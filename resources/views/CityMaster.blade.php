@@ -12,7 +12,7 @@
 <li class="breadcrumb-item active">District Master</li>
 </ol>
 </div>
-
+      
 </div>
 </div>
 </div>
