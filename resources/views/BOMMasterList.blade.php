@@ -1,7 +1,7 @@
 @extends('layouts.master') 
 @section('content')   
 <style>
-    .text-right
+    .text-right 
     {
         text-align:right;
     }
