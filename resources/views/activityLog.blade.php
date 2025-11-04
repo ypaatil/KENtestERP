@@ -252,7 +252,7 @@ body {
 
   <!-- Accordion Starts Here -->
   <section id="accordion-sec">
-  <span class="accordion-title">Activity Log</span>
+  <span class="accordion-title">   Activity Log</span>
 
 
 
