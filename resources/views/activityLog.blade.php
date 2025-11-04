@@ -12,7 +12,7 @@
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #f4f6f8;
-  color: #333;
+  color: #333;   
 }
 
 .wrapper {
