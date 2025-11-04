@@ -68,7 +68,7 @@
 
 </div>
 <div class="col-md-6">    
-<h4 class="mb-0" style="font-weight:bold;">KEN GLOBAL DESIGNS PRIVATE LIMITED Nutan</h4>
+<h4 class="mb-0" style="font-weight:bold;">KEN GLOBAL DESIGNS PRIVATE LIMITED </h4>
 </div>
 <div class="col-md-2">    
 <h6  style="font-weight:bold;">Date:{{ date('d-m-Y',strtotime($BOMList[0]->bom_date)) }}</h6>
