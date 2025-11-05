@@ -203,7 +203,7 @@ public function SalesOrderPrintView($tr_code)
         ->join('warehouse_master', 'warehouse_master.warehouse_id', '=', 'buyer_purchse_order_master.warehouse_id', 'left outer')  
         ->join('payment_term', 'payment_term.ptm_id', '=', 'buyer_purchse_order_master.ptm_id', 'left outer')
          ->leftJoin('merchant_master', 'merchant_master.merchant_id', '=', 'buyer_purchse_order_master.merchant_id')
-         ->join('pdmerchant_master', 'pdmerchant_master.PDMerchant_id','=','buyer_purchse_order_master.PDMerchant_id')
+         ->join('PDMerchant_master', 'PDMerchant_master.PDMerchant_id','=','buyer_purchse_order_master.PDMerchant_id')
           ->join('country_master', 'country_master.c_id', '=', 'buyer_purchse_order_master.country_id')
         
         
@@ -217,7 +217,7 @@ public function SalesOrderPrintView($tr_code)
         'payment_term.ptm_name',
         'shipment_mode_master.ship_mode_name',
         'merchant_master.merchant_name',
-        'pdmerchant_master.PDMerchant_name',
+        'PDMerchant_master.PDMerchant_name',
         'country_master.c_name',
         'warehouse_master.warehouse_name',
         'delivery_terms_master.delivery_term_name',
