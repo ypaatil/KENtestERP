@@ -189,6 +189,55 @@ class BuyerPurchaseOrderController extends Controller
         return view('BuyerPurchaseOrderMasterList', compact('chekform','job_status_id','NoOfOrder','total_value','total_qty','open_qty','shipped_qty'));
      }
 
+public function SalesOrderPrintView($tr_code)
+    {
+         $SalesOrderCostingMaster = BuyerPurchaseOrderMasterModel::join('usermaster', 'usermaster.userId', '=', 'buyer_purchse_order_master.userId', 'left outer')
+        ->join('ledger_master', 'ledger_master.Ac_code', '=', 'buyer_purchse_order_master.Ac_code', 'left outer')
+        ->join('fg_master', 'fg_master.fg_id', '=', 'buyer_purchse_order_master.fg_id', 'left outer')
+        ->join('job_status_master', 'job_status_master.job_status_id', '=', 'buyer_purchse_order_master.job_status_id', 'left outer')
+        ->join('order_group_master', 'order_group_master.og_id', '=', 'buyer_purchse_order_master.og_id', 'left outer')
+        ->join('season_master', 'season_master.season_id', '=', 'buyer_purchse_order_master.season_id', 'left outer') 
+        ->join('brand_master', 'brand_master.brand_id', '=', 'buyer_purchse_order_master.brand_id', 'left outer') 
+        ->join('delivery_terms_master', 'delivery_terms_master.dterm_id', '=', 'buyer_purchse_order_master.dterm_id', 'left outer') 
+        ->join('shipment_mode_master', 'shipment_mode_master.ship_id', '=', 'buyer_purchse_order_master.ship_id', 'left outer')  
+        ->join('warehouse_master', 'warehouse_master.warehouse_id', '=', 'buyer_purchse_order_master.warehouse_id', 'left outer')  
+        ->join('payment_term', 'payment_term.ptm_id', '=', 'buyer_purchse_order_master.ptm_id', 'left outer')
+         ->leftJoin('merchant_master', 'merchant_master.merchant_id', '=', 'buyer_purchse_order_master.merchant_id')
+         ->join('pdmerchant_master', 'pdmerchant_master.PDMerchant_id','=','buyer_purchse_order_master.PDMerchant_id')
+          ->join('country_master', 'country_master.c_id', '=', 'buyer_purchse_order_master.country_id')
+        
+        
+
+        ->where('buyer_purchse_order_master.delflag','=', '0')
+        ->where('buyer_purchse_order_master.tr_code','=', $tr_code)
+          ->select(
+        'buyer_purchse_order_master.*',
+        'brand_master.brand_name',
+        'fg_master.fg_name',
+        'payment_term.ptm_name',
+        'shipment_mode_master.ship_mode_name',
+        'merchant_master.merchant_name',
+        'pdmerchant_master.PDMerchant_name',
+        'country_master.c_name',
+        'warehouse_master.warehouse_name',
+        'delivery_terms_master.delivery_term_name',
+        'order_group_master.order_group_name',
+        'ledger_master.ac_name'
+    )
+        
+        ->get(['buyer_purchse_order_master.*','usermaster.username',
+        'ledger_master.Ac_name','fg_master.fg_name','job_status_master.job_status_name',
+        'order_group_master.order_group_name',
+        'season_master.season_name','brand_master.brand_name','delivery_terms_master.delivery_term_name','shipment_mode_master.ship_mode_name','warehouse_master.warehouse_name','buyer_purchse_order_master.sam']);
+       // print_r($SalesOrderCostingMaster[0]);exit;
+        
+      $SizeList= SizeModel::where('delflag','=', '0')->get();   
+        
+    
+    return view('SalesOrderPrintView',compact('SalesOrderCostingMaster','SizeList'));  
+    
+    }
+
     /**
      * Show the form for creating a new resource.
      *
