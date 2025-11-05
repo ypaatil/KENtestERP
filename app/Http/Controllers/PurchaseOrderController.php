@@ -1104,7 +1104,7 @@ class PurchaseOrderController extends Controller
     {
         $bom_types = array_map('trim', explode(',', $request->cat_id)); 
         $BOMCodes = array_map('trim', explode(',', $request->sales_order_nos));
-    
+        $po_type_id = $request->po_type_id;
         $BOMLIST = DB::table('bom_master')
             ->whereIn('bom_code', $BOMCodes)
             ->pluck('sales_order_no') 
@@ -1117,27 +1117,63 @@ class PurchaseOrderController extends Controller
         {
             $cat_id = (int) $cat_id;
     
-            if ($cat_id == 2) {
-                $q = DB::table('bom_sewing_trims_details as t')
-                    ->join('classification_master as c', function ($join) use ($cat_id) {
-                        $join->on('c.class_id', '=', 't.class_id')
-                             ->where('c.cat_id', '=', $cat_id);
-                    })
-                    ->whereIn('t.sales_order_no', $sales_order_nos)
-                    ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
-                    ->groupBy('t.class_id', 'c.class_name');
-                $queries[] = $q;
-    
-            } elseif ($cat_id == 3) {
-                $q = DB::table('bom_packing_trims_details as t')
-                    ->join('classification_master as c', function ($join) use ($cat_id) {
-                        $join->on('c.class_id', '=', 't.class_id')
-                             ->where('c.cat_id', '=', $cat_id);
-                    })
-                    ->whereIn('t.sales_order_no', $sales_order_nos)
-                    ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
-                    ->groupBy('t.class_id', 'c.class_name');
-                $queries[] = $q;
+            if($po_type_id != 2)
+            {
+                    if ($cat_id == 2) {
+                        $q = DB::table('bom_sewing_trims_details as t')
+                            ->join('classification_master as c', function ($join) use ($cat_id) {
+                                $join->on('c.class_id', '=', 't.class_id')
+                                     ->where('c.cat_id', '=', $cat_id);
+                            })
+                            ->whereIn('t.sales_order_no', $sales_order_nos)
+                            ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
+                            ->groupBy('t.class_id', 'c.class_name');
+                        $queries[] = $q;
+            
+                    } elseif ($cat_id == 3) {
+                        $q = DB::table('bom_packing_trims_details as t')
+                            ->join('classification_master as c', function ($join) use ($cat_id) {
+                                $join->on('c.class_id', '=', 't.class_id')
+                                     ->where('c.cat_id', '=', $cat_id);
+                            })
+                            ->whereIn('t.sales_order_no', $sales_order_nos)
+                            ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
+                            ->groupBy('t.class_id', 'c.class_name');
+                        $queries[] = $q;
+                    }
+            }
+            else
+            {
+                if ($cat_id == 2) 
+                {
+                    $q = DB::table('bom_sewing_trims_details as t')
+                        ->join('classification_master as c', function ($join) use ($cat_id) {
+                            $join->on('c.class_id', '=', 't.class_id')
+                                 ->where('c.cat_id', '=', $cat_id);
+                        })
+                        ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
+                        ->groupBy('t.class_id', 'c.class_name');
+                    $queries[] = $q;
+        
+                } elseif ($cat_id == 3) {
+                    $q = DB::table('bom_packing_trims_details as t')
+                        ->join('classification_master as c', function ($join) use ($cat_id) {
+                            $join->on('c.class_id', '=', 't.class_id')
+                                 ->where('c.cat_id', '=', $cat_id);
+                        })
+                        ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
+                        ->groupBy('t.class_id', 'c.class_name');
+                    $queries[] = $q;
+                }elseif ($cat_id == 1) {
+                    $q = DB::table('bom_fabric_details as t')
+                        ->join('classification_master as c', function ($join) use ($cat_id) {
+                            $join->on('c.class_id', '=', 't.class_id')
+                                 ->where('c.cat_id', '=', $cat_id);
+                        })
+                        ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
+                        ->groupBy('t.class_id', 'c.class_name');
+                    $queries[] = $q;
+                }
             }
         }
     

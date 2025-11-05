@@ -2378,10 +2378,10 @@ public function GetPackingTrimItemList(Request $request)
                                     $selected = ($classes['class_id'] == $row->class_id) ? 'selected="selected"' : '';
                                     $html .= '<option value="'.$classes['class_id'].'" '.$selected.'>'.$classes['class_name'].'</option>';
                                 }
-                            $html .= '</select>
+                            $html .= '</select> 
                           </td>
                           <td><input type="text" name="description[]" value="'.$row->item_description.'" style="width:200px; height:30px;" readonly></td>
-                          <td><input type="number" step="any" name="consumption[]" value="'.$row->consumption.'" id="consumption" style="width:80px; height:30px;"></td>
+                          <td><input type="number" step="any" name="consumption[]" value="'.$row->consumption.'" min="0" max="'.$row->consumption.'" id="consumption" style="width:80px; height:30px;"></td>
                           <td>  
                             <select name="unit_id[]" id="unit_id" style="width:100px; height:30px;" disabled>
                                 <option value="">--Select--</option>';

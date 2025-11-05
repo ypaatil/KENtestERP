@@ -1795,29 +1795,32 @@ ini_set('memory_limit', '10G');
          }
    
    });
-   
+ 
    function GetClassesList()
    {
-   //  cat_id=$("#bom_type").val();
-   var  bom_types = $("#bom_type option:selected").map(function() {
-     return this.value;
-   }).get().join(",");
-   
-   alert(bom_types);
-   
-   $.ajax({
-       dataType: "json",
-   url: "{{ route('getClassLists') }}",
-   data:{'cat_id':bom_types},
-   success: function(data){
-   $("#class_id").html(data.html);
-   
+       var po_type_id = $("#po_type_id").val();
+      
+       //  cat_id=$("#bom_type").val();
+       var  bom_types = $("#bom_type option:selected").map(function() {
+         return this.value;
+       }).get().join(",");
+        
+        
+       var  bom_codes = $("#bom_code option:selected").map(function() {
+         return this.value;
+       }).get().join(",");
+        
+        $.ajax({
+           dataType: "json",
+           url: "{{ route('getClassLists') }}",
+           data:{'cat_id':bom_types, sales_order_nos: bom_codes,'po_type_id':po_type_id},
+           success: function(data)
+           {
+                $("#class_id").html(data.html);
+           }
+       }); 
    }
-   });   
-   }
-   
-   
-   
+    
    // function getBomDetail(){
    //     var type=$("#bom_type").val();
     

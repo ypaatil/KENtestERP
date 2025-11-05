@@ -519,7 +519,7 @@
                                                          </select>
                                                       </td>
                                                       <td><input type="text"    name="description[]" value="{{$List->description}}" id="description" style="width:200px; height:30px;" readOnly/></td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->consumption}}" @endif name="consumption[]" value="{{$List->consumption}}" id="consumption" style="width:80px; height:30px;"  readonly /></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->consumption}}" @endif name="consumption[]" value="{{$List->consumption}}" id="consumption" style="width:80px; height:30px;" /></td>
                                                       <td>
                                                          <select name="unit_id[]" class=" " id="unit_id" style="width:100px; height:30px;" disabled>
                                                             <option value="">--Unit List--</option>
@@ -532,7 +532,7 @@
                                                             @endforeach
                                                          </select>
                                                       </td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1)  min="0" max="{{$List->rate_per_unit}}" @endif name="rate_per_unit[]" value="{{$List->rate_per_unit}}" id="rate_per_unit" style="width:80px; height:30px;"  readonly /></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1)  min="0" max="{{$List->rate_per_unit}}" @endif name="rate_per_unit[]" value="{{$List->rate_per_unit}}" id="rate_per_unit" style="width:80px; height:30px;"  /></td>
                                                       <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->wastage}}" @endif name="wastage[]" value="{{$List->wastage}}" id="wastage" style="width:80px; height:30px;" /></td>
                                                       <td><input type="number" step="any"  min="0" max="{{$List->bom_qty}}"    name="bom_qty[]" value="{{$List->bom_qty}}" id="bom_qty" style="width:80px; height:30px;" readOnly/>
                                                          <input type="hidden" name="bom_qty1[]" value="{{$List->item_qty}}" id="bom_qty1" style="width:80px; height:30px;" readOnly/>
@@ -576,7 +576,7 @@
                                                          </select>
                                                       </td>
                                                       <td><input type="text"    name="description[]" value="" id="description" style="width:200px; height:30px;" readOnly /></td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0" @endif  name="consumption[]" value="0" id="consumption" style="width:80px; height:30px;"  readonly /></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0" @endif  name="consumption[]" value="0" id="consumption" style="width:80px; height:30px;"  /></td>
                                                       <td>
                                                          <select name="unit_id[]"   id="unit_id" style="width:100px; height:30px;" disabled>
                                                             <option value="">--Unit List--</option>
@@ -587,7 +587,7 @@
                                                             @endforeach
                                                          </select>
                                                       </td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1)  min="0" max="0" @endif  name="rate_per_unit[]" value="0" id="rate_per_unit" style="width:80px; height:30px;"  readonly /></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1)  min="0" max="0" @endif  name="rate_per_unit[]" value="0" id="rate_per_unit" style="width:80px; height:30px;"/></td>
                                                       <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0" @endif name="wastage[]" value="0" id="wastage" style="width:80px; height:30px;" required /></td>
                                                       <td><input type="number" step="any" name="bom_qty[]" value="0" id="bom_qty" style="width:80px; height:30px;" readOnly />
                                                          <input type="hidden" name="bom_qty1[]" value="0" id="bom_qty1" style="width:80px; height:30px;" readOnly/>
@@ -702,7 +702,7 @@
                                                          </select>
                                                          <input type="hidden"  name="size_arraysx[]" value="{{$List->size_array}}" id="size_arraysx" style="width:80px; height:30px;" readOnly   />
                                                       </td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->consumption}}" @endif   name="consumptionsx[]"  value="{{$List->consumption}}"   style="width:80px; height:30px;"  readonly/></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->consumption}}" @endif   name="consumptionsx[]"  value="{{$List->consumption}}"   style="width:80px; height:30px;" /></td>
                                                       <td>
                                                          <select name="unit_idsx[]"   id="unit_idsx" style="width:100px; height:30px;"   disabled >
                                                             <option value="">--Unit List--</option>
@@ -778,7 +778,7 @@
                                                          </select>
                                                          <input type="text"  name="size_arraysx[]" value="0" id="size_arraysx" style="width:80px; height:30px;"   />
                                                       </td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0" @endif   name="consumptionsx[]" value="0" style="width:80px; height:30px;"  readonly/></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0" @endif   name="consumptionsx[]" value="0" style="width:80px; height:30px;"/></td>
                                                       <td>
                                                          <select name="unit_idsx[]" class=" " id="unit_idsx" style="width:100px; height:30px;" disabled  >
                                                             <option value="">--Unit List--</option>
@@ -789,7 +789,7 @@
                                                             @endforeach
                                                          </select>
                                                       </td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0"  @endif  name="rate_per_unitsx[]" value="0" id="rate_per_unitsx" style="width:80px; height:30px;" readonly/></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0"  @endif  name="rate_per_unitsx[]" value="0" id="rate_per_unitsx" style="width:80px; height:30px;"/></td>
                                                       <td><input type="number" step="any" @if(Session::get('user_type')!=1)  min="0" max="0" @endif name="wastagesx[]" value="0" id="wastagesx" style="width:80px; height:30px;"   /></td>
                                                       <td><input type="number" step="any" name="bom_qtysx[]" value="0" id="bom_qtysx" style="width:80px; height:30px;"   readOnly /> 
                                                          <input type="hidden" name="bom_qtysx1[]" value="0" id="bom_qtysx1" style="width:80px; height:30px;" readOnly/>
@@ -916,7 +916,7 @@
                                                          </select>
                                                          <input type="hidden"  name="size_arrays[]" value="{{$List->size_array}}" id="size_arrays" style="width:80px; height:30px;" readOnly />
                                                       </td>
-                                                      <td><input type="number" step="any"  min="0" max="{{$List->consumption}}"  name="consumptions[]"  value="{{$List->consumption}}" id="consumptions" style="width:80px; height:30px;"  readonly @php if($List->item_count>0){ echo 'readOnly'; } @endphp /></td>
+                                                      <td><input type="number" step="any"  min="0" max="{{$List->consumption}}"  name="consumptions[]"  value="{{$List->consumption}}" id="consumptions" style="width:80px; height:30px;" @php if($List->item_count>0){ echo 'readOnly'; } @endphp /></td>
                                                       <td>
                                                          <select name="unit_ids[]" class=" " id="unit_ids" style="width:100px; height:30px;" disabled>
                                                             <option value="">--Unit List--</option>
@@ -929,7 +929,7 @@
                                                             @endforeach
                                                          </select>
                                                       </td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->rate_per_unit}}" @endif   name="rate_per_units[]" value="{{$List->rate_per_unit}}" id="rate_per_units" style="width:80px; height:30px;"  readonly  @php if($List->item_count>0){ echo 'readOnly'; } @endphp/></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->rate_per_unit}}" @endif   name="rate_per_units[]" value="{{$List->rate_per_unit}}" id="rate_per_units" style="width:80px; height:30px;"  @php if($List->item_count>0){ echo 'readOnly'; } @endphp/></td>
                                                       <td><input type="number" step="any" name="wastages[]" value="{{$List->wastage}}" min="0" max="{{$List->wastage}}" id="wastages" style="width:80px; height:30px;" required  @php if($List->item_count>0){ echo 'readOnly'; } @endphp/></td>
                                                       <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->bom_qty}}"  @endif name="bom_qtys[]" value="{{$List->bom_qty}}" id="bom_qtys" style="width:80px; height:30px;" readOnly/>
                                                          <input type="hidden" name="bom_qtys1[]" value="{{$List->item_qty}}" id="bom_qtys1" style="width:80px; height:30px;" readOnly/>
@@ -996,7 +996,7 @@
                                                          </select>
                                                          <input type="hidden"  name="size_arrays[]" value="0" id="size_arrays" style="width:80px; height:30px;" required />
                                                       </td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0" @endif  name="consumptions[]" value="0" id="consumptions" style="width:80px; height:30px;"  readonly /></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0" @endif  name="consumptions[]" value="0" id="consumptions" style="width:80px; height:30px;"/></td>
                                                       <td>
                                                          <select name="unit_ids[]" class="" id="unit_ids" style="width:100px; height:30px;"  disabled>
                                                             <option value="">--Unit List--</option>
@@ -1007,7 +1007,7 @@
                                                             @endforeach
                                                          </select>
                                                       </td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1)  min="0" max="0"  @endif  name="rate_per_units[]" value="0" id="rate_per_units" style="width:80px; height:30px;"  readonly /></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1)  min="0" max="0"  @endif  name="rate_per_units[]" value="0" id="rate_per_units" style="width:80px; height:30px;"/></td>
                                                       <td><input type="number" step="any" min="0" name="wastages[]" value="0" id="wastages" style="width:80px; height:30px;" required /></td>
                                                       <td><input type="number" step="any" name="bom_qtys[]" value="0" id="bom_qtys" style="width:80px; height:30px;" readOnly />
                                                          <input type="hidden" name="bom_qtys1[]" value="0" id="bom_qtys1" style="width:80px; height:30px;" readOnly/>
@@ -1135,7 +1135,7 @@
                                                          </select>
                                                          <input type="hidden" name="size_arrayss[]" value="{{$List->size_array}}" id="size_arrayss" style="width:80px; height:30px;" readOnly/>
                                                       </td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1)  min="0" max="{{$List->consumption}}" @endif name="consumptionss[]" value="{{$List->consumption}}" id="consumptionss" style="width:80px; height:30px;"  readonly /></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1)  min="0" max="{{$List->consumption}}" @endif name="consumptionss[]" value="{{$List->consumption}}" id="consumptionss" style="width:80px; height:30px;" /></td>
                                                       <td>
                                                          <select name="unit_idss[]"  id="unit_idss" style="width:100px; height:30px;" disabled>
                                                             <option value="">--Unit List--</option>
@@ -1148,7 +1148,7 @@
                                                             @endforeach
                                                          </select>
                                                       </td>
-                                                      <td><input type="number" step="any"  @if(Session::get('user_type')!=1) min="0" max="{{$List->rate_per_unit}}"   @endif name="rate_per_unitss[]" value="{{$List->rate_per_unit}}" id="rate_per_unitss" style="width:80px; height:30px;"  readonly /></td>
+                                                      <td><input type="number" step="any"  @if(Session::get('user_type')!=1) min="0" max="{{$List->rate_per_unit}}"   @endif name="rate_per_unitss[]" value="{{$List->rate_per_unit}}" id="rate_per_unitss" style="width:80px; height:30px;" /></td>
                                                       <td><input type="number" step="any" min="0" max="{{$List->wastage}}" name="wastagess[]" value="{{$List->wastage}}" id="wastagess" style="width:80px; height:30px;" required /></td>
                                                       <td><input type="number" step="any"  @if(Session::get('user_type')!=1) min="0" max="{{$List->bom_qty}}"  @endif  name="bom_qtyss[]" value="{{$List->bom_qty}}" id="bom_qtyss" style="width:80px; height:30px;" readOnly/>
                                                          <input type="hidden" name="bom_qtyss1[]" value="{{$List->item_qty}}" id="bom_qtyss1" style="width:80px; height:30px;" readOnly/>
@@ -1214,7 +1214,7 @@
                                                          </select>
                                                          <input type="hidden" name="size_arrayss[]" value="0" id="size_arrayss" style="width:80px; height:30px;" required />
                                                       </td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0" @endif  name="consumptionss[]" value="0" id="consumptionss" style="width:80px; height:30px;" readonly /></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0" @endif  name="consumptionss[]" value="0" id="consumptionss" style="width:80px; height:30px;" /></td>
                                                       <td>
                                                          <select name="unit_idss[]"   id="unit_idss" style="width:100px; height:30px;" disabled>
                                                             <option value="">--Unit List--</option>
@@ -1225,7 +1225,7 @@
                                                             @endforeach
                                                          </select>
                                                       </td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0"  @endif name="rate_per_unitss[]" value="0" id="rate_per_unitss" style="width:80px; height:30px;" readonly /></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0"  @endif name="rate_per_unitss[]" value="0" id="rate_per_unitss" style="width:80px; height:30px;" /></td>
                                                       <td><input type="number" step="any" min="0"  name="wastagess[]" value="0" id="wastagess" style="width:80px; height:30px;" required /></td>
                                                       <td><input type="number" step="any" name="bom_qtyss[]" value="0" id="bom_qtyss" style="width:80px; height:30px;" readOnly/>
                                                          <input type="hidden" name="bom_qtyss1[]" value="{{isset($List->item_qty) ? $List->item_qty : 0}}" id="bom_qtyss1" style="width:80px; height:30px;" readOnly/>
@@ -1482,6 +1482,7 @@
     {
         var $select = $(selectEl);
         var currentValue = $select.val();
+        var currentText = $select.find("option:selected").text();
     
         $.ajax({
             type: "GET",
@@ -1514,7 +1515,7 @@
         var duplicateCount = allValues.filter(v => v === currentValue).length;
     
         if (duplicateCount > 1) {
-            alert('Duplicate Item Code: ' + currentValue);
+            alert('Duplicate Item: ' + currentText);
     
             // Destroy Select2 before clearing value
             if ($select.hasClass('select2-hidden-accessible')) {
@@ -1881,7 +1882,50 @@
 //      }
 //   }); 
    
-   getSalesOrderDetails($("#sales_order_no").val());
+   getBuyerDetails($("#sales_order_no").val());
+
+   function getBuyerDetails(sales_order_no)
+   { 
+      $.ajax({
+          type: "GET",
+          dataType:"json",
+          url: "{{ route('SalesOrderDetails') }}",
+          data:{'sales_order_no':sales_order_no},
+          success: function(data){
+          
+           $("#brand_id").val(data[0]['brand_id']);
+           $("#po_code").val(data[0]['po_code']);
+           $("#order_type").val(data[0]['order_type']).trigger('change');
+           $("#og_id").val(data[0]['og_id']).trigger('change');
+           
+           $("#season_id").val(data[0]['season_id']);
+           $("#Ac_code").val(data[0]['Ac_code']);
+           $("#currency_id").val(data[0]['currency_id']);
+          
+          
+           $("#mainstyle_id").val(data[0]['mainstyle_id']);
+           $("#substyle_id").val(data[0]['substyle_id']);
+          
+           $("#style_no").val(data[0]['style_no']);
+           $("#fg_id").val(data[0]['fg_id']);
+          
+           $("#style_description").val(data[0]['style_description']);
+           $("#order_rate").val(data[0]['order_rate']);
+           $("#total_qty").val(data[0]['total_qty']);
+           
+           
+           
+           document.getElementById('season_id').disabled=true;
+           document.getElementById('Ac_code').disabled=true;
+           document.getElementById('currency_id').disabled=true;
+           document.getElementById('mainstyle_id').disabled=true;
+           document.getElementById('substyle_id').disabled=true;
+           document.getElementById('fg_id').disabled=true;
+   
+      }
+      }); 
+   }
+   
    function getSalesOrderDetails(sales_order_no)
    { 
       $.ajax({
@@ -2005,22 +2049,22 @@
    // {CalculateQtyRowPros10($(this).closest("tr"));});
    function CalculateQtyRowPros10(row)
    {   
-   var class_id = $(row).val();
-   var row = $(row).closest('tr'); 
-   
-   // var class_id=+row.find('select[name^="class_ids[]"]').val();
-   $.ajax({
-          type: "GET",
-          dataType:"json",
-          url: "{{ route('GetClassItemList') }}",
-          data:{'class_id':class_id},
-          success: function(data)
-          {
-                  console.log(data);
-                   
-                  row.find('select[name^="item_codes[]"]').html(data.html);
-          }
-      });
+        var class_id = $(row).val();
+        var row = $(row).closest('tr'); 
+        row.find('select[name^="item_codes[]"]').select2('destroy');
+       
+       // var class_id=+row.find('select[name^="class_ids[]"]').val();
+       $.ajax({
+              type: "GET",
+              dataType:"json",
+              url: "{{ route('GetClassItemList') }}",
+              data:{'class_id':class_id},
+              success: function(data)
+              { 
+                    row.find('select[name^="item_codes[]"]').html(data.html);
+                    row.find('select[name^="item_codes[]"]').select2();
+              }
+          });
    
    }
    
@@ -2028,23 +2072,24 @@
    // $(document).on('change', 'select[name^="class_idss[]"]', function()
    // {CalculateQtyRowPros11($(this).closest("tr"));});
    function CalculateQtyRowPros11(row)
-   {   var class_id = $(row).val();
-   var row = $(row).closest('tr'); 
+   {  
+        var class_id = $(row).val();
+        var row = $(row).closest('tr'); 
+        row.find('select[name^="item_codess"]').select2('destroy');
    
-   // var class_id=+row.find('select[name^="class_idss[]"]').val();
-   $.ajax({
+        // var class_id=+row.find('select[name^="class_idss[]"]').val();
+        $.ajax({
           type: "GET",
           dataType:"json",
           url: "{{ route('GetClassItemList') }}",
           data:{'class_id':class_id},
           success: function(data)
-          {
-                  console.log(data);
+          { 
                   +row.find('select[name^="item_codess"]').html(data.html);
-                  
+                  row.find('select[name^="item_codess"]').select2();
           }
-      });
-   
+        });
+
    }
    
    // $(document).on('change', 'select[name^="class_idsx[]"]', function()
@@ -2052,22 +2097,22 @@
    function CalculateQtyRowPros123(row)
    {    
    
-   var class_id = $(row).val();
-   var row = $(row).closest('tr'); 
+        var class_id = $(row).val();
+        var row = $(row).closest('tr'); 
+        row.find('select[name^="item_codesx').select2('destroy');
    
-   var class_id=+row.find('select[name^="class_idsx[]"]').val();
-   $.ajax({
+        var class_id=+row.find('select[name^="class_idsx[]"]').val();
+        $.ajax({
           type: "GET",
           dataType:"json",
           url: "{{ route('GetClassItemList') }}",
           data:{'class_id':class_id},
           success: function(data)
-          {
-                  console.log(data);
-                  +row.find('select[name^="item_codesx"]').html(data.html);
-                  
+          { 
+                +row.find('select[name^="item_codesx"]').html(data.html);
+                row.find('select[name^="item_codesx').select2();
           }
-      });
+        });
    
    }
    
@@ -2232,7 +2277,7 @@
    }
    
    // For Fabric Trims get Consumption Details From Sales Costing Table
-   $('table.footable_1').on('change', 'select[name^="item_code[]"]', function()
+   $('table.footable_1').on('change', 'select[name^="item_code[]"], input[name^="consumption[]"],input[name^="rate_per_unit[]"]', function()
    {CalculateQtyRowPros1($(this).closest("tr"));});
    function CalculateQtyRowPros1(rows)
    {    
@@ -2518,16 +2563,34 @@
     
         // ======== Item Code Select ========
         var cell2 = row.insertCell(1);
-        var y = rows1.find('select[name^="item_code[]"]').clone();
+
+        // Destroy select2 before cloning
+        rows1.find('select[name^="item_code[]"]').select2('destroy');
+        
+        // Clone the select element
+        var y = rows1.find('select[name^="item_code[]"]').clone(false);
+        
+        // Set attributes
         y.attr({
             "id": "item_code" + indexcone,
             "name": "item_code[]"
         }).val("");
+        
+        // Enable it
         y.removeAttr('disabled');
+        
+        // Set width
         y.width(270);
-        y.empty();
-        y.append('<option value="">Select Item</option>');
-        y.appendTo(cell2);
+        
+        // Remove any existing Select2 container (safety)
+        cell2.querySelectorAll('.select2-container').forEach(el => el.remove());
+        
+        // Append cloned select
+        $(cell2).append(y);
+        
+        // Reinitialize Select2
+        y.select2();
+
     
         // ======== Color ========
         var cell3 = row.insertCell(2);
@@ -2568,7 +2631,6 @@
         t6.id = "consumption" + indexcone;
         t6.name = "consumption[]";
         t6.value = "";
-        t6.readOnly=true;
         cell6.appendChild(t6);
     
         // ======== Unit Select ========
@@ -2590,7 +2652,6 @@
         t8.id = "rate_per_unit" + indexcone;
         t8.name = "rate_per_unit[]";
         t8.value = "";
-        t8.readOnly=true;
         cell8.appendChild(t8);
     
         // ======== Wastage ========
@@ -2775,7 +2836,6 @@
         var consumption = document.createElement("input");
         consumption.style = "display: table-cell; width:80px;";
         consumption.type = "text";
-        consumption.readOnly = true;
         consumption.id = "consumptions" + indexcone1;
         consumption.name = "consumptions[]";
         consumption.value = "";
@@ -2795,7 +2855,6 @@
         var rate = document.createElement("input");
         rate.style = "display: table-cell; width:80px;";
         rate.type = "text";
-        rate.readOnly = true;
         rate.id = "rate_per_units" + indexcone1;
         rate.name = "rate_per_units[]";
         rate.value = "";
@@ -2990,7 +3049,6 @@
    var t5=document.createElement("input");
    t5.style="display: table-cell; width:80px;";
    t5.type="text";
-   t5.readOnly=true;
    t5.id = "consumptionsx"+indexcone1;
    t5.name="consumptionsx[]";
    cell5.appendChild(t5);  
@@ -3010,7 +3068,6 @@
    var t5=document.createElement("input");
    t5.style="display: table-cell; width:80px;";
    t5.type="text";
-   t5.readOnly=true;
    t5.id = "rate_per_unitsx"+indexcone1;
    t5.name="rate_per_unitsx[]";
    cell5.appendChild(t5);
@@ -3241,7 +3298,6 @@
         consumption.id = "consumptionss" + indexcone2;
         consumption.name = "consumptionss[]";
         consumption.value = "";
-        consumption.readOnly=true;
         cell7.appendChild(consumption);
     
         // --- Unit Select ---
@@ -3257,7 +3313,6 @@
         rate.type = "text";
         rate.id = "rate_per_unitss" + indexcone2;
         rate.name = "rate_per_unitss[]";
-        rate.readOnly=true;
         rate.value = "";
         cell9.appendChild(rate);
     

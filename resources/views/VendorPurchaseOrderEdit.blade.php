@@ -475,6 +475,7 @@
                                                    <th>SrNo</th>
                                                    <th>Item Name</th>
                                                    <th>Classification</th>
+                                                   <th>Size</th>
                                                    <th>Description</th>
                                                    <th>Cons(Mtr/Nos)</th>
                                                    <th>Unit</th>
@@ -1620,7 +1621,7 @@
      $('table.footable_5').on("change", 'input[name^="consumptionsx[]"],input[name^="wastagesx[]"],input[name^="rate_per_unitsx[]"],input[name^="bom_qtysx[]"]', function()
    {
       // alert();
-   CalculateQtyRowProsx($(this).closest("tr"));
+        // CalculateQtyRowProsx($(this).closest("tr"));
    
    });
    function CalculateQtyRowProsx(row)

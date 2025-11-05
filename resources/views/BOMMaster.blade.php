@@ -363,7 +363,7 @@
                                                       </select>
                                                    </td>
                                                    <td><input type="text"    name="description[]" value="" id="description" style="width:200px; height:30px;" readOnly/></td>
-                                                   <td><input type="number" step="any"    name="consumption[]" value="0" id="consumption" style="width:80px; height:30px;" readOnly /></td>
+                                                   <td><input type="number" step="any"    name="consumption[]" value="0" id="consumption" style="width:80px; height:30px;" /></td>
                                                    <td>
                                                       <select name="unit_id[]"  id="unit_id" style="width:100px; height:30px;" disabled>
                                                          <option value="">--Unit List--</option>
@@ -374,7 +374,7 @@
                                                          @endforeach
                                                       </select>
                                                    </td>
-                                                   <td><input type="number" step="any" name="rate_per_unit[]" value="0" id="rate_per_unit" style="width:80px; height:30px;" readOnly /></td>
+                                                   <td><input type="number" step="any" name="rate_per_unit[]" value="0" id="rate_per_unit" style="width:80px; height:30px;" /></td>
                                                    <td><input type="number" step="any" name="wastage[]" value="0" id="wastage" style="width:80px; height:30px;" required /></td>
                                                    <td><input type="number" step="any" name="bom_qty[]" value="0" id="bom_qty" style="width:80px; height:30px;" readOnly />
                                                       <input type="hidden"  name="bom_qty1[]" value="0" id="bom_qty1" style="width:80px; height:30px;" readOnly />
@@ -457,7 +457,7 @@
                                                       </select>
                                                       <input type="hidden"  name="size_arraysx[]" value="0" id="size_arraysx" style="width:80px; height:30px;"   />
                                                    </td>
-                                                   <td><input type="number" step="any"    name="consumptionsx[]" value="0" id="consumptionsx" style="width:80px; height:30px;" readOnly/></td>
+                                                   <td><input type="number" step="any"    name="consumptionsx[]" value="0" id="consumptionsx" style="width:80px; height:30px;"/></td>
                                                    <td>
                                                       <select name="unit_idsx[]" id="unit_idsx" style="width:100px; height:30px;" disabled >
                                                          <option value="">--Unit List--</option>
@@ -468,7 +468,7 @@
                                                          @endforeach
                                                       </select>
                                                    </td>
-                                                   <td><input type="number" step="any" name="rate_per_unitsx[]" value="0" id="rate_per_unitsx" style="width:80px; height:30px;" readOnly  /></td>
+                                                   <td><input type="number" step="any" name="rate_per_unitsx[]" value="0" id="rate_per_unitsx" style="width:80px; height:30px;"  /></td>
                                                    <td><input type="number" step="any" name="wastagesx[]" value="0" id="wastagesx" style="width:80px; height:30px;" required /></td>
                                                    <td><input type="number" step="any" name="bom_qtysx[]" value="0" id="bom_qtysx" style="width:80px; height:30px;"   readOnly />
                                                       <input type="hidden" name="bom_qtysx1[]" value="0" id="bom_qtysx1" style="width:80px; height:30px;"   readOnly />
@@ -555,7 +555,7 @@
                                                       </select>
                                                       <input type="hidden" name="size_arrays[]" value="0" id="size_arrays" style="width:80px; height:30px;" />
                                                    </td>
-                                                   <td><input type="number" step="any"  name="consumptions[]" value="0" id="consumptions" style="width:80px; height:30px;" readOnly /></td>
+                                                   <td><input type="number" step="any"  name="consumptions[]" value="0" id="consumptions" style="width:80px; height:30px;" /></td>
                                                    <td>
                                                       <select name="unit_ids[]"   id="unit_ids" style="width:100px; height:30px;" disabled>
                                                          <option value="">--Unit List--</option>
@@ -566,7 +566,7 @@
                                                          @endforeach
                                                       </select>
                                                    </td>
-                                                   <td><input type="number" step="any" name="rate_per_units[]" value="0" id="rate_per_units" style="width:80px; height:30px;" readOnly /></td>
+                                                   <td><input type="number" step="any" name="rate_per_units[]" value="0" id="rate_per_units" style="width:80px; height:30px;" /></td>
                                                    <td><input type="number" step="any" name="wastages[]" value="0" id="wastages" style="width:80px; height:30px;" required /></td>
                                                    <td><input type="number" step="any" name="bom_qtys[]" value="0" id="bom_qtys" style="width:80px; height:30px;" readOnly />
                                                       <input type="hidden" name="bom_qtys1[]" value="0" id="bom_qtys1" style="width:80px; height:30px;" readOnly />
@@ -653,7 +653,7 @@
                                                       </select>
                                                       <input type="hidden"     name="size_arrayss[]" value="0" id="size_arrayss" style="width:80px; height:30px;" readOnly/>
                                                    </td>
-                                                   <td><input type="number" step="any" name="consumptionss[]" value="0" id="consumptionss" style="width:80px; height:30px;" readOnly /></td>
+                                                   <td><input type="number" step="any" name="consumptionss[]" value="0" id="consumptionss" style="width:80px; height:30px;" /></td>
                                                    <td>
                                                       <select name="unit_idss[]"   id="unit_idss" style="width:100px; height:30px;" disabled>
                                                          <option value="">--Unit List--</option>
@@ -664,7 +664,7 @@
                                                          @endforeach
                                                       </select>
                                                    </td>
-                                                   <td><input type="number" step="any" name="rate_per_unitss[]" value="0" id="rate_per_unitss" style="width:80px; height:30px;" readOnly /></td>
+                                                   <td><input type="number" step="any" name="rate_per_unitss[]" value="0" id="rate_per_unitss" style="width:80px; height:30px;" /></td>
                                                    <td><input type="number" step="any" name="wastagess[]" value="0" id="wastagess" style="width:80px; height:30px;" required /></td>
                                                    <td><input type="number" step="any" name="bom_qtyss[]" value="0" id="bom_qtyss" style="width:80px; height:30px;" readOnly/>
                                                       <input type="hidden"  name="bom_qtyss1[]" value="0" id="bom_qtyss1" style="width:80px; height:30px;" readOnly/>
@@ -847,7 +847,6 @@
         var $select = $(selectEl);
         var currentValue = $select.val();
         var currentText = $select.find("option:selected").text();
-        
         $.ajax({
             type: "GET",
             dataType: "json",
@@ -856,7 +855,7 @@
             success: function (data) {
                 if (data && data.length > 0) {
                     console.log(data[0].item_description);
-                    $select.closest('tr').find('td:eq(4) input').val(data[0].item_description);
+                    $select.closest('tr').find('td:eq(4) input').val(data[0].item_description); 
                 } else {
                     console.warn("No item details found for code:", currentValue);
                 }
@@ -1033,7 +1032,7 @@
         });
     
         $clonedRow.find('select').not('select[name="unit_id[]"]').attr("disabled", false);
-        $clonedRow.find('input').not('input name="wastage[]"').not('button').attr("readonly", false);
+        $clonedRow.find('input').not('input[name="wastage[]"]').not('button').attr("readonly", false);
         $clonedRow.find('textarea').attr("readonly", false);
         // Append the cloned row to the end of the table
         $currentRow.closest('table').append($clonedRow);
@@ -1263,11 +1262,7 @@
    {
         alert('Before making BOM, please ensure that all garment colors, corresponding fabrics, and sizewise quantities are entered correctly in the sales order as per buyer PO');    
    }
-   
-   
-   
-   
-   
+
    function getSalesOrderDetails(sales_order_no)
    {
        
@@ -1570,9 +1565,11 @@
    // {CalculateQtyRowPros10($(this).closest("tr"));});
    function CalculateQtyRowPros10(row)
    {  //  alert('1');
-   var class_id = $(row).val();
-   var row = $(row).closest('tr'); 
+    
+    var class_id = $(row).val();
+    var row = $(row).closest('tr'); 
    
+    row.find('select[name^="item_codes[]"]').select2('destroy');
    // var class_id=+row.find('select[name^="class_ids[]"]').val();
     $.ajax({
            type: "GET",
@@ -1581,9 +1578,8 @@
            data:{'class_id':class_id},
            success: function(data)
            {
-                   console.log(data);
-                    
-                   row.find('select[name^="item_codes[]"]').html(data.html);
+                row.find('select[name^="item_codes[]"]').html(data.html);
+                row.find('select[name^="item_codes[]"]').select2();
            }
        });
    
@@ -1593,11 +1589,13 @@
    // $(document).on('change', 'select[name^="class_idss[]"]', function()
    // {CalculateQtyRowPros11($(this).closest("tr"));});
    function CalculateQtyRowPros11(row)
-   {   var class_id = $(row).val();
-   var row = $(row).closest('tr'); 
+   {   
+        var class_id = $(row).val();
+        var row = $(row).closest('tr'); 
    
+        row.find('select[name^="item_codess"]').select2('destroy');
    // var class_id=+row.find('select[name^="class_idss[]"]').val();
-    $.ajax({
+        $.ajax({
            type: "GET",
            dataType:"json",
            url: "{{ route('GetClassItemList') }}",
@@ -1606,9 +1604,10 @@
            {
                    console.log(data);
                    +row.find('select[name^="item_codess"]').html(data.html);
+                    row.find('select[name^="item_codess"]').select2();
                    
            }
-       });
+        });
    
    }
    
@@ -1617,11 +1616,12 @@
    function CalculateQtyRowPros12(row)
    {    
    
-   var class_id = $(row).val();
-   var row = $(row).closest('tr'); 
-   
-   var class_id=+row.find('select[name^="class_idsx[]"]').val();
-    $.ajax({
+        var class_id = $(row).val();
+        var row = $(row).closest('tr'); 
+        row.find('select[name^="item_codesx"]').select2('destroy');
+        
+        var class_id=+row.find('select[name^="class_idsx[]"]').val();
+        $.ajax({
            type: "GET",
            dataType:"json",
            url: "{{ route('GetClassItemList') }}",
@@ -1630,9 +1630,10 @@
            {
                    console.log(data);
                    +row.find('select[name^="item_codesx"]').html(data.html);
+                    row.find('select[name^="item_codesx"]').select2();
                    
            }
-       });
+        });
    
    }
    
@@ -1692,15 +1693,12 @@
    }
    
    // For Fabric Trims get Consumption Details From Sales Costing Table
-   $('table.footable_1').on('change', 'select[name^="item_code[]"]', function()
+   $('table.footable_1').on('change', 'select[name^="item_code[]"], input[name^="consumption[]"],input[name^="rate_per_unit[]"]', function()
    {CalculateQtyRowPros1($(this).closest("tr"));});
    function CalculateQtyRowPros1(rows)
-   {   
+   {    
        var row = $(rows).parent().parent('tr');
        var item_code = $(row).find('select[name^="item_code[]"]').val();
-       $(row).find('select[name^="item_code[]"]').attr('disabled', true);
-       $(row).find('select[name^="class_id[]"]').attr('disabled', true);
-       $(row).find('select[name^="unit_id[]"]').attr('disabled', true);
        var sales_order_no=$('#sales_order_no').val();
        $.ajax({
            type: "GET",
@@ -1709,7 +1707,6 @@
            data:{'item_code':item_code,sales_order_no:sales_order_no},
            success: function(data)
            {
-                   console.log(data);
                 //   row.find('input[name^="description[]"]').val(data[0]['description1']);
                    row.find('input[name^="consumption[]"]').val(data[0]['consumption']);
                   
@@ -1753,6 +1750,9 @@
            }
        });
    
+       $(row).find('select[name^="item_code[]"]').attr('disabled', true);
+       $(row).find('select[name^="class_id[]"]').attr('disabled', true);
+       $(row).find('select[name^="unit_id[]"]').attr('disabled', true);
       setTimeout(mycalc,2000);
    }
    
@@ -1783,7 +1783,7 @@
    
     $(document).on("change", 'input[name^="consumption[]"],input[name^="wastage[]"],input[name^="rate_per_unit[]"],input[name^="bom_qty[]"],input[name^="consumptions[]"],input[name^="wastages[]"],input[name^="rate_per_units[]"],input[name^="bom_qtys[]"],input[name^="consumptionss[]"],input[name^="wastagess[]"],input[name^="rate_per_unitss[]"],input[name^="bom_qtyss[]"],input[name^="consumptionsx[]"],input[name^="wastagesx[]"],input[name^="rate_per_unitsx[]"],input[name^="bom_qtysx[]"]', function () {
         @php $user_type=Session::get('user_type'); if($user_type!=1){ @endphp
-    
+       
         let $this = $(this);
         let rawVal = $this.val().trim();
     
@@ -1831,7 +1831,7 @@
         }
     
         @php } else { @endphp
-            $(this).removeAttr('max');
+           $(this).removeAttr('max');
         @php } @endphp
         // CalculateQtyRowPros2($(this).closest("tr"));
         // CalculateQtyRowPro($(this).closest("tr"));
@@ -2003,20 +2003,37 @@
    t1.value=indexcone;
    
    cell1.appendChild(t1);
-   
-   var cell3 = row.insertCell(1);
-   var t3=document.createElement("select");
-   var x = $("#item_code"),
-   y = x.clone();
-   y.attr("id","item_code");
-   y.attr("name","item_code[]");
-   y.attr("disabled",false);
-   y.width(270);
-   y.empty();
-   y.append('<option value="">Select Item</option>');
-   y.appendTo(cell3);
-   
-   
+     
+   // ======== Item Code Select ========
+    var cell2 = row.insertCell(1);
+
+    // Destroy select2 before cloning
+    rows1.find('select[name^="item_code[]"]').select2('destroy');
+    
+    // Clone the select element
+    var y = rows1.find('select[name^="item_code[]"]').clone(false);
+    
+    // Set attributes
+    y.attr({
+        "id": "item_code" + indexcone,
+        "name": "item_code[]"
+    }).val("");
+    
+    // Enable it
+    y.removeAttr('disabled');
+    
+    // Set width
+    y.width(270);
+    
+    // Remove any existing Select2 container (safety)
+    cell2.querySelectorAll('.select2-container').forEach(el => el.remove());
+    
+    // Append cloned select
+    $(cell2).append(y);
+    
+    // Reinitialize Select2
+    y.select2();
+ 
    var cell5 = row.insertCell(2);
    var t5=document.createElement("textarea");
    t5.style="display: table-cell; width:200px; height:30px";
@@ -2048,7 +2065,6 @@
    t5.style="display: table-cell; width:80px;";
    t5.type="number";
    t5.step="any";
-   t5.readOnly="true";
    t5.id = "consumption"+indexcone;
    t5.name="consumption[]";
    cell5.appendChild(t5);  
@@ -2068,7 +2084,6 @@
    t5.style="display: table-cell; width:80px;"; 
    t5.type="number";
    t5.step="any";
-   t5.readOnly="true";
    t5.id = "rate_per_unit"+indexcone;
    t5.name="rate_per_unit[]";
    cell5.appendChild(t5);
@@ -2255,7 +2270,6 @@
    t5.style="display: table-cell; width:80px;";
    t5.type="number";
    t5.step="any";
-   t5.readOnly="true";
    t5.id = "consumptions"+indexcone1;
    t5.name="consumptions[]";
    cell5.appendChild(t5);  
@@ -2275,7 +2289,6 @@
    t5.style="display: table-cell; width:80px;";
    t5.type="number";
    t5.step="any";
-   t5.readOnly="true";
    t5.id = "rate_per_units"+indexcone1;
    t5.name="rate_per_units[]";
    cell5.appendChild(t5);
@@ -2483,7 +2496,6 @@
    t5.style="display: table-cell; width:80px;";
    t5.type="number";
    t5.step="any";
-   t5.readOnly=true;
    t5.id = "consumptionsx"+indexcone1;
    t5.name="consumptionsx[]";
    cell5.appendChild(t5);  
@@ -2503,7 +2515,6 @@
    t5.style="display: table-cell; width:80px;";
    t5.type="number";
    t5.step="any";
-   t5.readOnly=true;
    t5.id = "rate_per_unitsx"+indexcone1;
    t5.name="rate_per_unitsx[]";
    cell5.appendChild(t5);
@@ -2726,7 +2737,6 @@
    t5.style="display: table-cell; width:80px;";
    t5.type="number";
    t5.step="any";
-   t5.readOnly=true;
    t5.id = "consumptionss"+indexcone2;
    t5.name="consumptionss[]";
    cell5.appendChild(t5);  
@@ -2746,7 +2756,6 @@
    t5.style="display: table-cell; width:80px;";
    t5.type="number";
    t5.step="any";
-   t5.readOnly=true;
    t5.id = "rate_per_unitss"+indexcone2;
    t5.name="rate_per_unitss[]";
    cell5.appendChild(t5);
