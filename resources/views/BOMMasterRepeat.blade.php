@@ -2510,7 +2510,8 @@
    var cell5 = row.insertCell(5);
    var t5=document.createElement("input");
    t5.style="display: table-cell; width:80px;";
-   t5.type="text";
+   t5.type="number";
+   t5.step="any";
    t5.id = "consumption"+indexcone;
    t5.name="consumption[]";
    cell5.appendChild(t5);  
@@ -2527,24 +2528,27 @@
    
    var cell5 = row.insertCell(7);
    var t5=document.createElement("input");
-   t5.style="display: table-cell; width:80px;";
-   t5.type="text";
+   t5.style="display: table-cell; width:80px;"; 
+   t5.type="number";
+   t5.step="any";
    t5.id = "rate_per_unit"+indexcone;
    t5.name="rate_per_unit[]";
    cell5.appendChild(t5);
    
    var cell5 = row.insertCell(8);
    var t5=document.createElement("input");
-   t5.style="display: table-cell; width:80px;";
-   t5.type="text";
+   t5.style="display: table-cell; width:80px;"; 
+   t5.type="number";
+   t5.step="any";
    t5.id = "wastage"+indexcone;
    t5.name="wastage[]";
    cell5.appendChild(t5);
    
    var cell5 = row.insertCell(9);
    var t5=document.createElement("input");
-   t5.style="display: table-cell; width:80px;";
-   t5.type="text";
+   t5.style="display: table-cell; width:80px;"; 
+   t5.type="number";
+   t5.step="any";
    t5.readOnly="true";
    t5.id = "bom_qty"+indexcone;
    t5.name="bom_qty[]";
@@ -2567,8 +2571,9 @@
    
    var cell5 = row.insertCell(10);
    var t5=document.createElement("input");
-   t5.style="display: table-cell; width:80px;";
-   t5.type="text";
+   t5.style="display: table-cell; width:80px;"; 
+   t5.type="number";
+   t5.step="any";
    t5.className="FABRIC";
    t5.readOnly=true;
    t5.id = "total_amount"+indexcone;
@@ -2725,7 +2730,8 @@
         var cell7 = row.insertCell(6);
         var consumption = document.createElement("input");
         consumption.style = "display: table-cell; width:80px;";
-        consumption.type = "text";
+        consumption.type = "number";
+        consumption.step = "any";
         consumption.id = "consumptions" + indexcone1;
         consumption.name = "consumptions[]";
         consumption.value = "";
@@ -2744,7 +2750,8 @@
         var cell9 = row.insertCell(8);
         var rate = document.createElement("input");
         rate.style = "display: table-cell; width:80px;";
-        rate.type = "text";
+        rate.type = "number";
+        rate.type = "any";
         rate.id = "rate_per_units" + indexcone1;
         rate.name = "rate_per_units[]";
         rate.value = "";
@@ -2754,7 +2761,8 @@
         var cell10 = row.insertCell(9);
         var wastage = document.createElement("input");
         wastage.style = "display: table-cell; width:80px;";
-        wastage.type = "text";
+        wastage.type = "number";
+        wastage.step = "any";
         wastage.id = "wastages" + indexcone1;
         wastage.name = "wastages[]";
         wastage.value = "";
@@ -2763,8 +2771,9 @@
         // --- BOM Qty ---
         var cell11 = row.insertCell(10);
         var bomQty = document.createElement("input");
-        bomQty.style = "display: table-cell; width:80px;";
-        bomQty.type = "text";
+        bomQty.style = "display: table-cell; width:80px;"; 
+        bomQty.type = "number";
+        bomQty.step = "any";
         bomQty.readOnly="true";
         bomQty.id = "bom_qtys" + indexcone1;
         bomQty.name = "bom_qtys[]";
@@ -2784,7 +2793,8 @@
         var cell12 = row.insertCell(11);
         var total = document.createElement("input");
         total.style = "display: table-cell; width:80px;";
-        total.type = "text";
+        total.type = "number";
+        total.step = "any";
         total.className = "SEWING";
         total.readOnly = true;
         total.id = "total_amounts" + indexcone1;
@@ -2937,8 +2947,9 @@
    
    var cell5 = row.insertCell(6);
    var t5=document.createElement("input");
-   t5.style="display: table-cell; width:80px;";
-   t5.type="text";
+   t5.style="display: table-cell; width:80px;"; 
+   t5.type = "number";
+   t5.step = "any";
    t5.id = "consumptionsx"+indexcone1;
    t5.name="consumptionsx[]";
    cell5.appendChild(t5);  
@@ -2954,8 +2965,9 @@
    
    var cell5 = row.insertCell(8);
    var t5=document.createElement("input");
-   t5.style="display: table-cell; width:80px;";
-   t5.type="text";
+   t5.style="display: table-cell; width:80px;"; 
+   t5.type = "number";
+   t5.step = "any";
    t5.id = "rate_per_unitsx"+indexcone1;
    t5.name="rate_per_unitsx[]";
    cell5.appendChild(t5);
@@ -2964,7 +2976,8 @@
    var cell5 = row.insertCell(9);
    var t5=document.createElement("input");
    t5.style="display: table-cell; width:80px;";
-   t5.type="text";
+   t5.type = "number";
+   t5.step = "any";
    t5.id = "wastagesx"+indexcone1;
    t5.name="wastagesx[]";
    cell5.appendChild(t5);
@@ -2973,7 +2986,8 @@
    var cell5 = row.insertCell(10);
    var t5=document.createElement("input");
    t5.style="display: table-cell; width:80px;";
-   t5.type="text";
+   t5.type = "number";
+   t5.step = "any";
    t5.readOnly=true;
    t5.id = "bom_qtysx"+indexcone1;
    t5.name="bom_qtysx[]";
@@ -2997,7 +3011,8 @@
    var cell5 = row.insertCell(11);
    var t5=document.createElement("input");
    t5.style="display: table-cell; width:80px;";
-   t5.type="text";
+   t5.type = "number";
+   t5.step = "any";
    t5.className="TRIMFABRIC";
    t5.readOnly=true;
    t5.id = "total_amountsx"+indexcone1;
@@ -3173,7 +3188,8 @@
         var cell7 = row.insertCell(6);
         var consumption = document.createElement("input");
         consumption.style = "display: table-cell; width:80px;";
-        consumption.type = "text";
+        consumption.type = "number";
+        consumption.step = "any";
         consumption.id = "consumptionss" + indexcone2;
         consumption.name = "consumptionss[]";
         consumption.value = "";
@@ -3189,7 +3205,8 @@
         var cell9 = row.insertCell(8);
         var rate = document.createElement("input");
         rate.style = "display: table-cell; width:80px;";
-        rate.type = "text";
+        rate.type = "number";
+        rate.step = "any";
         rate.id = "rate_per_unitss" + indexcone2;
         rate.name = "rate_per_unitss[]";
         rate.value = "";
@@ -3199,7 +3216,8 @@
         var cell10 = row.insertCell(9);
         var wastage = document.createElement("input");
         wastage.style = "display: table-cell; width:80px;";
-        wastage.type = "text";
+        wastage.type = "number";
+        wastage.step = "any";
         wastage.id = "wastagess" + indexcone2;
         wastage.name = "wastagess[]";
         wastage.value = "";
@@ -3209,7 +3227,8 @@
         var cell11 = row.insertCell(10);
         var bomQty = document.createElement("input");
         bomQty.style = "display: table-cell; width:80px;";
-        bomQty.type = "text";
+        bomQty.type = "number";
+        bomQty.step = "any";
         bomQty.readOnly="true";
         bomQty.id = "bom_qtyss" + indexcone2;
         bomQty.name = "bom_qtyss[]";
@@ -3228,7 +3247,8 @@
         var cell12 = row.insertCell(11);
         var total = document.createElement("input");
         total.style = "display: table-cell; width:80px;";
-        total.type = "text";
+        total.type = "number";
+        total.step = "any";
         total.className = "PACKING";
         total.readOnly = true;
         total.id = "total_amountss" + indexcone2;

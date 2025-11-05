@@ -284,4 +284,11 @@ function setEnvironmentValue($key, $value)
 //         return $string;
 
 // }
+
+if (!function_exists('money_format')) {
+    function money_format($format, $number) {
+        return number_format($number, 2, '.', ',');
+    }
+}
+
 ?>
