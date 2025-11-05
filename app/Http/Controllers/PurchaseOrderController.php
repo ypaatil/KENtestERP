@@ -20,7 +20,6 @@ use DataTables;
 ini_set('memory_limit', '10G');
 use App\Services\PurchaseOrderDetailActivityLog;
 use App\Services\PurchaseOrderMasterActivityLog;
-
 use Log;
 
 class PurchaseOrderController extends Controller

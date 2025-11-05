@@ -26,6 +26,7 @@ use App\Models\SalesOrderCostingMasterModel;
 use App\Models\BrandModel;
 use Session;
 use DataTables;  
+
 setlocale(LC_MONETARY, 'en_IN'); 
 date_default_timezone_set('Asia/Calcutta');
 use App\Services\BomDetailActivityLog;
