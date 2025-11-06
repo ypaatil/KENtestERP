@@ -212,10 +212,6 @@
                 padding: 10px !important;
                 font-size: 11pt;
 
-
-
-
-
             }
 
             .table-bordered tr th:first-child,
@@ -740,17 +736,18 @@
                                     {{ $rowDetail->item_name }}
                                     <br><b>Description:</b> {{ $rowDetail->item_description }}
                                     <br><b>Color:</b> {{ $rowDetail->color_name }}
-                                    <br><b>Width:</b> {{ $rowDetail->dimension }}
+                                    <br><b>Width:</b> {{ $rowDetail->dimension }}</br>
+                                    @if($rowDetail->poQty!=0) <b>1:</b> {{$rowDetail->conQty}} {{$rowDetail->unit1}}/{{$rowDetail->unit2}} @endif
 
 
                                 </td>
 
-                                @if($rowDetail->poQty!=0) <b>1:</b> {{$rowDetail->conQty}} {{$rowDetail->unit1}}/{{$rowDetail->unit2}} @endif
+
 
                                 <td class="text-end">{{ $rowDetail->hsn_code }}
                                     </br>
                                     @if($rowDetail->poQty!=0) {{$rowDetail->SecConQty}} {{$rowDetail->unit3}} @endif</td>
-                                <td class="text-end">{{ money_format('%!i',round($rowDetail->item_qty,2))}}
+                                <td class="text-end">{{ money_format('%!i',round($rowDetail->item_qty,2))}} <br>
                                     @if($rowDetail->poQty!=0) {{round($rowDetail->poQty,2)}} {{$rowDetail->unit4}} @endif </td>
                                 <td class="text-start">{{ $rowDetail->unit1 }}</td>
                                 <td class="text-end">{{ number_format($rowDetail->item_rate,2) }} <br>
@@ -854,7 +851,8 @@
                             FROM `purchaseorder_detail`
                             inner join purchase_order on purchase_order.`pur_code`=purchaseorder_detail.`pur_code`
                             inner join item_master on item_master.item_code=purchaseorder_detail.item_code
-                            where purchaseorder_detail.`pur_code`='".$poMaster[0]->pur_code."' group by hsn_code
+                            where purchaseorder_detail.`pur_code`='".$poMaster[0]->pur_code."' group by hsn_code ,
+                            purchaseorder_detail.pur_cgst ,purchaseorder_detail.pur_sgst , purchaseorder_detail.pur_igst
 
                             ");
                             $a=1;$b=0; $c=-1;
@@ -863,11 +861,11 @@
                             <tr>
                                 <td class="text-end">{{ $rowtax->hsn_code}}</td>
                                 <td class="text-end">{{ number_format($rowtax->gross_amount, 2) }}</td>
-                                <td class="text-end">{{ $rowtax->pur_cgst}}%</td>
+                                <td class="text-end">{{ number_format($rowtax->pur_cgst, 2) }}%</td>
                                 <td class="text-end">{{ number_format($rowtax->camt, 2) }}</td>
-                                <td class="text-end">{{ $rowtax->pur_sgst}}%</td>
+                                <td class="text-end">{{ number_format($rowtax->pur_sgst,2)}}%</td>
                                 <td class="text-end">{{ number_format($rowtax->samt, 2) }}</td>
-                                <td class="text-end">{{ $rowtax->pur_igst}}%</td>
+                                <td class="text-end">{{ number_format($rowtax->pur_igst,2)}}%</td>
                                 <td class="text-end">{{ number_format($rowtax->iamt, 2) }}</td>
                                 <td class="text-end">{{ number_format($rowtax->camt + $rowtax->samt + $rowtax->iamt, 2) }}</td>
                                 <!-- <td class="text-start">TOTAL TAX</td> -->
@@ -976,20 +974,8 @@
                         </table>
                         <div class="second-Page"> Remark:</div>
 
-                        <br>
-                        <br>
-                        <br>
-                        <br>
-                        <br>
-                        <br>
-                        <br>
-
-
                     </div>
                 </div>
-
-
-
             </main>
 
         </div>
