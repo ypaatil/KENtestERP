@@ -84,7 +84,7 @@
 }
 @endforeach
 </select>
-<input type="hidden" name="po_codenew" id="po_codenew" class="form-control"  value="{{ request()->po_code;  }}">
+<input type="hidden" name="po_codenew" id="po_codenew" class="form-control"  value="{{ request()->po_code  }}">
 
 </div>
 </div>

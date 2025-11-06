@@ -54,7 +54,19 @@
                   </div>
                   <div class="col-md-2">
                      <div class="mb-3">
-                        <label for="po_code" class="form-label">PO Code</label>   
+                        <label for="invoice_no" class="form-label">Invoice No</label>
+                        <input type="text" name="invoice_no" id="invoice_no" class="form-control" id="invoice_no" required>
+                     </div>
+                  </div>
+                  <div class="col-md-2">
+                     <div class="mb-3">
+                        <label for="invoice_date" class="form-label">Invoice Date</label>
+                        <input type="date" name="invoice_date" id="invoice_date" class="form-control" id="invoice_date" value="{{date('Y-m-d')}}">
+                     </div>
+                  </div>
+                  <div class="col-md-3">
+                     <div class="mb-3">
+                        <label for="po_code" class="form-label">PO No.</label>   
                         <select name="po_code" class="form-select select2" id="po_code" onchange="getDetails(this.value);GetPurchaseBillDetails();"   >
                            <option value="">PO code</option>
                            @foreach($POList as  $rowpol)
@@ -67,19 +79,20 @@
                         </select>
                      </div>
                   </div>
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="formrow-invoice_no-input" class="form-label">Invoice No</label>
-                        <input type="text" name="invoice_no" id="invoice_no" class="form-control" id="formrow-invoice_no-input" required>
-                     </div>
-                  </div>
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="formrow-invoice_date-input" class="form-label">Invoice Date</label>
-                        <input type="date" name="invoice_date" id="invoice_date" class="form-control" id="formrow-invoice_date-input" value="{{date('Y-m-d')}}">
-                     </div>
-                  </div>
                   <div class="col-md-3">
+                     <div class="mb-3">
+                        <label for="po_type_id" class="form-label">PO Type</label>
+                        <select name="po_type_id" class="form-select" id="po_type_id" required >
+                           <option value="">Type</option>
+                           @foreach($POTypeList as  $rowpo)
+                           {
+                           <option value="{{ $rowpo->po_type_id  }}">{{ $rowpo->po_type_name }}</option>
+                           }
+                           @endforeach
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-2">
                      <div class="mb-3">
                         <label for="formrow-inputState" class="form-label">Supplier</label>
                         <select name="Ac_code" class="form-select   " id="Ac_code" required>
@@ -103,9 +116,9 @@
                          </select>
                       </div>
                    </div> 
-                  <div class="col-md-2">
+                  <div class="col-md-2 hide">
                      <div class="mb-3">
-                        <label for="formrow-inputState" class="form-label">CP Type</label>
+                        <label for="cp_id" class="form-label">CP Type</label>
                         <select name="cp_id" class="form-select" id="cp_id" required onchange="serBarocode();"  disabled>
                            <option value="">--Select CP Type--</option>
                            @foreach($CPList as  $rowCP)
@@ -119,29 +132,16 @@
                      </div>
                   </div>
                   <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="formrow-inputState" class="form-label">PO Type</label>
-                        <select name="po_type_id" class="form-select" id="po_type_id" required >
-                           <option value="">Type</option>
-                           @foreach($POTypeList as  $rowpo)
-                           {
-                           <option value="{{ $rowpo->po_type_id  }}">{{ $rowpo->po_type_name }}</option>
-                           }
-                           @endforeach
-                        </select>
-                     </div>
-                  </div>
-                  <div class="col-md-2">
                      <div class="form-check form-check-primary mb-5">
-                        <input class="form-check-input" type="checkbox" id="is_opening" name="is_opening" onclick="enable(this);">
-                        <label class="form-check-label" for="is_opening">
+                        <input class="form-check-input" type="checkbox" id="is_opening" name="is_opening" style="font-size: 25px;margin-top: 30px;margin-left: 0px;" onclick="enable(this);">
+                        <label class="form-check-label" for="is_opening" style="margin-top: 30px;position: absolute;margin-left: 20px;font-size: 16px;">
                         Opening Stock
                         </label>
                      </div>
                   </div>
                 <div class="col-md-3">
                     <label for="fge_code" class="form-label">Fabric Gate Code</label>
-                    <select name="fge_code" class="form-select select2" id="fge_code">
+                    <select name="fge_code" class="form-select select2" id="fge_code" required>
                        <option value="">--Select--</option>
                        @foreach($FGECodeList as  $row) 
                             <option value="{{ $row->fge_code }}">{{ $row->fge_code }}</option> 
@@ -157,6 +157,31 @@
                        @endforeach
                     </select>
                  </div>
+                  <div class="col-md-2 mt-4">
+                     <div class="mb-3">
+                        <div class="form-check form-check-primary mb-5">
+                           <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);" name="isReturnFabricInward">
+                           <label class="form-check-label" for="isReturnFabricInward">
+                           Is it retun fabric inward ? 
+                           </label>
+                        </div>
+                     </div>
+                  </div>
+                  <div class="col-md-2 hide" id="workOrder">
+                     <div class="mb-3">
+                        <label for="" class="form-label">Vendor Process Order No.</label>   
+                        <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value);" >
+                           <option value="">Vendor Process Order No.</option>
+                           @foreach($vendorProcessOrderList as  $vendors)
+                           {
+                           <option value="{{ $vendors->vpo_code  }}"
+                           {{ $vendors->vpo_code == request()->vpo_code ? 'selected="selected"' : '' }} 
+                           >{{ $vendors->vpo_code }}</option>
+                           }
+                           @endforeach
+                        </select>
+                     </div>
+                  </div>
                   <div class="col-md-2 hide" id="vendorData">
                      <div class="mb-3">
                         <label for="" class="form-label">Vendor Name</label>   
@@ -265,41 +290,15 @@
                   </div>
                   <div class="col-md-2">
                      <div class="mb-3">
-                        <label for="formrow-email-input" class="form-label">Total Amount</label>
+                        <label for="total_amount" class="form-label">Total Amount</label>
                         <input type="text" name="total_amount" readOnly class="form-control" id="total_amount" required>
                      </div>
-                  </div>
-                  </br>
-                  <div class="col-md-2 mt-4">
-                     <div class="mb-3">
-                        <div class="form-check form-check-primary mb-5">
-                           <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);" name="isReturnFabricInward">
-                           <label class="form-check-label" for="isReturnFabricInward">
-                           Is it retun fabric inward ? 
-                           </label>
-                        </div>
-                     </div>
-                  </div>
-                  <div class="col-md-2 hide" id="workOrder">
-                     <div class="mb-3">
-                        <label for="" class="form-label">Vendor Process Order No.</label>   
-                        <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value);" >
-                           <option value="">Vendor Process Order No.</option>
-                           @foreach($vendorProcessOrderList as  $vendors)
-                           {
-                           <option value="{{ $vendors->vpo_code  }}"
-                           {{ $vendors->vpo_code == request()->vpo_code ? 'selected="selected"' : '' }} 
-                           >{{ $vendors->vpo_code }}</option>
-                           }
-                           @endforeach
-                        </select>
-                     </div>
-                  </div>
+                  </div> 
                </div>
                <div class="row">
                   <div class="col-sm-6">
                      <div class="mb-3">
-                        <label for="formrow-inputState" class="form-label">Narration</label>
+                        <label for="in_narration" class="form-label">Narration</label>
                         <input type="text" name="in_narration" class="form-control" id="in_narration"  value=""  />
                      </div>
                   </div>

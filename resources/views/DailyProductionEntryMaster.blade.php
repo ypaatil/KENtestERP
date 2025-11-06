@@ -580,7 +580,7 @@
           type: "POST",
           dataType:"json",
           url: "{{ route('previous_production_exist_record') }}",
-          data:{'bundleNo':bundleNo,'sales_order_no':sales_order_no,'operationNameId':operationNameId,'color_id':color_id,"_token":"{{ csrf_token(); }}"},
+          data:{'bundleNo':bundleNo,'sales_order_no':sales_order_no,'operationNameId':operationNameId,'color_id':color_id,"_token":"{{ csrf_token() }}"},
           success: function(data)
           { 
               

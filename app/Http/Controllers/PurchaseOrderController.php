@@ -20,6 +20,7 @@ use DataTables;
 ini_set('memory_limit', '10G');
 use App\Services\PurchaseOrderDetailActivityLog;
 use App\Services\PurchaseOrderMasterActivityLog;
+
 use Log;
 
 class PurchaseOrderController extends Controller
@@ -1171,6 +1172,12 @@ class PurchaseOrderController extends Controller
                         })
                         ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
                         ->groupBy('t.class_id', 'c.class_name');
+                    $queries[] = $q;
+                }elseif ($cat_id == 4) {
+                    $q = DB::table('classification_master as t')
+                        ->select('t.class_id', 't.class_name', DB::raw("$cat_id as cat_id"))
+                        ->where('t.cat_id', '=', $cat_id)
+                        ->groupBy('t.class_id', 't.class_name');
                     $queries[] = $q;
                 }
             }

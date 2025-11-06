@@ -548,7 +548,7 @@
                                                    $no=$no+1; 
                                                    @endphp
                                                    @endforeach
-                                                   <input type="hidden" name="fabric_old_data" value="{{  htmlspecialchars(json_encode($oldArray), ENT_QUOTES, 'UTF-8'); }}" id="fabric_old_data"/>
+                                                   <input type="hidden" name="fabric_old_data" value="{{  htmlspecialchars(json_encode($oldArray), ENT_QUOTES, 'UTF-8') }}" id="fabric_old_data"/>
                                                    @else
                                                    <tr>
                                                       <td><input type="text" name="id" value="1" id="id" style="width:50px;" readonly/></td>
@@ -947,7 +947,7 @@
                                                    $no=$no+1; 
                                                    @endphp
                                                    @endforeach
-                                                   <input type="hidden" name="sewing_old_data" value="{{  htmlspecialchars(json_encode($oldSewingArray), ENT_QUOTES, 'UTF-8'); }}" id="sewing_old_data"/>
+                                                   <input type="hidden" name="sewing_old_data" value="{{  htmlspecialchars(json_encode($oldSewingArray), ENT_QUOTES, 'UTF-8') }}" id="sewing_old_data"/>
                                                    @else
                                                    <tr>
                                                       <td><input type="text" name="ids" value="1" id="id" style="width:50px;" readonly/></td>

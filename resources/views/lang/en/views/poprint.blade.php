@@ -307,7 +307,7 @@ $number =  round($poMaster[0]->Net_amount);
 
 
 <tr>
-<td colspan="5" style="text-transform: uppercase;"><span class="font-weight-600">Amount In Rupees: </span>{{ $result . "Rupees  Only"; }}</td>  
+<td colspan="5" style="text-transform: uppercase;"><span class="font-weight-600">Amount In Rupees: </span>{{ $result . "Rupees  Only" }}</td>  
 
 <td colspan="1" class="font-weight-600">Round Off</td>
 <td style="text-align:right;" class="font-weight-600">{{ number_format((float)($poMaster[0]->Net_amount - $poMaster[0]->Gross_amount - $poMaster[0]->Gst_amount), 2, '.', '')}}
