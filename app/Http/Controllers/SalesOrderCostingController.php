@@ -1104,7 +1104,7 @@ class SalesOrderCostingController extends Controller
         return view('saleCostingSheet', compact('SalesOrderCostingMaster'));
     }
 
-    public function GetCostingDataTest($soc_code)
+    public function GetCostingDataPrintView($soc_code)
     {
         //DB::enableQueryLog();
         $SalesOrderCostingMaster = SalesOrderCostingMasterModel::join('usermaster', 'usermaster.userId', '=', 'sales_order_costing_master.userId')
