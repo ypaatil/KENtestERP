@@ -1121,7 +1121,7 @@ class SalesOrderCostingController extends Controller
             // ->leftJoin('currency_master', 'currency_master.cur_id', '=', 'sales_order_costing_master.currency_id')
             ->leftJoin('order_type_master', 'order_type_master.orderTypeId', '=', 'buyer_purchse_order_master.order_type')
             ->leftJoin('merchant_master', 'merchant_master.merchant_id', '=', 'buyer_purchse_order_master.merchant_id')
-            ->leftJoin('pdmerchant_master', 'pdmerchant_master.PDMerchant_id', '=', 'buyer_purchse_order_master.PDMerchant_id')
+            ->leftJoin('PDMerchant_master', 'PDMerchant_master.PDMerchant_id', '=', 'buyer_purchse_order_master.PDMerchant_id')
             ->join('shipment_mode_master', 'shipment_mode_master.ship_id', '=', 'buyer_purchse_order_master.ship_id', 'left outer')
             ->join('country_master', 'country_master.c_id', '=', 'buyer_purchse_order_master.country_id')
             ->leftJoin('order_group_master', 'order_group_master.og_id', '=', 'buyer_purchse_order_master.og_id', 'left outer')
@@ -1159,7 +1159,7 @@ class SalesOrderCostingController extends Controller
                 'warehouse_master.warehouse_name',
                 'country_master.c_name',
                 'merchant_master.merchant_name',
-                'pdmerchant_master.PDMerchant_name',
+                'PDMerchant_master.PDMerchant_name',
                 'order_group_master.order_group_name',
                 'order_type_master.order_type',
                 'fg_master.fg_name'
