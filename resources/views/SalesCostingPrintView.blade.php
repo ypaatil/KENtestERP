@@ -622,7 +622,7 @@ return $restUnits . $lastThree . $afterDecimal;
                             <div class="info-row">
                                 <div class="label">Buyer Name</div>
                                 <div class="colon">:</div>
-                                <div class="value"> {{ $SalesOrderCostingMaster[0]->Ac_name }}</div>
+                                <div class="value"> {{ $SalesOrderCostingMaster[0]->ac_short_name }}</div>
                             </div>
                             <div class="info-row">
                                 <div class="label">Brand Name</div>
@@ -659,12 +659,14 @@ return $restUnits . $lastThree . $afterDecimal;
                             <div class="info-row">
                                 <div class="label">Quantity</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{ number_format($SalesOrderCostingMaster[0]->total_qty) }}</div>
+                                <div class="value">{{ indianNumberFormat($SalesOrderCostingMaster[0]->total_qty) }}</div>
                             </div>
                             <div class="info-row">
                                 <div class="label">Order Value</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{ number_format($SalesOrderCostingMaster[0]->order_value) }}</div>
+                     <div class="value">{{ indianNumberFormat(round($SalesOrderCostingMaster[0]->order_value ?? 0)) }}</div>
+
+
                             </div>
                         </div>
                         <div class="col-md-4 p-2">
@@ -691,7 +693,7 @@ return $restUnits . $lastThree . $afterDecimal;
                             <div class="info-row">
                                 <div class="label">SAM</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{ $SalesOrderCostingMaster[0]->sam }} </div>
+                                <div class="value">{{ number_format($SalesOrderCostingMaster[0]->sam,2) }} </div>
                             </div>
                         </div>
                     </div>

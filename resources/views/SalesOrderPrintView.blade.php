@@ -546,7 +546,7 @@ table.table-bordered th:nth-child(10),
               <div class="info-row">
                 <div class="label">Order Value</div>
                 <div class="colon">:</div>
-                <div class="value">{{ indianNumberFormat($SalesOrderCostingMaster[0]->order_value) }}</div>
+             <div class="value">{{ indianNumberFormat(round($SalesOrderCostingMaster[0]->order_value)) }}</div>
               </div>
             </div>
             <div class="col-md-4 p-2">
@@ -573,7 +573,7 @@ table.table-bordered th:nth-child(10),
               <div class="info-row">
                 <div class="label">SAM</div>
                 <div class="colon">:</div>
-                <div class="value">{{  $SalesOrderCostingMaster[0]->sam }}</div>
+                <div class="value">{{  number_format($SalesOrderCostingMaster[0]->sam,2) }}</div>
               </div>
             </div>
           </div>
