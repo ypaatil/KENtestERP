@@ -493,6 +493,23 @@ class BuyerCostingController extends Controller
         return view('BuyerCostingPrint',compact('BuyerCostingMaster'));  
             
     }
+
+    
+     public function BuyerCostingPrintView($sr_no)
+    {
+        
+          //DB::enableQueryLog();
+        $BuyerCostingMaster = BuyerCostingMasterModel::join('usermaster', 'usermaster.userId', '=', 'buyer_costing_master.userId')
+            ->join('currency_master', 'currency_master.cur_id', '=', 'buyer_costing_master.cur_id')
+            ->join('order_group_master', 'order_group_master.og_id', '=', 'buyer_costing_master.og_id')
+            ->where('buyer_costing_master.delflag','=', '0')
+            ->where('buyer_costing_master.sr_no','=', $sr_no)
+            ->get(['buyer_costing_master.*', 'usermaster.username','currency_master.currency_name','order_group_master.*']);
+         
+            
+        return view('BuyerCostingPrintView',compact('BuyerCostingMaster'));  
+            
+    }
     
     public function RepeatBuyerCostingEdit(Request $request)
     { 
