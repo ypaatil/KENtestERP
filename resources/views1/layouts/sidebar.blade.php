@@ -2,7 +2,7 @@
      <div data-simplebar class="h-100">
     <div id="sidebar-menu">
     <!-- Left Menu Start -->
-{{ getSideBar(); }}
+{{ getSideBar() }}
     </div>
     </div>
     </div>

@@ -365,14 +365,14 @@
         }
     }
     
-    $('#sub').hover(function()
-    {
-        var is_click = $("#MBtn").attr('is_click');
-        if(is_click == 0)
-        {
-            alert("Please click on Calculate All Button...!");
-        }
-    });
+   //  $('#sub').hover(function()
+   //  {
+   //      var is_click = $("#MBtn").attr('is_click');
+   //      if(is_click == 0)
+   //      {
+   //          alert("Please click on Calculate All Button...!");
+   //      }
+   //  });
     
     function checkSalesOrder(row)
     { 
@@ -484,11 +484,27 @@
          mycalc();
    });
    
-   function MainBtn()
-   {
+  function MainBtn()
+    {  
         setTimeout(() => {
             document.getElementById("MBtn").disabled = false;
         }, 3000);
+        
+        $('.size_id').each(function()
+        {
+            var total = 0;
+            var name = $(this).attr('name'); 
+            var index = parseFloat(name.match(/\d+/)); 
+         
+            $('input[name="' + name + '"]').each(function() {
+                total += parseFloat($(this).val()) || 0; 
+            });  
+            
+            var allTotalArray = $("#allTotal").val().split(',');
+            allTotalArray[index-1] = total.toString(); 
+            $("#allTotal").val(allTotalArray.join(','));
+          
+        });
         
         $("#PackingData").empty(); 
         var process_id = $('#process_id').val();
@@ -519,6 +535,7 @@
         }
         else
         {
+            
             $("#footable_2 tbody").find('tr').each(function() 
             { 
                 var size_qty_total = $(this).find('input[name="size_qty_total[]"]').val();
@@ -529,10 +546,8 @@
                 }
             });
         }
-        
-        $("#MBtn").attr('is_click','1');
    }
-   
+      
     function removeDuplicateRows() 
     {  
     
@@ -578,7 +593,7 @@
         });
     }
    function GetSizeWiseQty(row) 
-   {
+    {
       var no=1;
       
        var process_id = $('#process_id').val();
@@ -655,16 +670,22 @@
                 
                color_ids = color_ids.join(",");
                var size_qty_array=$(row).closest("tr").find('input[name="size_qty_array[]"]').val();
-               var tbl_len = $('#footable_2 tbody tr').length;
+               var tbl_len = $('#footable_2 tbody tr').filter(function() {
+                  var val = parseFloat($(this).find('input[name="size_qty_total[]"]').val()) || 0;
+                  return val > 0;
+               }).length;
+
+               
                $.ajax({
                dataType: "json",
                url: "{{ route('GetPurchasePackingCreateConsumption') }}",
                data:{'tbl_len': tbl_len,'color_id': color_id, 'size_qty_total':size_qty_total,'sales_order_no':sales_order_no,'no':no,'size_qty_array':size_qty_array,'size_array':size_array,'allTotal':allTotal,'sumAllTotal':sumAllTotal, 'color_ids':color_ids},
                success: function(data)
                { 
+                    //$("#PackingData").empty(); 
                     $("#PackingData").append(data.html); 
-                    if(tbl_len > 1)
-                    {
+                  //   if(tbl_len > 1)
+                  //   {
                         var itemCodeMap = {};
                         $('#footable_4 tbody tr').each(function() {
                             var row = $(this);
@@ -699,6 +720,8 @@
                         });
                         
                         $.each(itemCodeMap, function(itemCode, data) {
+                            //data.row.find('td input[name="bom_qtyss[]"]').val(data.bomTotal); // Set summed BOM
+                            
                             const input = data.row.find('td input[name="bom_qtyss[]"]');
                             input.val(data.bomTotal);
                             input.attr('value', data.bomTotal); // Updates the actual HTML attribute
@@ -708,9 +731,10 @@
                             input1.val(data.bomTotal);
                             input1.attr('value', data.bomTotal); // Updates the actual HTML attribute
                             input1.trigger('change');
+                    
                             data.row.find('td input[name="color_ids[]"]').val(data.colors.join(", ")); // Set comma-separated colors
                         }); 
-                    }
+                  //   }
 
 
                     $('#footable_4 tbody').find('td input[name="wastagess[]"]').each(function()
@@ -728,6 +752,7 @@
        
        $("#Submit").removeAttr('disabled');
       }
+   
    
    function calculateBomWithWastage(row)
    {

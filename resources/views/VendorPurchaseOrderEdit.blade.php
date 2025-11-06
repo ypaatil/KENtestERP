@@ -312,7 +312,7 @@
                                                 @php $no=1;$n1=0; $sumAllTotal=0; @endphp
                                                 @foreach($VendorPurchaseOrderDetailList as $List) 
                                                 <tr>
-                                                   <td><input type="text" name="id" value="@php echo $no; @endphp" id="id" style="width:50px;"/></td>
+                                                   <td><input type="text" name="id" value="{{ $no }}" id="id" style="width:50px;"/></td>
                                                    <td>
                                                       <input type="hidden" name="item_codef[]" value="{{$List->item_code}}" id="item_codef"  />
                                                       <select name="color_id[]"   id="color_id" style="width:200px; height:30px;" disabled>
@@ -335,7 +335,7 @@
                                                         $sz = 's'.$nos;
                                                         $min = isset($VendorProcessDataList[$n1]->$sz) ? $VendorProcessDataList[$n1]->$sz : 0;
                                                    @endphp
-                                                   <td ><input style="width:80px; float:left;" max="{{max($szQty, $min)}}" min="{{min($szQty, $min)}}" onchange="validateSize(this);" name="s@php echo $nos; @endphp[]" class="size_id" type="number" id="s1" value="{{$szQty}}" required /></td>
+                                                   <td ><input style="width:80px; float:left;" max="{{max($szQty, $min)}}" min="{{min($szQty, $min)}}" onchange="validateSize(this);" name="s{{ $nos }}[]" class="size_id" type="number" id="s1" value="{{$szQty}}" required /></td>
                                                    @php 
                                                         $sumAllTotal += $szQty;
                                                       
@@ -391,9 +391,9 @@
                                                 @php $no=1; @endphp
                                                 @foreach($FabricList as $List) 
                                                 <tr>
-                                                   <td><input type="text" name="id" value="@php echo $no; @endphp" id="id" style="width:50px;" readOnly/></td>
+                                                   <td><input type="text" name="id" value="{{ $no }}" id="id" style="width:50px;" readOnly/></td>
                                                    <td>
-                                                      <select name="item_code[]"   id="item_code" style="width:200px; height:30px;" required @php if($List->item_count>0){ echo 'disabled'; } @endphp>
+                                                      <select name="item_code[]"   id="item_code" style="width:200px; height:30px;" required  @if($List->item_count>0) {{ 'disabled'}}  @endif>
                                                       <option value="">--Item List--</option>
                                                       @foreach($ItemList as  $row)
                                                       {
@@ -405,7 +405,7 @@
                                                       </select>
                                                    </td>
                                                    <td>
-                                                      <select name="class_id[]"   id="class_id" style="width:200px; height:30px;" required @php if($List->item_count>0){ echo 'disabled'; } @endphp>
+                                                      <select name="class_id[]"   id="class_id" style="width:200px; height:30px;" required @if($List->item_count>0){{'disabled'}} @endif>
                                                       <option value="">--Classification--</option>
                                                       @foreach($ClassList as  $row)
                                                       {
@@ -500,7 +500,7 @@
                                                 @endphp
                                                
                                                 <tr>
-                                                   <td><input type="text" name="idsx" value="@php echo $no; @endphp" id="idsx" style="width:50px;" readOnly/></td>
+                                                   <td><input type="text" name="idsx" value="{{ $no }}" id="idsx" style="width:50px;" readOnly/></td>
                                                    <td>
                                                       <select name="item_codesx[]" class="item_trim_fabric" id="item_codesx" style="width:200px; height:30px;" required disabled>
                                                          <option value="">--Item List--</option>
@@ -611,7 +611,9 @@
                                                     if(!empty($SizeListBOM))
                                                     {
                                                         $size_ids = explode(',', $SizeListBOM); 
-                                                        $SizeDetailList = App\Models\SizeDetailModel::whereIn('size_id',[$size_ids])->get('size_name');
+                                                        $size_ids = is_array($size_ids) ? $size_ids : [$size_ids];
+                                                        $SizeDetailList = App\Models\SizeDetailModel::whereIn('size_id', $size_ids)->get(['size_name']);
+
                                                         if(!empty($SizeDetailList))
                                                         {
                                                             foreach($SizeDetailList as $sz)
@@ -626,13 +628,21 @@
                                                     
                                                     if(!empty($ColorListpack))
                                                     {
-                                                        $colorids = explode(',', $ColorListpack);
-                                                     
-                                                        $ColorListpacking= App\Models\VendorPurchaseOrderDetailModel::join('color_master','vendor_purchase_order_detail.color_id','=','color_master.color_id')
-                                                        ->where('vendor_purchase_order_detail.sales_order_no', $VendorPurchaseOrderMasterList->sales_order_no)
-                                                        ->where('vendor_purchase_order_detail.vpo_code', $VendorPurchaseOrderMasterList->vpo_code)
-                                                        ->whereIn('vendor_purchase_order_detail.color_id', [$colorids])->where('color_master.delflag','=', '0')
-                                                        ->distinct('color_master.color_id')->get('color_name');
+                                                         $colorids = explode(',', $ColorListpack);
+
+                                                         $ColorListpacking = App\Models\VendorPurchaseOrderDetailModel::join(
+                                                               'color_master',
+                                                               'vendor_purchase_order_detail.color_id',
+                                                               '=',
+                                                               'color_master.color_id'
+                                                            )
+                                                            ->where('vendor_purchase_order_detail.sales_order_no', $VendorPurchaseOrderMasterList->sales_order_no)
+                                                            ->where('vendor_purchase_order_detail.vpo_code', $VendorPurchaseOrderMasterList->vpo_code)
+                                                            ->whereIn('vendor_purchase_order_detail.color_id', $colorids)
+                                                            ->where('color_master.delflag', '=', '0')
+                                                            ->distinct('color_master.color_id')
+                                                            ->get(['color_name']);
+
                                                        
                                                         if(!empty($ColorListpacking))
                                                         {
@@ -645,7 +655,7 @@
                                                 }
                                                 @endphp
                                                 <tr>
-                                                   <td><input type="text" name="idss" value="@php echo $no; @endphp" id="id" style="width:50px;" readOnly/></td>
+                                                   <td><input type="text" name="idss" value="{{ $no }}" id="id" style="width:50px;" readOnly/></td>
                                                    <td><input type="text" value="{{$List->item_code}}"  style="width:100px;" readOnly/></td>
                                                    <td>
                                                       <select name="item_codess[]" class="item_packing_trims" id="item_codess" style="width:200px; height:30px;" required disabled>
@@ -858,14 +868,14 @@
         }); 
     });
       
-    $('#sub').hover(function()
-    {
-        var is_click = $("#MBtn").attr('is_click');
-        if(is_click == 0)
-        {
-            alert("Please click on Calculate All Button...!");
-        }
-    });
+    //$('#sub').hover(function()
+    //{
+    //    var is_click = $("#MBtn").attr('is_click');
+    //    if(is_click == 0)
+    //    {
+    //        alert("Please click on Calculate All Button...!");
+     //   }
+   // });
     
    window.onload = function() 
    {
