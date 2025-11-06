@@ -248,6 +248,63 @@ $no=1;
 
     }
 
+     public function generatePOView($pur_code)
+  {
+
+
+
+    $pur_codes = base64_decode($pur_code);
+
+    // DB::enableQueryLog();
+
+    $query = DB::table('purchase_order')
+      ->join('ledger_master as lm1', 'lm1.ac_code', '=', 'purchase_order.Ac_code')
+      ->join('usermaster', 'usermaster.userId', '=', 'purchase_order.userId')
+      ->join('tax_type_master', 'tax_type_master.tax_type_id', '=', 'purchase_order.tax_type_id')
+      ->join('firm_master', 'firm_master.firm_id', '=', 'purchase_order.firm_id')
+      ->leftJoin('po_type_master', 'po_type_master.po_type_id', '=', 'purchase_order.po_type_id')
+      ->leftJoin('state_master', 'lm1.state_id', '=', 'state_master.state_id')
+      ->where('purchase_order.pur_code', $pur_codes)
+      ->select(
+        'purchase_order.*',
+        'usermaster.username',
+        'lm1.ac_name as ac_name1',
+        'lm1.address',
+        'lm1.gst_no',
+        'lm1.mobile',
+        'lm1.email',
+        'lm1.pan_no',
+        'firm_master.firm_name',
+        'tax_type_master.tax_type_name',
+        'po_type_master.po_type_name',
+        'state_master.state_id',       
+        'state_master.state_name'
+      );
+    $poMaster = $query->get();
+    // print_r($poMaster);exit();
+
+    $SalesOrderNo = DB::select("select distinct sales_order_no from purchaseorder_detail where  pur_code='" . $pur_codes . "'");
+
+
+    //dd(DB::getQueryLog());
+
+    $data = [
+      'title' => 'Purchase Order',
+      'poMaster' => $poMaster,
+      'SalesOrderNo' => $SalesOrderNo
+    ];
+
+    /*      
+     $pdf = \App::make('dompdf.wrapper');
+            $pdf = PDF::loadView('poprint',$data)->setOptions(['defaultFont' => 'sans-serif']);  
+           // return $pdf->download('poprint.pdf');  
+              $pdf->setPaper('A4', 'portrait');
+
+          return $pdf->stream();*/
+
+    return view('PurchaseOrderPrintView', $data);
+  }
+
 
 
 
