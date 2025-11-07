@@ -913,7 +913,7 @@
 
                     <div class="terms-conditions ">
                         <h6 class="p-1"> AGREED TERMS & CONDITIONS</h6>
-                        <h6 class="p-1">1. We have right to reject any goods which is rejected by our QC and vendor will be sole responsible for rejection.<br>
+                        <!-- <h6 class="p-1">1. We have right to reject any goods which is rejected by our QC and vendor will be sole responsible for rejection.<br>
                             2. We reserves the right to reject the goods if we find them defective even at the later stage and to recover the
                             cost of material and losses if any from the
                             sellers.<br>
@@ -928,7 +928,8 @@
                             whichever is lower).<br>
                             8. Delivery Address: - as above.<br>
                             9. Goods will be inspected at your factory as per our quality requirements Packing list, Invoice & L.R. copy
-                            required on the mail after dispatch.</h6>
+                            required on the mail after dispatch.</h6> -->
+                            <h6 class="p-1"> @php  echo  htmlspecialchars_decode($poMaster[0]->terms_and_conditions); @endphp</h6>
 
 
 

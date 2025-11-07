@@ -25,7 +25,7 @@ function indianNumberFormat($num) {
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Ken Enterprises Pvt. Ltd.</title>
+  <title>Sales Order</title>
   <!-- Web Fonts -->
   <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' type='text/css'>
   <!-- Stylesheets -->
@@ -144,10 +144,7 @@ function indianNumberFormat($num) {
         print-color-adjust: exact;
       }
 
-      /* @page {
-        size: A4 portrait;
-        margin: 20mm;
-      } */
+    
 
       .btn,
       .d-print-none {
@@ -599,7 +596,7 @@ table.table-bordered th:nth-child(10),
               <div class="info-row">
                 <div class="label">Delivery Place</div>
                 <div class="colon">:</div>
-                <div class="value">{{  $SalesOrderCostingMaster[0]->warehouse_name }}</div>
+                <div class="value">{{ $SalesOrderCostingMaster[0]->warehouse_name }}</div>
               </div>
               <div class="info-row">
                 <div class="label">Country</div>

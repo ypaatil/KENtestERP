@@ -25,7 +25,7 @@ return $restUnits . $lastThree . $afterDecimal;
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ken Enterprises Pvt. Ltd.</title>
+    <title>Sales Costing</title>
     <!-- Web Fonts -->
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' type='text/css'>
     <!-- Stylesheets -->
@@ -64,6 +64,13 @@ return $restUnits . $lastThree . $afterDecimal;
             padding: 8px;
             line-height: 1.1;
         }
+
+        
+            .table-bordered th {
+                vertical-align: middle;
+                text-align: center;
+            }
+
 
         .table {
             width: 100%;
@@ -299,6 +306,7 @@ return $restUnits . $lastThree . $afterDecimal;
 
 
                 text-align: center !important;
+               
             }
 
             thead tr,
@@ -520,7 +528,7 @@ return $restUnits . $lastThree . $afterDecimal;
                 page-break-inside: avoid;
             }
 
-
+        }
 
             @media print {
 
@@ -551,7 +559,7 @@ return $restUnits . $lastThree . $afterDecimal;
             }
 
 
-        }
+        
     </style>
 </head>
 
@@ -767,12 +775,12 @@ return $restUnits . $lastThree . $afterDecimal;
                     <!-- Assortment Table -->
                     <h4 class=" fw-bold">Fabric Details:</h4>
                     <table class="table table-bordered table-sm table-fixed">
-                        <thead>
+                        <thead >
                             <tr>
                                 <th>Classification </th>
                                 <th>Description </th>
                                 <th>Cnsm/Gmt </th>
-                                <th>Per Pcs Cost </th>
+                                <th>Cost / Pcs </th>
                                 <th>Wastage %</th>
                                 <th> Cnsm/Gmt with Wastage % </th>
                                 <th> Gmt Cost</th>
@@ -825,7 +833,7 @@ return $restUnits . $lastThree . $afterDecimal;
                                 <th>Classification </th>
                                 <th>Description </th>
                                 <th>Cnsm/Gmt </th>
-                                <th>Per Pcs Cost </th>
+                                <th>Cost / Pcs </th>
                                 <th>Wastage %</th>
                                 <th>Cnsm/Gmt with Wastage %</th>
                                 <th>Gmt Cost</th>
@@ -877,7 +885,7 @@ return $restUnits . $lastThree . $afterDecimal;
                                     <th>Classification </th>
                                     <th>Description </th>
                                     <th>Cnsm/Gmt </th>
-                                    <th>Per Pcs Cost </th>
+                                    <th>Cost / Pcs </th>
                                     <th>Wastage %</th>
                                     <th> Cnsm/Gmt with Wastage %</th>
                                     <th> Gmt Cost</th>
@@ -1114,7 +1122,7 @@ return $restUnits . $lastThree . $afterDecimal;
                                 <td class="text-end">{{ number_format((float)($percentOfsewing_trims_value + $percentOfpacking_trims_value), 2, '.', '') }}%</td>
                             </tr>
                             <tr>
-                                <td class="text-start">Manufacturing Cost</td>
+                                <td class="text-start">Manufacturing Cost (CM)</td>
                                 <td class="text-end">{{ number_format($SalesOrderCostingMaster[0]->production_value,2) }}</td>
                                 <td class="text-end">{{ number_format((float)$percentOfproduction_value, 2, '.', '') }}%</td>
                             </tr>
