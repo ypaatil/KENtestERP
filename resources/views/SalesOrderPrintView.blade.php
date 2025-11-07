@@ -1,18 +1,18 @@
 @php
 function indianNumberFormat($num) {
-    $num = (string) $num;
-    $afterDecimal = '';
-    if (strpos($num, '.') !== false) {
-        list($num, $afterDecimal) = explode('.', $num);
-        $afterDecimal = '.' . $afterDecimal;
-    }
-    $lastThree = substr($num, -3);
-    $restUnits = substr($num, 0, -3);
-    if ($restUnits != '') {
-        $lastThree = ',' . $lastThree;
-    }
-    $restUnits = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", $restUnits);
-    return $restUnits . $lastThree . $afterDecimal;
+$num = (string) $num;
+$afterDecimal = '';
+if (strpos($num, '.') !== false) {
+list($num, $afterDecimal) = explode('.', $num);
+$afterDecimal = '.' . $afterDecimal;
+}
+$lastThree = substr($num, -3);
+$restUnits = substr($num, 0, -3);
+if ($restUnits != '') {
+$lastThree = ',' . $lastThree;
+}
+$restUnits = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", $restUnits);
+return $restUnits . $lastThree . $afterDecimal;
 }
 @endphp
 
@@ -21,7 +21,7 @@ function indianNumberFormat($num) {
 <html lang="en">
 
 <head>
-    @php setlocale(LC_MONETARY, 'en_IN'); @endphp
+  @php setlocale(LC_MONETARY, 'en_IN'); @endphp
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -71,7 +71,7 @@ function indianNumberFormat($num) {
     .table {
       width: 100%;
       border-collapse: collapse;
-    
+
     }
 
     .imgs {
@@ -80,12 +80,12 @@ function indianNumberFormat($num) {
     }
 
     thead tr {
-    
+
       text-align: center;
     }
 
     tfoot tr {
-     
+
       text-align: center;
       border: 1px solid;
     }
@@ -134,7 +134,7 @@ function indianNumberFormat($num) {
         position: absolute;
         left: 0;
         top: 0;
-        
+
         width: 100%;
         max-width: 100% !important;
         margin: 0;
@@ -144,7 +144,7 @@ function indianNumberFormat($num) {
         print-color-adjust: exact;
       }
 
-    
+
 
       .btn,
       .d-print-none {
@@ -155,23 +155,23 @@ function indianNumberFormat($num) {
       body,
       html,
       #printInvoice {
-       
+
         line-height: 1.5 !important;
         color: #000 !important;
       }
 
       .info-row .label,
       .info-row .colon {
-       
+
         font-weight: bold !important;
       }
 
       /* Table styles */
       .table {
         width: 100% !important;
-      
+
         border-collapse: collapse !important;
-     
+
         word-wrap: break-word !important;
         overflow-wrap: break-word !important;
         padding: 2px;
@@ -183,7 +183,7 @@ function indianNumberFormat($num) {
           vertical-align: middle;
           text-align: center;
           white-space: nowrap;
-         
+
         }
 
         th,
@@ -202,18 +202,18 @@ function indianNumberFormat($num) {
 
       .table-bordered td,
       .table-bordered th {
-      
-           font-size: 11pt !important; 
-     
+
+        font-size: 11pt !important;
+
         text-align: center !important;
       }
 
       thead tr,
       tfoot tr {
-       
+
         -webkit-print-color-adjust: exact;
         font-weight: bold !important;
-       
+
       }
 
       /* Expand column widths */
@@ -309,23 +309,24 @@ function indianNumberFormat($num) {
     }
 
     @media print {
-     
+
       @page {
         size: A4;
-         margin-top:  12mm;
-         margin-right: 1mm; 
+        margin-top: 12mm;
+        margin-right: 1mm;
         border: 1px solid #000;
         /* some browsers support this */
         height: 100%;
-         margin-bottom:  10mm;
+        margin-bottom: 10mm;
       }
- .outer-border {
+
+      .outer-border {
         border: none !important;
         margin: 0 !important;
-        
+
         padding: 0 !important;
         max-width: 100% !important;
-         height: 100%;
+        height: 100%;
       }
 
       .invoice-container img {
@@ -350,100 +351,112 @@ function indianNumberFormat($num) {
         border-right: none !important;
       }
 
-     
-  .invoice-container h4 {
-          font-size: 18pt;
-          /* make text a little smaller for print */
-        }
 
-        .invoice-container p {
-          font-size: 12pt;
-        }
+      .invoice-container h4 {
+        font-size: 18pt;
+        /* make text a little smaller for print */
+      }
 
-        td.text-start {
-          text-align: left !important;
-        }
+      .invoice-container p {
+        font-size: 12pt;
+      }
 
-        td.text-end {
-          text-align: right !important;
-        }
-          /* Set fixed column widths only for print */
-          table.table-bordered th:nth-child(1),
-  table.table-bordered td:nth-child(1) {
-    width: auto !important;  
-  }
-           table.table-bordered th:nth-child(2),
-  table.table-bordered td:nth-child(2) {
-    width: auto !important;  
-  }
-  table.table-bordered th:nth-child(3),
-  table.table-bordered td:nth-child(3) {
-    width: auto !important;  
-  }
+      td.text-start {
+        text-align: left !important;
+      }
 
-  table.table-bordered th:nth-child(4),
-  table.table-bordered td:nth-child(4) {
-    width: auto !important;  /* Garment Color column */
-  }
+      td.text-end {
+        text-align: right !important;
+      }
 
-   table.table-bordered th:nth-child(5),
-  table.table-bordered td:nth-child(5) {
-    width: auto !important; 
-  }
-   table.table-bordered th:nth-child(6),
-  table.table-bordered td:nth-child(6) {
-    width: auto !important; 
-  }
-   table.table-bordered th:nth-child(7),
-  table.table-bordered td:nth-child(7) {
-    width: auto !important; 
-  }
- table.table-bordered th:nth-child(8),
-  table.table-bordered td:nth-child(8) {
-    width: auto !important; 
-  } table.table-bordered th:nth-child(9),
-  table.table-bordered td:nth-child(9) {
-    width: auto !important; 
-  }
-      
-table.table-bordered th:nth-child(10),
-  table.table-bordered td:nth-child(10) {
-    width: auto !important; 
-  }
-  table.table-bordered th:nth-child(11),
-  table.table-bordered td:nth-child(11) {
-    width: auto !important; 
-  }
-  table.table-bordered th:nth-child(12),
-  table.table-bordered td:nth-child(12) {
-    width: auto !important; 
-  }
-   table.table-bordered th:nth-child(13),
-  table.table-bordered td:nth-child(13) {
-    width: auto !important; 
-  }
-   table.table-bordered th:nth-child(14),
-  table.table-bordered td:nth-child(14) {
-    width: auto !important; 
-  }
-   table.table-bordered th:nth-child(15),
-  table.table-bordered td:nth-child(15) {
-    width: auto !important; 
-  }
-   table.table-bordered th:nth-child(16),
-  table.table-bordered td:nth-child(16) {
-    width: auto !important; 
-  }
-   table.table-bordered th:nth-child(17),
-  table.table-bordered td:nth-child(17) {
-    width: auto !important; 
-  }
-      
+      /* Set fixed column widths only for print */
+      table.table-bordered th:nth-child(1),
+      table.table-bordered td:nth-child(1) {
+        width: auto !important;
+      }
 
+      table.table-bordered th:nth-child(2),
+      table.table-bordered td:nth-child(2) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(3),
+      table.table-bordered td:nth-child(3) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(4),
+      table.table-bordered td:nth-child(4) {
+        width: auto !important;
+        /* Garment Color column */
+      }
+
+      table.table-bordered th:nth-child(5),
+      table.table-bordered td:nth-child(5) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(6),
+      table.table-bordered td:nth-child(6) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(7),
+      table.table-bordered td:nth-child(7) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(8),
+      table.table-bordered td:nth-child(8) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(9),
+      table.table-bordered td:nth-child(9) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(10),
+      table.table-bordered td:nth-child(10) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(11),
+      table.table-bordered td:nth-child(11) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(12),
+      table.table-bordered td:nth-child(12) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(13),
+      table.table-bordered td:nth-child(13) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(14),
+      table.table-bordered td:nth-child(14) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(15),
+      table.table-bordered td:nth-child(15) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(16),
+      table.table-bordered td:nth-child(16) {
+        width: auto !important;
+      }
+
+      table.table-bordered th:nth-child(17),
+      table.table-bordered td:nth-child(17) {
+        width: auto !important;
+      }
 
     }
-  
-
   </style>
 </head>
 
@@ -454,7 +467,7 @@ table.table-bordered th:nth-child(10),
     <button class="btn btn-primary" onclick="window.print()">
       Print
     </button>
-     <!-- <button type="button" id="export_button" class="btn btn-warning" style="margin-left: 10px;">Export</button>   -->
+    <!-- <button type="button" id="export_button" class="btn btn-warning" style="margin-left: 10px;">Export</button>   -->
   </div>
 
 
@@ -501,7 +514,7 @@ table.table-bordered th:nth-child(10),
               <div class="info-row">
                 <div class="label">Execution SBU</div>
                 <div class="colon">: </div>
-                <div class="value"> @php if($SalesOrderCostingMaster[0]->in_out_id == 1){ echo "Inhouse"; }if($SalesOrderCostingMaster[0]->in_out_id == 2){ echo "Outsource"; }  @endphp</div>
+                <div class="value"> @php if($SalesOrderCostingMaster[0]->in_out_id == 1){ echo "Inhouse"; }if($SalesOrderCostingMaster[0]->in_out_id == 2){ echo "Outsource"; } @endphp</div>
               </div>
               <div class="info-row">
                 <div class="label">Order Type</div>
@@ -516,7 +529,7 @@ table.table-bordered th:nth-child(10),
               <div class="info-row">
                 <div class="label">Buyer Name</div>
                 <div class="colon">:</div>
-                <div class="value">{{  $SalesOrderCostingMaster[0]->ac_name }}  </div>
+                <div class="value">{{ $SalesOrderCostingMaster[0]->ac_name }} </div>
               </div>
               <div class="info-row">
                 <div class="label">Brand Name</div>
@@ -538,24 +551,24 @@ table.table-bordered th:nth-child(10),
               <div class="info-row">
                 <div class="label">Quantity</div>
                 <div class="colon">:</div>
-                <div class="value"> {{  number_format($SalesOrderCostingMaster[0]->total_qty) }}</div>
+                <div class="value"> {{ number_format($SalesOrderCostingMaster[0]->total_qty) }}</div>
               </div>
               <div class="info-row">
                 <div class="label">Order Value</div>
                 <div class="colon">:</div>
-             <div class="value">{{ indianNumberFormat(round($SalesOrderCostingMaster[0]->order_value)) }}</div>
+                <div class="value">{{ indianNumberFormat(round($SalesOrderCostingMaster[0]->order_value)) }}</div>
               </div>
             </div>
             <div class="col-md-4 p-2">
               <div class="info-row">
                 <div class="label">Style Category</div>
                 <div class="colon">:</div>
-                <div class="value">{{  $SalesOrderCostingMaster[0]->fg_name }} </div>
+                <div class="value">{{ $SalesOrderCostingMaster[0]->fg_name }} </div>
               </div>
               <div class="info-row">
                 <div class="label">Style Name</div>
                 <div class="colon">:</div>
-                <div class="value">{{  $SalesOrderCostingMaster[0]->fg_name }} </div>
+                <div class="value">{{ $SalesOrderCostingMaster[0]->fg_name }} </div>
               </div>
               <div class="info-row">
                 <div class="label">Style No</div>
@@ -565,12 +578,12 @@ table.table-bordered th:nth-child(10),
               <div class="info-row">
                 <div class="label">Style Description</div>
                 <div class="colon">:</div>
-                <div class="value">{{  $SalesOrderCostingMaster[0]->style_description }}</div>
+                <div class="value">{{ $SalesOrderCostingMaster[0]->style_description }}</div>
               </div>
               <div class="info-row">
                 <div class="label">SAM</div>
                 <div class="colon">:</div>
-                <div class="value">{{  number_format($SalesOrderCostingMaster[0]->sam,2) }}</div>
+                <div class="value">{{ number_format($SalesOrderCostingMaster[0]->sam,2) }}</div>
               </div>
             </div>
           </div>
@@ -581,17 +594,17 @@ table.table-bordered th:nth-child(10),
               <div class="info-row">
                 <div class="label">Payment Terms</div>
                 <div class="colon">:</div>
-                <div class="value">{{  $SalesOrderCostingMaster[0]->ptm_name }}</div>
+                <div class="value">{{ $SalesOrderCostingMaster[0]->ptm_name }}</div>
               </div>
               <div class="info-row">
                 <div class="label">Delivery Terms</div>
                 <div class="colon">:</div>
-                <div class="value">{{  $SalesOrderCostingMaster[0]->delivery_term_name }}</div>
+                <div class="value">{{ $SalesOrderCostingMaster[0]->delivery_term_name }}</div>
               </div>
               <div class="info-row">
                 <div class="label">Shipment Mode</div>
                 <div class="colon">:</div>
-                <div class="value">{{  $SalesOrderCostingMaster[0]->ship_mode_name }}</div>
+                <div class="value">{{ $SalesOrderCostingMaster[0]->ship_mode_name }}</div>
               </div>
               <div class="info-row">
                 <div class="label">Delivery Place</div>
@@ -601,19 +614,19 @@ table.table-bordered th:nth-child(10),
               <div class="info-row">
                 <div class="label">Country</div>
                 <div class="colon">:</div>
-                <div class="value">{{  $SalesOrderCostingMaster[0]->c_name }}</div>
+                <div class="value">{{ $SalesOrderCostingMaster[0]->c_name }}</div>
               </div>
             </div>
             <div class="col-md-4 p-2 border-end">
               <div class="info-row">
                 <div class="label">Order Received Date</div>
                 <div class="colon">:</div>
-                <div class="value">{{  \Carbon\Carbon::parse ($SalesOrderCostingMaster[0]->order_received_date ?? '')->format('d-m-Y') }}</div>
+                <div class="value">{{ \Carbon\Carbon::parse ($SalesOrderCostingMaster[0]->order_received_date ?? '')->format('d-m-Y') }}</div>
               </div>
               <div class="info-row">
                 <div class="label">Plan Cut Date (PCD)</div>
                 <div class="colon">:</div>
-                <div class="value">{{  \Carbon\Carbon::parse ($SalesOrderCostingMaster[0]->plan_cut_date ?? '')->format('d-m-Y')  }}</div>
+                <div class="value">{{ \Carbon\Carbon::parse ($SalesOrderCostingMaster[0]->plan_cut_date ?? '')->format('d-m-Y')  }}</div>
               </div>
               <div class="info-row">
                 <div class="label">Inspection Date</div>
@@ -630,17 +643,17 @@ table.table-bordered th:nth-child(10),
               <div class="info-row">
                 <div class="label">Bulk Merchant Name</div>
                 <div class="colon">:</div>
-                <div class="value">{{  $SalesOrderCostingMaster[0]->merchant_name }}</div>
+                <div class="value">{{ $SalesOrderCostingMaster[0]->merchant_name }}</div>
               </div>
               <div class="info-row">
                 <div class="label">PD Merchant Name</div>
                 <div class="colon">:</div>
-                <div class="value">{{  $SalesOrderCostingMaster[0]->PDMerchant_name }}</div>
+                <div class="value">{{ $SalesOrderCostingMaster[0]->PDMerchant_name }}</div>
               </div>
             </div>
           </div>
-            @php  $SizeDetailList = App\Models\SizeDetailModel::where('size_detail.sz_code','=', $SalesOrderCostingMaster[0]->sz_code)->get();
-               @endphp
+          @php $SizeDetailList = App\Models\SizeDetailModel::where('size_detail.sz_code','=', $SalesOrderCostingMaster[0]->sz_code)->get();
+          @endphp
           <!-- Assortment Table -->
           <h4 class="text-center mt-6 fw-bold">Assortment Details</h4>
           <table class="table table-bordered table-sm">
@@ -649,63 +662,63 @@ table.table-bordered th:nth-child(10),
                 <th>Sr No</th>
                 <th>Item Code</th>
                 <th style="white-space: nowrap;">Fabric Color Code</th>
-               
+
                 <th>Garment Color</th>
-                 @foreach($SizeDetailList as $sz) 
-                  <th>{{ $sz->size_name }}</th>
-                  @endforeach
+                @foreach($SizeDetailList as $sz)
+                <th>{{ $sz->size_name }}</th>
+                @endforeach
                 <th>Total</th>
                 <th>UOM</th>
                 <th>Allow %</th>
               </tr>
             </thead>
             <tbody>
-                @php 
-                        $BuyerPurchaseOrderDetaillist = App\Models\BuyerPurchaseOrderDetailModel::
-                        join('item_master','item_master.item_code','=','buyer_purchase_order_detail.item_code')
-                        ->join('color_master','color_master.color_id','=','buyer_purchase_order_detail.color_id') 
-                        ->join('unit_master','unit_master.unit_id','=','buyer_purchase_order_detail.unit_id')  
-                        ->where('buyer_purchase_order_detail.tr_code','=', $SalesOrderCostingMaster[0]->tr_code)
-                        ->get(['buyer_purchase_order_detail.*','item_master.item_name','item_master.item_image_path','color_master.color_name','unit_master.unit_name']);      
-                        $no=1; 
-                        $totalQty=0;
-                        @endphp
-                        @foreach($BuyerPurchaseOrderDetaillist as $rowDetail)  
-                        @php 
-                        $totalQty=  $totalQty + $rowDetail->size_qty_total;
-                        @endphp
+              @php
+              $BuyerPurchaseOrderDetaillist = App\Models\BuyerPurchaseOrderDetailModel::
+              join('item_master','item_master.item_code','=','buyer_purchase_order_detail.item_code')
+              ->join('color_master','color_master.color_id','=','buyer_purchase_order_detail.color_id')
+              ->join('unit_master','unit_master.unit_id','=','buyer_purchase_order_detail.unit_id')
+              ->where('buyer_purchase_order_detail.tr_code','=', $SalesOrderCostingMaster[0]->tr_code)
+              ->get(['buyer_purchase_order_detail.*','item_master.item_name','item_master.item_image_path','color_master.color_name','unit_master.unit_name']);
+              $no=1;
+              $totalQty=0;
+              @endphp
+              @foreach($BuyerPurchaseOrderDetaillist as $rowDetail)
+              @php
+              $totalQty= $totalQty + $rowDetail->size_qty_total;
+              @endphp
               <tr>
                 <td class="text-center">{{ $no }}</td>
-                <td  class="text-center">{{ $rowDetail->item_code }}</td>
+                <td class="text-center">{{ $rowDetail->item_code }}</td>
                 <td class="text-start">{{ $rowDetail->item_name }} </td>
-              
+
                 <td class="text-start">{{ $rowDetail->color_name }}</td>
-                 @php 
-                           $SizeQtyList=explode(',', $rowDetail->size_qty_array)
-                           @endphp
-                           @foreach($SizeQtyList  as $size_id)
-                           <td class="text-end">{{ indianNumberFormat($size_id) }}</td>
-                           @endforeach
+                @php
+                $SizeQtyList=explode(',', $rowDetail->size_qty_array)
+                @endphp
+                @foreach($SizeQtyList as $size_id)
+                <td class="text-end">{{ indianNumberFormat($size_id) }}</td>
+                @endforeach
                 <td class="text-end">{{ indianNumberFormat($rowDetail->size_qty_total)  }}</td>
                 <td class="text-center">{{ $rowDetail->unit_name  }}</td>
                 <td class="text-end">{{ indianNumberFormat($rowDetail->shipment_allowance) }}</td>
               </tr>
               @php
-                        $no=$no+1;
-                        @endphp
-                        @endforeach 
+              $no=$no+1;
+              @endphp
+              @endforeach
             </tbody>
             <tfoot>
               <tr>
-                
-                <td colspan="4"  class="text-end"><b>Total:</b></td>
-                 @php 
-                           $SizeWsList=explode(',', $SalesOrderCostingMaster[0]->sz_ws_total);
-                           @endphp
-                           @foreach($SizeWsList  as $sztotal)
-                           <td class="text-end">{{ indianNumberFormat($sztotal)  }}</td>
-                           @endforeach
-                <td class="text-end">{{indianNumberFormat($totalQty)  }}</td>
+
+                <td colspan="4" class="text-end"><b>Total:</b></td>
+                @php
+                $SizeWsList=explode(',', $SalesOrderCostingMaster[0]->sz_ws_total);
+                @endphp
+                @foreach($SizeWsList as $sztotal)
+                <td class="text-end">{{ indianNumberFormat($sztotal)  }}</td>
+                @endforeach
+                <td class="text-end">{{indianNumberFormat($totalQty) }}</td>
                 <th class="text-end"></th>
                 <th class="text-end"> </th>
               </tr>
@@ -713,13 +726,13 @@ table.table-bordered th:nth-child(10),
           </table>
 
           <!-- Prepared & Verified -->
-           <br>
-            <br>
+          <br>
+          <br>
           <div class="row">
             <div class="col-md-9">
               <h5 class="text-4 mt-2">Prepared By: </h5>
             </div>
-             <br>
+            <br>
             <br>
             <div class="col-md-3">
               <h5 class="text-4 mt-2" style="margin-left: -40px;">Authorised sign:</h5>
@@ -731,14 +744,9 @@ table.table-bordered th:nth-child(10),
           <!-- Footer -->
           <footer>
             <div class="row">
-              <div class="col-md-6"><b>Order Remark:</b> {{  $SalesOrderCostingMaster[0]->narration }}</div>
+              <div class="col-md-6"><b>Order Remark:</b> {{ $SalesOrderCostingMaster[0]->narration }}</div>
             </div>
           </footer>
-
-           
-          
-    
-
 
         </div>
       </main>
@@ -747,42 +755,42 @@ table.table-bordered th:nth-child(10),
 
   <p class="text-center d-print-none"><a href="/SalesOrderCosting">&laquo; Back to List</a></p>
 
- 
-   <script type="text/javascript" src="{{URL::asset('assets/js/exporttoexcel.js')}}"></script>
-   <script>  
-   
-        function html_table_to_excel(type)
-        {
-             var data = document.getElementById('invoice');
-         
-             var file = XLSX.utils.table_to_book(data, {sheet: "sheet1"});
-         
-             XLSX.write(file, { bookType: type, bookSST: true, type: 'base64' });
-         
-             XLSX.writeFile(file, 'Sale Order.' + type);
-         }
-         
-          const export_button = document.getElementById('export_button');
-         
-          export_button.addEventListener('click', () =>  {
-             html_table_to_excel('xlsx');
-         });
-         
-         $('#printInvoice').click(function()
-         {
-             Popup($('.invoice')[0].outerHTML);
-             function Popup(data) 
-             {
-                 //window.print();
-                 return true;
-             }
-         });
-     
-         
-         
-   </script>
 
-   
+  <script type="text/javascript" src="{{URL::asset('assets/js/exporttoexcel.js')}}"></script>
+  <script>
+    function html_table_to_excel(type) {
+      var data = document.getElementById('invoice');
+
+      var file = XLSX.utils.table_to_book(data, {
+        sheet: "sheet1"
+      });
+
+      XLSX.write(file, {
+        bookType: type,
+        bookSST: true,
+        type: 'base64'
+      });
+
+      XLSX.writeFile(file, 'Sale Order.' + type);
+    }
+
+    const export_button = document.getElementById('export_button');
+
+    export_button.addEventListener('click', () => {
+      html_table_to_excel('xlsx');
+    });
+
+    $('#printInvoice').click(function() {
+      Popup($('.invoice')[0].outerHTML);
+
+      function Popup(data) {
+        //window.print();
+        return true;
+      }
+    });
+  </script>
+
+
 
 </body>
 
