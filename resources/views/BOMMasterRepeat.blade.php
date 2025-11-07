@@ -645,7 +645,6 @@
                                                       <td><input type="text" name="descriptionsx[]" value="{{$List->description}}" id="descriptionsx" style="width:200px; height:30px;"  readonly/></td>
                                                       <td>
                                                          <select name="color_idsx[][]"   id="color_idsx" style="width:300px; height:140px;"    multiple>
-                                                            <option value="">--Color List--</option>
                                                             @php $color_ids = explode(',', $List->color_id);   @endphp
                                                             @foreach($ColorList as  $row)
                                                             {
@@ -659,7 +658,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="size_idsx[][]"   id="size_idsx" style="width:200px; height:140px;"   multiple>
-                                                            <option value="">--Size List--</option>
                                                             @php $size_ids = explode(',', $List->size_array);   @endphp
                                                             @foreach($SizeDetailList as  $row)
                                                             {
@@ -725,7 +723,6 @@
                                                       <td><input type="text" name="descriptionsx[]" value="" id="descriptionsx" style="width:200px; height:30px;"  readOnly /></td>
                                                       <td>
                                                          <select name="color_idsx[][]"   id="color_idsx" style="width:300px; height:140px;"   multiple>
-                                                            <option value="">--Color List--</option>
                                                             @foreach($ColorList as  $row)
                                                             {
                                                             <option value="{{ $row->color_id }}"
@@ -737,7 +734,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="size_idsx[][]"   id="size_idsx" style="width:200px; height:140px;" multiple>
-                                                            <option value="">--Size List--</option>
                                                             @foreach($SizeDetailList as  $row)
                                                             {
                                                             <option value="{{ $row->size_id }}"
@@ -847,7 +843,6 @@
                                                       <td><input type="text" name="descriptions[]" value="{{$List->description}}" id="descriptions" style="width:200px; height:30px;" readOnly /></td>
                                                       <td>
                                                          <select name="color_ids[][]"   id="color_ids" style="width:300px; height:140px;"  multiple >
-                                                         <option value="">--Color List--</option>
                                                          @php $color_ids = explode(',', $List->color_id);   @endphp
                                                          @foreach($ColorList as  $row)
                                                          {
@@ -861,7 +856,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="size_ids[][]"  id="size_ids" style="width:200px; height:140px;" multiple > 
-                                                         <option value="">--Size List--</option>
                                                          @php $size_ids = explode(',', $List->size_array);   @endphp
                                                          @foreach($SizeDetailList as  $row)
                                                          {
@@ -925,7 +919,6 @@
                                                       <td><input type="text" name="descriptions[]" value="" id="descriptions" style="width:200px; height:30px;" readOnly /></td>
                                                       <td>
                                                          <select name="color_ids[][]"  id="color_ids" style="width:300px; height:100px;" multiple>
-                                                            <option value="">--Color List--</option>
                                                             @foreach($ColorList as  $row)
                                                             {
                                                             <option value="{{ $row->color_id }}"
@@ -937,7 +930,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="size_ids[][]" class="" id="size_ids" style="width:200px; height:140px;" multiple>
-                                                            <option value="">--Size List--</option>
                                                             @foreach($SizeDetailList as  $row)
                                                             {
                                                             <option value="{{ $row->size_id }}"
@@ -1048,7 +1040,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="color_idss[][]"   id="color_idss" style="width:300px; height:140px;" multiple>
-                                                         <option value="">--Color List--</option>
                                                          @php $color_ids = explode(',', $List->color_id);   @endphp
                                                          @foreach($ColorList as  $row)
                                                          {
@@ -1062,7 +1053,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="size_idss[][]"   id="size_idss" style="width:200px; height:140px;" multiple>
-                                                         <option value="">--Size List--</option>
                                                          @php $size_idss = explode(',', $List->size_array);   @endphp
                                                          @foreach($SizeDetailList as  $row)
                                                          {
@@ -1126,7 +1116,6 @@
                                                       <td> <input type="text" name="descriptionss[]" value="0" id="descriptionss" style="width:200px; height:30px;" readOnly /></td>
                                                       <td>
                                                          <select name="color_idss[][]"   id="color_idss" style="width:300px; height:100px;" multiple>
-                                                            <option value="">--Color List--</option>
                                                             @foreach($ColorList as  $row)
                                                             {
                                                             <option value="{{ $row->color_id }}"
@@ -1138,7 +1127,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="size_idss[][]"   id="size_idss" style="width:200px; height:140px;" multiple>
-                                                            <option value="">--Size List--</option>
                                                             @foreach($SizeDetailList as  $row)
                                                             {
                                                             <option value="{{ $row->size_id }}"
@@ -1755,175 +1743,201 @@
 //   }); 
    
    
+   function popup()
+   {
+        alert('Before making BOM, please ensure that all garment colors, corresponding fabrics, and sizewise quantities are entered correctly in the sales order as per buyer PO');    
+   }
+
+   
    function getSalesOrderDetails(sales_order_no)
    {
-   
-        $.ajax({
-               type: "GET",
-               dataType:"json",
-               url: "{{ route('SalesOrderDetails') }}",
-               data:{'sales_order_no':sales_order_no},
+    $.ajax({
+           type: "GET",
+           dataType:"json",
+           url: "{{ route('SalesOrderCostingStatus') }}",
+           data:{'sales_order_no':sales_order_no},
+           success: function(data)
+           {
+               if(data.status != 2)
+               {
+                   $("#sales_order_no").select2("destroy"); // properly destroys Select2
+                   $("#sales_order_no").val(null); // clears the value and updates Select2
+                   
+                   alert('The selected sales order no. '+sales_order_no+' costing is not approved.'); 
+                   $("#sales_order_no").select2();
+               }
+               else
+               {
+                  popup();
+                  $.ajax({
+                     type: "GET",
+                     dataType:"json",
+                     url: "{{ route('SalesOrderDetails') }}",
+                     data:{'sales_order_no':sales_order_no},
+                     success: function(data){
+                     
+                     $("#brand_id").val(data[0]['brand_id']);
+                     $("#po_code").val(data[0]['po_code']);
+                     $("#order_type").val(data[0]['order_type']).trigger('change');
+                     $("#og_id").val(data[0]['og_id']).trigger('change');
+                     $("#season_id").val(data[0]['season_id']);
+                     $("#Ac_code").val(data[0]['Ac_code']);
+                     $("#currency_id").val(data[0]['currency_id']);
+                     
+                     
+                     $("#mainstyle_id").val(data[0]['mainstyle_id']);
+                     $("#substyle_id").val(data[0]['substyle_id']);
+                     
+                     $("#style_no").val(data[0]['style_no']);
+                     $("#fg_id").val(data[0]['fg_id']);
+                     
+                     $("#style_description").val(data[0]['style_description']);
+                     $("#order_rate").val(data[0]['order_rate']);
+                     $("#total_qty").val(data[0]['total_qty']);
+                     
+                     $("#sales_order_no").attr('disabled', true);
+                     document.getElementById('season_id').disabled=true;
+                     document.getElementById('Ac_code').disabled=true;
+                     document.getElementById('currency_id').disabled=true;
+                     document.getElementById('mainstyle_id').disabled=true;
+                     document.getElementById('substyle_id').disabled=true;
+                     document.getElementById('fg_id').disabled=true;
+               }
+            });
+         
+            $.ajax({
+               dataType: "json",
+               url: "{{ route('GetOrderQty') }}",
+               data:{'tr_code':sales_order_no},
                success: function(data){
-               
-                $("#brand_id").val(data[0]['brand_id']);
-                $("#po_code").val(data[0]['po_code']);
-                $("#order_type").val(data[0]['order_type']).trigger('change');
-                $("#og_id").val(data[0]['og_id']).trigger('change');
-                $("#season_id").val(data[0]['season_id']);
-                $("#Ac_code").val(data[0]['Ac_code']);
-                $("#currency_id").val(data[0]['currency_id']);
-               
-               
-                $("#mainstyle_id").val(data[0]['mainstyle_id']);
-                $("#substyle_id").val(data[0]['substyle_id']);
-               
-                $("#style_no").val(data[0]['style_no']);
-                $("#fg_id").val(data[0]['fg_id']);
-               
-                $("#style_description").val(data[0]['style_description']);
-                $("#order_rate").val(data[0]['order_rate']);
-                $("#total_qty").val(data[0]['total_qty']);
-                
-                $("#sales_order_no").attr('disabled', true);
-                document.getElementById('season_id').disabled=true;
-                document.getElementById('Ac_code').disabled=true;
-                document.getElementById('currency_id').disabled=true;
-                document.getElementById('mainstyle_id').disabled=true;
-                document.getElementById('substyle_id').disabled=true;
-                document.getElementById('fg_id').disabled=true;
-           }
-        });
-   
-        $.ajax({
-           dataType: "json",
-           url: "{{ route('GetOrderQty') }}",
-           data:{'tr_code':sales_order_no},
-           success: function(data){
-           $("#footable_2").html(data.html);
-           }
-        });
-   
-       $.ajax({
-           dataType: "json",
-           url: "{{ route('GetSizeList') }}",
-           data:{'tr_code':sales_order_no},
-           success: function(data)
-           { 
-               $("#size_idsx").html(data.html);
-               $('select[name="size_ids[][]"]').html(data.html);
-               $('select[name="size_idss[][]"]').html(data.html);
-           }
-       });
-   
-   
-       $.ajax({
-           dataType: "json",
-           url: "{{ route('GetColorList') }}",
-           data:{'tr_code':sales_order_no},
-           success: function(data)
-           { 
-               $("#color_idsx").html(data.html);
-               $('select[name="color_ids[][]"]').html(data.html);
-               $('select[name="color_idss[][]"]').html(data.html);
-           }
-       });
-   
-       $.ajax({
-           dataType: "json",
-           url: "{{ route('GetItemList') }}",
-           data:{'tr_code':sales_order_no},
-           success: function(data)
-           {
-                $("#item_code").html(data.html);
-           }
-       });
-       
+               $("#footable_2").html(data.html);
+               }
+            });
+         
+            $.ajax({
+               dataType: "json",
+               url: "{{ route('GetSizeList') }}",
+               data:{'tr_code':sales_order_no},
+               success: function(data)
+               { 
+                     $("#size_idsx").html(data.html);
+                     $('select[name="size_ids[][]"]').html(data.html);
+                     $('select[name="size_idss[][]"]').html(data.html);
+               }
+            });
+         
+         
+            $.ajax({
+               dataType: "json",
+               url: "{{ route('GetColorList') }}",
+               data:{'tr_code':sales_order_no},
+               success: function(data)
+               { 
+                     $("#color_idsx").html(data.html);
+                     $('select[name="color_ids[][]"]').html(data.html);
+                     $('select[name="color_idss[][]"]').html(data.html);
+               }
+            });
+         
+            $.ajax({
+               dataType: "json",
+               url: "{{ route('GetItemList') }}",
+               data:{'tr_code':sales_order_no},
+               success: function(data)
+               {
+                     $("#item_code").html(data.html);
+               }
+            });
+            
 
-    //   $.ajax({
-    //       dataType: "json",
-    //       url: "{{ route('GetSewingTrimItemList') }}",
-    //       data:{'tr_code':sales_order_no},
-    //       success: function(data)
-    //       {
-    //             $("#item_codes").html(data.html);
-    //       }
-    //   });
-   
-    //   $.ajax({
-    //       dataType: "json",
-    //       url: "{{ route('GetPackingTrimItemList') }}",
-    //       data:{'tr_code':sales_order_no},
-    //       success: function(data)
-    //       {
-    //             $("#item_codess").html(data.html);
-    //       }
-    //   });
-           
-        $.ajax({
-           dataType: "json",
-           url: "{{ route('GetClassList') }}",
-           data:{'tr_code':sales_order_no},
-           success: function(data)
-           {
-               $("#class_id").html(data.html);
-               $("#class_idsx").html(data.html);
-           }
-        });
-        
-    //   setTimeout(function()
-    //   {
-    //       $("#footable_4 > tbody").each(function()
-    //       {
-    //           $('select,input').removeAttr('disabled'); 
-    //           $('input').removeAttr('readonly'); 
-    //       });
-    //   }, 500);
-       
-       $.ajax({
-           dataType: "json",
-           url: "{{ route('GetBOMFabricRepeat') }}",
-           data:{'tr_code':sales_order_no},
-           success: function(data)
-           {
-                $("#fabricBody").html(data.html);
-           }
-       });
-   
-       $.ajax({
-            dataType: "json",
-            url: "{{ route('GetBOMSewingRepeat') }}",
-            data: {'sales_order_no': sales_order_no},
-            success: function(data) 
-            {
-                var class_ids = data.SewingData.map(item => item.class_id.toString());
-                
-                $("#sewingBody tr").each(function() {
-                    var selectedVal = $(this).find('select[name="class_ids[]"]').val(); 
-                    if (!class_ids.includes(selectedVal)) {
-                        $(this).remove();
-                    }
-                    $(this).find('input[type="number"]').not('input[type="button"]').val(0);
-                });
+         //   $.ajax({
+         //       dataType: "json",
+         //       url: "{{ route('GetSewingTrimItemList') }}",
+         //       data:{'tr_code':sales_order_no},
+         //       success: function(data)
+         //       {
+         //             $("#item_codes").html(data.html);
+         //       }
+         //   });
+         
+         //   $.ajax({
+         //       dataType: "json",
+         //       url: "{{ route('GetPackingTrimItemList') }}",
+         //       data:{'tr_code':sales_order_no},
+         //       success: function(data)
+         //       {
+         //             $("#item_codess").html(data.html);
+         //       }
+         //   });
+               
+            $.ajax({
+               dataType: "json",
+               url: "{{ route('GetClassList') }}",
+               data:{'tr_code':sales_order_no},
+               success: function(data)
+               {
+                     $("#class_id").html(data.html);
+                     $("#class_idsx").html(data.html);
+               }
+            });
+            
+         //   setTimeout(function()
+         //   {
+         //       $("#footable_4 > tbody").each(function()
+         //       {
+         //           $('select,input').removeAttr('disabled'); 
+         //           $('input').removeAttr('readonly'); 
+         //       });
+         //   }, 500);
+            
+            $.ajax({
+               dataType: "json",
+               url: "{{ route('GetBOMFabricRepeat') }}",
+               data:{'tr_code':sales_order_no},
+               success: function(data)
+               {
+                     $("#fabricBody").html(data.html);
+               }
+            });
+         
+            $.ajax({
+                  dataType: "json",
+                  url: "{{ route('GetBOMSewingRepeat') }}",
+                  data: {'sales_order_no': sales_order_no},
+                  success: function(data) 
+                  {
+                     var class_ids = data.SewingData.map(item => item.class_id.toString());
+                     
+                     $("#sewingBody tr").each(function() {
+                        var selectedVal = $(this).find('select[name="class_ids[]"]').val(); 
+                        if (!class_ids.includes(selectedVal)) {
+                              $(this).remove();
+                        }
+                        $(this).find('input[type="number"]').not('input[type="button"]').val(0);
+                     });
+                  }
+            });
+         
+            $.ajax({
+                  dataType: "json",
+                  url: "{{ route('GetBOMPackingRepeat') }}",
+                  data: {'sales_order_no': sales_order_no},
+                  success: function(data) 
+                  {
+                     var class_ids = data.packingData.map(item => item.class_id.toString());
+                     
+                     $("#packingBody tr").each(function() {
+                        var selectedVal = $(this).find('select[name="class_idss[]"]').val(); 
+                        if (!class_ids.includes(selectedVal)) {
+                              $(this).remove();
+                        }
+                        $(this).find('input[type="number"]').not('input[type="button"]').val(0);
+                     });
+                  }
+               });
             }
-       });
-   
-       $.ajax({
-            dataType: "json",
-            url: "{{ route('GetBOMPackingRepeat') }}",
-            data: {'sales_order_no': sales_order_no},
-            success: function(data) 
-            {
-                var class_ids = data.packingData.map(item => item.class_id.toString());
-                
-                $("#packingBody tr").each(function() {
-                    var selectedVal = $(this).find('select[name="class_idss[]"]').val(); 
-                    if (!class_ids.includes(selectedVal)) {
-                        $(this).remove();
-                    }
-                    $(this).find('input[type="number"]').not('input[type="button"]').val(0);
-                });
-            }
-       });
+         }
+      });
        
    } 
        
