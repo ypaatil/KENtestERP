@@ -2451,7 +2451,7 @@ public function GetPackingTrimItemList(Request $request)
                             $html .= '</select>
                           </td>
                           <td><input type="text" name="description[]" value="'.$row->item_description.'" style="width:200px; height:30px;" readonly></td>
-                          <td><input type="number" step="any" name="consumption[]" value="'.$row->consumption.'" id="consumption" style="width:80px; height:30px;" readonly></td>
+                          <td><input type="number" step="any" name="consumption[]" value="'.$row->consumption.'" id="consumption" style="width:80px; height:30px;"></td>
                           <td>  
                             <select name="unit_id[]" id="unit_id" style="width:100px; height:30px;" disabled>
                                 <option value="">--Select--</option>';
@@ -2461,7 +2461,7 @@ public function GetPackingTrimItemList(Request $request)
                                 }
                             $html .= '</select>
                           </td>
-                          <td><input type="number" step="any" name="rate_per_unit[]" value="'.$row->rate_per_unit.'" id="rate_per_unit" style="width:80px; height:30px;" readonly></td>
+                          <td><input type="number" step="any" name="rate_per_unit[]" value="'.$row->rate_per_unit.'" id="rate_per_unit" style="width:80px; height:30px;"></td>
                           <td><input type="number" step="any" name="wastage[]" value="'.$row->wastage.'" id="wastage" style="width:80px; height:30px;"></td>
                           <td>
                              <input type="text" min="0" max="'.$bom_qty1.'" name="bom_qty[]" value="'.$bom_qty1.'" id="bom_qty" style="width:80px; height:30px;" readonly>
