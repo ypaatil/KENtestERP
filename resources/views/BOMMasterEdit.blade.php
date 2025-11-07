@@ -141,7 +141,7 @@
    <div class="col-xl-12">
       <div class="card">
          <div class="card-body">
-            <h4 class="card-title mb-4" style="font-size:20px;">BOM ({{$BOMMasterList->bom_code}})</h4>
+            <h4 class="card-title mb-4" style="font-size:20px;">BOM</h4>
             @if ($errors->any())
             <div class="col-md-6">
                <div class="alert alert-danger">
@@ -468,7 +468,7 @@
                                                       <th>Description</th>
                                                       <th>Cons./Gmt (Mtr/Nos)</th>
                                                       <th>UOM</th>
-                                                      <th>Per Pcs Cost</th>
+                                                      <th>Cost/Pcs</th>
                                                       <th>Wastage %</th>
                                                       <th>Qty</th>
                                                       <th>Amount</th>
@@ -631,7 +631,7 @@
                                                       <th>Size</th>
                                                       <th>Cons./Gmt (Mtr/Nos)</th>
                                                       <th>UOM</th>
-                                                      <th>Per Pcs Cost</th>
+                                                      <th>Cost/Pcs</th>
                                                       <th>Wastage %</th>
                                                       <th>Qty</th>
                                                       <th>Amount</th>
@@ -676,7 +676,6 @@
                                                       <td><input type="text"    name="descriptionsx[]" value="{{$List->description}}" id="descriptionsx" style="width:200px; height:30px;" readOnly/></td>
                                                       <td>
                                                          <select name="color_idsx[][]"   id="color_idsx" style="width:300px; height:140px;"    multiple>
-                                                            <option value="">--Color List--</option>
                                                             @php $color_ids = explode(',', $List->color_id);   @endphp
                                                             @foreach($ColorList as  $row)
                                                             {
@@ -690,7 +689,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="size_idsx[][]"   id="size_idsx" style="width:200px; height:140px;"   multiple>
-                                                            <option value="">--Size List--</option>
                                                             @php $size_ids = explode(',', $List->size_array);   @endphp
                                                             @foreach($SizeDetailList as  $row)
                                                             {
@@ -756,7 +754,6 @@
                                                       <td><input type="text"    name="descriptionsx[]" value="" id="descriptionsx" style="width:200px; height:30px;"   readOnly /></td>
                                                       <td>
                                                          <select name="color_idsx[][]"   id="color_idsx" style="width:300px; height:140px;"   multiple>
-                                                            <option value="">--Color List--</option>
                                                             @foreach($ColorList as  $row)
                                                             {
                                                             <option value="{{ $row->color_id }}"
@@ -768,7 +765,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="size_idsx[][]"   id="size_idsx" style="width:200px; height:140px;"   multiple>
-                                                            <option value="">--Size List--</option>
                                                             @foreach($SizeDetailList as  $row)
                                                             {
                                                             <option value="{{ $row->size_id }}"
@@ -833,7 +829,7 @@
                                                       <th>Size</th>
                                                       <th>Cons./Gmt (Mtr/Nos)</th>
                                                       <th>UOM</th>
-                                                      <th>Per Pcs Cost</th>
+                                                      <th>Cost/Pcs</th>
                                                       <th>Wastage %</th>
                                                       <th>Qty</th>
                                                       <th>Amount</th>
@@ -891,7 +887,6 @@
                                                       <td><input type="text" name="descriptions[]" value="{{$List->description}}" id="descriptions" style="width:200px; height:30px;" readOnly /></td>
                                                       <td>
                                                          <select name="color_ids[][]"   id="color_ids" style="width:300px; height:140px;"   multiple @if($List->item_count>0){{'disabled'}} @endif>
-                                                         <option value="">--Color List--</option>
                                                          @foreach($ColorList as  $row)
                                                          {
                                                          <option value="{{ $row->color_id }}"
@@ -904,7 +899,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="size_ids[][]"  id="size_ids" style="width:200px; height:140px;" required multiple @if($List->item_count>0){{ 'disabled' }} @endif> 
-                                                         <option value="">--Size List--</option>
                                                          @php $size_ids = explode(',', $List->size_array);   @endphp
                                                          @foreach($SizeDetailList as  $row)
                                                          {
@@ -974,7 +968,6 @@
                                                       <td><input type="text" name="descriptions[]" value="" id="descriptions" style="width:200px; height:30px;" readOnly /></td>
                                                       <td>
                                                          <select name="color_ids[][]"  id="color_ids" style="width:300px; height:100px;"  multiple>
-                                                            <option value="">--Color List--</option>
                                                             @foreach($ColorList as  $row)
                                                             {
                                                             <option value="{{ $row->color_id }}"
@@ -986,7 +979,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="size_ids[][]" class="" id="size_ids" style="width:200px; height:140px;"  multiple>
-                                                            <option value="">--Size List--</option>
                                                             @foreach($SizeDetailList as  $row)
                                                             {
                                                             <option value="{{ $row->size_id }}"
@@ -1050,7 +1042,7 @@
                                                       <th>Size</th>
                                                       <th>Cons./Gmt (Mtr/Nos)</th>
                                                       <th>UOM</th>
-                                                      <th>Per Pcs Cost</th>
+                                                      <th>Cost/Pcs</th>
                                                       <th>Wastage %</th>
                                                       <th>Qty</th>
                                                       <th>Amount</th>
@@ -1103,7 +1095,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="color_idss[][]"   id="color_idss" style="width:300px; height:140px;" required multiple @if($List->item_count>0){{'disabled'}} @endif>
-                                                         <option value="">--Color List--</option>
                                                          @php $color_ids = explode(',', $List->color_id);   @endphp
                                                          @foreach($ColorList as  $row)
                                                          <option value="{{ $row->color_id }}"@if(in_array($row->color_id, $color_ids)) selected @endif  >{{ $row->color_name }}</option>
@@ -1113,7 +1104,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="size_idss[][]"   id="size_idss" style="width:200px; height:140px;" required multiple @if($List->item_count>0){{ 'disabled'}} @endif>
-                                                         <option value="">--Size List--</option>
                                                          @php $size_idss = explode(',', $List->size_array);   @endphp
                                                          @foreach($SizeDetailList as  $row)
                                                          <option value="{{ $row->size_id }}" @if(in_array($row->size_id, $size_idss)) selected @endif >{{ $row->size_name }}</option>
@@ -1172,7 +1162,6 @@
                                                       <td> <input type="text" name="descriptionss[]" value="" id="descriptionss" style="width:200px; height:30px;" readOnly /></td>
                                                       <td>
                                                          <select name="color_idss[][]"   id="color_idss" style="width:300px; height:100px;" required multiple>
-                                                            <option value="">--Color List--</option>
                                                             @foreach($ColorList as  $row)
                                                             <option value="{{ $row->color_id }}"
                                                                >{{ $row->color_name }}</option>
@@ -1182,7 +1171,6 @@
                                                       </td>
                                                       <td>
                                                          <select name="size_idss[][]"   id="size_idss" style="width:200px; height:140px;" required multiple>
-                                                            <option value="">--Size List--</option>
                                                             @foreach($SizeDetailList as  $row)
                                                             <option value="{{ $row->size_id }}"
                                                                >{{ $row->size_name }}</option>
@@ -1228,25 +1216,25 @@
                   <div class="row">
                      <div class="col-md-2">
                         <div class="mb-3">
-                           <label for="po_date" class="form-label">Total Fabric Cost</label>
+                           <label for="po_date" class="form-label">Fabric Budget Cost</label>
                            <input type="text" name="fabric_value" class="form-control" id="fabric_value" value="{{ $BOMMasterList->fabric_value }}" required  readOnly>
                         </div>
                      </div>
                      <div class="col-md-2">
                         <div class="mb-3">
-                           <label for="po_date" class="form-label">Sewing Trims Cost</label>
+                           <label for="po_date" class="form-label">Sewing Trims Budget Cost</label>
                            <input type="text" name="sewing_trims_value" class="form-control" id="sewing_trims_value" value="{{ $BOMMasterList->sewing_trims_value }}" required readOnly >
                         </div>
                      </div>
                      <div class="col-md-2">
                         <div class="mb-3">
-                           <label for="po_date" class="form-label">Packing Trims Cost</label>
+                           <label for="po_date" class="form-label">Packing Trims Budget Cost</label>
                            <input type="text" name="packing_trims_value" class="form-control" id="packing_trims_value" value="{{ $BOMMasterList->packing_trims_value }}" required readOnly >
                         </div>
                      </div>
                      <div class="col-md-2">
                         <div class="mb-3">
-                           <label for="po_date" class="form-label">Total Cost</label>
+                           <label for="po_date" class="form-label">Total Budget Cost</label>
                            <input type="text" name="total_cost_value" class="form-control" id="total_cost_value" value="{{ $BOMMasterList->total_cost_value }}" required readOnly>
                         </div>
                      </div>
@@ -1272,7 +1260,7 @@
                   </div>
                   <div class="row">
                      <div class="col-sm-8">
-                        <label for="formrow-inputState" class="form-label">Narration</label>
+                        <label for="formrow-inputState" class="form-label">Remark</label>
                         <div class="mb-3">
                            <input type="text" name="narration" class="form-control" id="narration"  value="{{ $BOMMasterList->narration }}" />
                         </div>
@@ -1515,121 +1503,112 @@
         }
     }
     
-    function checkDuplicateItemGeneric(row, tableId, inputName)
-    {
-        var $rowEl = $(row);
-        var currentItemCode = $rowEl.val();
-        if (!currentItemCode) return false; // nothing selected, nothing to validate
-    
-        currentItemCode = String(currentItemCode);
-        var $currentRow = $rowEl.closest('tr');
-    
-        $.ajax({
-            type: "GET",
-            dataType: "json",
-            url: "{{ route('GetItemDetails') }}",
-            data: { item_code: currentItemCode},
-            success: function (data) 
-            {
-                $currentRow.find('td:eq(3) input').val(data[0].item_description);
-            },
-            error: function () {
-                resolve();
-            }
-        }); 
-        
-        // find size select in this row
-        var $currentSizeSelect = $currentRow.find('select[name^="size_ids"]');
-        var currentSizesRaw = $currentSizeSelect.val() || [];
-        var currentSizes = Array.isArray(currentSizesRaw) ? currentSizesRaw.map(String) : [String(currentSizesRaw)];
-        currentSizes = currentSizes.filter(function(s){ return s !== "" && s !== null && typeof s !== 'undefined'; });
-        if (currentSizes.length === 0) return false;
-    
-        var duplicateFound = false;
-        var duplicateInfo = null;
-    
-        // iterate all item selects in table
-        $('#' + tableId + ' select[name="' + inputName + '"]').each(function () {
-      
-            var $thisItem = $(this);
-            if ($thisItem.is($rowEl)) return true; // skip same row
-    
-            var otherItemCode = String($thisItem.val() || '');
-            if (!otherItemCode || otherItemCode !== currentItemCode) return true; // skip if not same item
-    
-            var $otherRow = $thisItem.closest('tr');
-            var $otherSizeSelect = $otherRow.find('select[name^="size_ids"]');
-            var otherSizesRaw = $otherSizeSelect.val() || [];
-            var otherSizes = Array.isArray(otherSizesRaw) ? otherSizesRaw.map(String) : [String(otherSizesRaw)];
-            otherSizes = otherSizes.filter(function(s){ return s !== "" && s !== null && typeof s !== 'undefined'; });
-    
-            // compare size overlap
-            for (var i = 0; i < currentSizes.length; i++) {
-                if (otherSizes.includes(currentSizes[i])) {
-                    duplicateFound = true;
-                    duplicateInfo = { size: currentSizes[i] };
-                    break;
-                }
-            }
-            if (duplicateFound) return false; // stop loop
-        });
-    
-        if (duplicateFound) {
-            $currentRow.find('input[type="number"]').val('');
-            alert('This item with size "' + duplicateInfo.size + '" is already selected! Please choose a different size.');
-            // ✅ Keep item_code as is — do NOT blank it
-            // ❌ Don’t clear $(row).val(null)
-            // Just disable the item select
-            $rowEl.prop("disabled", false);
-    
-            // ✅ Clear only size dropdown
-            if ($currentSizeSelect.length) {
-                if ($currentSizeSelect.data('select2')) {
-                    $currentSizeSelect.val(null).trigger('change.select2');
-                } else {
-                    $currentSizeSelect.val(null).trigger('change');
-                }
-            }
-    
-            $rowEl.focus();
-            return true;
-        }
-    
-        // If unique, disable as before
-        setTimeout(function () {
-            $rowEl.prop("disabled", true);
-            if (tableId === 'footable_5') {
-                $currentRow.find('select[name="class_idsx[]"]').prop("disabled", true);
-            }
-            if (tableId === 'footable_3') {
-                $currentRow.find('select[name="class_ids[]"]').prop("disabled", true);
-            }
-            if (tableId === 'footable_4') {
-                $currentRow.find('select[name="class_idss[]"]').prop("disabled", true);
-            }
-        }, 200);
-    
-        return false;
-    }
+   function checkDuplicateItemGeneric(row, tableId) 
+   {
+      var $currentRow = $(row).closest('tr');
 
-    
-    // ---------- Example usage / bindings ----------
-    // Call validator when item select changes (pass `this` as row)
-    $(document).on('change', 'select[name="item_code[]"], select[name="item_code\\[\\][]"], select[name^="item_code"]', function () {
-        // replace 'myTableId' with your actual table ID
-        checkDuplicateItemGeneric(this, 'footable_1', $(this).attr('name'));
-    });
-    
-    // Also call validator when the size multiselect changes (so changing sizes later is validated)
-    $(document).on('change', 'select[name^="size_ids"]', function () {
-        var $row = $(this).closest('tr');
-        // find the item select in same row - try common name patterns; adjust if your item select name differs
-        var $itemSelect = $row.find('select[name="item_code[]"], select[name^="item_code"]');
-        if ($itemSelect.length) {
-            checkDuplicateItemGeneric($itemSelect.first(), $row.closest('table').attr('id') || 'footable_1', $itemSelect.first().attr('name'));
-        }
-    });
-    
+      // 🟢 Get Item, Color, and Size elements using column index
+      var $itemSelect  = $currentRow.find('td:eq(2)').find('select');
+      var $colorSelect = $currentRow.find('td:eq(4)').find('select');
+      var $sizeSelect  = $currentRow.find('td:eq(5)').find('select');
+
+      // 🟢 Get current values
+      var itemCode = ($itemSelect.val() || '').toString().trim();
+      var colorsRaw = $colorSelect.val() || [];
+      var sizesRaw  = $sizeSelect.val()  || [];
+
+      // Convert all to array (even if single value)
+      var colors = Array.isArray(colorsRaw) ? colorsRaw.map(String) : [String(colorsRaw)];
+      var sizes  = Array.isArray(sizesRaw)  ? sizesRaw.map(String)  : [String(sizesRaw)];
+
+      colors = colors.filter(c => c && c !== 'null' && c !== 'undefined');
+      sizes  = sizes.filter(s => s && s !== 'null' && s !== 'undefined');
+
+      if (!itemCode || colors.length === 0 || sizes.length === 0) return false;
+
+      var duplicateFound = false;
+      var duplicateInfo  = null;
+
+      // 🟢 Loop through all rows in the same table
+      $('#' + tableId + ' tbody tr').each(function () {
+         var $row = $(this);
+         if ($row.is($currentRow)) return true; // skip same row
+
+         var $otherItem  = $row.find('td:eq(2)').find('select');
+         var $otherColor = $row.find('td:eq(4)').find('select');
+         var $otherSize  = $row.find('td:eq(5)').find('select');
+
+         var otherItemCode = ($otherItem.val() || '').toString().trim();
+         var otherColorsRaw = $otherColor.val() || [];
+         var otherSizesRaw  = $otherSize.val()  || [];
+
+         var otherColors = Array.isArray(otherColorsRaw) ? otherColorsRaw.map(String) : [String(otherColorsRaw)];
+         var otherSizes  = Array.isArray(otherSizesRaw)  ? otherSizesRaw.map(String)  : [String(otherSizesRaw)];
+
+         otherColors = otherColors.filter(c => c && c !== 'null' && c !== 'undefined');
+         otherSizes  = otherSizes.filter(s => s && s !== 'null' && s !== 'undefined');
+
+         // Compare (item + color + size)
+         if (itemCode === otherItemCode) {
+               for (var i = 0; i < colors.length; i++) {
+                  for (var j = 0; j < sizes.length; j++) {
+                     if (otherColors.includes(colors[i]) && otherSizes.includes(sizes[j])) {
+                           duplicateFound = true;
+                           var colorText = $colorSelect.find('option[value="' + colors[i] + '"]').text().trim();
+                           var sizeText  = $sizeSelect.find('option[value="' + sizes[j] + '"]').text().trim();
+                           duplicateInfo = { color_name: colorText || colors[i], size_name: sizeText || sizes[j] };
+                           break;
+                     }
+                  }
+                  if (duplicateFound) break;
+               }
+         }
+
+         if (duplicateFound) return false; // stop loop
+      });
+
+      // 🟢 If duplicate found — show alert and clear fields
+      if (duplicateFound) {
+         $currentRow.find('input[type="number"]').val('');
+         alert('This item with Color "' + duplicateInfo.color_name + '" and Size "' + duplicateInfo.size_name + '" already exists!');
+
+         // Reset selects
+         [$colorSelect, $sizeSelect].forEach(function($select) {
+               if ($select.data('select2')) {
+                  $select.val(null).trigger('change.select2');
+               } else {
+                  $select.val(null).trigger('change');
+               }
+         });
+
+         // Keep item enabled
+         $itemSelect.prop("disabled", false).focus();
+         return true;
+      }
+
+      // 🟢 If unique, disable item & class selects
+      setTimeout(function () {
+         $itemSelect.prop("disabled", true);
+         if (tableId === 'footable_5') {
+               $currentRow.find('select[name="class_idsx[]"]').prop("disabled", true);
+         }
+         if (tableId === 'footable_3') {
+               $currentRow.find('select[name="class_ids[]"]').prop("disabled", true);
+         }
+         if (tableId === 'footable_4') {
+               $currentRow.find('select[name="class_idss[]"]').prop("disabled", true);
+         }
+      }, 200);
+
+      return false;
+   }
+
+   $(document).on('change', '#footable_3 select, #footable_3 input, #footable_4 select, #footable_4 input, #footable_5 select, #footable_5 input', function() {
+      var $table = $(this).closest('table');
+      var tableId = $table.attr('id'); // get which table triggered it
+      checkDuplicateItemGeneric(this, tableId);
+   });
+
 
     
   $(document).ready(function () 

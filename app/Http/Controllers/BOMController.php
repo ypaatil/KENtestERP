@@ -57,12 +57,14 @@ class BOMController extends Controller
             //     ->get(['bom_master.*','usermaster.username','ledger_master.ac_short_name']);
                 
              
-            $BOMList = DB::SELECT("SELECT bom_master.*,brand_master.brand_name,usermaster.username,ledger_master.ac_short_name FROM bom_master 
+            $BOMList = DB::SELECT("SELECT bom_master.*,brand_master.brand_name,usermaster.username,ledger_master.ac_short_name, main_style_master.mainstyle_name, fg_master.fg_name FROM bom_master 
                         INNER JOIN buyer_purchse_order_master ON buyer_purchse_order_master.tr_code = bom_master.sales_order_no 
                         LEFT JOIN brand_master ON brand_master.brand_id = buyer_purchse_order_master.brand_id  
+                        LEFT JOIN main_style_master ON main_style_master.mainstyle_id = buyer_purchse_order_master.mainstyle_id
+                        LEFT JOIN fg_master ON fg_master.fg_id = buyer_purchse_order_master.fg_id
                         LEFT JOIN ledger_master ON ledger_master.Ac_code = bom_master.Ac_code 
                         LEFT JOIN usermaster ON usermaster.userId = bom_master.userId WHERE bom_master.delflag = 0
-                        AND buyer_purchse_order_master.brand_id IN(SELECT brand_id FROM buyer_brand_auth_details WHERE userId=".$userId.")");
+                        AND buyer_purchse_order_master.brand_id IN(SELECT brand_id FROM buyer_brand_auth_details WHERE userId=".$userId.") order by bom_master.bom_date DESC");
         }
         else
         {
@@ -72,13 +74,15 @@ class BOMController extends Controller
             //     ->where('bom_master.bom_date','>', DB::raw('LAST_DAY(CURRENT_DATE - INTERVAL 3 MONTH)'))
             //     ->get(['bom_master.*','usermaster.username','ledger_master.ac_short_name']);
          
-            $BOMList = DB::SELECT("SELECT bom_master.*,brand_master.brand_name,usermaster.username,ledger_master.ac_short_name FROM bom_master 
+            $BOMList = DB::SELECT("SELECT bom_master.*,brand_master.brand_name,usermaster.username,ledger_master.ac_short_name, main_style_master.mainstyle_name, fg_master.fg_name FROM bom_master 
                         INNER JOIN buyer_purchse_order_master ON buyer_purchse_order_master.tr_code = bom_master.sales_order_no
                         LEFT JOIN brand_master ON brand_master.brand_id = buyer_purchse_order_master.brand_id  
+                        LEFT JOIN main_style_master ON main_style_master.mainstyle_id = buyer_purchse_order_master.mainstyle_id
+                        LEFT JOIN fg_master ON fg_master.fg_id = buyer_purchse_order_master.fg_id
                         LEFT JOIN ledger_master ON ledger_master.Ac_code = bom_master.Ac_code  
                         LEFT JOIN usermaster ON usermaster.userId = bom_master.userId WHERE bom_master.delflag = 0
                         AND bom_master.bom_date > LAST_DAY(CURRENT_DATE - INTERVAL 3 MONTH)
-                        AND buyer_purchse_order_master.brand_id IN(SELECT brand_id FROM buyer_brand_auth_details WHERE userId=".$userId.")");
+                        AND buyer_purchse_order_master.brand_id IN(SELECT brand_id FROM buyer_brand_auth_details WHERE userId=".$userId.") order by bom_master.bom_date DESC");
                         
         //   $BOMList = DB::SELECT("SELECT bom_master.*,usermaster.username,ledger_master.ac_short_name FROM bom_master 
         //                 LEFT JOIN ledger_master ON ledger_master.Ac_code = bom_master.Ac_code 
@@ -91,23 +95,20 @@ class BOMController extends Controller
         }
 
        
-       
+        $serialNo = 0;
         if ($request->ajax()) 
         {
             return Datatables::of($BOMList)
             ->addIndexColumn()
-            ->addColumn('bom_code1',function ($row) {
-        
-                 $bom_codeData =substr($row->bom_code,4,15);
-        
-                 return $bom_codeData;
+            ->addColumn('bom_code1', function ($row) use (&$serialNo) {
+                return ++$serialNo; 
             }) 
-            ->addColumn('updated_at',function ($row) {
-        
-                 $updated_at = date("d-m-Y h:i:s", strtotime($row->updated_at));
-        
-                 return $updated_at;
-            }) 
+            ->addColumn('updated_at', function ($row) {
+
+                $updated_at = date("d/m/Y h:i:s", strtotime($row->updated_at));
+
+                return $updated_at;
+            })
             ->addColumn('action1', function ($row) 
             {
                 $btn1 = '<a class="btn btn-outline-secondary btn-sm print" target="_blank" href="BOMPrint/'.$row->bom_code.'" title="print">
@@ -151,15 +152,7 @@ class BOMController extends Controller
                
                 }
                 return $btn4;
-            }) 
-            ->addColumn('action5', function ($row) 
-            {
-                $btn2 = '<a class="btn btn-outline-secondary btn-sm" target="_blank" href="VendorPurchaseOrder/create" title="Cutting">
-                            <i class="fas fa-forward"></i>
-                            </a>';
-                return $btn2;
-            })
-            
+            })             
             ->addColumn('action8', function ($row) 
             {
                 $btn2 = '<a class="btn btn-outline-secondary btn-sm" target="_blank" href="BOMMasterRepeat/'.$row->bom_code.'" title="Repeat">
@@ -167,23 +160,7 @@ class BOMController extends Controller
                             </a>';
                 return $btn2;
             })
-            
-            ->addColumn('action6', function ($row) 
-            {
-                $btn2 = '<a class="btn btn-outline-secondary btn-sm" target="_blank" href="VendorWorkOrder/create" title="Stitching">
-                            <i class="fas fa-forward"></i>
-                            </a>';
-                return $btn2;
-            })
-            
-            ->addColumn('action7', function ($row) 
-            {
-                $btn2 = '<a class="btn btn-outline-secondary btn-sm" target="_blank" href="VendorPurchaseOrder/create" title="Packing">
-                            <i class="fas fa-forward"></i>
-                            </a>';
-                return $btn2;
-            })
-            ->rawColumns(['action1','action2','action3','action4','action5','action6','action7','action8','updated_at'])
+            ->rawColumns(['action1','action2','action3','action4','action8','updated_at'])
     
             ->make(true);
         }

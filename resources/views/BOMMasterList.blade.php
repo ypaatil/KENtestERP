@@ -56,25 +56,24 @@
    <div class="col-12">
       <div class="card">
          <div class="card-body">
-            <table  data-order='[[ 0, "desc" ]]' data-page-length='25' id="bom_table" class="table table-bordered dt-responsive nowrap w-100 footable_2">
+            <table data-page-length='25' id="bom_table" class="table table-bordered dt-responsive nowrap w-100 footable_2">
                <thead>
                   <tr style="text-align:center;">
-                     <th>SRNO</th>
-                     <th>BOM No</th>
-                     <th>Sales Order No</th>
-                     <th>Entry Date</th>
-                     <th>Buyer Name</th> 
-                     <th>Buyer Brand</th> 
-                     <th>User Name</th>
-                     <th>Updated Date</th>
-                     <th>BOM</th>
-                     <th>Budget</th>
-                     <th>Edit</th>
-                     <th>Delete</th>
-                     <th>Repeat</th>
-                     <th>Cutting</th>
-                     <th>Stitching</th>
-                     <th>Packing</th>
+                     <th nowrap>Sr No.</th>
+                     <th nowrap>BOM No.</th>
+                     <th nowrap>Order No.</th>
+                     <th nowrap>Created Date</th>
+                     <th nowrap>Buyer Name</th> 
+                     <th nowrap>Brand</th> 
+                     <th nowrap>Style Category</th> 
+                     <th nowrap>Style No.</th> 
+                     <th nowrap>User Name</th>
+                     <th nowrap>Updated Date</th>
+                     <th nowrap>BOM Print</th>
+                     <th nowrap>Budget Print</th>
+                     <th nowrap>Repeat</th> 
+                     <th nowrap>Edit</th>
+                     <th nowrap>Delete</th>
                   </tr>
                </thead>
                <tbody></tbody>
@@ -86,6 +85,7 @@
 </div>
 <!-- end row -->
 <script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
 <script type="text/javascript"> 
    $(document).on('click','.DeleteRecord',function(e) {
    
@@ -157,22 +157,34 @@
         ],
         
         columns: [
-          {data: 'bom_code1', name: 'bom_code1'},
+          {
+                data: null,  // no data from server
+                render: function (data, type, row, meta) {
+                    return meta.row + 1; // serial number
+                },
+                title: 'Sr No'
+          },
           {data: 'bom_code', name: 'bom_code'},
           {data: 'sales_order_no', name: 'sales_order_no'},
-          {data: 'bom_date', name: "bom_date"},
+          {
+                data: 'bom_date',
+                name: 'bom_date',
+                render: function(data, type, row) 
+                {
+                    return moment(data).format('DD/MM/YYYY');
+                }
+          }, 
           {data: 'ac_short_name', name: 'ac_short_name'}, 
           {data: 'brand_name', name: 'brand_name'}, 
+          {data: 'mainstyle_name', name: 'mainstyle_name'}, 
+          {data: 'fg_name', name: 'fg_name'}, 
           {data: 'username', name: 'username'}, 
           {data: 'updated_at', name: 'updated_at'}, 
           {data: 'action1', name: 'action1',orderable: false, searchable: false},
           {data: 'action2', name: 'action2',orderable: false, searchable: false},
+          {data: 'action8', name: 'action8',orderable: false, searchable: false}, 
           {data: 'action3', name: 'action3',orderable: false, searchable: false},
           {data: 'action4', name: 'action4',orderable: false, searchable: false},
-          {data: 'action8', name: 'action8',orderable: false, searchable: false},
-          {data: 'action5', name: 'action5',orderable: false, searchable: false},
-          {data: 'action6', name: 'action6',orderable: false, searchable: false},
-          {data: 'action7', name: 'action7',orderable: false, searchable: false},
         ]
     });
     
