@@ -722,40 +722,52 @@ $(document).ready(function() {
 
 });
 
-// Filter Data by filter
-// Columns to total (0-based indexes)
-var totalColumns = [5, 6, 7, 8, 9, 10,11];
-
-// Function to calculate totals for specified columns
-function updateFooterTotals() {
+$(document).ready(function () {
   var table = $('#dt').DataTable();
 
-  totalColumns.forEach(function(colIdx) {
-    // Calculate the sum of visible (filtered) rows
-    var total = table
-      .column(colIdx, { search: 'applied' })
-      .data()
-      .reduce(function(a, b) {
-        var x = parseFloat(String(a).replace(/[^0-9.-]+/g, '')) || 0;
-        var y = parseFloat(String(b).replace(/[^0-9.-]+/g, '')) || 0;
-        return x + y;
+  // ✅ Columns you want to total (0-based)
+  var totalColumns = [5, 6, 7, 8, 9, 10, 11];
+
+  function parseNumber(v) {
+    if (v === null || v === undefined) return 0;
+    if (typeof v === 'number') return v;
+    var n = String(v).replace(/[^0-9.\-]+/g, '');
+    if (n === '') return 0;
+    return parseFloat(n) || 0;
+  }
+
+  function updateFooterTotals() {
+    totalColumns.forEach(function (colIdx) {
+      // ✅ Get ALL filtered data (not just current page)
+      var colData = table
+        .cells(null, colIdx, { search: 'applied', order: 'applied', page: 'all' })
+        .data()
+        .toArray();
+
+      // ✅ Sum the values
+      var total = colData.reduce(function (acc, val) {
+        return acc + parseNumber(val);
       }, 0);
 
-    // Format total nicely (Indian format example)
-    var formattedTotal = total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+      // ✅ Format total (Indian format)
+      var formattedTotal = total.toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
 
-    // Update the footer cell
-    $(table.column(colIdx).footer()).html(formattedTotal);
+      // ✅ Update footer
+      $(table.column(colIdx).footer()).html(formattedTotal);
+    });
+  }
+
+  // 🔁 Update totals whenever table is redrawn (search, sort, paginate)
+  table.on('draw', function () {
+    updateFooterTotals();
   });
-}
 
-// Recalculate when DataTable is redrawn (after search/filter/sort)
-$('#dt').on('draw.dt', function() {
+  // Initial totals
   updateFooterTotals();
 });
-
-// Initial total calculation
-updateFooterTotals();
 
 </script>
 
