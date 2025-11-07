@@ -365,14 +365,14 @@
         }
     }
     
-   //  $('#sub').hover(function()
-   //  {
-   //      var is_click = $("#MBtn").attr('is_click');
-   //      if(is_click == 0)
-   //      {
-   //          alert("Please click on Calculate All Button...!");
-   //      }
-   //  });
+    $('#sub').hover(function()
+    {
+        var is_click = $("#MBtn").attr('is_click');
+        if(is_click == 0)
+        {
+            alert("Please click on Calculate All Button...!");
+        }
+    });
     
     function checkSalesOrder(row)
     { 
@@ -484,27 +484,11 @@
          mycalc();
    });
    
-  function MainBtn()
-    {  
+   function MainBtn()
+   {
         setTimeout(() => {
             document.getElementById("MBtn").disabled = false;
         }, 3000);
-        
-        $('.size_id').each(function()
-        {
-            var total = 0;
-            var name = $(this).attr('name'); 
-            var index = parseFloat(name.match(/\d+/)); 
-         
-            $('input[name="' + name + '"]').each(function() {
-                total += parseFloat($(this).val()) || 0; 
-            });  
-            
-            var allTotalArray = $("#allTotal").val().split(',');
-            allTotalArray[index-1] = total.toString(); 
-            $("#allTotal").val(allTotalArray.join(','));
-          
-        });
         
         $("#PackingData").empty(); 
         var process_id = $('#process_id').val();
@@ -535,7 +519,6 @@
         }
         else
         {
-            
             $("#footable_2 tbody").find('tr').each(function() 
             { 
                 var size_qty_total = $(this).find('input[name="size_qty_total[]"]').val();
@@ -546,8 +529,10 @@
                 }
             });
         }
+        
+        $("#MBtn").attr('is_click','1');
    }
-      
+   
     function removeDuplicateRows() 
     {  
     
@@ -593,7 +578,7 @@
         });
     }
    function GetSizeWiseQty(row) 
-    {
+   {
       var no=1;
       
        var process_id = $('#process_id').val();
@@ -670,81 +655,88 @@
                 
                color_ids = color_ids.join(",");
                var size_qty_array=$(row).closest("tr").find('input[name="size_qty_array[]"]').val();
-               var tbl_len = $('#footable_2 tbody tr').filter(function() {
+               
+                var tbl_len = $('#footable_2 tbody tr').filter(function() {
                   var val = parseFloat($(this).find('input[name="size_qty_total[]"]').val()) || 0;
                   return val > 0;
                }).length;
 
                
-               $.ajax({
-               dataType: "json",
-               url: "{{ route('GetPurchasePackingCreateConsumption') }}",
-               data:{'tbl_len': tbl_len,'color_id': color_id, 'size_qty_total':size_qty_total,'sales_order_no':sales_order_no,'no':no,'size_qty_array':size_qty_array,'size_array':size_array,'allTotal':allTotal,'sumAllTotal':sumAllTotal, 'color_ids':color_ids},
-               success: function(data)
-               { 
-                    //$("#PackingData").empty(); 
-                    $("#PackingData").append(data.html); 
-                  //   if(tbl_len > 1)
-                  //   {
-                        var itemCodeMap = {};
-                        $('#footable_4 tbody tr').each(function() {
-                            var row = $(this);
-                            var itemCode = row.find('td input').eq(1).val(); 
-                            var bomQty = parseFloat(row.find('td input[name="bom_qtyss[]"]').val()) || 0;
-                            var colorName = row.find('td input[name="color_ids[]"]').val();
-                            var sizeIds = row.find('td input[name="sizes_ids[]"]').val(); // Get sizes
-                        
-                            if (itemCodeMap[itemCode]) {
-                                // Check if sizeIds contains a comma
-                                if (!sizeIds.includes(",")) {
-                                    // Accumulate BOM quantity only if sizes are not comma-separated
-                                    itemCodeMap[itemCode].bomTotal += bomQty;
-                                }
-                        
-                                // Append color name if it's unique
-                                if (!itemCodeMap[itemCode].colors.includes(colorName)) {
-                                    itemCodeMap[itemCode].colors.push(colorName);
-                                }
-                        
-                                // Remove duplicate row
-                                row.remove();
-                            } else {
-                                // Initialize the map entry for the itemCode
-                                itemCodeMap[itemCode] = {
-                                    row: row, 
-                                    bomTotal: bomQty,
-                                    colors: [colorName],
-                                    sizeIds: sizeIds // Store sizeIds to check later
-                                };
-                            }
-                        });
-                        
-                        $.each(itemCodeMap, function(itemCode, data) {
-                            //data.row.find('td input[name="bom_qtyss[]"]').val(data.bomTotal); // Set summed BOM
-                            
-                            const input = data.row.find('td input[name="bom_qtyss[]"]');
-                            input.val(data.bomTotal);
-                            input.attr('value', data.bomTotal); // Updates the actual HTML attribute
-                            input.trigger('change');
-        
-                            let input1 = data.row.find('td input[name="bom_qtyss1[]"]');
-                            input1.val(data.bomTotal);
-                            input1.attr('value', data.bomTotal); // Updates the actual HTML attribute
-                            input1.trigger('change');
-                    
-                            data.row.find('td input[name="color_ids[]"]').val(data.colors.join(", ")); // Set comma-separated colors
-                        }); 
-                  //   }
+              $.ajax({
+    dataType: "json",
+    url: "{{ route('GetPurchasePackingCreateConsumption') }}",
+    data: {
+        'tbl_len': tbl_len,
+        'color_id': color_id,
+        'size_qty_total': size_qty_total,
+        'sales_order_no': sales_order_no,
+        'no': no,
+        'size_qty_array': size_qty_array,
+        'size_array': size_array,
+        'allTotal': allTotal,
+        'sumAllTotal': sumAllTotal,
+        'color_ids': color_ids
+    },
+    success: function (data) {
+        $("#PackingData").append(data.html);
 
+        var itemCodeMap = {};
 
-                    $('#footable_4 tbody').find('td input[name="wastagess[]"]').each(function()
-                    { 
-                        $(this).removeAttr('disabled');
-                         
-                    });
-                    recalcIdcone4(); 
-               }
-               });
+        $('#footable_4 tbody tr').each(function () {
+            var row = $(this);
+            var itemCode = row.find('td input').eq(1).val();
+            var bomQty = parseFloat(row.find('td input[name="bom_qtyss[]"]').val()) || 0;
+            var colorName = row.find('td input[name="color_ids[]"]').val();
+            var sizeIds = row.find('td input[name="sizes_ids[]"]').val();
+
+            // Skip rows with zero BOM quantity
+            if (bomQty <= 0) {
+                row.remove();
+                return; // move to next iteration
+            }
+
+            if (itemCodeMap[itemCode]) {
+                // If duplicate itemCode
+                if (!sizeIds.includes(",")) {
+                    itemCodeMap[itemCode].bomTotal += bomQty;
+                }
+
+                if (!itemCodeMap[itemCode].colors.includes(colorName)) {
+                    itemCodeMap[itemCode].colors.push(colorName);
+                }
+
+                row.remove();
+            } else {
+                // New itemCode entry
+                itemCodeMap[itemCode] = {
+                    row: row,
+                    bomTotal: bomQty,
+                    colors: [colorName],
+                    sizeIds: sizeIds
+                };
+            }
+        });
+
+        // Update merged rows with totals and colors
+        $.each(itemCodeMap, function (itemCode, data) {
+            const input = data.row.find('td input[name="bom_qtyss[]"]');
+            input.val(data.bomTotal).attr('value', data.bomTotal).trigger('change');
+
+            let input1 = data.row.find('td input[name="bom_qtyss1[]"]');
+            input1.val(data.bomTotal).attr('value', data.bomTotal).trigger('change');
+
+            data.row.find('td input[name="color_ids[]"]').val(data.colors.join(", "));
+        });
+
+        // Enable wastage inputs
+        $('#footable_4 tbody').find('td input[name="wastagess[]"]').each(function () {
+            $(this).removeAttr('disabled');
+        });
+
+        recalcIdcone4();
+    }
+});
+
                
                
                  mycalc();
@@ -752,7 +744,6 @@
        
        $("#Submit").removeAttr('disabled');
       }
-   
    
    function calculateBomWithWastage(row)
    {
@@ -1839,7 +1830,7 @@
    }
     
    }
-   }
+   } 
    
    function deleteRowcone3(btn) {
    if(document.getElementById('cntrr3').value > 1){

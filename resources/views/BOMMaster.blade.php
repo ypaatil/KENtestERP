@@ -333,16 +333,16 @@
                                              <thead>
                                                 <tr>
                                                    <th>Sr No</th>
+                                                   <th>Classification</th>
                                                    <th>Item Name</th>
                                                    <th>Garment Colors</th>
-                                                   <th>Classification</th>
                                                    <th>Description</th>
-                                                   <th>Cons(Mtr/Nos)</th>
+                                                   <th>Cons./Gmt (Mtr/Nos)</th>
                                                    <th>UOM</th>
-                                                   <th>Rate</th>
+                                                   <th>Per Pcs Cost</th>
                                                    <th>Wastage %</th>
-                                                   <th>BOM Qty</th>
-                                                   <th>Total Amount</th>
+                                                   <th>Qty</th>
+                                                   <th>Amount</th>
                                                    <th>Remark</th>
                                                    <th>Add</th>
                                                    <th>Remove</th>
@@ -352,16 +352,16 @@
                                                 <tr>
                                                    <td><input type="text" readonly name="id" value="1" id="id" style="width:50px;" readOnly/></td>
                                                    <td>
+                                                      <select name="class_id[]"   id="class_id" style="width:200px; height:30px;" disabled>
+                                                         <option value="">--Classification--</option>
+                                                      </select>
+                                                   </td>
+                                                   <td>
                                                       <select name="item_code[]" id="item_code" onchange="checkDuplicateItemGeneric(this, 'footable_1', 'item_code[]')" style="width:270px; height:30px;">
                                                          <option value="">--Item List--</option>
                                                       </select>
                                                    </td>
                                                    <td><textarea type="text"  name="colors[]" value="0" id="colors" style="width:200px; height:30px;" readOnly></textarea></td>
-                                                   <td>
-                                                      <select name="class_id[]"   id="class_id" style="width:200px; height:30px;" disabled>
-                                                         <option value="">--Classification--</option>
-                                                      </select>
-                                                   </td>
                                                    <td><input type="text"    name="description[]" value="" id="description" style="width:200px; height:30px;" readOnly/></td>
                                                    <td><input type="number" step="any"    name="consumption[]" value="0" id="consumption" style="width:80px; height:30px;" /></td>
                                                    <td>
@@ -414,12 +414,12 @@
                                                    <th>Description</th>
                                                    <th>Garment Color</th>
                                                    <th>Size</th>
-                                                   <th>Cons(Mtr/Nos)</th>
+                                                   <th>Cons./Gmt (Mtr/Nos)</th>
                                                    <th>UOM</th>
-                                                   <th>Rate</th>
+                                                   <th>Per Pcs Cost</th>
                                                    <th>Wastage %</th>
-                                                   <th>BOM Qty</th>
-                                                   <th>Total Amount</th>
+                                                   <th>Qty</th>
+                                                   <th>Amount</th>
                                                    <th>Remark</th>
                                                    <th>Add</th>
                                                    <th>Remove</th>
@@ -508,12 +508,12 @@
                                                    <th>Description</th>
                                                    <th>Garment Color</th>
                                                    <th>Size</th>
-                                                   <th>Cons(Mtr/Nos)</th>
+                                                   <th>Cons./Gmt (Mtr/Nos)</th>
                                                    <th>UOM</th>
-                                                   <th>Rate</th>
+                                                   <th>Per Pcs Cost</th>
                                                    <th>Wastage %</th>
-                                                   <th>BOM Qty</th>
-                                                   <th>Total Amount</th>
+                                                   <th>Qty</th>
+                                                   <th>Amount</th>
                                                    <th>Remark</th>
                                                    <th>Add</th>
                                                    <th>Remove</th>
@@ -606,12 +606,12 @@
                                                    <th>Description</th>
                                                    <th>Garment Color</th>
                                                    <th>Size</th>
-                                                   <th>Cons(Mtr/Nos)</th>
+                                                   <th>Cons./Gmt (Mtr/Nos)</th>
                                                    <th>UOM</th>
-                                                   <th>Rate</th>
+                                                   <th>Per Pcs Cost</th>
                                                    <th>Wastage %</th>
-                                                   <th>BOM Qty</th>
-                                                   <th>Total Amount</th>
+                                                   <th>Qty</th>
+                                                   <th>Amount</th>
                                                    <th>Remark</th>
                                                    <th>Add</th>
                                                    <th>Remove</th>
@@ -672,7 +672,7 @@
                                                    </td>
                                                    <td><input type="number" step="any"  class="PACKING"  name="total_amountss[]" value="0" id="total_amountss" style="width:80px; height:30px;" readOnly /></td>
                                                    <td><input type="text"      name="remarkss[]" value="" id="remarkss" style="width:80px; height:30px;" /></td>
-                                                   <td><button type="button" onclick="insertcone3();" class="btn btn-warning pull-left">+</button></td>
+                                                   <td><button type="button" onclick="insertcone3(this);" class="btn btn-warning pull-left">+</button></td>
                                                    <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone3(this);" value="X" ></td>
                                                 </tr>
                                              </tbody>
@@ -2004,8 +2004,17 @@
    
    cell1.appendChild(t1);
      
+   var cell3 = row.insertCell(1);
+   var t3=document.createElement("select");
+   var x = $("#class_id"),
+   y = x.clone();
+   y.attr("id","class_id");
+   y.attr("name","class_id[]");
+   y.width(200);
+   y.appendTo(cell3);
+   
    // ======== Item Code Select ========
-    var cell2 = row.insertCell(1);
+    var cell2 = row.insertCell(2);
 
     // Destroy select2 before cloning
     rows1.find('select[name^="item_code[]"]').select2('destroy');
@@ -2034,7 +2043,7 @@
     // Reinitialize Select2
     y.select2();
  
-   var cell5 = row.insertCell(2);
+   var cell5 = row.insertCell(3);
    var t5=document.createElement("textarea");
    t5.style="display: table-cell; width:200px; height:30px";
    t5.type="text";
@@ -2042,15 +2051,6 @@
    t5.name="colors[]";
    cell5.appendChild(t5);   
     
-   var cell3 = row.insertCell(3);
-   var t3=document.createElement("select");
-   var x = $("#class_id"),
-   y = x.clone();
-   y.attr("id","class_id");
-   y.attr("name","class_id[]");
-   y.width(200);
-   y.appendTo(cell3);
-   
    var cell5 = row.insertCell(4);
    var t5=document.createElement("input");
    t5.style="display: table-cell; width:200px; height:30px";
@@ -2644,7 +2644,7 @@
    
    // Start Packing Trims----------------------------
    var indexcone2 = 2;
-   function insertcone3(){
+   function insertcone3(row){
    $("#item_codess").select2("destroy");
    $("#class_idss").select2("destroy");
    var table=document.getElementById("footable_4").getElementsByTagName('tbody')[0];
@@ -2824,7 +2824,7 @@
    btnAdd.type = "button";
    btnAdd.className="btn btn-warning pull-left";
    btnAdd.value = "+";
-   btnAdd.setAttribute("onclick", "insertcone3()");
+   btnAdd.setAttribute("onclick", "insertcone3(this)");
    cell6.appendChild(btnAdd);
     
    var cell7=row.insertCell(14);

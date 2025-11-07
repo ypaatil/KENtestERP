@@ -1897,57 +1897,35 @@ public function GetItemColorList(Request $request)
     return response()->json($Colors);
 }
 
-
 public function GetClassItemList(Request $request)
 {
-   
-    //$class_ids = implode(', ', $request->class_id);
-    if (is_array($request->class_id) && !empty($request->class_id)) 
-    {
-    
+    if (is_array($request->class_id) && !empty($request->class_id)) {
         $valid_class_ids = array_filter($request->class_id, 'is_numeric');
-    
-        if (!empty($valid_class_ids)) 
-        {
-            
-            $class_ids = implode(', ', $valid_class_ids);
-        } 
-        else 
-        {
-           $class_ids = $request->class_id;
-        }
-    } 
-    else 
-    {
-      $class_ids = $request->class_id;
+        $class_ids = !empty($valid_class_ids) ? implode(', ', $valid_class_ids) : $request->class_id;
+    } else {
+        $class_ids = $request->class_id;
     }
 
-    if($request->class_id == 7)
-    {
-        $ItemList = DB::table('item_master')->select('item_master.item_code', 'item_master.item_name')->where('item_master.delflag','=',0)->get();
-        $html = '';
-        $html = '<option value="">--Item List--</option>';
-        
-        foreach ($ItemList as $row) 
-        {$html .= '<option value="'.$row->item_code.'">'.'('.$row->item_code.') '.$row->item_name.'</option>';}
+    if ($request->class_id == 7) {
+        $ItemList = DB::table('item_master')
+            ->select('item_code', 'item_name')
+            ->where('delflag', 0)
+            ->get();
+    } else {
+        $ItemList = DB::select("SELECT item_code, item_name FROM item_master WHERE delflag=0 AND class_id IN ($class_ids)");
     }
-    else
-    {
-         //DB::enableQueryLog();
 
-         $ItemList = DB::SELECT("SELECT item_code,item_name FROM item_master WHERE delflag=0 AND class_id IN (".$class_ids.")");
-        
-        //dd(DB::getQueryLog());
-       
-            $html = '';
-            $html = '<option value="">--Item List--</option>';
-            
-            foreach ($ItemList as $row) 
-            {$html .= '<option value="'.$row->item_code.'">'.'('.$row->item_code.') '.$row->item_name.'</option>';}
+    // Convert all strings to UTF-8 safely
+    $html = '<option value="">--Item List--</option>';
+    foreach ($ItemList as $row) {
+        $itemCode = mb_convert_encoding($row->item_code, 'UTF-8', 'UTF-8');
+        $itemName = mb_convert_encoding($row->item_name, 'UTF-8', 'UTF-8');
+        $html .= '<option value="' . htmlspecialchars($itemCode, ENT_QUOTES, 'UTF-8') . '">(' . htmlspecialchars($itemCode, ENT_QUOTES, 'UTF-8') . ') ' . htmlspecialchars($itemName, ENT_QUOTES, 'UTF-8') . '</option>';
     }
-    
+
     return response()->json(['html' => $html]);
 }
+
 
 
 public function GetItemList(Request $request)
@@ -2362,6 +2340,15 @@ public function GetPackingTrimItemList(Request $request)
             
             $html .= '<tr>
                           <td><input type="text" name="id" value="'.($sr_no++).'" id="id" style="width:50px;"></td>
+                          <td>
+                            <select name="class_id[]" id="class_id" style="width:270px; height:30px;" disabled>
+                                <option value="">--Select--</option>';
+                                foreach ($classificationList as $classes) {
+                                    $selected = ($classes['class_id'] == $row->class_id) ? 'selected="selected"' : '';
+                                    $html .= '<option value="'.$classes['class_id'].'" '.$selected.'>'.$classes['class_name'].'</option>';
+                                }
+                            $html .= '</select> 
+                          </td>
                           <td> 
                             <select name="item_code[]" id="item_code" style="width:270px; height:30px;" disabled onchange="CheckDuplicateItemForFabric(this);">
                                 <option value="">--Select--</option>';
@@ -2372,15 +2359,6 @@ public function GetPackingTrimItemList(Request $request)
                             $html .= '</select>
                           </td>
                           <td><textarea type="text" name="colors[]" id="colors" style="width:200px; height:30px;" readonly="">'.(htmlspecialchars($Colors['color_name'])).'</textarea></td>
-                          <td>
-                            <select name="class_id[]" id="class_id" style="width:270px; height:30px;" disabled>
-                                <option value="">--Select--</option>';
-                                foreach ($classificationList as $classes) {
-                                    $selected = ($classes['class_id'] == $row->class_id) ? 'selected="selected"' : '';
-                                    $html .= '<option value="'.$classes['class_id'].'" '.$selected.'>'.$classes['class_name'].'</option>';
-                                }
-                            $html .= '</select> 
-                          </td>
                           <td><input type="text" name="description[]" value="'.$row->item_description.'" style="width:200px; height:30px;" readonly></td>
                           <td><input type="number" step="any" name="consumption[]" value="'.$row->consumption.'" min="0" max="'.$row->consumption.'" id="consumption" style="width:80px; height:30px;"></td>
                           <td>  

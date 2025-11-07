@@ -462,16 +462,16 @@
                                                 <thead>
                                                    <tr>
                                                       <th>Sr No</th>
+                                                      <th>Classification</th>
                                                       <th>Item Name</th>
                                                       <th>Garment Colors</th>
-                                                      <th>Classification</th>
                                                       <th>Description</th>
-                                                      <th>Cons(Mtr/Nos)</th>
+                                                      <th>Cons./Gmt (Mtr/Nos)</th>
                                                       <th>UOM</th>
-                                                      <th>Rate</th>
+                                                      <th>Per Pcs Cost</th>
                                                       <th>Wastage %</th>
-                                                      <th>BOM Qty</th>
-                                                      <th>Total Amount</th>
+                                                      <th>Qty</th>
+                                                      <th>Amount</th>
                                                       <th>Remark</th>
                                                       <th>Add</th>
                                                       <th>Remove</th>
@@ -482,8 +482,20 @@
                                                    @php $no=1;$oldArray=[]; @endphp
                                                    @foreach($FabricList as $List) 
                                                    <tr>
-                                                      <td><input type="text" name="id" value="@php echo $no; @endphp" id="id" style="width:50px;" readonly/>
-                                                         <input type="hidden" name="sr_no_bom[]" value="@php echo $no; @endphp" id="sr_no_bom" style="width:50px;"/>
+                                                      <td><input type="text" name="id" value="{{$no}}" id="id" style="width:50px;" readonly/>
+                                                         <input type="hidden" name="sr_no_bom[]" value="{{$no}}" id="sr_no_bom" style="width:50px;"/>
+                                                      </td>       
+                                                      <td>
+                                                         <select name="class_id[]"   id="class_id" style="width:200px; height:30px;" disabled>
+                                                            <option value="">--Classification--</option>
+                                                            @foreach($ClassList5 as  $row)
+                                                            {
+                                                            <option value="{{ $row->class_id }}"
+                                                            {{ $row->class_id == $List->class_id ? 'selected="selected"' : '' }} 
+                                                            >{{ $row->class_name }}</option>
+                                                            }
+                                                            @endforeach
+                                                         </select>
                                                       </td>
                                                       <td>
                                                          <select name="item_code[]"   id="item_code" onchange="checkDuplicateItemGeneric(this, 'footable_1', 'item_code[]');CheckDuplicateItemForFabric(this);" style="width:270px; height:30px;" required @php if($List->item_count>0){ echo 'disabled'; } @endphp disabled >
@@ -505,19 +517,7 @@
                                                       $data=$data.$row->color_name.', ';
                                                       }
                                                       @endphp
-                                                      <td><textarea type="text"  name="colors[]"   id="colors" style="width:200px; height:30px;" readonly>{{$data}}</textarea></td>
-                                                      <td>
-                                                         <select name="class_id[]"   id="class_id" style="width:200px; height:30px;" disabled>
-                                                            <option value="">--Classification--</option>
-                                                            @foreach($ClassList5 as  $row)
-                                                            {
-                                                            <option value="{{ $row->class_id }}"
-                                                            {{ $row->class_id == $List->class_id ? 'selected="selected"' : '' }} 
-                                                            >{{ $row->class_name }}</option>
-                                                            }
-                                                            @endforeach
-                                                         </select>
-                                                      </td>
+                                                      <td><textarea type="text"  name="colors[]"   id="colors" style="width:200px; height:30px;" readonly>{{$data}}</textarea></td>                                             
                                                       <td><input type="text"    name="description[]" value="{{$List->description}}" id="description" style="width:200px; height:30px;" readOnly/></td>
                                                       <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->consumption}}" @endif name="consumption[]" value="{{$List->consumption}}" id="consumption" style="width:80px; height:30px;" /></td>
                                                       <td>
@@ -541,7 +541,7 @@
                                                       <td><input type="number" step="any" class="FABRIC"   name="total_amount[]" value="{{$List->total_amount}}" id="total_amount" style="width:80px; height:30px;" readOnly/></td>
                                                       <td><input type="text" name="remark[]" value="{{$List->remark}}" id="remark" style="width:80px; height:30px;" /></td>
                                                       <td><input type="button" readOnly name="Fbutton[]"   class="btn btn-warning pull-left" value="+"></td>
-                                                      <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone1(this);" value="X" @php if($List->item_count_fab >0){ echo 'disabled'; } @endphp></td>
+                                                      <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone1(this);" value="X" @if($List->item_count_fab >0) {{'disabled'}} @endif></td>
                                                    </tr>
                                                    @php 
                                                    $oldArray[]=['sr_no'=>$no,'item_code'=>$List->item_code,'consumption'=>$List->consumption,'description'=>$List->description,'rate_per_unit'=>$List->rate_per_unit,'wastage'=>$List->wastage,'bom_qty'=>$List->bom_qty,'total_amount'=>$List->total_amount];
@@ -552,6 +552,17 @@
                                                    @else
                                                    <tr>
                                                       <td><input type="text" name="id" value="1" id="id" style="width:50px;" readonly/></td>
+                                                      <td>
+                                                         <select name="class_id[]"   id="class_id" style="width:200px; height:30px;" disabled>
+                                                            <option value="">--Classification--</option>
+                                                            @foreach($ClassList as  $row)
+                                                            {
+                                                            <option value="{{ $row->class_id }}"
+                                                               >{{ $row->class_name }}</option>
+                                                            }
+                                                            @endforeach
+                                                         </select>
+                                                      </td>
                                                       <td>
                                                          <select name="item_code[]"  onchange="checkDuplicateItemGeneric(this, 'footable_1', 'item_code[]')"  id="item_code" style="width:270px; height:30px;" required>
                                                             <option value="">--Item List--</option>
@@ -564,17 +575,6 @@
                                                          </select>
                                                       </td>
                                                       <td><textarea type="text"  name="colors[]"   id="colors" style="width:300px; height:30px;" required ></textarea></td>
-                                                      <td>
-                                                         <select name="class_id[]"   id="class_id" style="width:200px; height:30px;" disabled>
-                                                            <option value="">--Classification--</option>
-                                                            @foreach($ClassList as  $row)
-                                                            {
-                                                            <option value="{{ $row->class_id }}"
-                                                               >{{ $row->class_name }}</option>
-                                                            }
-                                                            @endforeach
-                                                         </select>
-                                                      </td>
                                                       <td><input type="text"    name="description[]" value="" id="description" style="width:200px; height:30px;" readOnly /></td>
                                                       <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="0" @endif  name="consumption[]" value="0" id="consumption" style="width:80px; height:30px;"  /></td>
                                                       <td>
@@ -629,12 +629,12 @@
                                                       <th>Description</th>
                                                       <th>Garment Color</th>
                                                       <th>Size</th>
-                                                      <th>Cons(Mtr/Nos)</th>
+                                                      <th>Cons./Gmt (Mtr/Nos)</th>
                                                       <th>UOM</th>
-                                                      <th>Rate</th>
+                                                      <th>Per Pcs Cost</th>
                                                       <th>Wastage %</th>
-                                                      <th>BOM Qty</th>
-                                                      <th>Total Amount</th>
+                                                      <th>Qty</th>
+                                                      <th>Amount</th>
                                                       <th>Remark</th>
                                                       <th>Add</th>
                                                       <th>Remove</th>
@@ -648,7 +648,7 @@
                                                    $ItemList4 = DB::table('item_master')->where('delflag','=', '0')->where('class_id','=', $List->class_id)->get(); 
                                                    @endphp
                                                    <tr>
-                                                      <td><input type="text" name="idsx" value="@php echo $no; @endphp" id="idsx" style="width:50px;" readonly/></td>
+                                                      <td><input type="text" name="idsx" value="{{$no}}" id="idsx" style="width:50px;" readonly/></td>
                                                       <td>
                                                          <select name="class_idsx[]" class="select2"  id="class_idsx" style="width:200px; height:30px;"  onchange="CalculateQtyRowPros123(this);"  >
                                                             <option value="">--Classification--</option>
@@ -662,7 +662,7 @@
                                                          </select>
                                                       </td>
                                                       <td>
-                                                         <select name="item_codesx[]"  onchange="checkDuplicateItemGeneric(this, 'footable_5', 'item_codesx[]')" class="item_trim_fabric select2" id="item_codesx" style="width:270px; height:30px;"   @php if($List->item_count>0){ echo 'disabled'; } @endphp>
+                                                         <select name="item_codesx[]"  onchange="checkDuplicateItemGeneric(this, 'footable_5', 'item_codesx[]')" class="item_trim_fabric select2" id="item_codesx" style="width:270px; height:30px;"   @if($List->item_count>0){{'disabled'}}@endif>
                                                          <option value="">--Item List--</option>
                                                          @foreach($ItemList4 as  $row)
                                                          {
@@ -831,12 +831,12 @@
                                                       <th>Description</th>
                                                       <th>Garment Color</th>
                                                       <th>Size</th>
-                                                      <th>Cons(Mtr/Nos)</th>
+                                                      <th>Cons./Gmt (Mtr/Nos)</th>
                                                       <th>UOM</th>
-                                                      <th>Rate</th>
+                                                      <th>Per Pcs Cost</th>
                                                       <th>Wastage %</th>
-                                                      <th>BOM Qty</th>
-                                                      <th>Total Amount</th>
+                                                      <th>Qty</th>
+                                                      <th>Amount</th>
                                                       <th>Remark</th>
                                                       <th>Add</th>
                                                       <th>Remove</th>
@@ -861,11 +861,11 @@
                                                    $ItemList2= DB::table('item_master')->where('delflag','=', '0')->where('class_id','=', $List->class_id)->get(); 
                                                    @endphp
                                                    <tr>
-                                                      <td><input type="text" name="id" value="@php echo $no; @endphp" id="id" style="width:50px;" readonly/>
-                                                         <input type="hidden" name="sr_no_sewing_trims[]" value="@php echo $no; @endphp" id="sr_no_sewing_trims" style="width:50px;"/>
+                                                      <td><input type="text" name="id" value="{{$no}}" id="id" style="width:50px;" readonly/>
+                                                         <input type="hidden" name="sr_no_sewing_trims[]" value="{{ $no}}" id="sr_no_sewing_trims" style="width:50px;"/>
                                                       </td>
                                                       <td>
-                                                         <select name="class_ids[]"  class="select2" id="class_ids" style="width:200px; height:30px;" required  onchange="CalculateQtyRowPros10(this)" @php if($List->item_count>0){ echo 'disabled'; } @endphp>
+                                                         <select name="class_ids[]"  class="select2" id="class_ids" style="width:200px; height:30px;" required  onchange="CalculateQtyRowPros10(this)" @if($List->item_count>0){{ 'disabled' }} @endif>
                                                          <option value="">--Classification--</option>
                                                          @foreach($ClassList2 as  $row)
                                                          {
@@ -877,7 +877,7 @@
                                                          </select>
                                                       </td>
                                                       <td>
-                                                         <select name="item_codes[]"  onchange="checkDuplicateItemGeneric(this, 'footable_3', 'item_codes[]')" class="select2" id="item_codes" style="width:270px; height:30px;" required @php if($List->item_count>0){ echo 'disabled'; } @endphp>
+                                                         <select name="item_codes[]"  onchange="checkDuplicateItemGeneric(this, 'footable_3', 'item_codes[]')" class="select2" id="item_codes" style="width:270px; height:30px;" required @if($List->item_count>0) {{'disabled'}} @endif>
                                                          <option value="">--Item List--</option>
                                                          @foreach($ItemList2 as  $row)
                                                          {
@@ -890,7 +890,7 @@
                                                       </td>
                                                       <td><input type="text" name="descriptions[]" value="{{$List->description}}" id="descriptions" style="width:200px; height:30px;" readOnly /></td>
                                                       <td>
-                                                         <select name="color_ids[][]"   id="color_ids" style="width:300px; height:140px;"   multiple @php if($List->item_count>0){ echo 'disabled'; } @endphp>
+                                                         <select name="color_ids[][]"   id="color_ids" style="width:300px; height:140px;"   multiple @if($List->item_count>0){{'disabled'}} @endif>
                                                          <option value="">--Color List--</option>
                                                          @foreach($ColorList as  $row)
                                                          {
@@ -903,7 +903,7 @@
                                                          <input type="hidden" name="color_arrays[]" value="{{$List->color_id}}" id="color_arrays" style="width:80px; height:30px;" readOnly />
                                                       </td>
                                                       <td>
-                                                         <select name="size_ids[][]"  id="size_ids" style="width:200px; height:140px;" required multiple @php if($List->item_count>0){ echo 'disabled'; } @endphp> 
+                                                         <select name="size_ids[][]"  id="size_ids" style="width:200px; height:140px;" required multiple @if($List->item_count>0){{ 'disabled' }} @endif> 
                                                          <option value="">--Size List--</option>
                                                          @php $size_ids = explode(',', $List->size_array);   @endphp
                                                          @foreach($SizeDetailList as  $row)
@@ -929,8 +929,8 @@
                                                             @endforeach
                                                          </select>
                                                       </td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->rate_per_unit}}" @endif   name="rate_per_units[]" value="{{$List->rate_per_unit}}" id="rate_per_units" style="width:80px; height:30px;"  @php if($List->item_count>0){ echo 'readOnly'; } @endphp/></td>
-                                                      <td><input type="number" step="any" name="wastages[]" value="{{$List->wastage}}" min="0" max="{{$List->wastage}}" id="wastages" style="width:80px; height:30px;" required  @php if($List->item_count>0){ echo 'readOnly'; } @endphp/></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->rate_per_unit}}" @endif   name="rate_per_units[]" value="{{$List->rate_per_unit}}" id="rate_per_units" style="width:80px; height:30px;"  @if($List->item_count>0){{'readOnly'}} @endif/></td>
+                                                      <td><input type="number" step="any" name="wastages[]" value="{{$List->wastage}}" min="0" max="{{$List->wastage}}" id="wastages" style="width:80px; height:30px;" required  @if($List->item_count>0){{ 'readOnly' }} @endif/></td>
                                                       <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->bom_qty}}"  @endif name="bom_qtys[]" value="{{$List->bom_qty}}" id="bom_qtys" style="width:80px; height:30px;" readOnly/>
                                                          <input type="hidden" name="bom_qtys1[]" value="{{$List->item_qty}}" id="bom_qtys1" style="width:80px; height:30px;" readOnly/>
                                                          <input type="hidden" name="bom_qtys_expect[]" value="0" id="bom_qtys_expect1" style="width:80px; height:30px;" readOnly/>
@@ -1048,12 +1048,12 @@
                                                       <th>Description</th>
                                                       <th>Garment Color</th>
                                                       <th>Size</th>
-                                                      <th>Cons(Mtr/Nos)</th>
+                                                      <th>Cons./Gmt (Mtr/Nos)</th>
                                                       <th>UOM</th>
-                                                      <th>Rate</th>
+                                                      <th>Per Pcs Cost</th>
                                                       <th>Wastage %</th>
-                                                      <th>BOM Qty</th>
-                                                      <th>Total Amount</th>
+                                                      <th>Qty</th>
+                                                      <th>Amount</th>
                                                       <th>Remark</th>
                                                       <th>Add</th>
                                                       <th>Remove</th>
@@ -1078,29 +1078,23 @@
                                                    @endphp
                                                    <tr>
                                                       <td><input type="text" name="idss" value="{{ $no }}" id="id" style="width:50px;" readonly/>
-                                                         <input type="hidden" name="sr_no_packing_trims[]" value="@php echo $no; @endphp" id="sr_no_packing_trims" style="width:50px;"/>
+                                                         <input type="hidden" name="sr_no_packing_trims[]" value="{{$no}}" id="sr_no_packing_trims" style="width:50px;"/>
                                                       </td>
                                                       <td>
-                                                         <select name="class_idss[]"  class="select2" id="class_idss" style="width:200px; height:30px;" required onchange="CalculateQtyRowPros11(this);" @php if($List->item_count>0){ echo 'disabled'; } @endphp>
+                                                         <select name="class_idss[]"  class="select2" id="class_idss" style="width:200px; height:30px;" required onchange="CalculateQtyRowPros11(this);" @if($List->item_count>0){{'disabled'}}@endif>
                                                          <option value="">--Classification--</option>
                                                          @foreach($ClassList3 as  $row)
-                                                         {
                                                          <option value="{{ $row->class_id }}"
-                                                         {{ $row->class_id == $List->class_id ? 'selected="selected"' : '' }}
-                                                         >{{ $row->class_name }}</option>
-                                                         }
+                                                         {{ $row->class_id == $List->class_id ? 'selected="selected"' : '' }}>{{ $row->class_name }}</option>
                                                          @endforeach
                                                          </select>
                                                       </td>
                                                       <td>
-                                                         <select name="item_codess[]"  onchange="checkDuplicateItemGeneric(this, 'footable_4', 'item_codess[]')" class="item_packing_trims id select2" id="item_codess" style="width:270px; height:30px;" required @php if($List->item_count>0){ echo 'disabled'; } @endphp>
+                                                         <select name="item_codess[]"  onchange="checkDuplicateItemGeneric(this, 'footable_4', 'item_codess[]')" class="item_packing_trims id select2" id="item_codess" style="width:270px; height:30px;" required @if($List->item_count>0) {{'disabled'}} @endif>
                                                          <option value="">--Item List--</option>
                                                          @foreach($ItemList3 as  $row)
-                                                         {
                                                          <option value="{{ $row->item_code }}"
-                                                         {{ $row->item_code == $List->item_code ? 'selected="selected"' : '' }}
-                                                         >({{$row->item_code}}) {{ $row->item_name }}</option>
-                                                         }
+                                                         {{ $row->item_code == $List->item_code ? 'selected="selected"' : '' }}>({{$row->item_code}}) {{ $row->item_name }}</option>
                                                          @endforeach
                                                          </select>
                                                       </td>
@@ -1108,29 +1102,21 @@
                                                          <input type="text" name="descriptionss[]" value="{{$List->description}}" id="descriptionss" style="width:200px; height:30px;" readOnly />
                                                       </td>
                                                       <td>
-                                                         <select name="color_idss[][]"   id="color_idss" style="width:300px; height:140px;" required multiple @php if($List->item_count>0){ echo 'disabled'; } @endphp>
+                                                         <select name="color_idss[][]"   id="color_idss" style="width:300px; height:140px;" required multiple @if($List->item_count>0){{'disabled'}} @endif>
                                                          <option value="">--Color List--</option>
                                                          @php $color_ids = explode(',', $List->color_id);   @endphp
                                                          @foreach($ColorList as  $row)
-                                                         {
-                                                         <option value="{{ $row->color_id }}"
-                                                         @if(in_array($row->color_id, $color_ids)) selected @endif  
-                                                         >{{ $row->color_name }}</option>
-                                                         }
+                                                         <option value="{{ $row->color_id }}"@if(in_array($row->color_id, $color_ids)) selected @endif  >{{ $row->color_name }}</option>
                                                          @endforeach
                                                          </select>
                                                          <input type="hidden" name="color_arrayss[]" value="{{$List->color_id}}" id="color_arrayss" style="width:80px; height:30px;" required />
                                                       </td>
                                                       <td>
-                                                         <select name="size_idss[][]"   id="size_idss" style="width:200px; height:140px;" required multiple @php if($List->item_count>0){ echo 'disabled'; } @endphp>
+                                                         <select name="size_idss[][]"   id="size_idss" style="width:200px; height:140px;" required multiple @if($List->item_count>0){{ 'disabled'}} @endif>
                                                          <option value="">--Size List--</option>
                                                          @php $size_idss = explode(',', $List->size_array);   @endphp
                                                          @foreach($SizeDetailList as  $row)
-                                                         {
-                                                         <option value="{{ $row->size_id }}"
-                                                         @if(in_array($row->size_id, $size_idss)) selected @endif  
-                                                         >{{ $row->size_name }}</option>
-                                                         }
+                                                         <option value="{{ $row->size_id }}" @if(in_array($row->size_id, $size_idss)) selected @endif >{{ $row->size_name }}</option>
                                                          @endforeach
                                                          </select>
                                                          <input type="hidden" name="size_arrayss[]" value="{{$List->size_array}}" id="size_arrayss" style="width:80px; height:30px;" readOnly/>
@@ -1140,11 +1126,8 @@
                                                          <select name="unit_idss[]"  id="unit_idss" style="width:100px; height:30px;" disabled>
                                                             <option value="">--Unit List--</option>
                                                             @foreach($UnitList as  $row)
-                                                            {
                                                             <option value="{{ $row->unit_id }}"
-                                                            {{ $row->unit_id == $List->unit_id ? 'selected="selected"' : '' }}
-                                                            >{{ $row->unit_name }}</option>
-                                                            }
+                                                            {{ $row->unit_id == $List->unit_id ? 'selected="selected"' : '' }}>{{ $row->unit_name }}</option>
                                                             @endforeach
                                                          </select>
                                                       </td>
@@ -1157,13 +1140,14 @@
                                                       <td><input type="number" step="any" class="PACKING"   name="total_amountss[]" value="{{$List->total_amount}}" id="total_amountss" style="width:80px; height:30px;" readOnly/></td>
                                                       <td><input type="text"      name="remarkss[]" value="{{$List->remark}}" id="remarkss" style="width:80px; height:30px;"   /></td>
                                                       <td><input type="button"  readOnly name="Pbutton[]" class="btn btn-warning pull-left" value="+"></td>
-                                                      <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone3(this);" value="X"  @php if($List->item_count > 0 || $List->item_count_pack>0 ){ echo 'disabled'; } @endphp></td>
+                                                      <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone3(this);" value="X"  @if($List->item_count > 0 || $List->item_count_pack>0 ){{'disabled'}} @endif></td>
                                                    </tr>
                                                    @php
                                                    $oldPackingTrimsArray[]=['sr_no'=>$no,'class_id'=>$List->class_id,'item_code'=>$List->item_code,
                                                    'color_id'=>implode(',', $color_ids),'size_array'=>implode(',', $size_idss),'consumption'=>$List->consumption,'rate_per_unit'=>$List->rate_per_unit,
                                                    'wastage'=>$List->wastage,'bom_qty'=>$List->bom_qty,'total_amount'=>$List->total_amount,'remark'=>$List->remark];
-                                                   $no=$no+1;  @endphp
+                                                   $no=$no+1;  
+                                                   @endphp
                                                    @endforeach
                                                    <input type="hidden" name="packing_trims_old_data" value="{{  htmlspecialchars(json_encode($oldPackingTrimsArray), ENT_QUOTES, 'UTF-8'); }}" id="packing_trims_old_data"/>
                                                    @else
@@ -1173,9 +1157,7 @@
                                                          <select name="class_idss[]"  class="select2" id="class_idss" style="width:200px; height:30px;" required onchange="CalculateQtyRowPros11(this);" >
                                                             <option value="">--Classification--</option>
                                                             @foreach($ClassList3 as  $row)
-                                                            {
                                                             <option value="{{ $row->class_id }}">{{ $row->class_name }}</option>
-                                                            }
                                                             @endforeach
                                                          </select>
                                                       </td>
@@ -1183,9 +1165,7 @@
                                                          <select name="item_codess[]"  onchange="checkDuplicateItemGeneric(this, 'footable_4', 'item_codess[]')" class="item_packing_trims select2" id="item_codess" style="width:270px; height:30px;" required>
                                                             <option value="">--Item List--</option>
                                                             @foreach($ItemList3 as  $row)
-                                                            {
                                                             <option value="{{ $row->item_code }}">({{$row->item_code}}) {{ $row->item_name }}</option>
-                                                            }
                                                             @endforeach
                                                          </select>
                                                       </td>
@@ -1194,10 +1174,8 @@
                                                          <select name="color_idss[][]"   id="color_idss" style="width:300px; height:100px;" required multiple>
                                                             <option value="">--Color List--</option>
                                                             @foreach($ColorList as  $row)
-                                                            {
                                                             <option value="{{ $row->color_id }}"
                                                                >{{ $row->color_name }}</option>
-                                                            }
                                                             @endforeach
                                                          </select>
                                                          <input type="hidden" name="color_arrayss[]" value="0" id="color_arrayss" style="width:80px; height:30px;" required />
@@ -1206,10 +1184,8 @@
                                                          <select name="size_idss[][]"   id="size_idss" style="width:200px; height:140px;" required multiple>
                                                             <option value="">--Size List--</option>
                                                             @foreach($SizeDetailList as  $row)
-                                                            {
                                                             <option value="{{ $row->size_id }}"
                                                                >{{ $row->size_name }}</option>
-                                                            }
                                                             @endforeach
                                                          </select>
                                                          <input type="hidden" name="size_arrayss[]" value="0" id="size_arrayss" style="width:80px; height:30px;" required />
@@ -1219,9 +1195,7 @@
                                                          <select name="unit_idss[]"   id="unit_idss" style="width:100px; height:30px;" disabled>
                                                             <option value="">--Unit List--</option>
                                                             @foreach($UnitList as  $row)
-                                                            {
                                                             <option value="{{ $row->unit_id }}">{{ $row->unit_name }}</option>
-                                                            }
                                                             @endforeach
                                                          </select>
                                                       </td>
@@ -1278,7 +1252,8 @@
                      </div>
                      @php  
                      $userId=Session::get('userId');
-                     if($userId==1){   @endphp
+                     @endphp
+                     @if($userId==1) 
                      <div class="col-md-3">
                         <div class="mb-3">
                            <label for="is_approved" class="form-label">Do you want to Approve this BOM?</label>
@@ -1293,7 +1268,7 @@
                            </select>
                         </div>
                      </div>
-                     @php } @endphp
+                    @endif
                   </div>
                   <div class="row">
                      <div class="col-sm-8">
@@ -2561,8 +2536,21 @@
         hiddenInput.value = indexcone;
         cell1.appendChild(hiddenInput);
     
+        
+        // ======== Class Select ========
+        var cell4 = row.insertCell(1);
+        var y = $("#class_id").clone();
+        y.attr({
+            "id": "class_id" + indexcone,
+            "name": "class_id[]"
+        }).val("");
+        y.removeAttr('disabled');
+        y.width(200);
+        y.appendTo(cell4);
+    
+
         // ======== Item Code Select ========
-        var cell2 = row.insertCell(1);
+        var cell2 = row.insertCell(2);
 
         // Destroy select2 before cloning
         rows1.find('select[name^="item_code[]"]').select2('destroy');
@@ -2593,24 +2581,13 @@
 
     
         // ======== Color ========
-        var cell3 = row.insertCell(2);
+        var cell3 = row.insertCell(3);
         var t3 = document.createElement("textarea");
         t3.style = "display: table-cell; width:200px; height:30px;";
         t3.id = "colors" + indexcone;
         t3.name = "colors[]";
         t3.value = "";
         cell3.appendChild(t3);
-    
-        // ======== Class Select ========
-        var cell4 = row.insertCell(3);
-        var y = $("#class_id").clone();
-        y.attr({
-            "id": "class_id" + indexcone,
-            "name": "class_id[]"
-        }).val("");
-        y.removeAttr('disabled');
-        y.width(200);
-        y.appendTo(cell4);
     
         // ======== Description ========
         var cell5 = row.insertCell(4);
