@@ -747,7 +747,7 @@ function updateFooterTotals() {
     // Update the footer cell
     $(table.column(colIdx).footer()).html(formattedTotal);
   });
-} 
+}
 
 // Recalculate when DataTable is redrawn (after search/filter/sort)
 $('#dt').on('draw.dt', function() {
