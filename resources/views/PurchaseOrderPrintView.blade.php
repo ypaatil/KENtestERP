@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Ken Enterprises Pvt. Ltd.</title>
+    <title>Purchase Order Page</title>
     <!-- Web Fonts -->
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' type='text/css'>
     <!-- Stylesheets -->
@@ -457,30 +457,6 @@
                 border-right: 1px solid #000 !important;
             }
 
-
-
-            /* .terms-conditions {
-                 margin: 0 auto;
-            background: white;
-            padding: 30px;
-                border: 2px solid #000 !important;
-               
-               
-                max-width: 100%;
-                height: 100vh;
-               
-            } */
-            /* 
-                 .second-Page
-                 {
-                      background: #fff !important;
-                       border: 2px solid #000 !important;
-                       max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-
-                 } */
             .terms-conditions {
                 clear: both !important;
                 /* force it below any floated elements */
@@ -679,7 +655,7 @@
 
                     <div class="p-2">
                         <p class="">We are pleased to place an order to you, with the reference to above. You are requested to read the terms & specifcation
-                            carefuly and Supply Material Accordingly.</p>
+                            carefully and Supply Material Accordingly.</p>
                     </div>
 
                     <table class="table g-0  table-bordered first table-sm text-center" style="margin-top: -15px;">
@@ -861,11 +837,11 @@
                             <tr>
                                 <td class="text-end">{{ $rowtax->hsn_code}}</td>
                                 <td class="text-end">{{ number_format($rowtax->gross_amount, 2) }}</td>
-                                <td class="text-end">{{ number_format($rowtax->pur_cgst, 2) }}%</td>
+                                <td class="text-end">{{ number_format($rowtax->pur_cgst, 2) }} %</td>
                                 <td class="text-end">{{ number_format($rowtax->camt, 2) }}</td>
-                                <td class="text-end">{{ number_format($rowtax->pur_sgst,2)}}%</td>
+                                <td class="text-end">{{ number_format($rowtax->pur_sgst,2)}} %</td>
                                 <td class="text-end">{{ number_format($rowtax->samt, 2) }}</td>
-                                <td class="text-end">{{ number_format($rowtax->pur_igst,2)}}%</td>
+                                <td class="text-end">{{ number_format($rowtax->pur_igst,2)}} %</td>
                                 <td class="text-end">{{ number_format($rowtax->iamt, 2) }}</td>
                                 <td class="text-end">{{ number_format($rowtax->camt + $rowtax->samt + $rowtax->iamt, 2) }}</td>
                                 <!-- <td class="text-start">TOTAL TAX</td> -->
@@ -989,7 +965,7 @@
             var printContents = document.getElementById(divId).innerHTML;
             var originalContents = document.body.innerHTML;
             document.body.innerHTML = printContents;
-            window.print();
+           
             document.body.innerHTML = originalContents;
             location.reload();
         }
