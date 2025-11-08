@@ -207,6 +207,23 @@ class FabricOutwardReportController extends Controller
         return view('FabricOutwardPrint', compact('FabricOutwardMaster', 'FirmDetail'));
     }
 
+     public function FabricOutwardPrintView($fout_code)
+    {
+        $FirmDetail =  DB::table('firm_master')->first();
+        $fout_code = base64_decode($fout_code);
+        //   DB::enableQueryLog();
+
+        $FabricOutwardMaster = FabricOutwardModel::leftJoin('usermaster', 'usermaster.userId', '=', 'fabric_outward_master.userId')
+            ->leftJoin('ledger_master', 'ledger_master.Ac_code', '=', 'fabric_outward_master.vendorId')
+            ->leftJoin('vendor_purchase_order_master', 'vendor_purchase_order_master.vpo_code', '=', 'fabric_outward_master.vpo_code')
+            ->where('fabric_outward_master.fout_code', $fout_code)
+            ->get(['fabric_outward_master.*', 'usermaster.username', 'ledger_master.Ac_name', 'vendor_purchase_order_master.sales_order_no', 'ledger_master.gst_no', 'ledger_master.pan_no', 'ledger_master.state_id', 'ledger_master.address']);
+
+
+
+        return view('FabricOutwardPrintView', compact('FabricOutwardMaster', 'FirmDetail'));
+    }
+
 
 
     public function FabricOutwardRollsPrint($fout_code)
