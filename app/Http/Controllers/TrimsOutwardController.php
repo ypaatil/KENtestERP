@@ -2563,6 +2563,21 @@ public function getItemDescription(Request $request)
       
     }
 
+            public function TrimOutwardStandardPrintView($trimCode)
+    {
+        
+         $FirmDetail =  DB::table('firm_master')->first();
+         $TrimsOutwardMaster = TrimsOutwardMasterModel::join('usermaster', 'usermaster.userId', '=', 'trimOutwardMaster.userId')
+         ->join('ledger_master', 'ledger_master.Ac_code', '=', 'trimOutwardMaster.vendorId')
+                 ->join('fg_master','fg_master.fg_id','=','trimOutwardMaster.fg_id')
+    
+         ->where('trimOutwardMaster.trimOutCode', $trimCode)
+         ->get(['trimOutwardMaster.*','usermaster.username','ledger_master.Ac_name', 'ledger_master.state_id','ledger_master.gst_no','ledger_master.pan_no','ledger_master.state_id',
+         'ledger_master.address', 'fg_master.fg_name']);
+         return view('TrimsOutwardPrintView', compact('TrimsOutwardMaster','FirmDetail'));
+      
+    }
+
     public function TrimOutwardStandardPrint2($trimCode)
     {
         
@@ -2573,6 +2588,21 @@ public function getItemDescription(Request $request)
          ->where('trimOutwardMaster.trimOutCode', $trimCode)
          ->get(['trimOutwardMaster.*','usermaster.username','ledger_master.Ac_name', 'ledger_master.state_id','ledger_master.gst_no','ledger_master.pan_no','ledger_master.state_id','ledger_master.address']);
          return view('TrimsOutwardStandardPrint2', compact('TrimsOutwardMaster','FirmDetail'));
+      
+    }
+    
+           public function TrimOutwardStandardPrintView2($trimCode)
+    {
+        
+         $FirmDetail =  DB::table('firm_master')->first();
+         $TrimsOutwardMaster = TrimsOutwardMasterModel::join('usermaster', 'usermaster.userId', '=', 'trimOutwardMaster.userId')
+         ->join('ledger_master', 'ledger_master.Ac_code', '=', 'trimOutwardMaster.vendorId')
+         ->join('fg_master','fg_master.fg_id','=','trimOutwardMaster.fg_id')
+    
+         ->where('trimOutwardMaster.trimOutCode', $trimCode)
+         ->get(['trimOutwardMaster.*','usermaster.username','ledger_master.Ac_name', 'ledger_master.state_id','ledger_master.gst_no','ledger_master.pan_no',
+         'ledger_master.state_id','ledger_master.address', 'fg_master.fg_name']);
+         return view('TrimsOutwardPrintView2', compact('TrimsOutwardMaster','FirmDetail'));
       
     }
 
