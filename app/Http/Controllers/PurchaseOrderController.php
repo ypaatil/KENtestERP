@@ -1116,7 +1116,7 @@ class PurchaseOrderController extends Controller
         foreach ($bom_types as $cat_id) 
         {
             $cat_id = (int) $cat_id;
-    
+  
             if($po_type_id != 2)
             {
                     if ($cat_id == 2) {
@@ -1140,6 +1140,16 @@ class PurchaseOrderController extends Controller
                             ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
                             ->groupBy('t.class_id', 'c.class_name');
                         $queries[] = $q;
+                    }
+                    elseif ($cat_id == 1) {
+                                                 
+                        $q = DB::table('classification_master as t')
+                        ->select('t.class_id', 't.class_name', DB::raw("$cat_id as cat_id"))
+                        ->where('t.cat_id', '=', $cat_id)
+                        ->groupBy('t.class_id', 't.class_name');
+
+                        $queries[] = $q;
+                         
                     }
             }
             else

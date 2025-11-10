@@ -164,39 +164,63 @@
     </div>
 </div>
 
-<style>
-  
- .filter-icon {
-    cursor: pointer;
-    margin-left: 6px;
-    color: #555;
-  }
+ <style>
+  table.dataTable thead th { position: relative; }
+  .filter-icon { cursor: pointer; margin-left: 6px; }
+
+  /* Dropdown */
   .filter-menu {
     display: none;
     position: absolute;
+    top: 100%; left: 0;
+    z-index: 200;
     background: #fff;
     border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    z-index: 1000;
-    top: 100%;
-    left: 0;
-    width: 250px;
+    padding: 8px 0 40px 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    width: 260px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15);
   }
-  .filter-menu input[type="text"] {
-    width: 100%;
-    padding: 4px 6px;
-    margin-bottom: 6px;
-    border: 1px solid #ccc;
+
+  .filter-menu label { display: block; margin: 3px 0; cursor: pointer; }
+  .filter-search {
+    width: 90%;
+    margin: 0 0%;
+    padding: 4px;
+    box-sizing: border-box;
+    border: 1px solid #ddd;
+  }
+
+  /* Sticky Apply / Clear */
+  .filter-actions {
+    position: sticky;
+    bottom: 0;
+    background: #f8f8f8;
+    padding: 6px;
+    border-top: 1px solid #ccc;
+    text-align: right;
+  }
+  .filter-actions button {
+    margin-left: 6px;
+    padding: 3px 8px;
+    border: 1px solid #aaa;
+    background: #eee;
+    cursor: pointer;
     border-radius: 4px;
   }
-  .filter-options {
-    max-height: 150px;
-    overflow-y: auto;
-    margin-bottom: 8px;
-  }
-   
+
+  .filter-actions button:hover { background: #ddd; }
+
+  /* Tree Style */
+  .tree-toggle { cursor: pointer; font-weight: bold; color: #007bff; margin-right: 6px; }
+  .tree-line { display: flex; align-items: center; gap: 4px; }
+
+  .month-list, .day-list { margin-left: 18px; }
+  .day-list { margin-left: 32px; }
+  .collapsed { display: none; }
+
+  tfoot { background-color: #f3f3f3; font-weight: bold; }
 </style>
 
 <div class="row">
@@ -208,10 +232,10 @@
                   <thead>
                      <tr class="text-center" >
                         <th>Sr No </th>
-                        <th>Invoice No <span class="filter-icon">🔽</span></th>
-                        <th>Sale Head <span class="filter-icon">🔽</span></th>
-                        <th>Invoice Date <span class="filter-icon">🔽</span></th>
-                        <th>Buyer <span class="filter-icon">🔽</span></th>
+                        <th>Invoice No <span class="filter-icon">🔽</span><div class="filter-menu invno-menu"></div></th>
+      <th>Sale Head <span class="filter-icon">🔽</span><div class="filter-menu salehead-menu"></div></th>
+      <th>Invoice Date <span class="filter-icon">🔽</span><div class="filter-menu date-menu"></div></th>
+      <th>Buyer <span class="filter-icon">🔽</span><div class="filter-menu buyer-menu"></div></th>      
                         <th>Total Qty</th>
                         <th>Total Min</th>
                         <th>CMOHP</th>
@@ -393,6 +417,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
 <script>
     
     $(document).ready(function() 
@@ -434,8 +459,10 @@
         const formattedDate = `${day}-${month}-${year}`;
         const exportTitle = 'Sales Report (' + formattedDate + ')';
         
-        $('#dt').DataTable({
+       const table = $('#dt').DataTable({
             destroy: true,
+            paging: true,
+            info: false,
             dom: 'Bfrtip',
             buttons: [
                 {
@@ -476,302 +503,217 @@
             ]
 
         });
+
+
+        // New script added 10-11-2025
+ 
+
+  function unique(arr){ return [...new Set(arr)].sort(); }
+
+  buildAllMenus();
+  updateFooterTotals();
+
+  function buildAllMenus() {
+    buildSimpleFilter('.invno-menu', 1);
+    buildSimpleFilter('.salehead-menu', 2);
+    buildDateFilter();
+    buildSimpleFilter('.buyer-menu', 4);
+  }
+
+  function buildSimpleFilter(selector, colIndex) {
+    const visible = table.rows({ search: 'applied' }).data().toArray();
+    const values = unique(visible.map(r=>r[colIndex]));
+    let html = `
+      <input type='text' class='filter-search' placeholder='Search...'>
+      <label><input type='checkbox' class='select-all' checked> Select All</label>
+      <div class='options'>`;
+    values.forEach(v=>{
+      html += `<label><input type='checkbox' class='opt' value='${v}' checked> ${v}</label>`;
     });
-</script>
+    html += `</div>
+      <div class='filter-actions'>
+        <button class='apply-btn'>Apply</button>
+        <button class='clear-btn'>Clear</button>
+      </div>`;
+    $(selector).html(html);
+  }
 
+  function buildDateFilter(){
+    const visible = table.rows({ search: 'applied' }).data().toArray();
+    const dates = unique(visible.map(r=>r[3]));
+    const tree = {};
 
-
-<script>
-$(document).ready(function() {
-  // ASSUME: Your DataTable already initialized above and assigned to `table` or re-get it here:
-  var table = $('#dt').DataTable();
-
-  // --- Config ---
-  var dateColIndex = 3; // Invoice Date column index (0-based) - update if different
-
-  // Create a filter menu container inside the header cell for Invoice Date
-  var $dateTh = $('#dt thead th').eq(dateColIndex);
-  var $dateMenu = $('<div class="filter-menu" style="min-width:260px;"></div>');
-  $dateTh.css('position','relative').append($dateMenu);
-
-  // Build UI: Year / Month / Date sections with checkboxes
-  var $yearWrap = $('<div><strong>Years</strong><div class="year-list" style="max-height:120px; overflow:auto;"></div></div>').appendTo($dateMenu);
-  var $monthWrap = $('<div style="margin-top:8px;"><strong>Months</strong><div class="month-list" style="max-height:120px; overflow:auto;"></div></div>').appendTo($dateMenu);
-  var $dateWrap = $('<div style="margin-top:8px;"><strong>Dates</strong><div class="date-list" style="max-height:140px; overflow:auto;"></div></div>').appendTo($dateMenu);
-  var $btnArea = $('<div class="d-flex justify-content-between" style="margin-top:8px;">' +
-                    '<button class="btn btn-sm btn-primary apply-date-filter">Apply</button>' +
-                    '<button class="btn btn-sm btn-secondary clear-date-filter">Clear</button>' +
-                    '</div>').appendTo($dateMenu);
-
-  // Collect unique dates from the column and group Year -> Month -> Dates
-  var rawDates = table.column(dateColIndex).data().toArray();
-  var grouped = {}; // { year: { monthIndex: { monthName: [dateStrs...] } } }
-
-  rawDates.forEach(function(d) {
-    if (!d) return;
-    // Input format: 25-Apr-2011  (PHP date("d-M-Y"))
-    var m = moment(d, 'DD-MMM-YYYY', true); // strict parse
-    if (!m.isValid()) {
-      // try some other common formats if needed
-      m = moment(d, ['YYYY-MM-DD','DD/MM/YYYY','D-M-YYYY'], true);
-      if (!m.isValid()) return;
-    }
-    var y = m.format('YYYY');
-    var moIndex = parseInt(m.format('MM'), 10); // 1..12
-    var moName = m.format('MMMM'); // e.g., "April"
-    var dateFull = m.format('DD-MMM-YYYY'); // keep same format like shown
-    grouped[y] = grouped[y] || {};
-    grouped[y][moIndex] = grouped[y][moIndex] || { name: moName, dates: new Set() };
-    grouped[y][moIndex].dates.add(dateFull);
-  });
-
-  // Sort years descending (newest first) for better UX, then months ascending
-  var years = Object.keys(grouped).sort(function(a,b){ return b - a; });
-
-  years.forEach(function(y) {
-    var $yDiv = $('<div style="margin-bottom:6px;"></div>');
-    $yDiv.append('<div><label><input type="checkbox" class="year-check" data-year="' + y + '"> <b>' + y + '</b></label></div>');
-    var months = Object.keys(grouped[y]).map(Number).sort(function(a,b){ return a - b; });
-    months.forEach(function(mi) {
-      var mo = grouped[y][mi];
-      var $moDiv = $('<div style="margin-left:14px;"></div>');
-      $moDiv.append('<div><label><input type="checkbox" class="month-check" data-year="'+y+'" data-month="'+mi+'"> ' + mo.name + '</label></div>');
-      // Dates under month
-      var dateArr = Array.from(mo.dates).sort(function(a,b){
-        var ma = moment(a,'DD-MMM-YYYY'), mb = moment(b,'DD-MMM-YYYY');
-        return ma - mb;
-      });
-      dateArr.forEach(function(dt) {
-        var $dtDiv = $('<div style="margin-left:28px;"><label><input type="checkbox" class="date-check" data-year="'+y+'" data-month="'+mi+'" value="' + dt + '"> ' + dt + '</label></div>');
-        $moDiv.append($dtDiv);
-      });
-      $yDiv.append($moDiv);
-    });
-    $yearWrap.find('.year-list').append($yDiv);
-  });
-
-  // --- Hierarchical checkbox behavior ---
-  $dateMenu.on('change', '.year-check', function() {
-    var year = $(this).data('year');
-    var checked = $(this).is(':checked');
-    // check/uncheck months and dates for this year
-    $dateMenu.find('.month-check[data-year="'+year+'"]').prop('checked', checked);
-    $dateMenu.find('.date-check[data-year="'+year+'"]').prop('checked', checked);
-  });
-
-  $dateMenu.on('change', '.month-check', function() {
-    var year = $(this).data('year');
-    var month = $(this).data('month');
-    var checked = $(this).is(':checked');
-    $dateMenu.find('.date-check[data-year="'+year+'"][data-month="'+month+'"]').prop('checked', checked);
-
-    // if all months under a year are checked -> check year; if none -> uncheck
-    var allMonths = $dateMenu.find('.month-check[data-year="'+year+'"]');
-    var allChecked = allMonths.length && allMonths.filter(':checked').length === allMonths.length;
-    $dateMenu.find('.year-check[data-year="'+year+'"]').prop('checked', allChecked);
-  });
-
-  $dateMenu.on('change', '.date-check', function() {
-    var year = $(this).data('year');
-    var month = $(this).data('month');
-    // if all dates under month are checked -> check month; else uncheck
-    var allDates = $dateMenu.find('.date-check[data-year="'+year+'"][data-month="'+month+'"]');
-    var allChecked = allDates.length && allDates.filter(':checked').length === allDates.length;
-    $dateMenu.find('.month-check[data-year="'+year+'"][data-month="'+month+'"]').prop('checked', allChecked);
-
-    // adjust year checkbox if all months checked
-    var allMonths = $dateMenu.find('.month-check[data-year="'+year+'"]');
-    var monthsChecked = allMonths.filter(':checked').length;
-    $dateMenu.find('.year-check[data-year="'+year+'"]').prop('checked', allMonths.length && monthsChecked === allMonths.length);
-  });
-
-  // Toggle menu when clicking the filter icon inside header
-  $dateTh.find('.filter-icon').off('click').on('click', function(e) {
-    e.stopPropagation();
-    $('.filter-menu').not($dateMenu).hide();
-    $dateMenu.toggle();
-  });
-
-  // Hide menu on outside click
-  $(document).on('click', function(e) {
-    if ($(e.target).closest('.filter-menu').length === 0 && $(e.target).closest('.filter-icon').length === 0) {
-      $('.filter-menu').hide();
-    }
-  });
-
-  // --- DataTables custom row filter for dates ---
-  $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
-    // only apply for this table
-    if (settings.nTable.id !== 'dt') return true;
-
-    var checkedDates = $dateMenu.find('.date-check:checked').map(function(){ return $(this).val(); }).get();
-    var checkedMonths = $dateMenu.find('.month-check:checked').map(function(){ return { y: $(this).data('year'), m: $(this).data('month') }; }).get();
-    var checkedYears = $dateMenu.find('.year-check:checked').map(function(){ return $(this).data('year'); }).get();
-
-    // if nothing selected -> allow row
-    if (!checkedDates.length && !checkedMonths.length && !checkedYears.length) {
-      return true;
-    }
-
-    var cell = data[dateColIndex] || '';
-    if (!cell) return false;
-    var m = moment(cell, 'DD-MMM-YYYY', true);
-    if (!m.isValid()) {
-      m = moment(cell, ['YYYY-MM-DD','DD/MM/YYYY','D-M-YYYY'], true);
-      if (!m.isValid()) return false;
-    }
-    var y = m.format('YYYY');
-    var mi = parseInt(m.format('MM'), 10);
-    var full = m.format('DD-MMM-YYYY');
-
-    // match exact date checkbox
-    if (checkedDates.length && checkedDates.indexOf(full) !== -1) return true;
-
-    // match month selection (year+month)
-    for (var i=0;i<checkedMonths.length;i++){
-      if (String(checkedMonths[i].y) === String(y) && parseInt(checkedMonths[i].m,10) === mi) return true;
-    }
-
-    // match year selection
-    if (checkedYears.indexOf(y) !== -1) return true;
-
-    return false;
-  });
-
-  // Apply & Clear buttons
-  $dateMenu.on('click', '.apply-date-filter', function() {
-    table.draw();
-    $dateMenu.hide();
-  });
-  $dateMenu.on('click', '.clear-date-filter', function() {
-    $dateMenu.find('input[type="checkbox"]').prop('checked', false);
-    table.search('').columns().search('').draw(); // clear column searches and redraw
-    $dateMenu.hide();
-  });
-
-  // ---------------------
-  // Keep your existing generic filters for other columns:
-  // We'll create checkbox-search menus for other columns (same structure as before)
-  // but avoid re-creating the date column menu.
-  $('#dt thead th').each(function(i) {
-    if (i === dateColIndex) return; // skip date column (already done)
-    var column = table.column(i);
-    var $th = $(this);
-    var $menu = $th.find('.filter-menu');
-    if ($menu.length === 0) {
-      $menu = $('<div class="filter-menu"></div>').appendTo($th);
-    }
-    // small search box
-    var $search = $('<input type="text" placeholder="Search..." class="form-control form-control-sm mb-1">').appendTo($menu);
-    var $options = $('<div class="filter-options" style="max-height:160px; overflow:auto;"></div>').appendTo($menu);
-    $options.append('<div><input type="checkbox" class="select-all"> <strong>Select All</strong></div>');
-    var unique = column.data().unique().sort();
-    unique.each(function(d) {
-      if (d === null || d === undefined || String(d).trim() === '') return;
-      // keep values trimmed and displayed
-      $options.append('<div><label><input type="checkbox" value="' + $('<div>').text(d).html() + '"> ' + d + '</label></div>');
+    dates.forEach(d=>{
+      const dt = new Date(d);
+      const y = dt.getFullYear();
+      const m = dt.toLocaleString('default',{month:'short'});
+      if(!tree[y]) tree[y] = {};
+      if(!tree[y][m]) tree[y][m] = [];
+      tree[y][m].push(d);
     });
 
-    // click icon to toggle
-    $th.find('.filter-icon').off('click').on('click', function(e) {
-      e.stopPropagation();
-      $('.filter-menu').not($menu).hide();
-      $menu.toggle();
-    });
-
-    // select all toggle
-    $options.on('change', '.select-all', function() {
-      var checked = $(this).is(':checked');
-      $options.find('input[type="checkbox"]').not(this).prop('checked', checked);
-    });
-
-    // search inside options
-    $search.on('keyup', function() {
-      var val = $(this).val().toLowerCase();
-      $options.children('div').each(function() {
-        var text = $(this).text().toLowerCase();
-        // keep the select-all row visible always
-        if ($(this).find('.select-all').length) { $(this).show(); return; }
-        $(this).toggle(text.indexOf(val) > -1);
-      });
-    });
-
-    // Apply / Clear controls (add if not exist)
-    if ($menu.find('.apply-filter').length === 0) {
-      var $btns = $('<div class="d-flex justify-content-between mt-2">' +
-        '<button class="btn btn-primary btn-sm apply-filter">Filter</button>' +
-        '<button class="btn btn-secondary btn-sm clear-filter">Clear</button>' +
-        '</div>').appendTo($menu);
-
-      $btns.find('.apply-filter').on('click', function() {
-        var selected = [];
-        $options.find('input[type="checkbox"]:checked').each(function() {
-          if (!$(this).hasClass('select-all')) selected.push($(this).val());
+    let html = `<input type='text' class='filter-search' placeholder='Search date...'>`;
+    Object.keys(tree).forEach(y=>{
+      html += `
+        <div class='year-block'>
+          <div class='tree-line'>
+            <span class='tree-toggle' data-target='year-${y}'>+</span>
+            <label><input type='checkbox' class='year-check' data-year='${y}' checked> ${y}</label>
+          </div>
+          <div class='month-list collapsed' id='year-${y}'>`;
+      Object.keys(tree[y]).forEach(m=>{
+        html += `
+          <div class='month-block'>
+            <div class='tree-line'>
+              <span class='tree-toggle' data-target='month-${y}-${m}'>+</span>
+              <label><input type='checkbox' class='month-check' data-year='${y}' data-month='${m}' checked> ${m}</label>
+            </div>
+            <div class='day-list collapsed' id='month-${y}-${m}'>`;
+        tree[y][m].forEach(d=>{
+          html += `<label><input type='checkbox' class='date-opt' data-year='${y}' data-month='${m}' value='${d}' checked> ${d}</label>`;
         });
-        column.search(selected.join('|'), true, false).draw();
-        $menu.hide();
+        html += `</div></div>`;
       });
+      html += `</div></div>`;
+    });
 
-      $btns.find('.clear-filter').on('click', function() {
-        $options.find('input[type="checkbox"]').prop('checked', false);
-        column.search('').draw();
-        $menu.hide();
-      });
+    html += `
+      <div class='filter-actions'>
+        <button class='apply-btn'>Apply</button>
+        <button class='clear-btn'>Clear</button>
+      </div>`;
+    $('.date-menu').html(html);
+  }
+
+  // === UI Events ===
+  $('.filter-icon').on('click', function(e){
+    e.stopPropagation();
+    $('.filter-menu').hide();
+    $(this).next('.filter-menu').toggle();
+  });
+  $(document).on('click', e=>{
+    if(!$(e.target).closest('.filter-menu, .filter-icon').length) $('.filter-menu').hide();
+  });
+  $(document).on('click', '.filter-menu', e=> e.stopPropagation());
+
+  $(document).on('input', '.filter-search', function(){
+    const val = $(this).val().toLowerCase();
+    $(this).closest('.filter-menu').find('label').each(function(){
+      $(this).toggle($(this).text().toLowerCase().includes(val));
+    });
+  });
+
+  $(document).on('change', '.select-all', function(){
+    $(this).closest('.filter-menu').find('.opt').prop('checked', this.checked);
+  });
+
+  $(document).on('click', '.tree-toggle', function(){
+    const id = $(this).data('target');
+    const block = $('#'+id);
+    if(block.hasClass('collapsed')){
+      block.removeClass('collapsed');
+      $(this).text('−');
+    } else {
+      block.addClass('collapsed');
+      $(this).text('+');
     }
   });
 
-});
+  $(document).on('change', '.year-check', function(){
+    const y = $(this).data('year');
+    $(`.month-check[data-year='${y}'], .date-opt[data-year='${y}']`).prop('checked', this.checked);
+  });
+  $(document).on('change', '.month-check', function(){
+    const y = $(this).data('year');
+    const m = $(this).data('month');
+    $(`.date-opt[data-year='${y}'][data-month='${m}']`).prop('checked', this.checked);
+    const allMonths = $(`.month-check[data-year='${y}']`);
+    $(`.year-check[data-year='${y}']`).prop('checked', allMonths.length === allMonths.filter(':checked').length);
+  });
+  $(document).on('change', '.date-opt', function(){
+    const y = $(this).data('year');
+    const m = $(this).data('month');
+    const allDates = $(`.date-opt[data-year='${y}'][data-month='${m}']`);
+    const allChecked = allDates.length === allDates.filter(':checked').length;
+    $(`.month-check[data-year='${y}'][data-month='${m}']`).prop('checked', allChecked);
+    const allMonths = $(`.month-check[data-year='${y}']`);
+    $(`.year-check[data-year='${y}']`).prop('checked', allMonths.length === allMonths.filter(':checked').length);
+  });
 
-$(document).ready(function () {
-  var table = $('#dt').DataTable();
-
-  // ✅ Columns you want to total (0-based)
-  var totalColumns = [5, 6, 7, 8, 9, 10, 11];
-
-  function parseNumber(v) {
-    if (v === null || v === undefined) return 0;
-    if (typeof v === 'number') return v;
-    var n = String(v).replace(/[^0-9.\-]+/g, '');
-    if (n === '') return 0;
-    return parseFloat(n) || 0;
-  }
-
-  function updateFooterTotals() {
-    totalColumns.forEach(function (colIdx) {
-      // ✅ Get ALL filtered data (not just current page)
-      var colData = table
-        .cells(null, colIdx, { search: 'applied', order: 'applied', page: 'all' })
-        .data()
-        .toArray();
-
-      // ✅ Sum the values
-      var total = colData.reduce(function (acc, val) {
-        return acc + parseNumber(val);
-      }, 0);
-
-      // ✅ Format total (Indian format)
-      var formattedTotal = total.toLocaleString('en-IN', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-
-      // ✅ Update footer
-      $(table.column(colIdx).footer()).html(formattedTotal);
-    });
-  }
-
-  // 🔁 Update totals whenever table is redrawn (search, sort, paginate)
-  table.on('draw', function () {
+  $(document).on('click', '.apply-btn', function(){
+    const menu = $(this).closest('.filter-menu');
+    if(menu.hasClass('invno-menu')) applySimpleFilter(1, menu);
+    else if(menu.hasClass('salehead-menu')) applySimpleFilter(2, menu);
+    else if(menu.hasClass('buyer-menu')) applySimpleFilter(4, menu);
+    else if(menu.hasClass('date-menu')) applyDateFilter(menu);
+    $('.filter-menu').hide();
+    buildAllMenus();
     updateFooterTotals();
   });
 
-  // Initial totals
-  updateFooterTotals();
-});
+  $(document).on('click', '.clear-btn', function(){
+    table.search('').columns().search('').draw();
+    buildAllMenus();
+    updateFooterTotals();
+  });
+
+  function applySimpleFilter(col, menu){
+    const vals = menu.find('.opt:checked').map((i,e)=>e.value).get();
+    table.column(col).search(vals.length ? vals.join('|') : '❌', true, false).draw();
+  }
+
+  function applyDateFilter(menu){
+    const vals = menu.find('.date-opt:checked').map((i,e)=>e.value).get();
+    table.column(3).search(vals.length ? vals.join('|') : '❌', true, false).draw();
+  }
+
+  function updateFooterTotals() {
+  const data = table.rows({ search: 'applied' }).data();
+  const cols = [5,6,7,8,9,10,11,12]; // numeric columns
+  const totals = Array(cols.length).fill(0);
+
+  for (let i = 0; i < data.length; i++) {
+    cols.forEach((c, idx) => {
+      let cell = data[i][c];
+
+      // Ensure cell is a string
+      if (cell == null) cell = "0";
+      if (typeof cell !== "string") cell = String(cell);
+
+      // Remove HTML tags and spaces
+      cell = cell.replace(/<[^>]*>/g, '').trim();
+
+      // ✅ Remove commas but keep decimals
+      cell = cell.replace(/,/g, '');
+
+      // Remove any non-numeric or minus/decimal symbols except digits, dot, minus
+      cell = cell.replace(/[^\d.-]/g, '');
+
+      const num = parseFloat(cell);
+      if (!isNaN(num)) totals[idx] += num;
+    });
+  }
+
+  // ✅ Update footer cells (no need for IDs)
+  const footerCells = $('#dt tfoot th');
+  cols.forEach((c, idx) => {
+    $(footerCells[c]).text(
+      totals[idx].toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    );
+  });
+}
+
+
+  table.on('draw', updateFooterTotals);
+
+    });
+ 
+ 
+ 
 
 </script>
 
-
+ 
 
 
 @endsection
