@@ -667,26 +667,21 @@
     table.column(3).search(vals.length ? vals.join('|') : '❌', true, false).draw();
   }
 
-  function updateFooterTotals() {
+ // Start Function updateFooterTotals
+ function updateFooterTotals() {
   const data = table.rows({ search: 'applied' }).data();
-  const cols = [5,6,7,8,9,10,11,12]; // numeric columns
+  const cols = [5, 6, 7, 8, 9, 10, 11, 12]; // numeric columns
   const totals = Array(cols.length).fill(0);
 
   for (let i = 0; i < data.length; i++) {
     cols.forEach((c, idx) => {
       let cell = data[i][c];
-
-      // Ensure cell is a string
       if (cell == null) cell = "0";
       if (typeof cell !== "string") cell = String(cell);
 
-      // Remove HTML tags and spaces
+      // Clean up and convert
       cell = cell.replace(/<[^>]*>/g, '').trim();
-
-      // ✅ Remove commas but keep decimals
       cell = cell.replace(/,/g, '');
-
-      // Remove any non-numeric or minus/decimal symbols except digits, dot, minus
       cell = cell.replace(/[^\d.-]/g, '');
 
       const num = parseFloat(cell);
@@ -694,14 +689,20 @@
     });
   }
 
-  // ✅ Update footer cells (no need for IDs)
-  const footerCells = $('#dt tfoot th');
+  const footerCells = $('#example tfoot th');
   cols.forEach((c, idx) => {
-    $(footerCells[c]).text(
-      totals[idx].toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-    );
+    let value;
+    if (c === 7) {
+      // ✅ PHP sprintf('%.2f', round(value,2)) equivalent
+      value = (Math.round(totals[idx] * 100) / 100).toFixed(2);
+    } else {
+      value = totals[idx].toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    $(footerCells[c]).text(value);
   });
 }
+
+// end Function updateFooterTotals
 
 
   table.on('draw', updateFooterTotals);
