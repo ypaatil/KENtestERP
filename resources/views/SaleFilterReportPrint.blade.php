@@ -165,8 +165,11 @@
 </div>
 
  <style>
-  table.dataTable thead th { position: relative; }
-  .filter-icon { cursor: pointer; margin-left: 6px; }
+  table.dataTable thead th { position: relative;  }
+
+ 
+
+  .filter-icon { cursor: pointer; margin-left: 6px;font-size: large;  }
 
   /* Dropdown */
   .filter-menu {
@@ -176,21 +179,38 @@
     z-index: 200;
     background: #fff;
     border: 1px solid #ccc;
-    padding: 8px 0 40px 10px;
+    padding: -1px 0 40px 10px;
     max-height: 300px;
     overflow-y: auto;
     width: 260px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.15);
   }
 
-  .filter-menu label { display: block; margin: 3px 0; cursor: pointer; }
+  /* ---------- Labels & Checkboxes ---------- */
+.filter-menu label {
+  display: block;
+  margin: 3px 10px;
+  font-size: 15px;
+  cursor: pointer;
+}
+.filter-menu input[type='checkbox'] {
+  margin-right: 6px;
+}
+
   .filter-search {
-    width: 90%;
-    margin: 0 0%;
-    padding: 4px;
-    box-sizing: border-box;
-    border: 1px solid #ddd;
-  }
+  width: 90%;
+  margin: 2px 5% 8px 5%;
+  padding: 6px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-sizing: border-box;
+  outline: none;
+  font-size: 13px;
+}
+.filter-search:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 4px rgba(0,123,255,0.3);
+}
 
   /* Sticky Apply / Clear */
   .filter-actions {
@@ -205,12 +225,12 @@
     margin-left: 6px;
     padding: 3px 8px;
     border: 1px solid #aaa;
-    background: #eee;
+     
     cursor: pointer;
     border-radius: 4px;
   }
 
-  .filter-actions button:hover { background: #ddd; }
+  .filter-actions button:hover { }
 
   /* Tree Style */
   .tree-toggle { cursor: pointer; font-weight: bold; color: #007bff; margin-right: 6px; }
@@ -221,6 +241,31 @@
   .collapsed { display: none; }
 
   tfoot { background-color: #f3f3f3; font-weight: bold; }
+  .year-block{ padding-left:10px; }
+
+  /* ✅ Apply Button Style */
+    .apply-btn {
+      background-color: #0078d7;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(0, 120, 215, 0.3);
+    }
+    .apply-btn:hover {
+      background-color: #0078d7;
+      box-shadow: 0 3px 6px rgba(0, 120, 215, 0.4);
+    }
+
+    /* ❎ Clear Button Style */
+    .clear-btn {
+      background-color: #eaeaea;
+      color: #333;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .clear-btn:hover {
+      background-color: #d6d6d6;
+      color: #000;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.15);
+    }
+   
 </style>
 
 <div class="row">
@@ -511,7 +556,7 @@
   function unique(arr){ return [...new Set(arr)].sort(); }
 
   buildAllMenus();
-  updateFooterTotals();
+  //updateFooterTotals();
 
   function buildAllMenus() {
     buildSimpleFilter('.invno-menu', 1);
@@ -675,31 +720,37 @@
 
   for (let i = 0; i < data.length; i++) {
     cols.forEach((c, idx) => {
-      let cell = data[i][c];
-      if (cell == null) cell = "0";
-      if (typeof cell !== "string") cell = String(cell);
-
-      // Clean up and convert
-      cell = cell.replace(/<[^>]*>/g, '').trim();
-      cell = cell.replace(/,/g, '');
-      cell = cell.replace(/[^\d.-]/g, '');
-
+      let cell = (data[i][c] || "0").toString()
+        .replace(/<[^>]*>/g, '') // remove HTML
+        .trim()
+        .replace(/,/g, '')       // remove commas
+        .replace(/[^\d.-]/g, ''); // remove symbols
       const num = parseFloat(cell);
       if (!isNaN(num)) totals[idx] += num;
     });
   }
 
-  const footerCells = $('#example tfoot th');
+  const footerCells = $('#dt tfoot th');
   cols.forEach((c, idx) => {
     let value;
     if (c === 7) {
-      // ✅ PHP sprintf('%.2f', round(value,2)) equivalent
-      value = (Math.round(totals[idx] * 100) / 100).toFixed(2);
+     
+      value = 0.0;
+      if (totals[0]  > 0){
+      const calculateV= totals[3] / totals[0] ;
+      value = calculateV.toFixed(2); 
+      }
+
     } else {
-      value = totals[idx].toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+       
+      value = totals[idx].toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
     }
     $(footerCells[c]).text(value);
   });
+ 
 }
 
 // end Function updateFooterTotals
