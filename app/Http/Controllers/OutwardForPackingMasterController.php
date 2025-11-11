@@ -1312,6 +1312,46 @@ echo json_encode($data);
              return view('OutwardForPackingPrint', compact('OutwardForPackingMaster','OutwardForPackingList','SizeDetailList','FirmDetail'));
       
     }
+ public function OutwardForPackingPrintView($ofp_code)
+    {
+        
+         
+        // DB::enableQueryLog();
+       
+         $OutwardForPackingMaster = OutwardForPackingMasterModel::join('usermaster', 'usermaster.userId', '=', 'outward_for_packing_master.userId')
+         ->leftJoin('ledger_master', 'ledger_master.ac_code', '=', 'outward_for_packing_master.vendorId')
+         ->leftJoin('location_master as sent', 'sent.loc_id', '=', 'outward_for_packing_master.sent_to')
+         ->leftJoin('main_style_master', 'main_style_master.mainstyle_id', '=', 'outward_for_packing_master.mainstyle_id')
+         ->leftJoin('sub_style_master', 'sub_style_master.substyle_id', '=', 'outward_for_packing_master.sent_to')
+         ->leftJoin('fg_master', 'fg_master.fg_id', '=', 'outward_for_packing_master.fg_id')
+         ->leftJoin('vendor_work_order_master', 'vendor_work_order_master.vw_code', '=','outward_for_packing_master.vw_code')
+        ->where('outward_for_packing_master.ofp_code', $ofp_code)
+         ->get(['outward_for_packing_master.*','usermaster.username','sent.location as sent_location','outward_for_packing_master.sales_order_no',
+         'sent.gst_no as sent_gst_no','sent.loc_inc as sent_loc_inc','sent.pan_no as sent_pan_no','mainstyle_name','substyle_name','fg_name','ledger_master.ac_name','ledger_master.address','ledger_master.gst_no','ledger_master.pan_no']);
+         $BuyerPurchaseOrderMasterList = BuyerPurchaseOrderMasterModel::where('tr_code',$OutwardForPackingMaster[0]->sales_order_no)->get();
+                   
+        
+        $SizeDetailList = SizeDetailModel::where('size_detail.sz_code','=', $BuyerPurchaseOrderMasterList[0]->sz_code)->get();
+        $sizes='';
+        $no=1;
+        foreach ($SizeDetailList as $sz) 
+        {
+            $sizes=$sizes.'sum(s'.$no.') as s'.$no.',';
+            $no=$no+1;
+        }
+        $sizes=rtrim($sizes,',');
+        //  DB::enableQueryLog();  
+          $OutwardForPackingList = DB::select("SELECT 	outward_for_packing_size_detail.color_id, color_master.color_name, ".$sizes.", 
+        sum(size_qty_total) as size_qty_total  from	outward_for_packing_size_detail  
+        inner join color_master on color_master.color_id=outward_for_packing_size_detail.color_id 
+        where ofp_code='".$OutwardForPackingMaster[0]->ofp_code."' group by outward_for_packing_size_detail.color_id");
+           
+        $FirmDetail = DB::table('firm_master')->where('delflag','=', '0')->first();
+      
+             return view('PackingOutwardView', compact('OutwardForPackingMaster','OutwardForPackingList','SizeDetailList','FirmDetail'));
+      
+    }
+
     
     public function OutwardForPackingMergedPrint(Request $request)
     {

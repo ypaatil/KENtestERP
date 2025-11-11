@@ -1244,6 +1244,50 @@ echo json_encode($data);
              return view('InwardForPackingPrint', compact('InwardForPackingMaster','InwardForPackingList','SizeDetailList','FirmDetail'));
       
     }
+
+     public function PackingInward($ifp_code)
+    {
+        
+         
+    //   DB::enableQueryLog();
+       
+         $InwardForPackingMaster = InwardForPackingMasterModel::join('usermaster', 'usermaster.userId', '=', 'inward_for_packing_master.userId')
+         ->leftJoin('ledger_master', 'ledger_master.Ac_code', '=', 'inward_for_packing_master.sent_to')
+         ->leftJoin('main_style_master', 'main_style_master.mainstyle_id', '=', 'inward_for_packing_master.mainstyle_id')
+         ->leftJoin('sub_style_master', 'sub_style_master.substyle_id', '=', 'inward_for_packing_master.sent_to')
+         ->leftJoin('fg_master', 'fg_master.fg_id', '=', 'inward_for_packing_master.fg_id')
+         ->leftJoin('vendor_work_order_master', 'vendor_work_order_master.vw_code', '=','inward_for_packing_master.vw_code')
+        ->where('inward_for_packing_master.ifp_code', $ifp_code)
+         ->get(['inward_for_packing_master.*','usermaster.username','ledger_master.Ac_name','inward_for_packing_master.sales_order_no',
+         'ledger_master.gst_no','ledger_master.pan_no','ledger_master.state_id','ledger_master.address','mainstyle_name','substyle_name','fg_name']);
+       
+        
+        $BuyerPurchaseOrderMasterList = BuyerPurchaseOrderMasterModel::where('tr_code',$InwardForPackingMaster[0]->sales_order_no)->get();
+                   
+        
+        $SizeDetailList = SizeDetailModel::where('size_detail.sz_code','=', $BuyerPurchaseOrderMasterList[0]->sz_code)->get();
+        $sizes='';
+        $no=1;
+        foreach ($SizeDetailList as $sz) 
+        {
+            $sizes=$sizes.'sum(s'.$no.') as s'.$no.',';
+            $no=$no+1;
+        }
+        $sizes=rtrim($sizes,',');
+        //  DB::enableQueryLog();  
+          $InwardForPackingList = DB::select("SELECT item_master.item_name,	inward_for_packing_size_detail.color_id, color_master.color_name, ".$sizes.", 
+        sum(size_qty_total) as size_qty_total  from	inward_for_packing_size_detail 
+        inner join item_master on item_master.item_code=inward_for_packing_size_detail.item_code 
+        inner join color_master on color_master.color_id=inward_for_packing_size_detail.color_id 
+        where ifp_code='".$InwardForPackingMaster[0]->ifp_code."' group by inward_for_packing_size_detail.color_id");
+           
+        $FirmDetail = DB::table('firm_master')->where('delflag','=', '0')->first();
+
+     
+      
+             return view('PackingInward', compact('InwardForPackingMaster','InwardForPackingList','SizeDetailList','FirmDetail'));
+      
+    }
         
     public function destroy($id)
     {
