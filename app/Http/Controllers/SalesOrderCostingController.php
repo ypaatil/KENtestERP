@@ -1125,7 +1125,7 @@ class SalesOrderCostingController extends Controller
             ->join('shipment_mode_master', 'shipment_mode_master.ship_id', '=', 'buyer_purchse_order_master.ship_id', 'left outer')
             ->join('country_master', 'country_master.c_id', '=', 'buyer_purchse_order_master.country_id')
             ->leftJoin('order_group_master', 'order_group_master.og_id', '=', 'buyer_purchse_order_master.og_id', 'left outer')
-            ->join('warehouse_master', 'warehouse_master.warehouse_id', '=', 'buyer_purchse_order_master.warehouse_id', 'left outer')
+            ->join('warehouse_master', 'warehouse_master.warehouse_id', '=', 'buyer_purchse_order_master.warehouse_id', 'left outer') 
             ->join('delivery_terms_master', 'delivery_terms_master.dterm_id', '=', 'buyer_purchse_order_master.dterm_id', 'left outer')
             ->leftJoin('brand_master', 'brand_master.brand_id', '=', 'buyer_purchse_order_master.brand_id')
             ->where('sales_order_costing_master.delflag', '=', '0')
@@ -1139,7 +1139,7 @@ class SalesOrderCostingController extends Controller
                 'buyer_purchse_order_master.shipment_date',
                 'buyer_purchse_order_master.plan_cut_date',
                 'usermaster.username',
-                'ledger_master.Ac_name',
+                'ledger_master.ac_short_name',
                 'buyer_purchse_order_master.total_qty',
                 'costing_type_master.cost_type_name',
                 'season_master.season_name',

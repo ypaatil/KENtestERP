@@ -1437,8 +1437,47 @@ foreach($SizeList as $sz)
         //   $query = end($query);
         //   dd($query);
         $FirmDetail = DB::table('firm_master')->where('delflag','=', '0')->first();
+
+       
       
              return view('CutPanelGRNPrint', compact('CutPanelGRNMaster','CutPanelGRNList','SizeDetailList','FirmDetail'));
+      
+    }
+
+     public function CutPanelGRNPrintView($cpg_code)
+    {
+        
+         
+    //   DB::enableQueryLog();
+       
+         $CutPanelGRNMaster = CutPanelGRNMasterModel::join('usermaster', 'usermaster.userId', '=', 'cut_panel_grn_master.userId')
+         ->join('ledger_master', 'ledger_master.Ac_code', '=', 'cut_panel_grn_master.vendorId')
+         ->leftJoin('vendor_purchase_order_master', 'vendor_purchase_order_master.vpo_code', '=','cut_panel_grn_master.vpo_code')
+        ->where('cut_panel_grn_master.cpg_code', $cpg_code)
+         ->get(['cut_panel_grn_master.*','usermaster.username','ledger_master.Ac_name','cut_panel_grn_master.sales_order_no',
+         'ledger_master.gst_no','ledger_master.pan_no','ledger_master.state_id','ledger_master.address' ]);
+       
+       
+          
+        $BuyerPurchaseOrderMasterList = BuyerPurchaseOrderMasterModel::where('tr_code',$CutPanelGRNMaster[0]->sales_order_no)->get();
+        $SizeDetailList = SizeDetailModel::where('size_detail.sz_code','=', $BuyerPurchaseOrderMasterList[0]->sz_code)->get();
+        $sizes='';
+        $no=1;
+        foreach ($SizeDetailList as $sz) 
+        {
+            $sizes=$sizes.'sum(s'.$no.') as s'.$no.',';
+            $no=$no+1;
+        }
+        $sizes=rtrim($sizes,',');
+        //  DB::enableQueryLog();  
+          $CutPanelGRNList = DB::select("SELECT   item_master.item_name,	cut_panel_grn_size_detail.color_id, color_master.color_name, ".$sizes.", 
+        sum(size_qty_total) as size_qty_total  from 	cut_panel_grn_size_detail 
+        inner join item_master on item_master.item_code=	cut_panel_grn_size_detail.item_code 
+        inner join color_master on color_master.color_id=	cut_panel_grn_size_detail.color_id 
+        where cpg_code='".$CutPanelGRNMaster[0]->cpg_code."' group by 	cut_panel_grn_size_detail.color_id");
+           
+        $FirmDetail = DB::table('firm_master')->where('delflag','=', '0')->first();
+        return view('CutPanelGRNPrintView', compact('CutPanelGRNMaster','CutPanelGRNList','SizeDetailList','FirmDetail'));
       
     }
      
