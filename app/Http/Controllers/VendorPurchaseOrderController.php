@@ -781,6 +781,28 @@ class VendorPurchaseOrderController extends Controller
         return view('cuttingOrderPrint', compact('BOMList','FirmDetail'));     
     }
 
+     public function VPPrintView($vpo_code)
+    {
+       $BOMList = VendorPurchaseOrderModel::join('usermaster', 'usermaster.userId', '=', 'vendor_purchase_order_master.userId', 'left outer')
+        ->join('ledger_master', 'ledger_master.Ac_code', '=', 'vendor_purchase_order_master.Ac_code', 'left outer')
+        ->join('ledger_master as LM2', 'LM2.Ac_code', '=', 'vendor_purchase_order_master.vendorId', 'left outer')
+        ->join('season_master', 'season_master.season_id', '=', 'vendor_purchase_order_master.season_id', 'left outer')
+        ->join('currency_master', 'currency_master.cur_id', '=', 'vendor_purchase_order_master.currency_id', 'left outer')
+        ->join('costing_type_master', 'costing_type_master.cost_type_id', '=', 'vendor_purchase_order_master.cost_type_id', 'left outer')
+        ->join('main_style_master', 'main_style_master.mainstyle_id', '=', 'vendor_purchase_order_master.mainstyle_id', 'left outer') 
+        ->join('sub_style_master', 'sub_style_master.substyle_id', '=', 'vendor_purchase_order_master.substyle_id', 'left outer')  
+        ->join('fg_master', 'fg_master.fg_id', '=', 'vendor_purchase_order_master.fg_id', 'left outer')   
+        ->where('vendor_purchase_order_master.delflag','=', '0')
+        ->where('vendor_purchase_order_master.vpo_code','=', $vpo_code)
+        ->get(['vendor_purchase_order_master.*','usermaster.username','ledger_master.Ac_name','LM2.Ac_name as vendorName','LM2.address', 'LM2.pan_no','LM2.gst_no','costing_type_master.cost_type_name','season_master.season_name',
+        'currency_master.currency_name','main_style_master.mainstyle_name','sub_style_master.substyle_name','fg_master.fg_name']);
+         $FirmDetail = DB::table('firm_master')->where('delflag','=', '0')->first();
+        
+ 
+        return view('VPPrintView', compact('BOMList','FirmDetail'));     
+    }
+
+
     /**
      * Show the form for editing the specified resource.
      *
