@@ -488,7 +488,7 @@
                         <div class="green-part"></div>
                     </div>
 
-                    <h3 class="mb-0 fw-bold  text-center"> Trims Inward</h3>
+                    <h3 class="mb-0 fw-bold  text-center"> Goods Receipt Note-Trim</h3>
 
                     <!-- Sales Info -->
                     <div class="row g-0  border-top border-bottom ">
@@ -528,22 +528,22 @@
                         </div>
                         <div class="col-md-6 p-2">
                             <p><b>Goods Received By: </b></p>
-                            <p><b></b> <br> </p>
+                            <p><b>KEN Global Designs Pvt. Ltd.</b> <br> GAT NO 298/299,A/P Kondigre, Kolhapur, Maharashtra, 416101 </p>
 
                             <div class="info-row">
                                 <div class="label">PAN NO</div>
                                 <div class="colon">:</div>
-                                <div class="value"> </div>
+                                <div class="value">ABCCS7591Q </div>
                             </div>
                             <div class="info-row">
                                 <div class="label">GST NO</div>
                                 <div class="colon">:</div>
-                                <div class="value"> </div>
+                                <div class="value">27ABCCS7591Q1ZD </div>
                             </div>
                             <div class="info-row">
                                 <div class="label">STATE</div>
                                 <div class="colon">:</div>
-                                <div class="value"> </div>
+                                <div class="value"> MAHARASTRA</div>
                             </div>
 
                         </div>
@@ -562,7 +562,7 @@
                                 <div class="info-row">
                                     <div class="label">GST NO</div>
                                     <div class="colon">:</div>
-                                    <div class="value"> </div>
+                                    <div class="value"> {{  $TrimsInwardMaster[0]->gst_no }}</div>
                                 </div>
                                 <div class="info-row">
                                     <div class="label">STATE</div>
@@ -586,7 +586,7 @@
                     </div>
 
                     <!-- Assortment Table -->
-                    <h4 class="text-center  fw-bold">Goods Receipt Note</h4>
+                    <h4 class="text-center  fw-bold">Item Details</h4>
                     <table class="table table-bordered second table-sm">
                         <thead>
                             <tr>
@@ -670,7 +670,7 @@
                                 <td class="text-center">{{ $rowDetail->item_code }}</td>
                                 <td class="text-start"> {{ $rowDetail->item_name }}</td>
                                 <td class="text-center">{{ $rowDetail->unit_name }}</td>
-                                <td class="text-end">{{ $rowDetail->item_qty }}</td>
+                                <td class="text-end">{{ number_format($rowDetail->item_qty,2) }}</td>
 
                                 <td class="text-end">{{ $rowDetail->item_rate }}</td>
                                 <td class="text-end">{{ money_format('%!i',$Amount)}}</td>
@@ -752,7 +752,7 @@
                                     @endphp
                                     <tr>
                                     <th colspan="11" class="text-center">
-                                        AMOUNT (INR): {{ $result }}
+                                       Amount Chargeable (in words): INR {{ Str::title( $result)  }}Only
                                     </th>
                                     </tr>
                         </tfoot>
@@ -800,9 +800,13 @@
                         </tr>
                     </table>
 
-                    <br>
+                  <footer>
+                        <div class="row">
+                            <div class="col-md-6"><b> Remark:</b> Remark details here</div>
+                        </div>
+                    </footer>
 
-                    <table class="table">
+                    <table class="table" style="margin-top: 100px; ">
                         <tr>
                             <th>Prepared By:</th>
                             <th>Checked By:</th>

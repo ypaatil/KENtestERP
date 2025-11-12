@@ -754,7 +754,7 @@
                                     <tr>
                                     @php use Illuminate\Support\Str; @endphp
 
-                                    <th colspan="12">Amount(in words):INR {{ Str::title($result) }} Only</th>
+                                    <th colspan="12">Amount Chargeable (in words): INR {{ Str::title($result) }} Only</th>
                                     </tr>
                         </tfoot>
                     </table>
