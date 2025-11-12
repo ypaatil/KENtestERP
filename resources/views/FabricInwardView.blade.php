@@ -185,7 +185,7 @@
 
             font-size: 10pt;
             padding: 10px !important;
-            text-align: center !important;
+           
         }
 
         thead tr,
@@ -399,9 +399,7 @@
                 margin-right: 0 !important;
             }
 
-            .summary-table th.text-start {
-                text-align: left !important;
-            }
+           
 
             .summary-table td,
             .summary-table th {
@@ -429,7 +427,11 @@
             }
 
 
-            .table-bordered.summary-table tr th:first-child,
+            
+
+        }
+
+        .table-bordered.summary-table tr th:first-child,
             .table-bordered.summary-table tr td:first-child,
             .table-bordered.summary-table tr th:last-child,
             .table-bordered.summary-table tr td:last-child {
@@ -437,8 +439,6 @@
                 border-right: 1px solid #000 !important;
             }
 
-
-        }
     </style>
 </head>
 
@@ -671,7 +671,7 @@
 
                                 <td class="text-start">{{ $rowDetail->item_description }}</td>
 
-                                <td class="text-end">{{ $rowDetail->meter }}</td>
+                                <td class="text-end">{{ number_format($rowDetail->meter,2) }}</td>
                                 <td>{{ $rowDetail->unit_name}}</td>
                                 <td class="text-end">{{ $rowDetail->item_rate }}</td>
                                 <td class="text-end">{{ money_format('%!i',$Amount)}}</td>
@@ -701,10 +701,10 @@
                         <tfoot>
                             <tr>
                                 <td class="text-end" colspan="4">Total Meter:</td>
-                                <td class="text-end">{{ $FabricInwardMaster[0]->total_meter }}</td>
+                                <td class="text-end">{{ number_format($FabricInwardMaster[0]->total_meter,2) }}</td>
                                 <th class="text-end"></th>
                                 <th></th>
-                                <td class="text-end">{{ money_format('%!i',$amt) }}</td>
+                                <td class="text-end">{{  money_format('%!i',$amt) }}</td>
                                 <th> </th>
                                 <th></th>
                                 <th></th>
@@ -759,6 +759,8 @@
                         </tfoot>
                     </table>
 
+                    
+
 
                     <table class="table table-bordered border  border-dark  ms-auto  summary-table" style="width: 500px;">
                         <tr>
@@ -802,7 +804,7 @@
                     </footer>
                     <br>
 
-                    <table class="table">
+                    <table class="table" style="margin-top:100px;">
                         <tr>
                             <th>Prepared By:</th>
                             <th>Checked By:</th>
