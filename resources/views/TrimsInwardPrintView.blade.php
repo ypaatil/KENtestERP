@@ -699,16 +699,15 @@
                         <tfoot>
                             <tr>
 
-                                <td colspan="3" class="text-end">Total Qty:</td>
-                                <th></th>
-                                <td class="text-end">{{ money_format('%!i',$TrimsInwardMaster[0]->totalqty) }} </td>
+                                <td colspan="4" class="text-end fw-bold">Total Qty:</td>
+                               
+                                <td class="text-end fw-bold">{{ money_format('%!i',$TrimsInwardMaster[0]->totalqty) }} </td>
 
-                                <td class="text-end">Gross Amount</td>
-                                <td class="text-end">{{ money_format('%!i',$amt) }}</td>
-                                <th class="text-end"></th>
-                                <th class="text-end"></th>
-                                <th class="text-end"></th>
-                                <td class="text-end">{{money_format('%!i',$tamt)}} </td>
+                                <td class="text-end fw-bold">Total (Before Tax)</td>
+                                <td class="text-end fw-bold">{{ money_format('%!i',$amt) }}</td>
+                                <th colspan= "3" class="text-end fw-bold">Total (After Tax)</th>
+                               
+                                <td class="text-end fw-bold">{{money_format('%!i',$tamt)}} </td>
                             </tr>
                             @php
                             $number = ($tamt);

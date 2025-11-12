@@ -176,18 +176,20 @@
             #printInvoice {
                 width: 100% !important;
                 max-width: 100% !important;
-            }
-        }
+            }              
 
-
-        .table-bordered td,
+            .table-bordered td,
         .table-bordered th {
 
-            font-size: 10pt;
+            font-size: 11pt;
             padding: 10px !important;
            
         }
 
+        }
+
+
+        
         thead tr,
         tfoot tr {
 
@@ -347,7 +349,7 @@
 
             table.second th:nth-child(4),
             table.second td:nth-child(4) {
-                width: 160px !important;
+                width: 150px !important;
 
             }
 
@@ -358,7 +360,7 @@
 
             table.second th:nth-child(6),
             table.second td:nth-child(6) {
-                width: auto !important;
+                width: 80px !important;
             }
 
             table.second th:nth-child(7),
@@ -702,12 +704,11 @@
                             <tr>
                                 <td class="text-end" colspan="4">Total Meter:</td>
                                 <td class="text-end">{{ number_format($FabricInwardMaster[0]->total_meter,2) }}</td>
-                                <th class="text-end"></th>
-                                <th></th>
+                                <th colspan="2" class="text-end">  Total (Before Tax) </th>
+                                
                                 <td class="text-end">{{  money_format('%!i',$amt) }}</td>
-                                <th> </th>
-                                <th></th>
-                                <th></th>
+                                <th colspan="3" class="text-end" >Total (After Tax)</th>
+                               
 
                                 <td class="text-end"> {{money_format('%!i',$tamt)}}</td>
                             </tr>
