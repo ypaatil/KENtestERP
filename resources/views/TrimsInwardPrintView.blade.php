@@ -358,18 +358,18 @@
 
             table.second th:nth-child(4),
             table.second td:nth-child(4) {
-                width: 70px !important;
+                width: auto !important;
                 /* Garment Color column */
             }
 
             table.second th:nth-child(5),
             table.second td:nth-child(5) {
-                width: auto !important;
+                width: 70px !important;
             }
 
             table.second th:nth-child(6),
             table.second td:nth-child(6) {
-                width: auto !important;
+                width: 70px !important;
             }
 
             table.second th:nth-child(7),
@@ -762,7 +762,7 @@
                     <table class="table table-bordered border  border-dark  ms-auto  summary-table" style="width: 500px;">
                         <tr>
                             <th class="text-start">Total (Before Tax)</th>
-                            <td class="text-end">{{ money_format('%!i',$Amount)}}</td>
+                            <td class="text-end">{{ money_format('%!i',$amt) }}</td>
                         </tr>
                         <tr>
                             <th class="text-start">SGST</th>
