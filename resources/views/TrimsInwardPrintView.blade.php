@@ -593,9 +593,9 @@
                                 <th>Sr No</th>
                                 <th>Item Code</th>
                                 <th>Item Name</th>
-                                <th>UOM</th>
+                               
                                 <th>Qty</th>
-
+                                 <th>UOM</th>
                                 <th>Rate</th>
                                 <th> Amt. (Before Tax)</th>
                                 <th>CGST</th>
@@ -669,9 +669,9 @@
                                 <td class="text-end">{{ $no }}</td>
                                 <td class="text-center">{{ $rowDetail->item_code }}</td>
                                 <td class="text-start"> {{ $rowDetail->item_name }}</td>
-                                <td class="text-center">{{ $rowDetail->unit_name }}</td>
+                               
                                 <td class="text-end">{{ number_format($rowDetail->item_qty,2) }}</td>
-
+                                 <td class="text-center">{{ $rowDetail->unit_name }}</td>
                                 <td class="text-end">{{ number_format($rowDetail->item_rate,2) }}</td>
                                 <td class="text-end">{{ money_format('%!i',$Amount)}}</td>
                                 @if($tax_type_id==1)
@@ -699,11 +699,11 @@
                         <tfoot>
                             <tr>
 
-                                <td colspan="4" class="text-end fw-bold">Total Qty:</td>
+                                <td colspan="3" class="text-end fw-bold">Total Qty:</td>
                                
                                 <td class="text-end fw-bold">{{ money_format('%!i',$TrimsInwardMaster[0]->totalqty) }} </td>
 
-                                <td class="text-end fw-bold">Total Amount <br> (Before Tax):</td>
+                                <td colspan="2" class="text-end fw-bold">Total Amount <br> (Before Tax):</td>
                                 <td class="text-end fw-bold">{{ money_format('%!i',$amt) }}</td>
                                 <td colspan= "3" class="text-end fw-bold">Total Amount <br> (After Tax):</td>
                                
