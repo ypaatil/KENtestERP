@@ -3,7 +3,7 @@
 @php setlocale(LC_MONETARY, 'en_IN'); @endphp
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
 <div class="row">
    <div class="col-12">
       <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -167,8 +167,6 @@
  <style>
   table.dataTable thead th { position: relative;  }
 
- 
-
   .filter-icon { cursor: pointer; margin-left: 6px;font-size: large;  }
 
   /* Dropdown */
@@ -193,6 +191,17 @@
   font-size: 15px;
   cursor: pointer;
 }
+
+.year-block  label {
+  display: block;
+  margin-top: 3px;  
+    margin-right: 10px;  
+     margin-bottom: 3px; 
+      margin-left:  0px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
 .filter-menu input[type='checkbox'] {
   margin-right: 6px;
 }
@@ -233,7 +242,7 @@
   .filter-actions button:hover { }
 
   /* Tree Style */
-  .tree-toggle { cursor: pointer; font-weight: bold; color: #007bff; margin-right: 6px; }
+  .tree-toggle { cursor: pointer; font-weight: bold; color: #007bff; margin-right: 6px; font-size: x-large; }
   .tree-line { display: flex; align-items: center; gap: 4px; }
 
   .month-list, .day-list { margin-left: 18px; }
@@ -472,30 +481,7 @@
         } 
         
       // Define a single exportOptions block in one place
-      const commonExportOptions = {
-         columns: ':visible',
-         modifier: { search: 'applied' },
-         format: {
-           header: function (data, columnIdx) {
-                           const div = document.createElement("div");
-                           div.innerHTML = data;
-
-                           // Remove any filter dropdown content
-                           const filterMenus = div.querySelectorAll('.filter-menu');
-                           filterMenus.forEach(el => el.remove());
-
-                           const filterMenusicon = div.querySelectorAll('.filter-icon');
-                           filterMenusicon.forEach(el => el.remove());
-                           
-
-                           // Remove icons if present
-                           const icons = div.querySelectorAll('i, svg');
-                           icons.forEach(el => el.remove());
-
-                           return div.textContent.trim() || div.innerText.trim() || "";
-                           }
-         }
-      };
+      
 
         const today = new Date();
         const day = String(today.getDate()).padStart(2, '0');
@@ -546,13 +532,10 @@
                     exportOptions: commonExportOptions
                 }
             ]
-
         });
 
 
-        // New script added 10-11-2025
- 
-
+  // New script added 10-11-2025 
   function unique(arr){ return [...new Set(arr)].sort(); }
 
   buildAllMenus();
@@ -741,28 +724,19 @@
       value = calculateV.toFixed(2); 
       }
 
-    } else {
-       
+    } else {       
       value = totals[idx].toLocaleString('en-IN', {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       });
     }
     $(footerCells[c]).text(value);
-  });
- 
-}
-
+  }); 
+  }
 // end Function updateFooterTotals
-
-
   table.on('draw', updateFooterTotals);
 
-    });
- 
- 
- 
-
+  });  
 </script>
 
  

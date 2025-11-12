@@ -270,21 +270,21 @@ if($job_status_id==1) { @endphp
                      </tr>
                      <tr class="text-center" style="white-space:nowrap">
                         <th>Sr.No.</th>
-                        <th>Order No.</th>
-                        <th>Inhouse/Outsource</th>
-                        <th>Order Group</th>
-                        <th>Order Category</th>
-                        <th>PO status</th>
-                        <th>Order Type</th>
-                        <th>Recd. Date</th>
-                        <th>Plan Cut Date</th>
-                        <th>Shipment Date</th>
-                        <th>Close Date</th>
-                        <th>Buyer Name</th>
-                        <th>Buyer Brand</th>
-                        <th>Style</th>
-                        <th>Sub Style</th>
-                        <th>Style Name</th>
+                        <th>Order No.<span class="filter-icon">🔽</span><div class="filter-menu order-no"></div></th>
+                        <th>Inhouse/Outsource<span class="filter-icon">🔽</span><div class="filter-menu inhouse-outsource"></div></th>
+                        <th>Order Group<span class="filter-icon">🔽</span><div class="filter-menu order-group"></div></th>
+                        <th>Order Category<span class="filter-icon">🔽</span><div class="filter-menu order-category"></div></th>
+                        <th>PO status<span class="filter-icon">🔽</span><div class="filter-menu po-status"></div></th>
+                        <th>Order Type<span class="filter-icon">🔽</span><div class="filter-menu order-type"></div></th>
+                        <th>Recd. Date<span class="filter-icon">🔽</span><div class="filter-menu recd-date"></div></th>
+                        <th>Plan Cut Date<span class="filter-icon">🔽</span><div class="filter-menu plancut-date"></div></th>
+                        <th>Shipment Date<span class="filter-icon">🔽</span><div class="filter-menu shipment-date"></div></th>
+                        <th>Close Date<span class="filter-icon">🔽</span><div class="filter-menu close-date"></div></th>
+                        <th>Buyer Name<span class="filter-icon">🔽</span><div class="filter-menu buyer-name"></div></th>
+                        <th>Buyer Brand<span class="filter-icon">🔽</span><div class="filter-menu buyer-brand"></div></th>
+                        <th>Style<span class="filter-icon">🔽</span><div class="filter-menu style"></div></th>
+                        <th>Sub Style<span class="filter-icon">🔽</span><div class="filter-menu sub-style"></div></th>
+                        <th>Style Name<span class="filter-icon">🔽</span><div class="filter-menu style-name"></div></th>
                         <th>SAM</th>
                         <th>Cons.</th>
                         <th>Rate</th>
@@ -293,9 +293,9 @@ if($job_status_id==1) { @endphp
                         <th>Value  </th>
                         <th>Shipment Qty </th>
                         <th>Bal. Qty  </th>
-                        <th>Costing Entry</th>
-                        <th>Costing Status</th>
-                        <th>Bulk Merchant</th>
+                        <th>Costing Entry<span class="filter-icon">🔽</span><div class="filter-menu costing-entry"></div></th>
+                        <th>Costing Status<span class="filter-icon">🔽</span><div class="filter-menu costing-status"></div></th>
+                        <th>Bulk Merchant<span class="filter-icon">🔽</span><div class="filter-menu bulk-merchant"></div></th>
                      </tr>
                   </thead>
                   <tbody>
@@ -432,6 +432,7 @@ if($job_status_id==1) { @endphp
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
 <script>
 
     $('#head_total_qty').html($('#totalQty').val());
@@ -453,29 +454,33 @@ if($job_status_id==1) { @endphp
         const formattedDate = `${day}-${month}-${year}`;
         const exportTitle = 'All Orders Report (' + formattedDate + ')';
         
-        $('#dt').DataTable({
+        const table = $('#dt').DataTable({
             destroy: true,
             dom: 'Bfrtip',
             buttons: [
                 {
                     extend: 'copyHtml5',
                     text: 'Copy',
-                    title: exportTitle
+                    title: exportTitle,
+                    exportOptions: commonExportOptions
                 },
                 {
                     extend: 'excelHtml5',
                     text: 'Excel',
-                    title: exportTitle
+                    title: exportTitle,
+                    exportOptions: commonExportOptions
                 },
                 {
                     extend: 'csvHtml5',
                     text: 'CSV',
-                    title: exportTitle
+                    title: exportTitle,
+                    exportOptions: commonExportOptions
                 },
                 {
                     extend: 'pdfHtml5',
                     text: 'PDF',
                     title: exportTitle,
+                    exportOptions: commonExportOptions,
                     orientation: 'landscape',     // or 'portrait'
                     pageSize: 'A4',               // A4, A3, etc.
                     customize: function (doc) {
@@ -485,11 +490,49 @@ if($job_status_id==1) { @endphp
                 {
                     extend: 'print',
                     text: 'Print Table',
-                    title: exportTitle
+                    title: exportTitle,
+                    exportOptions: commonExportOptions
                 }
             ]
 
         });
+
+   // New script added 11-11-2025   
+  buildAllMenusTotalsSalesOrderDetailDashboard(); 
+
+  $(document).on('click', '.apply-btn', function() {
+    const menu = $(this).closest('.filter-menu');
+    if(menu.hasClass('order-no')) applySimpleFilter(1, menu);
+    else if(menu.hasClass('inhouse-outsource')) applySimpleFilter(2, menu);
+    else if(menu.hasClass('order-group')) applySimpleFilter(3, menu);
+    else if(menu.hasClass('order-category')) applySimpleFilter(4,menu);
+    else if(menu.hasClass('po-status')) applySimpleFilter(5,menu);
+    else if(menu.hasClass('order-type')) applySimpleFilter(6,menu);
+    else if(menu.hasClass('recd-date')) applyDateFilter( 7,menu);
+    else if(menu.hasClass('plancut-date')) applyDateFilter( 8,menu); 
+    else if(menu.hasClass('shipment-date')) applyDateFilter(9, menu);
+    else if(menu.hasClass('close-date')) applyDateFilter(10, menu);     
+   else if(menu.hasClass('buyer-name')) applySimpleFilter(11,menu);
+    else if(menu.hasClass('buyer-brand')) applySimpleFilter(12,menu);
+   else if(menu.hasClass('style')) applySimpleFilter(13,menu);
+   else if(menu.hasClass('sub-style')) applySimpleFilter(14,menu);
+   else if(menu.hasClass('style-name')) applySimpleFilter(15,menu);
+   else if(menu.hasClass('costing-entry')) applyColouredFilter(24,menu);
+   else if(menu.hasClass('costing-status')) applyColouredFilter(25,menu);
+   else if(menu.hasClass('bulk-merchant')) applySimpleFilter(26,menu);
+    
+    $('.filter-menu').hide();
+    buildAllMenusTotalsSalesOrderDetailDashboard();   
+    updateTotalsSalesOrderDetailDashboard();
     });
+
+  $(document).on('click', '.clear-btn', function(){
+    table.search('').columns().search('').draw();
+    buildAllMenusTotalsSalesOrderDetailDashboard();    
+    updateTotalsSalesOrderDetailDashboard();
+  });
+
+
+   });
 </script>
 @endsection
