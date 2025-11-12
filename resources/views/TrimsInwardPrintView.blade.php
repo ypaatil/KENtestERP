@@ -562,7 +562,7 @@
                                 <div class="info-row">
                                     <div class="label">GST NO</div>
                                     <div class="colon">:</div>
-                                    <div class="value"> {{  $TrimsInwardMaster[0]->gst_no }}</div>
+                                    <div class="value"> {{ $TrimsInwardMaster[0]->gst_no }}</div>
                                 </div>
                                 <div class="info-row">
                                     <div class="label">STATE</div>
@@ -593,9 +593,9 @@
                                 <th>Sr No</th>
                                 <th>Item Code</th>
                                 <th>Item Name</th>
-                               
+
                                 <th>Qty</th>
-                                 <th>UOM</th>
+                                <th>UOM</th>
                                 <th>Rate</th>
                                 <th> Amt. (Before Tax)</th>
                                 <th>CGST</th>
@@ -669,9 +669,9 @@
                                 <td class="text-end">{{ $no }}</td>
                                 <td class="text-center">{{ $rowDetail->item_code }}</td>
                                 <td class="text-start"> {{ $rowDetail->item_name }}</td>
-                               
+
                                 <td class="text-end">{{ number_format($rowDetail->item_qty,2) }}</td>
-                                 <td class="text-center">{{ $rowDetail->unit_name }}</td>
+                                <td class="text-center">{{ $rowDetail->unit_name }}</td>
                                 <td class="text-end">{{ number_format($rowDetail->item_rate,2) }}</td>
                                 <td class="text-end">{{ money_format('%!i',$Amount)}}</td>
                                 @if($tax_type_id==1)
@@ -700,13 +700,13 @@
                             <tr>
 
                                 <td colspan="3" class="text-end fw-bold">Total Qty:</td>
-                               
+
                                 <td class="text-end fw-bold">{{ money_format('%!i',$TrimsInwardMaster[0]->totalqty) }} </td>
 
                                 <td colspan="2" class="text-end fw-bold">Total Amount <br> (Before Tax):</td>
                                 <td class="text-end fw-bold">{{ money_format('%!i',$amt) }}</td>
-                                <td colspan= "3" class="text-end fw-bold">Total Amount <br> (After Tax):</td>
-                               
+                                <td colspan="3" class="text-end fw-bold">Total Amount <br> (After Tax):</td>
+
                                 <td class="text-end fw-bold">{{money_format('%!i',$tamt)}} </td>
                             </tr>
                             @php
@@ -751,7 +751,7 @@
                                     @endphp
                                     <tr>
                                     <th colspan="11" class="text-center">
-                                       Amount Chargeable (in words): INR {{ Str::title( $result)  }}Only
+                                        Amount Chargeable (in words): INR {{ Str::title( $result)  }}Only
                                     </th>
                                     </tr>
                         </tfoot>
@@ -759,47 +759,58 @@
 
 
 
-                    <table class="table table-bordered border  border-dark  ms-auto  summary-table" style="width: 500px;">
+                    <table class="table table-bordered border border-dark ms-auto summary-table" style="width: 500px;">
+                        @php
+                        // Ensure numeric values
+                        $amt = (float)($amt ?? 0);
+                        $SGSTTotal = (float)($SGSTTotal ?? 0);
+                        $CGSTTotal = (float)($CGSTTotal ?? 0);
+                        $IGSTTotal = (float)($IGSTTotal ?? 0);
+
+                        // Calculate after-tax total
+                        $afterTaxTotal = $amt + $SGSTTotal + $CGSTTotal + $IGSTTotal;
+
+                        // Round off logic
+                        $roundedTotal = round($afterTaxTotal); // nearest rupee
+                        $roundOff = round($roundedTotal - $afterTaxTotal, 2);
+
+                        // Final grand total
+                        $TotalAmount = $roundedTotal;
+                        @endphp
+
                         <tr>
                             <th class="text-start">Total (Before Tax)</th>
-                            <td class="text-end">{{ money_format('%!i',$amt) }}</td>
+                            <td class="text-end">{{ number_format($amt, 2) }}</td>
                         </tr>
                         <tr>
                             <th class="text-start">SGST</th>
-                            <td class="text-end">{{$SGSTTotal}}</td>
+                            <td class="text-end">{{ number_format($SGSTTotal, 2) }}</td>
                         </tr>
                         <tr>
                             <th class="text-start">CGST</th>
-                            <td class="text-end">{{$CGSTTotal}}</td>
+                            <td class="text-end">{{ number_format($CGSTTotal, 2) }}</td>
                         </tr>
                         <tr>
                             <th class="text-start">IGST</th>
-                            <td class="text-end">{{$IGSTTotal}}</td>
+                            <td class="text-end">{{ number_format($IGSTTotal, 2) }}</td>
                         </tr>
                         <tr>
                             <th class="text-start">Total (After Tax)</th>
-                            <td class="text-end">{{money_format('%!i',$TotalAmount)}}</td>
+                            <td class="text-end">{{ number_format($afterTaxTotal, 2) }}</td>
                         </tr>
                         <tr>
-                            @php
-                            $beforeTaxTotal = $amt;
-                            $afterTaxTotal = $tamt;
-
-                            // Calculate round off
-                            $roundedTotal = round($afterTaxTotal); // nearest rupee
-                            $roundOff = round($roundedTotal - $afterTaxTotal, 2);
-                            @endphp
-
-                            <th class="text-start">Round</th>
-                            <td class="text-end"> {{ $roundOff >= 0 ? '+' : '' }}{{ money_format('%!i', $roundOff) }}</td>
+                            <th class="text-start">Round Off</th>
+                            <td class="text-end">
+                                {{ $roundOff >= 0 ? '+' : '' }}{{ number_format($roundOff, 2) }}
+                            </td>
                         </tr>
                         <tr>
-                            <th class="text-start">Grand total</th>
-                            <td class="text-end">{{money_format('%!i',$TotalAmount)}}</td>
+                            <th class="text-start">Grand Total</th>
+                            <td class="text-end fw-bold">{{ number_format($TotalAmount, 2) }}</td>
                         </tr>
                     </table>
 
-                  <footer>
+                    <footer>
                         <div class="row">
                             <div class="col-md-6"><b> Remark:</b> Remark details here</div>
                         </div>
