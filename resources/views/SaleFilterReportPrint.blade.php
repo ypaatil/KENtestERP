@@ -535,153 +535,26 @@
         });
 
 
-  // New script added 10-11-2025 
-  function unique(arr){ return [...new Set(arr)].sort(); }
-
-  buildAllMenus();
-  //updateFooterTotals();
-
-  function buildAllMenus() {
-    buildSimpleFilter('.invno-menu', 1);
-    buildSimpleFilter('.salehead-menu', 2);
-    buildDateFilter();
-    buildSimpleFilter('.buyer-menu', 4);
-  }
-
-  function buildSimpleFilter(selector, colIndex) {
-    const visible = table.rows({ search: 'applied' }).data().toArray();
-    const values = unique(visible.map(r=>r[colIndex]));
-    let html = `
-      <input type='text' class='filter-search' placeholder='Search...'>
-      <label><input type='checkbox' class='select-all' checked> Select All</label>
-      <div class='options'>`;
-    values.forEach(v=>{
-      html += `<label><input type='checkbox' class='opt' value='${v}' checked> ${v}</label>`;
-    });
-    html += `</div>
-      <div class='filter-actions'>
-        <button class='apply-btn'>Apply</button>
-        <button class='clear-btn'>Clear</button>
-      </div>`;
-    $(selector).html(html);
-  }
-
-  function buildDateFilter(){
-    const visible = table.rows({ search: 'applied' }).data().toArray();
-    const dates = unique(visible.map(r=>r[3]));
-    const tree = {};
-
-    dates.forEach(d=>{
-      const dt = new Date(d);
-      const y = dt.getFullYear();
-      const m = dt.toLocaleString('default',{month:'short'});
-      if(!tree[y]) tree[y] = {};
-      if(!tree[y][m]) tree[y][m] = [];
-      tree[y][m].push(d);
-    });
-
-    let html = `<input type='text' class='filter-search' placeholder='Search date...'>`;
-    Object.keys(tree).forEach(y=>{
-      html += `
-        <div class='year-block'>
-          <div class='tree-line'>
-            <span class='tree-toggle' data-target='year-${y}'>+</span>
-            <label><input type='checkbox' class='year-check' data-year='${y}' checked> ${y}</label>
-          </div>
-          <div class='month-list collapsed' id='year-${y}'>`;
-      Object.keys(tree[y]).forEach(m=>{
-        html += `
-          <div class='month-block'>
-            <div class='tree-line'>
-              <span class='tree-toggle' data-target='month-${y}-${m}'>+</span>
-              <label><input type='checkbox' class='month-check' data-year='${y}' data-month='${m}' checked> ${m}</label>
-            </div>
-            <div class='day-list collapsed' id='month-${y}-${m}'>`;
-        tree[y][m].forEach(d=>{
-          html += `<label><input type='checkbox' class='date-opt' data-year='${y}' data-month='${m}' value='${d}' checked> ${d}</label>`;
-        });
-        html += `</div></div>`;
-      });
-      html += `</div></div>`;
-    });
-
-    html += `
-      <div class='filter-actions'>
-        <button class='apply-btn'>Apply</button>
-        <button class='clear-btn'>Clear</button>
-      </div>`;
-    $('.date-menu').html(html);
-  }
-
-
- 
-
+  // New script added 10-11-2025  
+  buildAllMenusSaleFilterReport();
+  
   $(document).on('click', '.apply-btn', function(){
     const menu = $(this).closest('.filter-menu');
     if(menu.hasClass('invno-menu')) applySimpleFilter(1, menu);
     else if(menu.hasClass('salehead-menu')) applySimpleFilter(2, menu);
     else if(menu.hasClass('buyer-menu')) applySimpleFilter(4, menu);
-    else if(menu.hasClass('date-menu')) applyDateFilter(menu);
+    else if(menu.hasClass('date-menu')) applyDateFilter(3,menu);
     $('.filter-menu').hide();
-    buildAllMenus();
+    buildAllMenusSaleFilterReport();
     updateFooterTotals();
   });
 
   $(document).on('click', '.clear-btn', function(){
     table.search('').columns().search('').draw();
-    buildAllMenus();
+    buildAllMenusSaleFilterReport();
     updateFooterTotals();
   });
 
-  function applySimpleFilter(col, menu){
-    const vals = menu.find('.opt:checked').map((i,e)=>e.value).get();
-    table.column(col).search(vals.length ? vals.join('|') : '❌', true, false).draw();
-  }
-
-  function applyDateFilter(menu){
-    const vals = menu.find('.date-opt:checked').map((i,e)=>e.value).get();
-    table.column(3).search(vals.length ? vals.join('|') : '❌', true, false).draw();
-  }
-
- // Start Function updateFooterTotals
- function updateFooterTotals() {
-  const data = table.rows({ search: 'applied' }).data();
-  const cols = [5, 6, 7, 8, 9, 10, 11, 12]; // numeric columns
-  const totals = Array(cols.length).fill(0);
-
-  for (let i = 0; i < data.length; i++) {
-    cols.forEach((c, idx) => {
-      let cell = (data[i][c] || "0").toString()
-        .replace(/<[^>]*>/g, '') // remove HTML
-        .trim()
-        .replace(/,/g, '')       // remove commas
-        .replace(/[^\d.-]/g, ''); // remove symbols
-      const num = parseFloat(cell);
-      if (!isNaN(num)) totals[idx] += num;
-    });
-  }
-
-  const footerCells = $('#dt tfoot th');
-  cols.forEach((c, idx) => {
-    let value;
-    if (c === 7) {
-     
-      value = 0.0;
-      if (totals[0]  > 0){
-      const calculateV= totals[3] / totals[0] ;
-      value = calculateV.toFixed(2); 
-      }
-
-    } else {       
-      value = totals[idx].toLocaleString('en-IN', {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2
-      });
-    }
-    $(footerCells[c]).text(value);
-  }); 
-  }
-// end Function updateFooterTotals
   table.on('draw', updateFooterTotals);
 
   });  

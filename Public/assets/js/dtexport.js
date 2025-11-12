@@ -23,6 +23,47 @@ const commonExportOptions = {
          }
       };
 
+       // Start Function updateFooterTotals
+        function updateFooterTotals() {
+          const table = $('#dt').DataTable();
+          const data = table.rows({ search: 'applied' }).data();
+          const cols = [5, 6, 7, 8, 9, 10, 11, 12]; // numeric columns
+          const totals = Array(cols.length).fill(0);
+
+          for (let i = 0; i < data.length; i++) {
+            cols.forEach((c, idx) => {
+              let cell = (data[i][c] || "0").toString()
+                .replace(/<[^>]*>/g, '') // remove HTML
+                .trim()
+                .replace(/,/g, '')       // remove commas
+                .replace(/[^\d.-]/g, ''); // remove symbols
+              const num = parseFloat(cell);
+              if (!isNaN(num)) totals[idx] += num;
+            });
+          }
+
+          const footerCells = $('#dt tfoot th');
+          cols.forEach((c, idx) => {
+            let value;
+            if (c === 7) {
+            
+              value = 0.0;
+              if (totals[0]  > 0){
+              const calculateV= totals[3] / totals[0] ;
+              value = calculateV.toFixed(2); 
+              }
+
+            } else {       
+              value = totals[idx].toLocaleString('en-IN', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+              });
+            }
+            $(footerCells[c]).text(value);
+          }); 
+          }
+        // end Function updateFooterTotals
+
       function unique(arr){ return [...new Set(arr)].sort(); }
 
         function buildSimpleFilter(selector, colIndex) {
@@ -271,6 +312,12 @@ function applyDateFilter(col,menu){
   });
   // Date - Mon-  Date  change code end
 
+    function buildAllMenusSaleFilterReport() {
+    buildSimpleFilter('.invno-menu', 1);
+    buildSimpleFilter('.salehead-menu', 2);
+    buildDateFilter('.date-menu',3);
+    buildSimpleFilter('.buyer-menu', 4);
+    }
 
     function buildAllMenusTotalsSalesOrderDetailDashboard() {
     buildSimpleFilter('.order-no', 1);

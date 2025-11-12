@@ -576,12 +576,11 @@ if($job_status_id==1) { @endphp
             updateTotalsOpenSalesOrderDetailDashboard();
       });
 
-  $(document).on('click', '.clear-btn', function(){
-    table.search('').columns().search('').draw();
-    buildAllMenusOpenSalesDetailOrderDetailDashboard();    
-    updateTotalsOpenSalesOrderDetailDashboard();
-  });
-
+      $(document).on('click', '.clear-btn', function(){
+         table.search('').columns().search('').draw();
+         buildAllMenusOpenSalesDetailOrderDetailDashboard();    
+         updateTotalsOpenSalesOrderDetailDashboard();
+      });
     });
 </script>
 @endsection
