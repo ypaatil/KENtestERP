@@ -5,6 +5,7 @@
 <script src="{{ URL::asset('assets/libs/node-waves/waves.min.js')}}"></script>
 
  <link href="https://cdn.jsdelivr.net/select2/3.5.2/select2.css" rel="stylesheet" />
+ <link href="{{ URL::asset('assets/css/filtersearch.css') }}" rel="stylesheet" />
  <script src="https://cdn.jsdelivr.net/select2/3.5.2/select2.min.js"></script>
 
  <!-- Required datatable js -->
@@ -42,7 +43,8 @@
 });
         </script>
      
-      
+<!-- Reports js added 11-11-2025  -->
+      <script src="{{ URL::asset('assets/js/dtexport.js') }}"></script>
         
        
 

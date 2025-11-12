@@ -532,7 +532,6 @@ if($job_status_id==1) { @endphp
     updateTotalsSalesOrderDetailDashboard();
   });
 
-
    });
 </script>
 @endsection
