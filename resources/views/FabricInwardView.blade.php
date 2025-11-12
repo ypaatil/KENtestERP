@@ -365,7 +365,7 @@
 
             table.second th:nth-child(7),
             table.second td:nth-child(7) {
-                width: 65px !important;
+                width: 67px !important;
             }
 
             table.second th:nth-child(8),
@@ -704,10 +704,10 @@
                             <tr>
                                 <td class="text-end" colspan="4">Total Meter:</td>
                                 <td class="text-end">{{ number_format($FabricInwardMaster[0]->total_meter,2) }}</td>
-                                <th colspan="2" class="text-end">  Total (Before Tax) </th>
+                                <th colspan="2" class="text-end">  Total (Before Tax): </th>
                                 
                                 <td class="text-end">{{  money_format('%!i',$amt) }}</td>
-                                <th colspan="3" class="text-end" >Total (After Tax)</th>
+                                <th colspan="3" class="text-end" >Total (After Tax):</th>
                                
 
                                 <td class="text-end"> {{money_format('%!i',$tamt)}}</td>

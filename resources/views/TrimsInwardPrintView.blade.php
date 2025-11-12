@@ -343,7 +343,7 @@
 
             table.second th:nth-child(1),
             table.second td:nth-child(1) {
-                width: 60px !important;
+                width: 59px !important;
             }
 
             table.second th:nth-child(2),
@@ -353,7 +353,7 @@
 
             table.second th:nth-child(3),
             table.second td:nth-child(3) {
-                width: 250px !important;
+                width: 249px !important;
             }
 
             table.second th:nth-child(4),
@@ -672,7 +672,7 @@
                                 <td class="text-center">{{ $rowDetail->unit_name }}</td>
                                 <td class="text-end">{{ number_format($rowDetail->item_qty,2) }}</td>
 
-                                <td class="text-end">{{ $rowDetail->item_rate }}</td>
+                                <td class="text-end">{{ number_format($rowDetail->item_rate,2) }}</td>
                                 <td class="text-end">{{ money_format('%!i',$Amount)}}</td>
                                 @if($tax_type_id==1)
                                 <td class="text-end">{{money_format('%!i',$CGST)}} <br> ({{$rowDetail->cgst_per}}%)</td>
@@ -703,9 +703,9 @@
                                
                                 <td class="text-end fw-bold">{{ money_format('%!i',$TrimsInwardMaster[0]->totalqty) }} </td>
 
-                                <td class="text-end fw-bold">Total (Before Tax)</td>
+                                <td class="text-end fw-bold">Total Amount <br> (Before Tax):</td>
                                 <td class="text-end fw-bold">{{ money_format('%!i',$amt) }}</td>
-                                <th colspan= "3" class="text-end fw-bold">Total (After Tax)</th>
+                                <td colspan= "3" class="text-end fw-bold">Total Amount <br> (After Tax):</td>
                                
                                 <td class="text-end fw-bold">{{money_format('%!i',$tamt)}} </td>
                             </tr>
