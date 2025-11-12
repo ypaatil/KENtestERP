@@ -524,7 +524,7 @@ if($job_status_id==1) { @endphp
     $('.filter-menu').hide();
     buildAllMenusTotalsSalesOrderDetailDashboard();   
     updateTotalsSalesOrderDetailDashboard();
-    });
+   });
 
   $(document).on('click', '.clear-btn', function(){
     table.search('').columns().search('').draw();

@@ -975,19 +975,19 @@ public function SalesOrderPrintView($tr_code)
         $total_qtyc=0;
         $open_qtyc=0;
         $shipped_qtyc=0;
-        foreach($Buyer_Purchase_Order_List as $row){$total_valuec=$total_valuec + $row->order_value; $total_qtyc=$total_qtyc+$row->total_qty; $open_qtyc=$open_qtyc+$row->balance_qty; $shipped_qtyc=$shipped_qtyc+$row->shipped_qty;}
+        //foreach($Buyer_Purchase_Order_List as $row){$total_valuec=$total_valuec + $row->order_value; $total_qtyc=$total_qtyc+$row->total_qty; $open_qtyc=$open_qtyc+$row->balance_qty; $shipped_qtyc=$shipped_qtyc+$row->shipped_qty;}
         $NoOfOrderc=count($Buyer_Purchase_Order_List);
         
-        $salesOrderList = DB::SELECT("SELECT tr_code FROM buyer_purchse_order_master WHERE delflag = 0 AND og_id != 4");
+        /*$salesOrderList = DB::SELECT("SELECT tr_code FROM buyer_purchse_order_master WHERE delflag = 0 AND og_id != 4");
         $jobStatusList = DB::SELECT("SELECT job_status_id,job_status_name FROM job_status_master WHERE delflag = 0");
         $brandList = DB::SELECT("SELECT brand_id,brand_name FROM brand_master WHERE delflag = 0");
         $styleList = DB::SELECT("SELECT fg_id,fg_name FROM fg_master WHERE delflag = 0");
         $mainStyleList = DB::SELECT("SELECT mainstyle_id,mainstyle_name FROM main_style_master WHERE delflag = 0");
         $buyerList = DB::SELECT("SELECT ac_code,ac_name FROM ledger_master WHERE delflag = 0");
-        $poList = DB::SELECT("SELECT po_code FROM buyer_purchse_order_master WHERE delflag = 0 GROUP BY buyer_purchse_order_master.po_code");
+        $poList = DB::SELECT("SELECT po_code FROM buyer_purchse_order_master WHERE delflag = 0 GROUP BY buyer_purchse_order_master.po_code");*/
     
-    
-        return view('OpenSalesOrderDetailDashboard', compact('Buyer_Purchase_Order_List','DFilter','chekform','job_status_id','NoOfOrderc','total_valuec','total_qtyc','open_qtyc','shipped_qtyc','salesOrderList','jobStatusList','buyerList','brandList','styleList','mainStyleList','poList','ReportDate','Ac_code','po_code','sales_order_no','brand_id','mainstyle_id','fg_id'));
+    return view('OpenSalesOrderDetailDashboard', compact('Buyer_Purchase_Order_List','DFilter','chekform','job_status_id','NoOfOrderc','total_valuec','total_qtyc','open_qtyc','shipped_qtyc',  'ReportDate','Ac_code','po_code','sales_order_no','brand_id','mainstyle_id','fg_id'));
+        //return view('OpenSalesOrderDetailDashboard', compact('Buyer_Purchase_Order_List','DFilter','chekform','job_status_id','NoOfOrderc','total_valuec','total_qtyc','open_qtyc','shipped_qtyc','salesOrderList','jobStatusList','buyerList','brandList','styleList','mainStyleList','poList','ReportDate','Ac_code','po_code','sales_order_no','brand_id','mainstyle_id','fg_id'));
     }
     
     public function OpenSalesOrderDetailDashboardColorWise(Request $request)

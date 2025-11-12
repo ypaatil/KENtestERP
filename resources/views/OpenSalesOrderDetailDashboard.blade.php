@@ -188,13 +188,13 @@ if($job_status_id==1) { @endphp
                         
                      <tr style="text-align:center;white-space:nowrap;">
                         <th style="text-align:center;">Sr No.</th>
-                        <th style="text-align:center;">Order No.</th>
-                        <th style="text-align:center;">Order Group</th> 
-                        <th style="text-align:center;">Order Recd. Date</th>
-                        <th style="text-align:center;">Buyer Name</th>
-                        <th style="text-align:center;">Buyer Brand</th>
-                        <th style="text-align:center;">Style Category</th>
-                        <th style="text-align:center;">Style Name</th>
+                        <th style="text-align:center;">Order No.<span class="filter-icon">🔽</span><div class="filter-menu order-no"></div></th>
+                        <th style="text-align:center;">Order Group<span class="filter-icon">🔽</span><div class="filter-menu order-group"></div></th> 
+                        <th style="text-align:center;">Order Recd. Date<span class="filter-icon">🔽</span><div class="filter-menu order-rec-date"></div></th>
+                        <th style="text-align:center;">Buyer Name<span class="filter-icon">🔽</span><div class="filter-menu buyer-name"></div></th>
+                        <th style="text-align:center;">Buyer Brand<span class="filter-icon">🔽</span><div class="filter-menu buyer-brand"></div></th>
+                        <th style="text-align:center;">Style Category<span class="filter-icon">🔽</span><div class="filter-menu style-category"></div></th>
+                        <th style="text-align:center;">Style Name<span class="filter-icon">🔽</span><div class="filter-menu style-name"></div></th>
                         <th style="text-align:center;">SAM</th>
                         <th style="text-align:center;">Rate</th>
                         <th style="text-align:center;">Value  </th>
@@ -219,10 +219,10 @@ if($job_status_id==1) { @endphp
                         <th style="text-align:center;">B 2 Produce Actual Min</th>
                         <th style="text-align:center;">CMOHP</th>
                         <th style="text-align:center;">CMOHP Value</th>
-                        <th style="text-align:center;">Plan Cut Date</th>
-                        <th style="text-align:center;">Shipment Date</th>
-                        <th style="text-align:center;">Ship Month</th>
-                        <th style="text-align:center;">Bulk Merchant</th>
+                        <th style="text-align:center;">Plan Cut Date<span class="filter-icon">🔽</span><div class="filter-menu plan-cut-date"></div></th>
+                        <th style="text-align:center;">Shipment Date<span class="filter-icon">🔽</span><div class="filter-menu shipment-date"></div></th>
+                        <th style="text-align:center;">Ship Month<span class="filter-icon">🔽</span><div class="filter-menu shipment-month"></div></th>
+                        <th style="text-align:center;">Bulk Merchant<span class="filter-icon">🔽</span><div class="filter-menu bulk-merchant"></div></th>
                         <th style="text-align:center;">Remark</th>
                      </tr>
                   </thead>
@@ -517,22 +517,26 @@ if($job_status_id==1) { @endphp
                 {
                     extend: 'copyHtml5',
                     text: 'Copy',
-                    title: exportTitle
+                    title: exportTitle,
+                    exportOptions: commonExportOptions
                 },
                 {
                     extend: 'excelHtml5',
                     text: 'Excel',
-                    title: exportTitle
+                    title: exportTitle,
+                    exportOptions: commonExportOptions
                 },
                 {
                     extend: 'csvHtml5',
                     text: 'CSV',
-                    title: exportTitle
+                    title: exportTitle,
+                    exportOptions: commonExportOptions
                 },
                 {
                     extend: 'pdfHtml5',
                     text: 'PDF',
                     title: exportTitle,
+                    exportOptions: commonExportOptions,
                     orientation: 'landscape',     // or 'portrait'
                     pageSize: 'A4',               // A4, A3, etc.
                     customize: function (doc) {
@@ -542,11 +546,42 @@ if($job_status_id==1) { @endphp
                 {
                     extend: 'print',
                     text: 'Print Table',
-                    title: exportTitle
+                    title: exportTitle,
+                    exportOptions: commonExportOptions
                 }
             ]
 
         });
+
+           // New script added 11-11-2025   
+            buildAllMenusOpenSalesDetailOrderDetailDashboard();
+
+         $(document).on('click', '.apply-btn', function() {
+            const menu = $(this).closest('.filter-menu');
+            if(menu.hasClass('order-no')) applySimpleFilter(1, menu);
+            else if(menu.hasClass('order-group')) applySimpleFilter(2, menu);
+            else if(menu.hasClass('order-rec-date')) applyDateFilter(3, menu);
+            else if(menu.hasClass('buyer-name')) applySimpleFilter(4,menu);
+            else if(menu.hasClass('buyer-brand')) applySimpleFilter(5,menu);
+            else if(menu.hasClass('style-category')) applySimpleFilter(6,menu);
+            else if(menu.hasClass('style-name')) applySimpleFilter(7,menu);
+
+            else if(menu.hasClass('plan-cut-date')) applyDateFilter(32,menu); 
+            else if(menu.hasClass('shipment-date')) applyDateFilter(33, menu);
+            else if(menu.hasClass('shipment-month')) applyDateFilter(34, menu);     
+            else if(menu.hasClass('bulk-merchant')) applySimpleFilter(35,menu);            
+    
+            $('.filter-menu').hide();
+            buildAllMenusOpenSalesDetailOrderDetailDashboard();   
+            updateTotalsOpenSalesOrderDetailDashboard();
+      });
+
+  $(document).on('click', '.clear-btn', function(){
+    table.search('').columns().search('').draw();
+    buildAllMenusOpenSalesDetailOrderDetailDashboard();    
+    updateTotalsOpenSalesOrderDetailDashboard();
+  });
+
     });
 </script>
 @endsection

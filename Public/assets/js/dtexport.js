@@ -292,3 +292,100 @@ function applyDateFilter(col,menu){
     buildColouredFilter('.costing-status', 25); 
     buildSimpleFilter('.bulk-merchant', 26); 
   }
+
+    function buildAllMenusOpenSalesDetailOrderDetailDashboard() {
+    buildSimpleFilter('.order-no', 1);
+    buildSimpleFilter('.order-group', 2);
+    buildDateFilter('.order-rec-date', 3);
+    buildSimpleFilter('.buyer-name', 4);
+    buildSimpleFilter('.buyer-brand', 5);
+    buildSimpleFilter('.style-category', 6);    
+    buildSimpleFilter('.style-name',7);
+    buildDateFilter('.plan-cut-date',32);
+    buildDateFilter('.shipment-date',33);
+    buildDateFilter('.shipment-month',34);
+    buildSimpleFilter('.bulk-merchant',35);    
+  }
+
+  	function updateTotalsOpenSalesOrderDetailDashboard() {     
+    const data = $('#dt').DataTable().rows({ search: 'applied' }).data(); //table.rows({ search: 'applied' }).data();
+
+    let head_total_order_value = 0;
+    let head_total_order_qty = 0;
+    let head_total_Min_qty = 0;
+    let head_total_cut_qty = 0;
+    let head_total_production_qty = 0;
+    let head_total_prod_bal_qty = 0;
+    let head_total_prod_min = 0;
+    let head_total_reject_qty = 0;
+    let head_total_packing_qty = 0;
+    let head_total_ship_qty = 0;
+    let head_total_ship_min = 0;
+    let head_total_excess_cut_qty = 0;
+    let head_total_bal_ship_qty = 0;
+    let head_total_bal_ship_min = 0;
+    let head_total_bal_prod = 0;
+    let head_total_bal_prod_min = 0;
+    let head_total_short_close_qty = 0;
+    let head_total_bal_qty_prod_actual = 0;
+    let head_total_bal_min_produced_actual = 0;
+    let head_total_bal_min_prod_actual = 0;
+    let head_total_cmohp_value = 0;
+
+
+    // Loop through visible rows
+    data.each(function (row) {  
+      
+        // Adjust column indexes as per your table structure
+        head_total_order_value         += parseFloat(row[10]?.toString().replace(/,/g, '')) || 0;
+        head_total_order_qty           += parseFloat(row[11]?.toString().replace(/,/g, '')) || 0;
+        head_total_Min_qty             += parseFloat(row[12]?.toString().replace(/,/g, '')) || 0;
+        head_total_cut_qty             += parseFloat(row[13]?.toString().replace(/,/g, '')) || 0;
+        head_total_production_qty      += parseFloat(row[14]?.toString().replace(/,/g, '')) || 0;
+        head_total_prod_bal_qty        += parseFloat(row[15]?.toString().replace(/,/g, '')) || 0;
+        head_total_prod_min            += parseFloat(row[16]?.toString().replace(/,/g, '')) || 0;
+        head_total_reject_qty          += parseFloat(row[17]?.toString().replace(/,/g, '')) || 0;
+        head_total_packing_qty         += parseFloat(row[18]?.toString().replace(/,/g, '')) || 0;
+        head_total_ship_qty            += parseFloat(row[19]?.toString().replace(/,/g, '')) || 0;
+        head_total_ship_min            += parseFloat(row[20]?.toString().replace(/,/g, '')) || 0;
+        head_total_excess_cut_qty      += parseFloat(row[21]?.toString().replace(/,/g, '')) || 0;
+        head_total_bal_ship_qty        += parseFloat(row[22]?.toString().replace(/,/g, '')) || 0;
+        head_total_bal_ship_min        += parseFloat(row[23]?.toString().replace(/,/g, '')) || 0;
+        head_total_bal_prod            += parseFloat(row[24]?.toString().replace(/,/g, '')) || 0;
+        head_total_bal_prod_min        += parseFloat(row[25]?.toString().replace(/,/g, '')) || 0;
+        head_total_short_close_qty     += parseFloat(row[26]?.toString().replace(/,/g, '')) || 0;
+        head_total_bal_qty_prod_actual += parseFloat(row[27]?.toString().replace(/,/g, '')) || 0;
+        head_total_bal_min_produced_actual += parseFloat(row[28]?.toString().replace(/,/g, '')) || 0;
+        head_total_bal_min_prod_actual += parseFloat(row[29]?.toString().replace(/,/g, '')) || 0;
+        head_total_cmohp_value         += parseFloat(row[31]?.toString().replace(/,/g, '')) || 0;
+
+    });
+
+    // Format number with commas and 2 decimals
+    function formatNum(n) {
+        return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // Set totals in header/footer
+    $('#head_total_order_value').text(formatNum(head_total_order_value));
+    $('#head_total_order_qty').text(formatNum(head_total_order_qty));
+    $('#head_total_Min_qty').text(formatNum(head_total_Min_qty));
+    $('#head_total_cut_qty').text(formatNum(head_total_cut_qty));
+    $('#head_total_production_qty').text(formatNum(head_total_production_qty));
+    $('#head_total_prod_bal_qty').text(formatNum(head_total_prod_bal_qty));
+    $('#head_total_prod_min').text(formatNum(head_total_prod_min));
+    $('#head_total_reject_qty').text(formatNum(head_total_reject_qty));
+    $('#head_total_packing_qty').text(formatNum(head_total_packing_qty));
+    $('#head_total_ship_qty').text(formatNum(head_total_ship_qty));
+    $('#head_total_ship_min').text(formatNum(head_total_ship_min));    
+    $('#head_total_excess_cut_qty').text(formatNum(head_total_excess_cut_qty));
+    $('#head_total_bal_ship_qty').text(formatNum(head_total_bal_ship_qty));  
+    $('#head_total_bal_ship_min').text(formatNum(head_total_bal_ship_min));
+    $('#head_total_bal_prod').text(formatNum(head_total_bal_prod));    
+    $('#head_total_bal_prod_min').text(formatNum(head_total_bal_prod_min));
+    $('#head_total_short_close_qty').text(formatNum(head_total_short_close_qty));
+    $('#head_total_bal_qty_prod_actual').text(formatNum(head_total_bal_qty_prod_actual));
+    $('#head_total_bal_min_produced_actual').text(formatNum(head_total_bal_min_produced_actual));
+    $('#head_total_bal_min_prod_actual').text(formatNum(head_total_bal_min_prod_actual));    
+    $('#head_total_cmohp_value').text(formatNum(head_total_cmohp_value));
+   }

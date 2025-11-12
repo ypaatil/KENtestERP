@@ -613,60 +613,8 @@
     $('.date-menu').html(html);
   }
 
-  // === UI Events ===
-  $('.filter-icon').on('click', function(e){
-    e.stopPropagation();
-    $('.filter-menu').hide();
-    $(this).next('.filter-menu').toggle();
-  });
-  $(document).on('click', e=>{
-    if(!$(e.target).closest('.filter-menu, .filter-icon').length) $('.filter-menu').hide();
-  });
-  $(document).on('click', '.filter-menu', e=> e.stopPropagation());
 
-  $(document).on('input', '.filter-search', function(){
-    const val = $(this).val().toLowerCase();
-    $(this).closest('.filter-menu').find('label').each(function(){
-      $(this).toggle($(this).text().toLowerCase().includes(val));
-    });
-  });
-
-  $(document).on('change', '.select-all', function(){
-    $(this).closest('.filter-menu').find('.opt').prop('checked', this.checked);
-  });
-
-  $(document).on('click', '.tree-toggle', function(){
-    const id = $(this).data('target');
-    const block = $('#'+id);
-    if(block.hasClass('collapsed')){
-      block.removeClass('collapsed');
-      $(this).text('−');
-    } else {
-      block.addClass('collapsed');
-      $(this).text('+');
-    }
-  });
-
-  $(document).on('change', '.year-check', function(){
-    const y = $(this).data('year');
-    $(`.month-check[data-year='${y}'], .date-opt[data-year='${y}']`).prop('checked', this.checked);
-  });
-  $(document).on('change', '.month-check', function(){
-    const y = $(this).data('year');
-    const m = $(this).data('month');
-    $(`.date-opt[data-year='${y}'][data-month='${m}']`).prop('checked', this.checked);
-    const allMonths = $(`.month-check[data-year='${y}']`);
-    $(`.year-check[data-year='${y}']`).prop('checked', allMonths.length === allMonths.filter(':checked').length);
-  });
-  $(document).on('change', '.date-opt', function(){
-    const y = $(this).data('year');
-    const m = $(this).data('month');
-    const allDates = $(`.date-opt[data-year='${y}'][data-month='${m}']`);
-    const allChecked = allDates.length === allDates.filter(':checked').length;
-    $(`.month-check[data-year='${y}'][data-month='${m}']`).prop('checked', allChecked);
-    const allMonths = $(`.month-check[data-year='${y}']`);
-    $(`.year-check[data-year='${y}']`).prop('checked', allMonths.length === allMonths.filter(':checked').length);
-  });
+ 
 
   $(document).on('click', '.apply-btn', function(){
     const menu = $(this).closest('.filter-menu');
