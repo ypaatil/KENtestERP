@@ -1,27 +1,46 @@
-const commonExportOptions = {
-         columns: ':visible',
-         modifier: { search: 'applied' },
-         format: {
-           header: function (data, columnIdx) {
-                           const div = document.createElement("div");
-                           div.innerHTML = data;
+function commonExportOptions(dateColumns = []) {
+  return {
+    columns: ':visible',
+    modifier: { search: 'applied' },
+    format: {
+      header: function (data, columnIdx) {
+        const div = document.createElement("div");
+        div.innerHTML = data;
 
-                           // Remove any filter dropdown content
-                           const filterMenus = div.querySelectorAll('.filter-menu');
-                           filterMenus.forEach(el => el.remove());
+        // Remove filter menus & icons
+        div.querySelectorAll('.filter-menu, .filter-icon, i, svg').forEach(el => el.remove());
 
-                           const filterMenusicon = div.querySelectorAll('.filter-icon');
-                           filterMenusicon.forEach(el => el.remove());
-                           
+        return div.textContent.trim() || div.innerText.trim() || "";
+      },
 
-                           // Remove icons if present
-                           const icons = div.querySelectorAll('i, svg');
-                           icons.forEach(el => el.remove());
+      body: function (data, row, column, node) {
+        // 🧹 Always clean HTML tags first
+        let cleanText = $('<div>').html(data).text().trim();
 
-                           return div.textContent.trim() || div.innerText.trim() || "";
-                           }
-         }
-      };
+        // 🗓 If this column is a date column, format it for Excel/CSV
+        if (dateColumns.includes(column) && typeof cleanText === 'string') {
+          const parts = cleanText.match(/(\d{1,2})-(\w{3})-(\d{4})/);
+          if (parts) {
+            const months = {
+              Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+              Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12'
+            };
+            const d = parts[1].padStart(2, '0');
+            const m = months[parts[2]];
+            const y = parts[3];
+            return `${y}-${m}-${d}`;
+          }
+        }
+
+        // 🧾 Return cleaned plain text
+        return cleanText;
+      }
+    }
+  };
+}
+
+
+
 
        // Start Function updateFooterTotals
         function updateFooterTotals() {
@@ -66,113 +85,193 @@ const commonExportOptions = {
 
       function unique(arr){ return [...new Set(arr)].sort(); }
 
-        function buildSimpleFilter(selector, colIndex) {
-          const table = $('#dt').DataTable();
-            const visible = table.rows({ search: 'applied' }).data().toArray();
-            const values = unique(visible.map(r=>r[colIndex]));
-            let html = `
-              <input type='text' class='filter-search' placeholder='Search...'>
-              <label><input type='checkbox' class='select-all' checked> Select All</label>
-              <div class='options'>`;
-            values.forEach(v=>{
-              html += `<label><input type='checkbox' class='opt' value='${v}' checked> ${v}</label>`;
-            });
-            html += `</div>
-              <div class='filter-actions'>
-                <button class='apply-btn'>Apply</button>
-                <button class='clear-btn'>Clear</button>
-              </div>`;
-            $(selector).html(html);
-      }
+let lastParentFilterCol = null;
+let savedFilterStates = {};     // { colIndex: [checked values] }
+let savedVisibleValues = {};    // { colIndex: [visible values at apply time] }
 
-      
-      function buildColouredFilter(selector, colIndex) {
-        const table = $('#dt').DataTable();
-        const visible = table.rows({ search: 'applied' }).data().toArray();        
-        const statuses = unique(visible.map(r => r[colIndex]).filter(Boolean));
-         console.log(statuses);
-        let html = `
-          <input type='text' class='filter-search' placeholder='Search...'>
-          <label><input type='checkbox' class='select-all' checked> Select All</label>
-          <div class='options'>`;
+function buildSimpleFilter(selector, colIndex) {
+  const table = $('#dt').DataTable();
+  const menu = $(selector);
 
-        statuses.forEach(s => {
-            let colorClass = '';
- 
-            if (s.toLowerCase().trim() === 'completed') colorClass = 'completed-label';
-            if (s.toLowerCase().trim() === 'approved') colorClass = 'approved-label';
-            if (s.toLowerCase().trim() === 'not approved') colorClass = 'not-approved-label';
-            if (s.toLowerCase().trim() === 'not done') colorClass = 'not-done-label';
+  let valuesToShow;
 
-            html += `
-              <label>
-                <input type='checkbox' class='opt' value='${s}' checked>
-                <span class='${colorClass}'>${s}</span>
-              </label>`;
-        });
+  if (lastParentFilterCol === colIndex && savedVisibleValues[colIndex]) {
+    // ✅ Reopen same parent filter: use saved visible options
+    valuesToShow = savedVisibleValues[colIndex];
+  } else {
+    // ✅ Build from current filtered data
+    const visibleData = table.column(colIndex, { search: 'applied' }).data().toArray();
+    valuesToShow = [...new Set(visibleData.filter(v => v && v.trim() !== ''))].sort();
+  }
 
-        html += `
-          </div>
-          <div class='filter-actions'>
-            <button class='apply-btn'>Apply</button>
-            <button class='clear-btn'>Clear</button>
-          </div>`;
-          
-        $(selector).html(html);
-    }
+  // Restore previously checked values
+  const prevChecked = savedFilterStates[colIndex] || [];
 
-    function buildDateFilter(selector, colIndex) {
-      const table = $('#dt').DataTable();
-      const visible = table.rows({ search: 'applied' }).data().toArray();
-      const dates = unique(visible.map(r => r[colIndex]).filter(Boolean));
-      const tree = {};
+  // Build HTML
+  let html = `
+    <input type='text' class='filter-search' placeholder='Search...'>
+    <label><input type='checkbox' class='select-all'> <b>Select All</b></label>
+    <div class='options'>
+  `;
 
-      // Group dates by Year → Month → Day
-      dates.forEach(d => {
-         const dt = new Date(d);
-         if (isNaN(dt)) return;
-         const y = dt.getFullYear();
-         const m = dt.toLocaleString('default', { month: 'short' });
-         if (!tree[y]) tree[y] = {};
-         if (!tree[y][m]) tree[y][m] = [];
-         tree[y][m].push(d);
-      });
+  valuesToShow.forEach(v => {
+    const checked = prevChecked.length === 0 || prevChecked.includes(v) ? 'checked' : '';
+    html += `<label><input type='checkbox' class='opt' value='${v}' ${checked}> ${v}</label>`;
+  });
 
-      // Build HTML
-      let html = `<input type='text' class='filter-search' placeholder='Search date...'>`;
+  html += `
+    </div>
+    <div class='filter-actions'>
+      <button class='apply-btn'>Apply</button>
+      <button class='clear-btn'>Clear</button>
+    </div>
+  `;
 
-      Object.keys(tree).sort((a,b)=>b-a).forEach(y => {
-         html += `
-            <div class='year-block'>
-            <div class='tree-line'>
-               <span class='tree-toggle' data-target='year-${colIndex}-${y}'>+</span>
-               <label><input type='checkbox' class='year-check' data-col='${colIndex}' data-year='${y}' checked> ${y}</label>
-            </div>
-            <div class='month-list collapsed' id='year-${colIndex}-${y}'>`;
-         Object.keys(tree[y]).forEach(m => {
-            html += `
-            <div class='month-block'>
-               <div class='tree-line'>
-                  <span class='tree-toggle' data-target='month-${colIndex}-${y}-${m}'>+</span>
-                  <label><input type='checkbox' class='month-check' data-col='${colIndex}' data-year='${y}' data-month='${m}' checked> ${m}</label>
-               </div>
-               <div class='day-list collapsed' id='month-${colIndex}-${y}-${m}'>`;
-            tree[y][m].forEach(d => {
-            html += `<label><input type='checkbox' class='date-opt' data-col='${colIndex}' data-year='${y}' data-month='${m}' value='${d}' checked> ${d}</label>`;
-            });
-            html += `</div></div>`;
-         });
-         html += `</div></div>`;
-      });
+  menu.html(html);
 
+  // Handle select-all state
+  const allCount = valuesToShow.length;
+  const checkedCount = menu.find('.opt:checked').length;
+  menu.find('.select-all').prop('checked', allCount === checkedCount);
+}
+
+function buildColouredFilter(selector, colIndex) {
+  const table = $('#dt').DataTable();
+  const menu = $(selector);
+
+  let valuesToShow;
+
+  // ✅ 1️⃣ Check if this column is the last parent filter
+  if (lastParentFilterCol === colIndex && savedVisibleValues[colIndex]) {
+    // Reopen same parent filter → use previously saved visible values
+    valuesToShow = savedVisibleValues[colIndex];
+  } else {
+    // Build new options based on currently filtered data
+    const visibleData = table.column(colIndex, { search: 'applied' }).data().toArray();
+    valuesToShow = [...new Set(visibleData.filter(v => v && v.trim() !== ''))].sort();
+  }
+
+  // ✅ 2️⃣ Get previously checked options (if any)
+  const prevChecked = savedFilterStates[colIndex] || [];
+
+  // ✅ 3️⃣ Build HTML
+  let html = `
+    <input type='text' class='filter-search' placeholder='Search...'>
+    <label><input type='checkbox' class='select-all'> <b>Select All</b></label>
+    <div class='options'>
+  `;
+
+  valuesToShow.forEach(v => {
+    const cleanVal = $('<div>').html(v).text().trim(); // strip HTML
+    const checked = prevChecked.length === 0 || prevChecked.includes(cleanVal) ? 'checked' : '';
+
+    // Color label
+    let colorClass = '';
+    if (cleanVal.toLowerCase() === 'completed') colorClass = 'completed-label';
+    else if (cleanVal.toLowerCase() === 'approved') colorClass = 'approved-label';
+    else if (cleanVal.toLowerCase() === 'not approved') colorClass = 'not-approved-label';
+    else if (cleanVal.toLowerCase() === 'not done') colorClass = 'not-done-label';
+
+    html += `
+      <label>
+        <input type='checkbox' class='opt' value='${cleanVal}' ${checked}>
+        <span class='${colorClass}'>${cleanVal}</span>
+      </label>`;
+  });
+
+  html += `
+    </div>
+    <div class='filter-actions'>
+      <button class='apply-btn'>Apply</button>
+      <button class='clear-btn'>Clear</button>
+    </div>
+  `;
+
+  menu.html(html);
+
+  // ✅ 4️⃣ Handle select-all checkbox state
+  const allCount = valuesToShow.length;
+  const checkedCount = menu.find('.opt:checked').length;
+  menu.find('.select-all').prop('checked', allCount === checkedCount);
+}
+
+
+   function buildDateFilter(selector, colIndex) {
+  const table = $('#dt').DataTable();
+  const menu = $(selector);
+
+  let dates = [];
+
+  // ✅ If this column was the last parent filter, rebuild using saved visible values
+  if (lastParentFilterCol === colIndex && savedVisibleValues[colIndex]) {
+    dates = savedVisibleValues[colIndex];
+  } else {
+    // Otherwise, build from currently visible (filtered) data
+    const visible = table.rows({ search: 'applied' }).data().toArray();
+    dates = [...new Set(visible.map(r => r[colIndex]).filter(Boolean))];
+  }
+
+  // ✅ Store unique sorted dates
+  dates.sort((a, b) => new Date(b) - new Date(a));
+
+  // ✅ Create a tree grouped by Year → Month → Day
+  const tree = {};
+  dates.forEach(d => {
+    const dt = new Date(d);
+    if (isNaN(dt)) return;
+    const y = dt.getFullYear();
+    const m = dt.toLocaleString('default', { month: 'short' });
+    if (!tree[y]) tree[y] = {};
+    if (!tree[y][m]) tree[y][m] = [];
+    tree[y][m].push(d);
+  });
+
+  // ✅ Restore previously checked values
+  const prevChecked = savedFilterStates[colIndex] || [];
+
+  // ✅ Build HTML
+  let html = `<input type='text' class='filter-search' placeholder='Search date...'>`;
+
+  Object.keys(tree).sort((a, b) => b - a).forEach(y => {
+    html += `
+      <div class='year-block'>
+        <div class='tree-line'>
+          <span class='tree-toggle' data-target='year-${colIndex}-${y}'>+</span>
+          <label><input type='checkbox' class='year-check' data-col='${colIndex}' data-year='${y}' checked> ${y}</label>
+        </div>
+        <div class='month-list collapsed' id='year-${colIndex}-${y}'>
+    `;
+
+    Object.keys(tree[y]).forEach(m => {
       html += `
-         <div class='filter-actions'>
-            <button class='apply-btn' data-col='${colIndex}'>Apply</button>
-            <button class='clear-btn' data-col='${colIndex}'>Clear</button>
-         </div>`;
+        <div class='month-block'>
+          <div class='tree-line'>
+            <span class='tree-toggle' data-target='month-${colIndex}-${y}-${m}'>+</span>
+            <label><input type='checkbox' class='month-check' data-col='${colIndex}' data-year='${y}' data-month='${m}' checked> ${m}</label>
+          </div>
+          <div class='day-list collapsed' id='month-${colIndex}-${y}-${m}'>
+      `;
 
-      $(selector).html(html);
-      }
+      tree[y][m].forEach(d => {
+        const checked = prevChecked.length === 0 || prevChecked.includes(d) ? 'checked' : '';
+        html += `<label><input type='checkbox' class='date-opt' data-col='${colIndex}' data-year='${y}' data-month='${m}' value='${d}' ${checked}> ${d}</label>`;
+      });
+
+      html += `</div></div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  html += `
+    <div class='filter-actions'>
+      <button class='apply-btn' data-col='${colIndex}'>Apply</button>
+      <button class='clear-btn' data-col='${colIndex}'>Clear</button>
+    </div>`;
+
+  menu.html(html);
+}
+
 
 	function updateTotalsSalesOrderDetailDashboard() { 
     // Get visible rows (after filter applied)
@@ -210,53 +309,98 @@ const commonExportOptions = {
 
      // === Coloured Filter Apply ===
  
-function applyColouredFilter(col, menu) {
+ function applyColouredFilter(col, menu) {
   const table = $('#dt').DataTable();
 
-  // Get selected checkbox text (strip HTML)
+  // Get selected checkbox labels (clean HTML text)
   const vals = menu.find('.opt:checked').map((i, e) => {
     return $('<div>').html($(e).val()).text().trim();
   }).get();
 
-  // If nothing selected — clear column filter
+  // Save checked values & visible values
+  savedFilterStates[col] = vals;
+  savedVisibleValues[col] = menu.find('.opt').map((i, e) => {
+    return $('<div>').html($(e).val()).text().trim();
+  }).get();
+
+  // Remember last parent column
+  lastParentFilterCol = col;
+
+  // Clear filter if nothing selected
   if (vals.length === 0) {
-    table.column(col).search('❌', true, false).draw();
+    table.column(col).search('').draw();
     return;
   }
 
-  // Escape regex special chars and create exact match pattern
-  const escapedVals = vals.map(v => v.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
-  const regex = '^(' + escapedVals.join('|') + ')$';
+  // Remove any previous custom filter for this column
+  $.fn.dataTable.ext.search = $.fn.dataTable.ext.search.filter(fn => !fn._isColouredFilter || fn._col !== col);
 
-  // Custom filter — strip HTML before comparing
-  $.fn.dataTable.ext.search.push(function(settings, data, dataIndex) {
+  // Create new custom filter
+  const customFilter = function (settings, data, dataIndex) {
+    if (settings.nTable !== table.table().node()) return true; // only this table
+
     const cellHtml = data[col] || '';
-    const cellText = $('<div>').html(cellHtml).text().trim();
-    return vals.includes(cellText);
-  });
+    const cellText = $('<div>').html(cellHtml).text().trim(); // strip HTML
+    return vals.includes(cellText); // exact text match
+  };
+  customFilter._isColouredFilter = true;
+  customFilter._col = col;
 
-  // Redraw table with filter
+  $.fn.dataTable.ext.search.push(customFilter);
+
+  // Redraw table with filter applied
   table.draw();
-
-  // Remove custom filter after use (to prevent stacking)
-  $.fn.dataTable.ext.search.pop();
 }
 
-  function applySimpleFilter(col, menu){
-    const table = $('#dt').DataTable();
-    const vals = menu.find('.opt:checked').map((i,e)=>e.value).get();    
-    table.column(col).search(vals.length ? vals.join('|') : '❌', true, false).draw();
-  }
 
-function applyDateFilter(col,menu){ 
-    const table = $('#dt').DataTable();
-    const vals = menu.find('.date-opt:checked').map((i,e)=>e.value).get();
-    table.column(col).search(vals.length ? vals.join('|') : '❌', true, false).draw();
-  }
+
+
+  function applySimpleFilter(col, menu) {
+  const table = $('#dt').DataTable();
+  const vals = menu.find('.opt:checked').map((i,e)=>e.value).get();    
+
+  // Save checked values
+  savedFilterStates[col] = vals;
+
+  // Save visible options at this moment
+  const visibleOptions = menu.find('.opt').map((i,e)=>e.value).get();
+  savedVisibleValues[col] = visibleOptions;
+
+  // Mark this as parent
+  lastParentFilterCol = col;
+
+  // Apply search
+  table.column(col).search(vals.length ? vals.join('|') : '❌', true, false).draw();
+}
+
+    //******************************************** */
+
+
+ /////////////////////////////
+  
+
+function applyDateFilter(col, menu) {
+  const table = $('#dt').DataTable();
+  const vals = menu.find('.date-opt:checked').map((i,e)=>e.value).get();
+
+  // Save checked values
+  savedFilterStates[col] = vals;
+
+  // Save visible options at this moment
+  const visibleDates = menu.find('.date-opt').map((i,e)=>e.value).get();
+  savedVisibleValues[col] = visibleDates;
+
+  // Mark this as parent
+  lastParentFilterCol = col;
+
+  // Apply search
+  table.column(col).search(vals.length ? vals.join('|') : '❌', true, false).draw();
+}
+
 
 
   // === UI Events ===
-  $('.filter-icon').on('click', function(e){
+  $('.filter-icon').on('click', function(e) {
     e.stopPropagation();
     $('.filter-menu').hide();
     $(this).next('.filter-menu').toggle();
@@ -312,12 +456,12 @@ function applyDateFilter(col,menu){
   });
   // Date - Mon-  Date  change code end
 
-    function buildAllMenusSaleFilterReport() {
-    buildSimpleFilter('.invno-menu', 1);
-    buildSimpleFilter('.salehead-menu', 2);
-    buildDateFilter('.date-menu',3);
-    buildSimpleFilter('.buyer-menu', 4);
-    }
+function buildAllMenusSaleFilterReport() {
+  buildSimpleFilter('.invno-menu', 1);
+  buildSimpleFilter('.salehead-menu', 2);
+  buildDateFilter('.date-menu', 3);
+  buildSimpleFilter('.buyer-menu', 4);
+}
 
     function buildAllMenusTotalsSalesOrderDetailDashboard() {
     buildSimpleFilter('.order-no', 1);
