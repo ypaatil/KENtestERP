@@ -193,25 +193,25 @@ function buildColouredFilter(selector, colIndex) {
 }
 
 
-   function buildDateFilter(selector, colIndex) {
+ function buildDateFilter(selector, colIndex) {
   const table = $('#dt').DataTable();
   const menu = $(selector);
 
   let dates = [];
 
-  // ✅ If this column was the last parent filter, rebuild using saved visible values
+  // ✅ If reopening same parent filter, use saved visible options
   if (lastParentFilterCol === colIndex && savedVisibleValues[colIndex]) {
     dates = savedVisibleValues[colIndex];
   } else {
-    // Otherwise, build from currently visible (filtered) data
+    // ✅ Build from current filtered rows
     const visible = table.rows({ search: 'applied' }).data().toArray();
     dates = [...new Set(visible.map(r => r[colIndex]).filter(Boolean))];
   }
 
-  // ✅ Store unique sorted dates
+  // ✅ Sort newest first
   dates.sort((a, b) => new Date(b) - new Date(a));
 
-  // ✅ Create a tree grouped by Year → Month → Day
+  // ✅ Group by Year → Month → Day
   const tree = {};
   dates.forEach(d => {
     const dt = new Date(d);
@@ -224,41 +224,49 @@ function buildColouredFilter(selector, colIndex) {
   });
 
   // ✅ Restore previously checked values
-  const prevChecked = savedFilterStates[colIndex] || [];
+  const prevChecked = savedFilterStates[colIndex];
 
-  // ✅ Build HTML
+  // ✅ Build HTML tree
   let html = `<input type='text' class='filter-search' placeholder='Search date...'>`;
 
-  Object.keys(tree).sort((a, b) => b - a).forEach(y => {
-    html += `
-      <div class='year-block'>
-        <div class='tree-line'>
-          <span class='tree-toggle' data-target='year-${colIndex}-${y}'>+</span>
-          <label><input type='checkbox' class='year-check' data-col='${colIndex}' data-year='${y}' checked> ${y}</label>
-        </div>
-        <div class='month-list collapsed' id='year-${colIndex}-${y}'>
-    `;
-
-    Object.keys(tree[y]).forEach(m => {
+  Object.keys(tree)
+    .sort((a, b) => b - a)
+    .forEach(y => {
       html += `
-        <div class='month-block'>
+        <div class='year-block'>
           <div class='tree-line'>
-            <span class='tree-toggle' data-target='month-${colIndex}-${y}-${m}'>+</span>
-            <label><input type='checkbox' class='month-check' data-col='${colIndex}' data-year='${y}' data-month='${m}' checked> ${m}</label>
+            <span class='tree-toggle' data-target='year-${colIndex}-${y}'>+</span>
+            <label><input type='checkbox' class='year-check' data-col='${colIndex}' data-year='${y}'> ${y}</label>
           </div>
-          <div class='day-list collapsed' id='month-${colIndex}-${y}-${m}'>
+          <div class='month-list collapsed' id='year-${colIndex}-${y}'>
       `;
 
-      tree[y][m].forEach(d => {
-        const checked = prevChecked.length === 0 || prevChecked.includes(d) ? 'checked' : '';
-        html += `<label><input type='checkbox' class='date-opt' data-col='${colIndex}' data-year='${y}' data-month='${m}' value='${d}' ${checked}> ${d}</label>`;
+      Object.keys(tree[y]).forEach(m => {
+        html += `
+          <div class='month-block'>
+            <div class='tree-line'>
+              <span class='tree-toggle' data-target='month-${colIndex}-${y}-${m}'>+</span>
+              <label><input type='checkbox' class='month-check' data-col='${colIndex}' data-year='${y}' data-month='${m}'> ${m}</label>
+            </div>
+            <div class='day-list collapsed' id='month-${colIndex}-${y}-${m}'>
+        `;
+
+        tree[y][m].forEach(d => {
+          // ✅ FIX: Only default all checked if no previous filter state exists
+          let checked = '';
+          if (!prevChecked) {
+            checked = 'checked'; // First page load → all checked
+          } else if (prevChecked.includes(d)) {
+            checked = 'checked'; // User selection → keep checked
+          }
+          html += `<label><input type='checkbox' class='date-opt' data-col='${colIndex}' data-year='${y}' data-month='${m}' value='${d}' ${checked}> ${d}</label>`;
+        });
+
+        html += `</div></div>`;
       });
 
       html += `</div></div>`;
     });
-
-    html += `</div></div>`;
-  });
 
   html += `
     <div class='filter-actions'>
@@ -267,7 +275,64 @@ function buildColouredFilter(selector, colIndex) {
     </div>`;
 
   menu.html(html);
+
+  // ✅ After building, immediately sync checkbox hierarchy
+  syncAllDateHierarchies(colIndex);
 }
+
+
+
+// =======================================================
+// ✅ Sync all month/year check states right after build
+// =======================================================
+function syncAllDateHierarchies(colIndex) {
+  const years = [...new Set($(`.year-check[data-col='${colIndex}']`).map((_, e) => $(e).data('year')).get())];
+  years.forEach(y => recalcHierarchy(y));
+}
+
+
+// =======================================================
+// ✅ Shared recalculation logic (same as before)
+// =======================================================
+function recalcHierarchy(y) {
+  // Update each month for this year
+  $(`.month-check[data-year='${y}']`).each(function () {
+    const m = $(this).data('month');
+    const allDates = $(`.date-opt[data-year='${y}'][data-month='${m}']`);
+    const checkedDates = allDates.filter(':checked').length;
+
+    if (checkedDates === 0) {
+      this.checked = false;
+      this.indeterminate = false;
+    } else if (checkedDates === allDates.length) {
+      this.checked = true;
+      this.indeterminate = false;
+    } else {
+      this.checked = false;
+      this.indeterminate = true;
+    }
+  });
+
+  // Update year checkbox based on months
+  const allMonths = $(`.month-check[data-year='${y}']`);
+  const checkedMonths = allMonths.filter(':checked').length;
+  const indeterminateMonths = allMonths.filter(function () {
+    return this.indeterminate;
+  }).length;
+
+  const yearCheck = $(`.year-check[data-year='${y}']`)[0];
+  if (checkedMonths === 0 && indeterminateMonths === 0) {
+    yearCheck.checked = false;
+    yearCheck.indeterminate = false;
+  } else if (checkedMonths === allMonths.length) {
+    yearCheck.checked = true;
+    yearCheck.indeterminate = false;
+  } else {
+    yearCheck.checked = false;
+    yearCheck.indeterminate = true;
+  }
+}
+
 
 
 	function updateTotalsSalesOrderDetailDashboard() { 
@@ -453,12 +518,14 @@ function applyDateFilter(col, menu) {
   });
   // Date - Mon-  Date  change code end
 
-function buildAllMenusSaleFilterReport() {
-  buildSimpleFilter('.invno-menu', 1);
-  buildSimpleFilter('.salehead-menu', 2);
-  buildDateFilter('.date-menu', 3);
-  buildSimpleFilter('.buyer-menu', 4);
-}
+  
+
+    function buildAllMenusSaleFilterReport() {
+      buildSimpleFilter('.invno-menu', 1);
+      buildSimpleFilter('.salehead-menu', 2);
+      buildDateFilter('.date-menu', 3);
+      buildSimpleFilter('.buyer-menu', 4);
+    }
 
     function buildAllMenusTotalsSalesOrderDetailDashboard() {
     buildSimpleFilter('.order-no', 1);
