@@ -191,27 +191,27 @@ function buildColouredFilter(selector, colIndex) {
   const checkedCount = menu.find('.opt:checked').length;
   menu.find('.select-all').prop('checked', allCount === checkedCount);
 }
-
-
- function buildDateFilter(selector, colIndex) {
+ 
+function buildDateFilter(selector, colIndex) {
   const table = $('#dt').DataTable();
   const menu = $(selector);
 
   let dates = [];
 
-  // ✅ If reopening same parent filter, use saved visible options
-  if (lastParentFilterCol === colIndex && savedVisibleValues[colIndex]) {
+  // Reuse visible options if reopening same filter
+  if (lastParentFilterCol === colIndex && Array.isArray(savedVisibleValues[colIndex])) {
     dates = savedVisibleValues[colIndex];
   } else {
-    // ✅ Build from current filtered rows
-    const visible = table.rows({ search: 'applied' }).data().toArray();
-    dates = [...new Set(visible.map(r => r[colIndex]).filter(Boolean))];
+    // Otherwise, rebuild from visible table data
+    const colData = table.column(colIndex, { search: 'applied' }).data().toArray();
+    dates = [...new Set(colData.filter(Boolean))];
+    savedVisibleValues[colIndex] = dates;
   }
 
-  // ✅ Sort newest first
+  // Sort newest first
   dates.sort((a, b) => new Date(b) - new Date(a));
 
-  // ✅ Group by Year → Month → Day
+  // Group: Year → Month → Dates[]
   const tree = {};
   dates.forEach(d => {
     const dt = new Date(d);
@@ -223,10 +223,10 @@ function buildColouredFilter(selector, colIndex) {
     tree[y][m].push(d);
   });
 
-  // ✅ Restore previously checked values
-  const prevChecked = savedFilterStates[colIndex];
+  // ✅ Detect if there’s a saved state
+  const hasSavedState = Array.isArray(savedFilterStates[colIndex]);
+  const prevChecked = hasSavedState ? savedFilterStates[colIndex] : [];
 
-  // ✅ Build HTML tree
   let html = `<input type='text' class='filter-search' placeholder='Search date...'>`;
 
   Object.keys(tree)
@@ -252,13 +252,10 @@ function buildColouredFilter(selector, colIndex) {
         `;
 
         tree[y][m].forEach(d => {
-          // ✅ FIX: Only default all checked if no previous filter state exists
-          let checked = '';
-          if (!prevChecked) {
-            checked = 'checked'; // First page load → all checked
-          } else if (prevChecked.includes(d)) {
-            checked = 'checked'; // User selection → keep checked
-          }
+          // ✅ If no saved state yet → all checked
+          // ✅ Else → restore exactly
+          const checked =
+            !hasSavedState || prevChecked.includes(d) ? 'checked' : '';
           html += `<label><input type='checkbox' class='date-opt' data-col='${colIndex}' data-year='${y}' data-month='${m}' value='${d}' ${checked}> ${d}</label>`;
         });
 
@@ -276,63 +273,39 @@ function buildColouredFilter(selector, colIndex) {
 
   menu.html(html);
 
-  // ✅ After building, immediately sync checkbox hierarchy
+  // ✅ Sync hierarchy (so years/months reflect day states)
   syncAllDateHierarchies(colIndex);
 }
 
 
-
-// =======================================================
-// ✅ Sync all month/year check states right after build
-// =======================================================
 function syncAllDateHierarchies(colIndex) {
-  const years = [...new Set($(`.year-check[data-col='${colIndex}']`).map((_, e) => $(e).data('year')).get())];
-  years.forEach(y => recalcHierarchy(y));
-}
+  // Sync each year’s checkboxes and indeterminate states
+  $(`.year-check[data-col='${colIndex}']`).each(function () {
+    const y = $(this).data('year');
+    const months = $(`.month-check[data-col='${colIndex}'][data-year='${y}']`);
+    const dates = $(`.date-opt[data-col='${colIndex}'][data-year='${y}']`);
 
+    const totalDates = dates.length;
+    const checkedDates = dates.filter(':checked').length;
 
-// =======================================================
-// ✅ Shared recalculation logic (same as before)
-// =======================================================
-function recalcHierarchy(y) {
-  // Update each month for this year
-  $(`.month-check[data-year='${y}']`).each(function () {
-    const m = $(this).data('month');
-    const allDates = $(`.date-opt[data-year='${y}'][data-month='${m}']`);
-    const checkedDates = allDates.filter(':checked').length;
-
-    if (checkedDates === 0) {
-      this.checked = false;
-      this.indeterminate = false;
-    } else if (checkedDates === allDates.length) {
-      this.checked = true;
-      this.indeterminate = false;
-    } else {
-      this.checked = false;
-      this.indeterminate = true;
-    }
+    // ✅ Year checkbox checked if all dates checked
+    // ✅ Indeterminate if partially checked
+    this.checked = totalDates > 0 && checkedDates === totalDates;
+    this.indeterminate = checkedDates > 0 && checkedDates < totalDates;
   });
 
-  // Update year checkbox based on months
-  const allMonths = $(`.month-check[data-year='${y}']`);
-  const checkedMonths = allMonths.filter(':checked').length;
-  const indeterminateMonths = allMonths.filter(function () {
-    return this.indeterminate;
-  }).length;
+  // Sync each month’s checkboxes within each year
+  $(`.month-check[data-col='${colIndex}']`).each(function () {
+    const y = $(this).data('year');
+    const m = $(this).data('month');
+    const dates = $(`.date-opt[data-col='${colIndex}'][data-year='${y}'][data-month='${m}']`);
+    const totalDates = dates.length;
+    const checkedDates = dates.filter(':checked').length;
 
-  const yearCheck = $(`.year-check[data-year='${y}']`)[0];
-  if (checkedMonths === 0 && indeterminateMonths === 0) {
-    yearCheck.checked = false;
-    yearCheck.indeterminate = false;
-  } else if (checkedMonths === allMonths.length) {
-    yearCheck.checked = true;
-    yearCheck.indeterminate = false;
-  } else {
-    yearCheck.checked = false;
-    yearCheck.indeterminate = true;
-  }
+    this.checked = totalDates > 0 && checkedDates === totalDates;
+    this.indeterminate = checkedDates > 0 && checkedDates < totalDates;
+  });
 }
-
 
 
 	function updateTotalsSalesOrderDetailDashboard() { 
