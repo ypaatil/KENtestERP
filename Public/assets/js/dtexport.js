@@ -1,4 +1,4 @@
-function commonExportOptions(dateColumns = []) {
+function commonExportOptions() {
   return {
     columns: ':visible',
     modifier: { search: 'applied' },
@@ -14,33 +14,30 @@ function commonExportOptions(dateColumns = []) {
       },
 
       body: function (data, row, column, node) {
-        // 🧹 Always clean HTML tags first
+        // 🧹 Remove any HTML tags and keep only text
         let cleanText = $('<div>').html(data).text().trim();
 
-        // 🗓 If this column is a date column, format it for Excel/CSV
-        if (dateColumns.includes(column) && typeof cleanText === 'string') {
-          const parts = cleanText.match(/(\d{1,2})-(\w{3})-(\d{4})/);
-          if (parts) {
-            const months = {
-              Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
-              Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12'
-            };
-            const d = parts[1].padStart(2, '0');
-            const m = months[parts[2]];
-            const y = parts[3];
-            return `${y}-${m}-${d}`;
-          }
+        // 🧠 Auto-detect date-like strings (e.g. 13-Nov-2025 or 01-Jan-24)
+        const datePattern = /^(\d{1,2})[-/](\w{3})[-/](\d{2,4})$/;
+
+        if (typeof cleanText === 'string' && datePattern.test(cleanText)) {
+          const parts = cleanText.match(datePattern);
+          const months = {
+            Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+            Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12'
+          };
+          const d = parts[1].padStart(2, '0');
+          const m = months[parts[2]] || '01';
+          const y = parts[3].length === 2 ? `20${parts[3]}` : parts[3]; // handle YY or YYYY
+          return `${y}-${m}-${d}`; // ISO format (Excel/CSV friendly)
         }
 
-        // 🧾 Return cleaned plain text
+        // Return cleaned text
         return cleanText;
       }
     }
   };
 }
-
-
-
 
        // Start Function updateFooterTotals
         function updateFooterTotals() {

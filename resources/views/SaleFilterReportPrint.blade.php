@@ -501,25 +501,25 @@
                     extend: 'copyHtml5',
                     text: 'Copy',
                     title: exportTitle,
-                    exportOptions: commonExportOptions([]),
+                    exportOptions: commonExportOptions(),
                 },
                 {
                     extend: 'excelHtml5',
                     text: 'Excel',
                     title: exportTitle,
-                    exportOptions: commonExportOptions([3])
+                    exportOptions: commonExportOptions()
                 },
                 {
                     extend: 'csvHtml5',
                     text: 'CSV',
                     title: exportTitle,
-                    exportOptions: commonExportOptions([3])
+                    exportOptions: commonExportOptions()
                 },
                 {
                     extend: 'pdfHtml5',
                     text: 'PDF',
                     title: exportTitle,
-                    exportOptions: commonExportOptions([]),
+                    exportOptions: commonExportOptions(),
                     orientation: 'landscape',     // or 'portrait'
                     pageSize: 'A4',               // A4, A3, etc.
                     customize: function (doc) {
@@ -530,7 +530,7 @@
                     extend: 'print',
                     text: 'Print Table',
                     title: exportTitle,
-                    exportOptions: commonExportOptions([]),
+                    exportOptions:commonExportOptions(),
                 }
             ]
         });
@@ -551,6 +551,7 @@
   });
 
   $(document).on('click', '.clear-btn', function(){
+   $('.filter-menu').hide(); return;
     table.search('').columns().search('').draw();
     buildAllMenusSaleFilterReport();
     updateFooterTotals();

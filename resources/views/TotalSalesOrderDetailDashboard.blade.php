@@ -462,25 +462,25 @@ if($job_status_id==1) { @endphp
                     extend: 'copyHtml5',
                     text: 'Copy',
                     title: exportTitle,
-                    exportOptions: commonExportOptions([]),
+                    exportOptions: commonExportOptions(),
                 },
                 {
                     extend: 'excelHtml5',
                     text: 'Excel',
                     title: exportTitle,
-                    exportOptions: commonExportOptions([7,8,9,10]),
+                    exportOptions: commonExportOptions(),
                 },
                 {
                     extend: 'csvHtml5',
                     text: 'CSV',
                     title: exportTitle,
-                    exportOptions: commonExportOptions([7,8,9,10]),
+                    exportOptions: commonExportOptions(),
                 },
                 {
                     extend: 'pdfHtml5',
                     text: 'PDF',
                     title: exportTitle,
-                    exportOptions: commonExportOptions([]),
+                    exportOptions: commonExportOptions(),
                     orientation: 'landscape',     // or 'portrait'
                     pageSize: 'A4',               // A4, A3, etc.
                     customize: function (doc) {
@@ -491,7 +491,7 @@ if($job_status_id==1) { @endphp
                     extend: 'print',
                     text: 'Print Table',
                     title: exportTitle,
-                    exportOptions: commonExportOptions([])
+                    exportOptions: commonExportOptions()
                 }
             ]
 
@@ -527,6 +527,7 @@ if($job_status_id==1) { @endphp
    });
 
   $(document).on('click', '.clear-btn', function(){
+   $('.filter-menu').hide(); return;
     table.search('').columns().search('').draw();
     buildAllMenusTotalsSalesOrderDetailDashboard();    
     updateTotalsSalesOrderDetailDashboard();
