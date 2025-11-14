@@ -314,13 +314,13 @@
                        </div>
                     </div>
                </div>
-               <div class="row"  >
-                  <div class="  "  >
+               <div class="row">
+                  <div class="">
                      <div class="panel-group" id="accordion">
                         <div class="panel panel-default">
                            <div class="panel-heading">
                               <h4 class="panel-title">
-                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Fabric: </a>
+                                 <a data-toggle="collapse" data-parent="#accordion1" href="#collapse4">Fabric: </a>
                               </h4>
                            </div>
                            <div id="collapse4" class="panel-collapse collapse">
@@ -396,7 +396,7 @@
                         <div class="panel panel-default">
                            <div class="panel-heading">
                               <h4 class="panel-title">
-                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">Trim Fabric: </a>
+                                 <a data-toggle="collapse" data-parent="#accordion2" href="#collapse5">Trim Fabric: </a>
                               </h4>
                            </div>
                            <div id="collapse5" class="panel-collapse collapse">
@@ -490,7 +490,7 @@
                         <div class="panel panel-default">
                            <div class="panel-heading">
                               <h4 class="panel-title">
-                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Sewing Trims: </a>
+                                 <a data-toggle="collapse" data-parent="#accordion3" href="#collapse2">Sewing Trims: </a>
                               </h4>
                            </div>
                            <div id="collapse2" class="panel-collapse collapse">
@@ -588,7 +588,7 @@
                         <div class="panel panel-default">
                            <div class="panel-heading">
                               <h4 class="panel-title">
-                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Packing Trims:</a>
+                                 <a data-toggle="collapse" data-parent="#accordion4" href="#collapse3">Packing Trims:</a>
                               </h4>
                            </div>
                            <div id="collapse3" class="panel-collapse collapse">
@@ -742,13 +742,12 @@
 </div>
 <!-- end row -->
 <!-- end row -->
-<script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script> 
+<script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-<script src="https://cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
+
 <!-- end row -->
 <script>
-
     $(document).on('keydown', 'input[type="number"]', function(e) {
         const invalidKeys = ['e', 'E', '+', '-'];
     
@@ -770,6 +769,7 @@
 
 
     (function($){
+
         $(document).ready(function(){
           // initialize any panels that are already open
           $('.panel-custom .panel-collapse.in').each(function(){
@@ -792,55 +792,6 @@
           });
         });
       })(jQuery);
-//   function checkDuplicateItemGeneric(row, tableId, inputName)
-//   {
-//         // $(row).parent().parent('tr').find('select').select2('destroy');
-//         var currentItemCode = $(row).val();
-//         if (!currentItemCode) return; // Skip if empty
-    
-//         var duplicateCount = 0;
-    
-//         // Build dynamic selector based on table ID and input name
-//         $('#' + tableId + ' select[name="' + inputName + '"]').each(function () {
-//             if ($(this).val() === currentItemCode) {
-//                 duplicateCount++;
-//             }
-//         });
-    
-//         if (duplicateCount > 1) {
-//             alert('This item is already selected! Please choose another.');
-//             if(tableId != 'footable_1')
-//             {
-//                 $('#' + tableId + ' select[name="' + inputName + '"]').select2('destroy');
-//             }
-//             // Properly clear Select2 field (value + UI text)
-//             $(row).val(null).trigger('change'); // resets value safely
-//             $(row).select2('close'); // close dropdown if open
-    
-//             $(row).focus();
-//             if(tableId != 'footable_1')
-//             {
-//                 $('#' + tableId + ' select[name="' + inputName + '"]').select2();
-//             }
-//         } else {
-//             // Allow dependent function to run before disabling
-//             setTimeout(function () {
-//                 $(row).prop("disabled", true);
-//                 if(tableId == 'footable_5')
-//                 {
-//                     $(row).parent().parent('tr').find('select[name="class_idsx[]"]').prop("disabled", true); 
-//                 }
-//                 if(tableId == 'footable_3')
-//                 {
-//                     $(row).parent().parent('tr').find('select[name="class_ids[]"]').prop("disabled", true);
-//                 }
-//                 if(tableId === 'footable_4')
-//                 {
-//                     $(row).parent().parent('tr').find('select[name="class_idss[]"]').prop("disabled", true);
-//                 }
-//             }, 200);
-//         }
-//     }
     
     function CheckDuplicateItemForFabric(selectEl) 
     {

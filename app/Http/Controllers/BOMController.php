@@ -2020,21 +2020,30 @@ public function GetSewingTrimItemList(Request $request)
 
 public function GetPackingTrimItemList(Request $request)
 {
-    $ClassList = DB::table('sales_order_packing_trims_costing_details')->select('item_master.item_code', 'item_name')
-    ->join('item_master', 'item_master.class_id', '=', 'sales_order_packing_trims_costing_details.class_id', 'left outer')
-    ->where('sales_order_no','=',$request->tr_code)->distinct()->get();
-    if (!$request->tr_code)
-    {
-        $html = '<option value="">--Item List--</option>';
-        } else {
-        $html = '';
-        $html = '<option value="">--Item List--</option>';
-        
-        foreach ($ClassList as $row) 
-        {$html .= '<option value="'.$row->item_code.'">'.'('.$row->item_code.')'.$row->item_name.'</option>';}
+    $ClassList = DB::table('sales_order_packing_trims_costing_details')
+        ->select('item_master.item_code', 'item_name')
+        ->join('item_master', 'item_master.class_id', '=', 'sales_order_packing_trims_costing_details.class_id', 'left outer')
+        ->where('sales_order_no', '=', $request->tr_code)
+        ->distinct()
+        ->get();
+
+    $html = '<option value="">--Item List--</option>';
+
+    if ($request->tr_code) {
+
+        foreach ($ClassList as $row) {
+
+            // ⭐ FIX: force UTF-8 to avoid the error
+            $itemCode = mb_convert_encoding($row->item_code, 'UTF-8', 'UTF-8');
+            $itemName = mb_convert_encoding($row->item_name, 'UTF-8', 'UTF-8');
+
+            $html .= '<option value="'.$itemCode.'">('.$itemCode.')'.$itemName.'</option>';
+        }
     }
-      return response()->json(['html' => $html]);
+
+    return response()->json(['html' => $html], 200, [], JSON_UNESCAPED_UNICODE);
 }
+
 
 
 

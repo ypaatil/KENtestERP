@@ -234,117 +234,93 @@ $data2=array(
      */
     public function update(Request $request, $id)
     {
-       //echo '<pre>'; print_r($_POST);exit;
-       //// $Ledger = LedgerModel::findOrFail($id);
-
+        // ----------------------- VALIDATION -----------------------
         $this->validate($request, [
-            'ac_name'=> 'required',
-            // 'group_code'=> 'required',
-            // 'op_bal'=> 'required', 
-            // 'op_dc'=> 'required', 
-            // 'address'=> 'required',
-            // 'c_id'=> 'required',
-            // 'state_id'=> 'required',
-            // 'dist_id'=> 'required', 
-            // 'taluka_id'=> 'required', 
-            // 'city_name'=> 'required',
-            // 'phone'=> 'required', 
-            // 'mobile'=> 'required',
-            // 'email'=> 'required',
-            // 'pan_no'=> 'required',
-            // 'gst_no'=> 'required', 
-            // 'adhar_no'=> 'required', 
-            // 'bt_id'=> 'required',
-            // 'bank_name'=> 'required',
-            // 'account_name'=> 'required',
-            // 'account_no'=> 'required',
-            // 'ac_id'=> 'required', 
-            // 'ifsc_code'=> 'required', 
-            // 'tds_type'=> 'required',
-            // 'tds_per'=> 'required',
-            // 'note'=> 'required',
+            'ac_name' => 'required',
         ]);
-
-        // $input = $request->all();
-
-        // $Ledger->fill($input)->save();
-
-
-        $data1=array(
-           
-            'ac_code'=>$request->ac_code,
-            'ac_name'=>$request->ac_name,
-            'trade_name'=>$request->trade_name,
-            'ac_short_name'=>$request->ac_short_name,
-            'group_code'=>$request->group_code ,
-            'group_main'=>$request->group_main ,
-            'op_bal'=>$request->op_bal,
-            'op_dc'=>$request->op_dc ,
-            'address'=>$request->address ,
-            'c_id'=>$request->c_id,
-            'state_id'=>$request->state_id,
-            'dist_id'=>$request->dist_id ,
-            'taluka_id'=>$request->taluka_id,
-            'city_name'=>$request->city_name,
-            'phone'=>$request->phone,
-            'mobile'=>$request->mobile,
-            'status_id'=>$request->status_id,
-            'email'=>$request->email,
-            'pan_no'=>$request->pan_no ,
-            'gst_no'=>$request->gst_no ,
-            'note'=>$request->note,
-            'adhar_no'=>$request->adhar_no,
-            'bt_id'=>$request->bt_id ,
-            'bt_id1'=>$request->bt_id1,
-            'bt_id2'=>$request->bt_id2,
-            'bank_name'=>$request->bank_name, 
-            'account_name'=>$request->account_name,
-            'ac_id'=>$request->ac_id,
-            'account_no'=>$request->account_no,
-            'ifsc_code'=>$request->ifsc_code ,
-            'pin_code'=>$request->pin_code ,
-            'msme_code'=>$request->msme_code ,
-            'cin_no'=>$request->cin_no ,
-            'branch_name'=>$request->branch_name ,
-            'tds_type'=>$request->tds_type ,
-            'tds_per'=>$request->tds_per ,
-            'userId'=>$request->userId ,
-            'delflag'=>'0',
-            'isPackingInward'=>$request->isPackingInwardValue,
-            
-      
-);
-
- 
-$LedgerList = LedgerModel::findOrFail($request->input('ac_code'));  
-$LedgerList->fill($data1)->save();
- 
-DB::table('ledger_details')->where('ac_code', $request->input('ac_code'))->delete();
-
-$site_code = $request->site_code;
-if(count($site_code)>0)
-{
-
-for($x=0; $x<count($site_code); $x++) {
-
-    $data2=array( 
-        'ac_code'=>$request->ac_code,
-        'site_code' => $request->site_code[$x],
-        'pan_no'=>$request->pan_nos[$x],
-        'gst_no'=>$request->gst_nos[$x], 
-        'trade_name'=>$request->trade_names[$x],
-        'addr1'=>$request->addr1[$x],
-        'state_id'=>$request->state_ids[$x],
-        'pin_code'=>$request->pin_codes[$x],
-     );
-     
-     LedgerDetailModel::insert($data2);
-
+    
+        // ----------------------- MAIN LEDGER UPDATE -----------------------
+        $data1 = [
+            'ac_code'        => $request->ac_code,
+            'ac_name'        => $request->ac_name,
+            'trade_name'     => $request->trade_name,
+            'ac_short_name'  => $request->ac_short_name,
+            'group_code'     => $request->group_code,
+            'group_main'     => $request->group_main,
+            'op_bal'         => $request->op_bal,
+            'op_dc'          => $request->op_dc,
+            'address'        => $request->address,
+            'c_id'           => $request->c_id,
+            'state_id'       => $request->state_id,
+            'dist_id'        => $request->dist_id,
+            'taluka_id'      => $request->taluka_id,
+            'city_name'      => $request->city_name,
+            'phone'          => $request->phone,
+            'mobile'         => $request->mobile,
+            'status_id'      => $request->status_id,
+            'email'          => $request->email,
+            'pan_no'         => $request->pan_no,
+            'gst_no'         => $request->gst_no,
+            'note'           => $request->note,
+            'adhar_no'       => $request->adhar_no,
+            'bt_id'          => $request->bt_id,
+            'bt_id1'         => $request->bt_id1,
+            'bt_id2'         => $request->bt_id2,
+            'bank_name'      => $request->bank_name,
+            'account_name'   => $request->account_name,
+            'ac_id'          => $request->ac_id,
+            'account_no'     => $request->account_no,
+            'ifsc_code'      => $request->ifsc_code,
+            'pin_code'       => $request->pin_code,
+            'msme_code'      => $request->msme_code,
+            'cin_no'         => $request->cin_no,
+            'branch_name'    => $request->branch_name,
+            'tds_type'       => $request->tds_type,
+            'tds_per'        => $request->tds_per,
+            'userId'         => $request->userId,
+            'delflag'        => '0',
+            'isPackingInward' => $request->isPackingInwardValue,
+        ];
+    
+        // Update the main ledger using ac_code as primary key
+        $LedgerList = LedgerModel::findOrFail($request->ac_code);
+        $LedgerList->fill($data1)->save();
+    
+        // ----------------------- UPDATE / INSERT DETAILS -----------------------
+        $ac_code = $request->ac_code;
+        $site_codes = $request->site_code ?? [];
+    
+        if (!empty($site_codes)) 
+        {
+            for ($i = 0; $i < count($site_codes); $i++) 
+            {
+                $data2 = [
+                    'ac_code'     => $ac_code,
+                    'sr_no'   => $request->sr_no[$i],
+                    'site_code'   => $request->site_code[$i],
+                    'pan_no'      => $request->pan_nos[$i],
+                    'gst_no'      => $request->gst_nos[$i],
+                    'trade_name'  => $request->trade_names[$i],
+                    'addr1'       => $request->addr1[$i],
+                    'state_id'    => $request->state_ids[$i],
+                    'pin_code'    => $request->pin_codes[$i],
+                ];
+    
+                // DO NOT DELETE... JUST UPDATE OR INSERT
+                DB::table('ledger_details')->updateOrInsert(
+                    [
+                        'ac_code'   => $ac_code,
+                        'sr_no' => $request->sr_no[$i],  // unique match key
+                    ],
+                    $data2
+                );
+            }
+        }
+    
+        // ----------------------- RESPONSE -----------------------
+        return redirect()->route('Ledger.index')->with('message', 'Update Record Successfully');
     }
-}
- 
-        return redirect()->route('Ledger.index')->with('message', 'Update Record Succesfully');
-    }
+
 
     /**
      * Remove the specified resource from storage.

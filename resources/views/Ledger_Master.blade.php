@@ -372,6 +372,7 @@
                                  <input type="text" name="id[]"  class="form-control" id="id" value="@php echo $no; @endphp" style="width:50px;" readOnly>
                               </td>
                               <td> 
+                                 <input type="hidden" name="sr_no[]" class="form-control" id="sr_no"  value="{{ $List->sr_no }}">
                                  <input type="text" name="trade_names[]" class="form-control" id="trade_name"  value="{{ $List->trade_name }}">
                               </td>
                               <td>
@@ -408,6 +409,7 @@
                                  <input type="text"   name="id[]"  class="form-control" id="id" value="1" style="width:50px;">
                               </td>
                               <td> 
+                                 <input type="hidden" name="sr_no[]" class="form-control" id="sr_no"  value="">
                                  <input type="text" name="trade_names[]" class="form-control" id="trade_name"  value="">
                               </td>
                               <td>
