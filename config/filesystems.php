@@ -52,7 +52,11 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
-
+        // ✅ Add this block exactly
+        'invoice_data' => [
+            'driver' => 'local',
+            'root' => 'D:\\InvoiceData',
+        ],
     ],
 
     /*
