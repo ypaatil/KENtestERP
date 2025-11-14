@@ -726,7 +726,7 @@
                                 <td class="text-end">{{ money_format('%!i',round($rowDetail->item_qty,2))}} <br>
                                     @if($rowDetail->poQty!=0) {{round($rowDetail->poQty,2)}} {{$rowDetail->unit4}} @endif </td>
                                 <td class="text-start">{{ $rowDetail->unit1 }}</td>
-                                <td class="text-end">{{ number_format($rowDetail->item_rate,2) }} <br>
+                                <td class="text-end">{{ number_format($rowDetail->item_rate,4) }} <br>
                                     @if($rowDetail->poQty!=0) {{money_format('%!i',$rowDetail->rateM)}}/Box @endif</td>
                                 <td class="text-end">{{ money_format('%!i', round($rowDetail->amount ?? $rowDetail->iamt,2)) }}</td>
 
