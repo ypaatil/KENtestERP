@@ -39,6 +39,24 @@ function commonExportOptions() {
   };
 }
 
+function validateFilterMenu(menu) {
+    // Find only normal checkboxes (ignore .select-all)
+    const checkedCount = menu.find('input[type="checkbox"]:checked:not(.select-all)').length;
+
+    if (checkedCount === 0) {
+        alert("Please select at least one option");
+        return false;  // ❌ validation failed
+    }
+    const filterBtn = menu.closest('th').find('.filter-icon');
+    if (checkedCount) {
+        filterBtn.addClass('filter-active');   // highlight icon
+    } else {
+        filterBtn.removeClass('filter-active'); // remove highlight if no filter
+    }
+
+    return true;  // ✔ validation passed
+  }
+
        // Start Function updateFooterTotals
         function updateFooterTotals() {
           const table = $('#dt').DataTable();
@@ -533,6 +551,18 @@ function applyDateFilter(col, menu) {
     buildDateFilter('.shipment-date',33);
     buildDateFilter('.shipment-month',34);
     buildSimpleFilter('.bulk-merchant',35);    
+  }
+
+  function buildAllMenusSalesCostingProfitSheet() {
+    buildSimpleFilter('.sales-order-no', 1);
+    buildSimpleFilter('.buyer', 2);    
+    buildSimpleFilter('.brand', 3); 
+    buildSimpleFilter('.costing-status', 4);
+    buildSimpleFilter('.status', 5);
+    buildSimpleFilter('.order-type', 6);
+    buildDateFilter('.order-recd-date', 7);
+    buildSimpleFilter('.style-no',8); 
+    buildSimpleFilter('.style-category',9);
   }
 
   	function updateTotalsOpenSalesOrderDetailDashboard() {     
