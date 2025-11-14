@@ -75,26 +75,26 @@ setlocale(LC_MONETARY, 'en_IN');
                         <th></th>
                      </tr>
                      <tr style="text-align:center;">
-                        <th nowrap>Supplier Name</th>
-                        <th nowrap>Bill To</th>
-                        <th nowrap>PO No</th>
-                        <th nowrap>Sales Order No</th>
-                        <th nowrap>Buyer Name</th>
-                        <th nowrap>Return WO no.</th>
-                        <th nowrap>Return Vendor Name</th> 
-                        <th nowrap>GRN No.</th>
-                        <th nowrap>GRN Date.</th>
-                        <th nowrap>Invoice No.</th>
-                        <th nowrap>Invoice Date.</th>
-                        <th nowrap>Item Code</th>
-                        <th nowrap>Item Name</th>
+                        <th nowrap>Supplier Name<span class="filter-icon">🔽</span><div class="filter-menu supplier-name"></div></th>
+                        <th nowrap>Bill To<span class="filter-icon">🔽</span><div class="filter-menu bill-to"></div></th>
+                        <th nowrap>PO No<span class="filter-icon">🔽</span><div class="filter-menu po-no"></div></th>
+                        <th nowrap>Sales Order No<span class="filter-icon">🔽</span><div class="filter-menu sales-order-no"></div></th>
+                        <th nowrap>Buyer Name<span class="filter-icon">🔽</span><div class="filter-menu buyer-name"></div></th>
+                        <th nowrap>Return WO no.<span class="filter-icon">🔽</span><div class="filter-menu return-wo-no"></div></th>
+                        <th nowrap>Return Vendor Name<span class="filter-icon">🔽</span><div class="filter-menu return-vendor-name"></div></th> 
+                        <th nowrap>GRN No.<span class="filter-icon">🔽</span><div class="filter-menu grn-no"></div></th>
+                        <th nowrap>GRN Date.<span class="filter-icon">🔽</span><div class="filter-menu grn-date"></div></th>
+                        <th nowrap>Invoice No.<span class="filter-icon">🔽</span><div class="filter-menu invoice-no"></div></th>
+                        <th nowrap>Invoice Date.<span class="filter-icon">🔽</span><div class="filter-menu invoice-date"></div></th>
+                        <th nowrap>Item Code<span class="filter-icon">🔽</span><div class="filter-menu item-code"></div></th>
+                        <th nowrap>Item Name<span class="filter-icon">🔽</span><div class="filter-menu item-name"></div></th>
                         <th nowrap>GRN Qty </th>
                         <th nowrap>Rate </th>
                         <th nowrap>Value </th>
                         <th nowrap>Width</th>
                         <th nowrap>Color</th>
-                        <th nowrap>Item Description</th>
-                        <th nowrap>Rack Name</th>
+                        <th nowrap>Item Description<span class="filter-icon">🔽</span><div class="filter-menu item-description"></div></th>
+                        <th nowrap>Rack Name<span class="filter-icon">🔽</span><div class="filter-menu rack-code"></div></th>
                      </tr>
                   </thead>
                   <tbody>
@@ -112,7 +112,9 @@ setlocale(LC_MONETARY, 'en_IN');
 <script>
 
    function tableData(ele) 
-   {
+   {     
+         removeFilterColor() ;
+         
         var fromDate = $("#fromDate").val();
         var toDate = $("#toDate").val();
         var currentURL = "";
@@ -143,11 +145,14 @@ setlocale(LC_MONETARY, 'en_IN');
             },
             dom: 'lBfrtip',
             buttons: [
-                { extend: 'copyHtml5', footer: true, title: exportTitle },
-                { extend: 'excelHtml5', footer: true, title: exportTitle },
-                { extend: 'csvHtml5', footer: true, title: exportTitle },
-                { extend: 'pdfHtml5', footer: true, title: exportTitle }
+                { extend: 'copyHtml5', footer: true, title: exportTitle,exportOptions: commonExportOptions() },
+                { extend: 'excelHtml5', footer: true, title: exportTitle ,exportOptions: commonExportOptions() },
+                { extend: 'csvHtml5', footer: true, title: exportTitle ,exportOptions: commonExportOptions() },
+                { extend: 'pdfHtml5', footer: true, title: exportTitle ,exportOptions: commonExportOptions() }
             ],
+            initComplete: function () {
+                  buildAllMenusTrimGRNDataReport();
+            },
             "footerCallback": function (row, data, start, end, display) {                
                  var total_size_qty = 0;        
                  var total_item_value = 0;
@@ -195,19 +200,54 @@ setlocale(LC_MONETARY, 'en_IN');
                   {data: 'rack_name', name: 'rack_name'}
             ]
         });
+
+
+
     }
     
-    
+           // Start script for filter search and apply
+        
+         $(document).on('click', '.apply-btn', function() {
+         const menu = $(this).closest('.filter-menu');
+          debugger;
+         if (!validateFilterMenu(menu)) {
+               return;
+         }
+
+         if(menu.hasClass('supplier-name')) applySimpleFilter(0, menu);
+         else if(menu.hasClass('bill-to')) applySimpleFilter(1, menu); 
+         else if(menu.hasClass('po-no')) applySimpleFilter(2, menu);            
+         else if(menu.hasClass('sales-order-no')) applySimpleFilter(3,menu);
+         else if(menu.hasClass('buyer-name')) applySimpleFilter(4,menu);
+         else if(menu.hasClass('return-wo-no')) applySimpleFilter(5,menu);
+         else if(menu.hasClass('return-vendor-name')) applySimpleFilter(6,menu);
+         else if(menu.hasClass('grn-no')) applySimpleFilter(7, menu);    
+         else if(menu.hasClass('grn-date')) applyDateFilter(8,menu);
+         else if(menu.hasClass('invoice-no')) applySimpleFilter(9,menu);
+         else if(menu.hasClass('invoice-date')) applyDateFilter(10,menu);    
+         else if(menu.hasClass('item-code')) applySimpleFilter(11,menu);  
+         else if(menu.hasClass('item-name')) applySimpleFilter(12,menu); 
+         else if(menu.hasClass('item-description')) applySimpleFilter(18,menu);  
+         else if(menu.hasClass('rack-code')) applySimpleFilter(19,menu);                         
+         $('.filter-menu').hide();
+         debugger;
+         buildAllMenusTrimGRNDataReport(); 
+         updateFooterForTrimGRNDataReport();           
+         });
+        // End script for filter search and apply
+
     function ClearReport()
-    {
+    {   
+        removeFilterColor() ;
         $("#sales_order_no").val("").trigger('change');
-        tableData(0);
+        tableData(0);        
     }
   
     $( document ).ready(function() 
-    { 
-        tableData(0);
-       
+    {    
+         removeFilterColor();
+         tableData(0);               
     });
+    
 </script>
 @endsection

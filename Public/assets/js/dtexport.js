@@ -42,7 +42,7 @@ function commonExportOptions() {
 function validateFilterMenu(menu) {
     // Find only normal checkboxes (ignore .select-all)
     const checkedCount = menu.find('input[type="checkbox"]:checked:not(.select-all)').length;
-
+    console.log(checkedCount + "   "+menu);
     if (checkedCount === 0) {
         alert("Please select at least one option");
         return false;  // ❌ validation failed
@@ -55,6 +55,10 @@ function validateFilterMenu(menu) {
     }
 
     return true;  // ✔ validation passed
+  }
+
+  function removeFilterColor() {
+    $('.filter-icon').removeClass('filter-active');
   }
 
        // Start Function updateFooterTotals
@@ -105,6 +109,7 @@ let savedFilterStates = {};
 let savedVisibleValues = {};
 
 function buildSimpleFilter(selector, colIndex) {
+ 
   const table = $('#dt').DataTable();
   const menu = $(selector);
 
@@ -116,7 +121,21 @@ function buildSimpleFilter(selector, colIndex) {
   } else {
     // ✅ Build from current filtered data
     const visibleData = table.column(colIndex, { search: 'applied' }).data().toArray();
-    valuesToShow = [...new Set(visibleData.filter(v => v && v.trim() !== ''))].sort();
+   
+try{
+      valuesToShow = [...new Set(visibleData.filter(v => v && v.trim() !== ''))].sort();
+    }
+    catch(error){
+ 
+
+      valuesToShow = [...new Set(
+          visibleData
+              .map(v => (v === null || v === undefined ? '' : String(v)))  
+              .map(v => v.trim())  
+              .filter(v => v !== '')
+      )].sort();
+    }
+
   }
 
   // Restore previously checked values
@@ -128,8 +147,9 @@ function buildSimpleFilter(selector, colIndex) {
     <label><input type='checkbox' class='select-all'> <b>Select All</b></label>
     <div class='options'>
   `;
-
+ 
   valuesToShow.forEach(v => {
+   
     const checked = prevChecked.length === 0 || prevChecked.includes(v) ? 'checked' : '';
     html += `<label><input type='checkbox' class='opt' value='${v}' ${checked}> ${v}</label>`;
   });
@@ -160,10 +180,11 @@ function buildColouredFilter(selector, colIndex) {
   if (lastParentFilterCol === colIndex && savedVisibleValues[colIndex]) {
     // Reopen same parent filter → use previously saved visible values
     valuesToShow = savedVisibleValues[colIndex];
-  } else {
-    // Build new options based on currently filtered data
+  } else {    
     const visibleData = table.column(colIndex, { search: 'applied' }).data().toArray();
     valuesToShow = [...new Set(visibleData.filter(v => v && v.trim() !== ''))].sort();
+    
+
   }
 
   // ✅ 2️⃣ Get previously checked options (if any)
@@ -407,8 +428,8 @@ function syncAllDateHierarchies(colIndex) {
 
 
 
-
-  function applySimpleFilter(col, menu) {
+ 
+ /* function applySimpleFilter(col, menu) {
   const table = $('#dt').DataTable();
   const vals = menu.find('.opt:checked').map((i,e)=>e.value).get();    
 
@@ -425,12 +446,32 @@ function syncAllDateHierarchies(colIndex) {
   // Apply search
   table.column(col).search(vals.length ? vals.join('|') : '❌', true, false).draw();
 }
+*/
 
-    //******************************************** */
-
-
- /////////////////////////////
+function escapeRegex(text) {
+    return text.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+}
   
+function applySimpleFilter(col, menu) {
+    const table = $('#dt').DataTable();
+    
+    const vals = menu.find('.opt:checked').map((i, e) => escapeRegex(e.value)).get();
+    let valsD = menu.find('.opt:checked').map((i, e) => {
+        return e.value.replace(/\\/g, "");
+    }).get();
+
+    savedFilterStates[col] = valsD;
+     
+    const visibleOptions = menu.find('.opt').map((i, e) => e.value).get();   
+    savedVisibleValues[col] = visibleOptions;
+    lastParentFilterCol = col;
+ 
+    // Apply search safely
+    const pattern = vals.length ? vals.join('|') : '❌';
+    
+    table.column(col).search(pattern, true, false).draw();
+}
+
 
 function applyDateFilter(col, menu) {
   const table = $('#dt').DataTable();
@@ -564,6 +605,43 @@ function applyDateFilter(col, menu) {
     buildSimpleFilter('.style-no',8); 
     buildSimpleFilter('.style-category',9);
   }
+
+  function buildAllMenusTrimGRNDataReport(){
+    buildSimpleFilter('.supplier-name', 0);
+    buildSimpleFilter('.bill-to', 1);
+    buildSimpleFilter('.po-no', 2);
+    buildSimpleFilter('.sales-order-no', 3);
+    buildSimpleFilter('.buyer-name', 4);
+    buildSimpleFilter('.return-wo-no', 5);
+    buildSimpleFilter('.return-vendor-name', 6);
+    buildSimpleFilter('.grn-no', 7);
+    buildDateFilter('.grn-date', 8);
+    buildSimpleFilter('.invoice-no', 9);
+    buildDateFilter('.invoice-date', 10);
+    buildSimpleFilter('.item-code', 11);
+    buildSimpleFilter('.item-name', 12);
+    buildSimpleFilter('.item-description', 18);
+    buildSimpleFilter('.rack-code', 19);
+  }
+
+  function formatNumberTableHead(n) {
+        return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+  function updateFooterForTrimGRNDataReport() {
+    const data = $('#dt').DataTable().rows({ search: 'applied' }).data();
+    let head_total_qty = 0;
+    let head_total_value=0;
+
+    data.each(function (row) {        
+        head_total_qty         += parseFloat(row['item_qty']?.toString().replace(/,/g, '')) || 0;
+        head_total_value           += parseFloat(row['item_value']?.toString().replace(/,/g, '')) || 0;
+    });
+  
+    $('#head_total_qty').text(formatNumberTableHead(head_total_qty));
+    $('#head_total_value').text(formatNumberTableHead(head_total_value));
+  }
+
 
   	function updateTotalsOpenSalesOrderDetailDashboard() {     
     const data = $('#dt').DataTable().rows({ search: 'applied' }).data(); //table.rows({ search: 'applied' }).data();
