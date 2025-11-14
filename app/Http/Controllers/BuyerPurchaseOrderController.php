@@ -1070,7 +1070,7 @@ public function SalesOrderPrintView($tr_code)
     $ReportDate, // prod_qty
     $ReportDate, // order_received_date
     $ReportDate  // order_close_date
-]);     
+    ]);     
        
         $total_valuec=0;
         $total_qtyc=0;

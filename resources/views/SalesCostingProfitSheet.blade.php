@@ -146,15 +146,15 @@
                       <thead>
                         <tr>
                                 <th class="text-center" nowrap>Sr. No.</th>
-                                <th class="text-center" nowrap>Sales Order No</th>
-                                <th class="text-center" nowrap>Buyer</th>
-                                <th class="text-center" nowrap>Brand</th>
-                                <th class="text-center" nowrap>Costing Status</th>
-                                <th class="text-center" nowrap>Status</th>
-                                <th class="text-center" nowrap>Order Type</th>
-                                <th class="text-center" nowrap>Order Recd. Date</th>
-                                <th class="text-center" nowrap>Style No</th>
-                                <th class="text-center" nowrap>Style Category</th> 
+                                <th class="text-center" nowrap>Sales Order No<span class="filter-icon">🔽</span><div class="filter-menu sales-order-no"></div></th>
+                                <th class="text-center" nowrap>Buyer<span class="filter-icon">🔽</span><div class="filter-menu buyer"></div></th>
+                                <th class="text-center" nowrap>Brand<span class="filter-icon">🔽</span><div class="filter-menu brand"></div></th>
+                                <th class="text-center" nowrap>Costing Status<span class="filter-icon">🔽</span><div class="filter-menu costing-status"></div></th>
+                                <th class="text-center" nowrap>Status<span class="filter-icon">🔽</span><div class="filter-menu status"></div></th>
+                                <th class="text-center" nowrap>Order Type<span class="filter-icon">🔽</span><div class="filter-menu order-type"></div></th>
+                                <th class="text-center" nowrap>Order Recd. Date<span class="filter-icon">🔽</span><div class="filter-menu order-recd-date"></div></th>
+                                <th class="text-center" nowrap>Style No<span class="filter-icon">🔽</span><div class="filter-menu style-no"></div></th>
+                                <th class="text-center" nowrap>Style Category<span class="filter-icon">🔽</span><div class="filter-menu style-category"></div></th> 
                                 <th class="text-center" nowrap>SAM</th>
                                 <th class="text-center" nowrap>Order Qty</th>
                                 <th class="text-center" nowrap>FOB Rate</th>
@@ -426,22 +426,26 @@
                     {
                         extend: 'copyHtml5',
                         text: 'Copy',
-                        title: exportTitle
+                        title: exportTitle,
+                    exportOptions: commonExportOptions(),
                     },
                     {
                         extend: 'excelHtml5',
                         text: 'Excel',
-                        title: exportTitle
+                        title: exportTitle,
+                    exportOptions: commonExportOptions(),
                     },
                     {
                         extend: 'csvHtml5',
                         text: 'CSV',
-                        title: exportTitle
+                        title: exportTitle,
+                    exportOptions: commonExportOptions(),
                     },
                     {
                         extend: 'pdfHtml5',
                         text: 'PDF',
-                        title: exportTitle,
+                        title: exportTitle, 
+                    exportOptions: commonExportOptions(),
                         orientation: 'landscape',     // or 'portrait'
                         pageSize: 'A4',               // A4, A3, etc.
                         customize: function (doc) {
@@ -451,11 +455,38 @@
                     {
                         extend: 'print',
                         text: 'Print Table',
-                        title: exportTitle
+                        title: exportTitle,
+                    exportOptions: commonExportOptions(),
                     }
                 ]
     
             });
+
+            // Start script for filter search and apply
+            buildAllMenusSalesCostingProfitSheet();
+
+             $(document).on('click', '.apply-btn', function() {
+            const menu = $(this).closest('.filter-menu');
+
+            if (!validateFilterMenu(menu)) {
+                return;
+            }
+
+            if(menu.hasClass('sales-order-no')) applySimpleFilter(1, menu);
+            else if(menu.hasClass('buyer')) applySimpleFilter(2, menu);            
+            else if(menu.hasClass('brand')) applySimpleFilter(3,menu);
+            else if(menu.hasClass('costing-status')) applySimpleFilter(4,menu);
+            else if(menu.hasClass('status')) applySimpleFilter(5,menu);
+            else if(menu.hasClass('order-type')) applySimpleFilter(6,menu);
+            else if(menu.hasClass('order-recd-date')) applyDateFilter(7, menu);    
+            else if(menu.hasClass('style-no')) applySimpleFilter(8,menu);
+            else if(menu.hasClass('style-category')) applySimpleFilter(9,menu);                         
+            $('.filter-menu').hide();
+            buildAllMenusSalesCostingProfitSheet();            
+            });
+            // End script for filter search and apply
+
+            
         });
     </script>                                               
     

@@ -116,4 +116,9 @@
       box-shadow: 0 3px 6px rgba(0,0,0,0.15);
     }
 
+    .filter-icon.filter-active {
+    background-color: orange !important;
+    border-color: orange !important;
+    color: white !important;
+    }
     
