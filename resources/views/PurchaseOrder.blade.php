@@ -126,7 +126,7 @@ ini_set('memory_limit', '10G');
                <input type="hidden" name="type" id="type" class="form-control" value="<?php echo 'PURCHASE'; ?>" /> 
                @csrf 
                <div class="row">
-                  <div class="col-md-2">
+                  <div class="col-md-2 hide">
                      <div class="mb-3">
                         <label for="firm_id" class="form-label">Firm</label>
                         <select name="firm_id" class="form-select" id="firm_id" required>
@@ -149,7 +149,7 @@ ini_set('memory_limit', '10G');
                         <select name="Ac_code" class="form-select select2" id="Ac_code" onchange="SetBillTo();GetPartyDetailsSale();" required>
                            <option value="">--- Select Supplier ---</option>
                            @foreach($ledgerlist as  $rowledger)
-                           <option value="{{ $rowledger->ac_code  }}">{{ $rowledger->ac_name }}</option>
+                           <option value="{{ $rowledger->ac_code  }}">{{ $rowledger->ac_short_name }}</option>
                            @endforeach
                         </select>
                      </div>
@@ -210,7 +210,7 @@ ini_set('memory_limit', '10G');
                         <label for="bom_code" class="form-label">BOM</label>
                         <select name="bom_codes[]" class="form-select select2" id="bom_code" multiple disabled>
                            @foreach($BOMLIST as  $rowbom)
-                           <option value="{{ $rowbom->bom_code  }}">{{ $rowbom->bom_code }} ({{$rowbom->sales_order_no}})</option>
+                           <option value="{{ $rowbom->bom_code  }}">{{$rowbom->sales_order_no}}</option>
                            @endforeach
                         </select>
                      </div>
@@ -408,7 +408,7 @@ ini_set('memory_limit', '10G');
                   </div>
                </div>
                <div class="row">
-                  <div class="col-md-4">
+                  <div class="col-md-4 hide">
                      <div class="mb-3">
                         <label for="deliveryAddress" class="form-label">Delivery Address</label>
                         <input type="text" name="deliveryAddress" class="form-control" id="deliveryAddress" value="GAT NO 298/299,A/P Kondigre,  Kolhapur, Maharashtra, 416101">
