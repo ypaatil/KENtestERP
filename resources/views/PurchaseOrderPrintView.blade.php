@@ -597,12 +597,12 @@
                             <p><b>{{ $BillToData[0]->trade_name ?? "-" }}</b> <br> {{ $BillToData[0]->addr1 ?? "-" }}</p>
 
                             <div class="info-row">
-                                <div class="label">PAN NO</div>
+                                <div class="label">GST NO</div>
                                 <div class="colon">:</div>
                                 <div class="value"> {{ $BillToData[0]->gst_no ?? "-" }}</div>
                             </div>
                             <div class="info-row">
-                                <div class="label">GST NO</div>
+                                <div class="label">PAN NO</div>
                                 <div class="colon">:</div>
                                 <div class="value"> {{ $BillToData[0]->pan_no ?? "-" }} </div>
                             </div>
@@ -650,8 +650,7 @@
                     </div>
 
                     <div class="p-2">
-                        <p class="">We are pleased to place an order to you, with the reference to above. You are requested to read the terms & specifcation
-                            carefully and Supply Material Accordingly.</p>
+                        <p class="">We are pleased to place an order to you, with the reference to above. You are requested to read the terms & specification carefully and Supply Material Accordingly.</p>
                     </div>
 
                     <table class="table g-0  table-bordered first table-sm text-center" style="margin-top: -15px;">
