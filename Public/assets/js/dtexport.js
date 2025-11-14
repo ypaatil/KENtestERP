@@ -83,8 +83,8 @@ function commonExportOptions() {
       function unique(arr){ return [...new Set(arr)].sort(); }
 
 let lastParentFilterCol = null;
-let savedFilterStates = {};     // { colIndex: [checked values] }
-let savedVisibleValues = {};    // { colIndex: [visible values at apply time] }
+let savedFilterStates = {};
+let savedVisibleValues = {};
 
 function buildSimpleFilter(selector, colIndex) {
   const table = $('#dt').DataTable();

@@ -857,12 +857,14 @@ public function SalesOrderPrintView($tr_code)
         $filter = '';
         if($fob > 0)
         {
-            $filter .= ' AND buyer_purchse_order_master.order_type = 1';
+           // $filter .= ' AND buyer_purchse_order_master.order_type = 1';
+           $filter .= ' AND bpo.order_type = 1';
         }
         
         if($job_work > 0)
         {
-            $filter .= ' AND buyer_purchse_order_master.order_type = 3';
+           // $filter .= ' AND buyer_purchse_order_master.order_type = 3';
+           $filter .= ' AND bpo.order_type = 3';
         }
          
         //  $Buyer_Purchase_Order_List = DB::SELECT("SELECT order_group_master.order_group_name,buyer_purchse_order_master.*,usermaster.username,ledger_master.Ac_name, sales_order_costing_master.total_cost_value,sales_order_costing_master.order_rate,sales_order_costing_master.production_value,sales_order_costing_master.other_value,
@@ -882,7 +884,10 @@ public function SalesOrderPrintView($tr_code)
         //         WHERE buyer_purchse_order_master.delflag = 0 AND buyer_purchse_order_master.og_id != 4  AND order_close_date = '".$ReportDate."' $filter
         //         OR order_received_date <= '".$ReportDate."' AND  buyer_purchse_order_master.delflag = 0 AND buyer_purchse_order_master.og_id != 4 AND buyer_purchse_order_master.job_status_id IN(1) ".$filter);
          
-        $Buyer_Purchase_Order_List = DB::SELECT("
+ 
+
+
+     /*   $Buyer_Purchase_Order_List = DB::SELECT("
                 SELECT 
                     order_group_master.order_group_name,
                     buyer_purchse_order_master.*,
@@ -968,16 +973,112 @@ public function SalesOrderPrintView($tr_code)
                         OR buyer_purchse_order_master.order_close_date IS NULL
                     )
                     $filter 
-            ");
+            ");  */
 
-        //dd(DB::getQueryLog());
+
+       
+       $Buyer_Purchase_Order_List = DB::select("
+    SELECT 
+        og.order_group_name,
+        bpo.*,
+        u.username,
+        l.ac_short_name,
+        socm.total_cost_value,
+        socm.order_rate,
+        socm.production_value,
+        socm.other_value,
+        s.shipped_qty,
+        p.shipped_qty2,
+        a.adjust_qty,
+        a.remark,
+        f.fabric_issued,
+        fg.fg_name,
+        m.merchant_name,
+        br.brand_name,
+        ms.mainstyle_name,
+        c.cut_qty,
+        sti.prod_qty,
+        bpo.order_rate
+    FROM buyer_purchse_order_master bpo
+
+    INNER JOIN usermaster u ON u.userId = bpo.userId
+    INNER JOIN ledger_master l ON l.Ac_code = bpo.Ac_code
+    LEFT JOIN brand_master br ON br.brand_id = bpo.brand_id
+    LEFT JOIN main_style_master ms ON ms.mainstyle_id = bpo.mainstyle_id
+    INNER JOIN fg_master fg ON fg.fg_id = bpo.fg_id
+    LEFT JOIN merchant_master m ON m.merchant_id = bpo.merchant_id
+    LEFT JOIN sales_order_costing_master socm ON socm.sales_order_no = bpo.tr_code
+    LEFT JOIN order_group_master og ON og.og_id = bpo.og_id
+
+    LEFT JOIN (
+        SELECT sales_order_no, IFNULL(SUM(order_qty),0) AS shipped_qty
+        FROM sale_transaction_detail
+        WHERE sale_date <= ?
+        GROUP BY sales_order_no
+    ) s ON s.sales_order_no = bpo.tr_code
+
+    LEFT JOIN (
+        SELECT sales_order_no, SUM(total_qty) AS shipped_qty2
+        FROM packing_inhouse_master
+        WHERE pki_date <= ?
+        GROUP BY sales_order_no
+    ) p ON p.sales_order_no = bpo.tr_code
+
+    LEFT JOIN (
+        SELECT tr_code, SUM(adjust_qty) AS adjust_qty, MAX(remark) AS remark
+        FROM buyer_purchase_order_detail
+        WHERE tr_date <= ?
+        GROUP BY tr_code
+    ) a ON a.tr_code = bpo.tr_code
+
+    LEFT JOIN (
+        SELECT vpo.sales_order_no, IFNULL(SUM(fom.total_meter),0) AS fabric_issued
+        FROM fabric_outward_master fom
+        INNER JOIN vendor_purchase_order_master vpo
+            ON vpo.vpo_code = fom.vpo_code
+        WHERE fom.fout_date <= ?
+        GROUP BY vpo.sales_order_no
+    ) f ON f.sales_order_no = bpo.tr_code
+
+    LEFT JOIN (
+        SELECT sales_order_no, IFNULL(SUM(total_qty),0) AS cut_qty
+        FROM cut_panel_grn_master
+        WHERE cpg_date <= ?
+        GROUP BY sales_order_no
+    ) c ON c.sales_order_no = bpo.tr_code
+
+    LEFT JOIN (
+        SELECT sales_order_no, IFNULL(SUM(total_qty),0) AS prod_qty
+        FROM stitching_inhouse_master
+        WHERE sti_date <= ?
+        GROUP BY sales_order_no
+    ) sti ON sti.sales_order_no = bpo.tr_code
+
+    WHERE 
+        bpo.delflag = 0
+        AND bpo.og_id != 4
+        $filter
+        AND bpo.order_type != 2
+        AND bpo.order_received_date <= ?
+        AND (bpo.order_close_date > ? OR bpo.order_close_date IS NULL)
+", [
+    $ReportDate, // shipped_qty
+    $ReportDate, // shipped_qty2
+    $ReportDate, // adjust_qty / remark
+    $ReportDate, // fabric_issued
+    $ReportDate, // cut_qty
+    $ReportDate, // prod_qty
+    $ReportDate, // order_received_date
+    $ReportDate  // order_close_date
+]);     
+       
         $total_valuec=0;
         $total_qtyc=0;
         $open_qtyc=0;
         $shipped_qtyc=0;
         //foreach($Buyer_Purchase_Order_List as $row){$total_valuec=$total_valuec + $row->order_value; $total_qtyc=$total_qtyc+$row->total_qty; $open_qtyc=$open_qtyc+$row->balance_qty; $shipped_qtyc=$shipped_qtyc+$row->shipped_qty;}
         $NoOfOrderc=count($Buyer_Purchase_Order_List);
-        
+       
         /*$salesOrderList = DB::SELECT("SELECT tr_code FROM buyer_purchse_order_master WHERE delflag = 0 AND og_id != 4");
         $jobStatusList = DB::SELECT("SELECT job_status_id,job_status_name FROM job_status_master WHERE delflag = 0");
         $brandList = DB::SELECT("SELECT brand_id,brand_name FROM brand_master WHERE delflag = 0");
@@ -986,7 +1087,7 @@ public function SalesOrderPrintView($tr_code)
         $buyerList = DB::SELECT("SELECT ac_code,ac_name FROM ledger_master WHERE delflag = 0");
         $poList = DB::SELECT("SELECT po_code FROM buyer_purchse_order_master WHERE delflag = 0 GROUP BY buyer_purchse_order_master.po_code");*/
     
-    return view('OpenSalesOrderDetailDashboard', compact('Buyer_Purchase_Order_List','DFilter','chekform','job_status_id','NoOfOrderc','total_valuec','total_qtyc','open_qtyc','shipped_qtyc',  'ReportDate','Ac_code','po_code','sales_order_no','brand_id','mainstyle_id','fg_id'));
+    return view('OpenSalesOrderDetailDashboard', compact('Buyer_Purchase_Order_List','DFilter', 'job_status_id','NoOfOrderc',  'ReportDate',  'sales_order_no' ));
         //return view('OpenSalesOrderDetailDashboard', compact('Buyer_Purchase_Order_List','DFilter','chekform','job_status_id','NoOfOrderc','total_valuec','total_qtyc','open_qtyc','shipped_qtyc','salesOrderList','jobStatusList','buyerList','brandList','styleList','mainStyleList','poList','ReportDate','Ac_code','po_code','sales_order_no','brand_id','mainstyle_id','fg_id'));
     }
     

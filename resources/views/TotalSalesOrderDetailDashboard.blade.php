@@ -502,6 +502,13 @@ if($job_status_id==1) { @endphp
 
   $(document).on('click', '.apply-btn', function() {
     const menu = $(this).closest('.filter-menu');
+
+     const anyChecked = menu.find('input[type="checkbox"]:checked').length > 0;
+    if(!anyChecked){
+        alert('Please select at least one option');
+        return;
+    }
+
     if(menu.hasClass('order-no')) applySimpleFilter(1, menu);
     else if(menu.hasClass('inhouse-outsource')) applySimpleFilter(2, menu);
     else if(menu.hasClass('order-group')) applySimpleFilter(3, menu);

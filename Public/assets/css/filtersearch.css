@@ -105,6 +105,7 @@
 
     /* ❎ Clear Button Style */
     .clear-btn {
+      display: none;
       background-color: #eaeaea;
       color: #333;
       box-shadow: 0 2px 4px rgba(0,0,0,0.1);

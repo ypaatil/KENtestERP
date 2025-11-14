@@ -541,6 +541,13 @@
   
   $(document).on('click', '.apply-btn', function(){
     const menu = $(this).closest('.filter-menu');
+     
+    const anyChecked = menu.find('input[type="checkbox"]:checked').length > 0;
+    if(!anyChecked){
+        alert('Please select at least one option');
+        return;
+    }
+
     if(menu.hasClass('invno-menu')) applySimpleFilter(1, menu);
     else if(menu.hasClass('salehead-menu')) applySimpleFilter(2, menu);
     else if(menu.hasClass('buyer-menu')) applySimpleFilter(4, menu);
@@ -551,7 +558,6 @@
   });
 
   $(document).on('click', '.clear-btn', function(){
-   $('.filter-menu').hide(); return;
     table.search('').columns().search('').draw();
     buildAllMenusSaleFilterReport();
     updateFooterTotals();
