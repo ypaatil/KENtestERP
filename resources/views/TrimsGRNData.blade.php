@@ -157,9 +157,12 @@ setlocale(LC_MONETARY, 'en_IN');
                  var total_size_qty = 0;        
                  var total_item_value = 0;
                     
-                for (var i = 0; i < data.length; i++) {
-                    total_size_qty += parseFloat(data[i].item_qty);
-                    total_item_value += parseFloat(data[i].item_value);
+                for (var i = 0; i < data.length; i++) {               
+                    const qty  = String(data[i].item_qty).replace(/,/g, "");
+                     const val  = String(data[i].item_value).replace(/,/g, "");
+                     total_size_qty  += parseFloat(qty) || 0;
+                     total_item_value += parseFloat(val) || 0; 
+
                 }
                 
                 let formatted_qty = parseFloat(total_size_qty).toLocaleString('en-IN', {
@@ -209,7 +212,7 @@ setlocale(LC_MONETARY, 'en_IN');
         
          $(document).on('click', '.apply-btn', function() {
          const menu = $(this).closest('.filter-menu');
-          debugger;
+       
          if (!validateFilterMenu(menu)) {
                return;
          }
@@ -230,7 +233,7 @@ setlocale(LC_MONETARY, 'en_IN');
          else if(menu.hasClass('item-description')) applySimpleFilter(18,menu);  
          else if(menu.hasClass('rack-code')) applySimpleFilter(19,menu);                         
          $('.filter-menu').hide();
-         debugger;
+         
          buildAllMenusTrimGRNDataReport(); 
          updateFooterForTrimGRNDataReport();           
          });
