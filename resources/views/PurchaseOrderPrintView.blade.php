@@ -407,10 +407,6 @@
                 /* center it on page */
             }
 
-
-
-
-
             .invoice-container p {
                 font-size: 14pt;
                 /* make text a little smaller for print */
@@ -717,9 +713,6 @@
 
 
                                 </td>
-
-
-
                                 <td class="text-end">{{ $rowDetail->hsn_code }}
                                     </br>
                                     @if($rowDetail->poQty!=0) {{$rowDetail->SecConQty}} {{$rowDetail->unit3}} @endif</td>
@@ -929,7 +922,7 @@
                             8. Delivery Address: - as above.<br>
                             9. Goods will be inspected at your factory as per our quality requirements Packing list, Invoice & L.R. copy
                             required on the mail after dispatch.</h6> -->
-                            <h6 class="p-1"> @php  echo  htmlspecialchars_decode($poMaster[0]->terms_and_conditions); @endphp</h6>
+                        <h6 class="p-1"> @php echo htmlspecialchars_decode($poMaster[0]->terms_and_conditions); @endphp</h6>
 
 
 
@@ -966,7 +959,7 @@
             var printContents = document.getElementById(divId).innerHTML;
             var originalContents = document.body.innerHTML;
             document.body.innerHTML = printContents;
-           
+
             document.body.innerHTML = originalContents;
             location.reload();
         }
