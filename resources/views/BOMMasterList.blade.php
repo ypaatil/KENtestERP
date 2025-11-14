@@ -180,9 +180,9 @@
           {data: 'fg_name', name: 'fg_name'}, 
           {data: 'username', name: 'username'}, 
           {data: 'updated_at', name: 'updated_at'}, 
-          {data: 'action1', name: 'action1',orderable: false, searchable: false},
-          {data: 'action2', name: 'action2',orderable: false, searchable: false},
-          {data: 'action8', name: 'action8',orderable: false, searchable: false}, 
+          {data: 'action1', name: 'action1',orderable: false, searchable: false, className: 'text-center'},
+          {data: 'action2', name: 'action2',orderable: false, searchable: false, className: 'text-center'},
+          {data: 'action8', name: 'action8',orderable: false, searchable: false, className: 'text-center'}, 
           {data: 'action3', name: 'action3',orderable: false, searchable: false},
           {data: 'action4', name: 'action4',orderable: false, searchable: false},
         ]

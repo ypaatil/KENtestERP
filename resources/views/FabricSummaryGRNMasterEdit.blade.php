@@ -154,7 +154,7 @@
                               <td><input type="text" name="id" value="{{ $no }}" id="id"  style="width:50px;" readonly/></td>
                               <td>
                               
-                              <span onclick="openmodal({{ $po_sr_no[0]->sr_no }},{{ $row->item_code }});" style="color:#556ee6; cursor: pointer;"> {{$row->item_code}}</span>
+                              <span onclick="openmodal({{ isset($po_sr_no[0]->sr_no) ? $po_sr_no[0]->sr_no : 0 }},{{ $row->item_code }});" style="color:#556ee6; cursor: pointer;"> {{$row->item_code}}</span>
                               
                               </td>
                               <td>
@@ -268,7 +268,7 @@
          <div class="col-sm-6">
          <label for="formrow-inputState" class="form-label"></label>
          <div class="form-group">
-         <button type="submit" class="btn btn-primary w-md" onclick="UpdateBarcode();EnableFields();"id="Submit">Submit</button>
+         <button type="submit" class="btn btn-primary w-md" onclick="EnableFields();"id="Submit">Submit</button>
          <a href="{{ Route('FabricSummaryGRN.index') }}" class="btn btn-warning w-md">Cancel</a>
          </div>
          </div>

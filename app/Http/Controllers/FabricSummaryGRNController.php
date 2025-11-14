@@ -74,83 +74,107 @@ class FabricSummaryGRNController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
-     */
+     */ 
+     
     public function store(Request $request)
     {
-        $this->validate($request, [
-             
-                'fsg_code'=>'required',
-                'fsg_date'=>'required',
-                'supplier_id'=>'required',
-                'total_qty'=>'required',
-                'c_code'=>'required',
-                 ]);
-                 
-        
-                
-    $data1=array(
-        'fsg_code'=>$request->fsg_code, 'fsg_date'=>$request->fsg_date,'po_code'=>$request->po_code,'chk_code'=>$request->chk_code,'challan_no'=>$request->challan_no,'po_type_id'=>$request->po_type_id, 
-        'supplier_id'=>$request->supplier_id, 'challan_date'=>$request->challan_date,
-        'invoice_no' =>$request->invoice_no, 'invoice_date' => $request->invoice_date, 'transport_id'=>$request->transport_id,
-        'freight_paid'=>$request->freight_paid,  'total_qty'=>$request->total_qty, 
-        'narration'=>$request->narration,  'c_code' => $request->c_code,'userId'=>$request->userId, 'delflag'=>'0'
-     );
+        // $this->validate($request, [
+        //     'fsg_code'    => 'required',
+        //     'fsg_date'    => 'required',
+        //     'supplier_id' => 'required',
+        //     'total_qty'   => 'required',
+        //     'c_code'      => 'required',
+        // ]);
     
-    FabricSummaryGRNMasterModel::insert($data1);
- 
-    DB::select("update counter_number set tr_no=tr_no + 1   where c_name ='C1' AND type='FABRIC_SUMMARY_GRN'"); 
-  
-    $item_codes = $request->input('item_codes');
-    if($request->allocate_qty != "")
-    {
-      
-        $allocate_qtys=count($request->allocate_qty);
-    }
-    if(count($item_codes)>0)
-    {
-        
-        for($x=0; $x<count($item_codes); $x++) {
-        # code...
-       
-                    $data2[]=array(
-                    'fsg_code' =>$request->fsg_code,
-                    'fsg_date' => $request->fsg_date,
-                    'po_code' => $request->po_code,
-                    'challan_no'=>$request->challan_no,
-                    'challan_date' =>$request->challan_date,
-                    'invoice_no' =>$request->invoice_no,
-                    'invoice_date'=>$request->invoice_date,
-                    'item_code'=>$request->item_codes[$x], 
-                    'item_qty' => $request->item_qtys[$x],
-                    'item_rate' => $request->item_rates[$x],
-                    );
-                   
+        DB::beginTransaction(); // ✅ Start Transaction
+    
+        try {
+            // ---------- 1️⃣ Insert Master ----------
+            $data1 = [
+                'fsg_code'     => $request->fsg_code,
+                'fsg_date'     => $request->fsg_date,
+                'po_code'      => $request->po_code,
+                'chk_code'     => $request->chk_code,
+                'challan_no'   => $request->challan_no,
+                'po_type_id'   => $request->po_type_id,
+                'supplier_id'  => $request->supplier_id,
+                'challan_date' => $request->challan_date,
+                'invoice_no'   => $request->invoice_no,
+                'invoice_date' => $request->invoice_date,
+                'transport_id' => $request->transport_id,
+                'freight_paid' => $request->freight_paid,
+                'total_qty'    => $request->total_qty,
+                'narration'    => $request->narration,
+                'c_code'       => $request->c_code,
+                'userId'       => $request->userId,
+                'delflag'      => '0'
+            ];
+    
+            FabricSummaryGRNMasterModel::insert($data1);
+    
+            // ---------- 2️⃣ Update Counter ----------
+            DB::update("UPDATE counter_number SET tr_no = tr_no + 1 WHERE c_name = 'C1' AND type = 'FABRIC_SUMMARY_GRN'");
+    
+            // ---------- 3️⃣ Insert Details ----------
+            $item_codes = $request->input('item_codes', []);
+            if (!empty($item_codes)) {
+                $data2 = [];
+                foreach ($item_codes as $x => $item_code) {
+                    $data2[] = [
+                        'fsg_code'     => $request->fsg_code,
+                        'fsg_date'     => $request->fsg_date,
+                        'po_code'      => $request->po_code,
+                        'challan_no'   => $request->challan_no,
+                        'challan_date' => $request->challan_date,
+                        'invoice_no'   => $request->invoice_no,
+                        'invoice_date' => $request->invoice_date,
+                        'item_code'    => $item_code,
+                        'item_qty'     => $request->item_qtys[$x] ?? 0,
+                        'item_rate'    => $request->item_rates[$x] ?? 0,
+                    ];
+                }
+    
+                FabricSummaryGRNDetailModel::insert($data2);
             }
-         FabricSummaryGRNDetailModel::insert($data2);
+    
+            // ---------- 4️⃣ Insert Stock Association ----------
+            $allocate_qtys = $request->input('allocate_qty', []);
+            if (!empty($allocate_qtys)) {
+                foreach ($allocate_qtys as $y => $qty) {
+                    $data3 = [
+                        "po_code"        => $request->po_code,
+                        "po_date"        => $request->input('fsg_date'),
+                        "tr_code"        => $request->fsg_code,
+                        "tr_date"        => $request->input('fsg_date'),
+                        'bom_code'       => $request->stock_bom_code[$y] ?? null,
+                        'sales_order_no' => $request->sales_order_no[$y] ?? null,
+                        'cat_id'         => $request->cat_id[$y] ?? null,
+                        'class_id'       => $request->class_id[$y] ?? null,
+                        "item_code"      => $request->item_code[$y] ?? null,
+                        'unit_id'        => 0,
+                        'qty'            => $qty,
+                        "tr_type"        => 1,
+                    ];
+    
+                    StockAssociationForFabricModel::insert($data3);
+                }
+            }
+    
+            DB::commit(); // ✅ Commit all if successful
+    
+            return redirect()
+                ->route('FabricSummaryGRN.index')
+                ->with('message', 'Record Created Successfully');
+        } 
+        catch (\Exception $e) {
+            DB::rollBack(); // ❌ Rollback if any error occurs
+            return redirect()
+                ->back()
+                ->with('error', 'Transaction failed: ' . $e->getMessage())
+                ->withInput();
+        }
     }
-    for($y=0;$y<$allocate_qtys; $y++) 
-    {
-        
-           $data3 = array(
-                "po_code"=> $request->po_code,
-                "po_date"=> $request->input('fsg_date'),
-                "tr_code"=> $request->fsg_code,  
-                "tr_date"=> $request->input('fsg_date'),
-                'bom_code'=> $request->stock_bom_code[$y],
-                'sales_order_no'=>$request->sales_order_no[$y],
-                'cat_id'=>$request->cat_id[$y],
-                'class_id'=>$request->class_id[$y],
-                "item_code"=> $request->item_code[$y],
-                'unit_id' => 0,
-                'qty' => $request->allocate_qty[$y],
-                "tr_type"=> 1,
-            );
 
-            StockAssociationForFabricModel::insert($data3);
-    }
-   return redirect()->route('FabricSummaryGRN.index')->with('message', ' Record Created Succesfully');
-
-    }
 
     /**
      * Display the specified resource.
@@ -230,103 +254,110 @@ class FabricSummaryGRNController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\FabricInwardModel  $fabricInwardModel
      * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request,$id)
-    { 
-        
-       
-        
-        $this->validate($request, [
-             
-                'fsg_code'=>'required',
-                'fsg_date'=>'required',
-                'supplier_id'=>'required',
-                'total_qty'=>'required',
-                'c_code'=>'required',
-             ]);
+     */ 
 
- 
- $fsg_code=base64_decode($request->fsg_code);
- //echo $fsg_code;
- $data1=array(
-
-        'fsg_code'=>$fsg_code, 'fsg_date'=>$request->fsg_date,'po_code'=>$request->po_code,'chk_code'=>$request->chk_code,'challan_no'=>$request->challan_no,'po_type_id'=>$request->po_type_id, 
-        'supplier_id'=>$request->supplier_id, 'challan_date'=>$request->challan_date,
-        'invoice_no' =>$request->invoice_no, 'invoice_date' => $request->invoice_date, 'transport_id'=>$request->transport_id,
-        'freight_paid'=>$request->freight_paid,  'total_qty'=>$request->total_qty, 
-        'narration'=>$request->narration,  'c_code' => $request->c_code,'userId'=>$request->userId, 'delflag'=>'0'
-        
-        
-    );
-
- 
-//print_r($data1);
-// DB::enableQueryLog();
-
-        $FabricSummaryGRNMasterList = FabricSummaryGRNMasterModel::findOrFail($id);  
-      $FabricSummaryGRNMasterList->fill($data1)->save();
-        //  $query = DB::getQueryLog();
-        // $query = end($query);
-        // dd($query);
-  
-        DB::table('fabric_summary_grn_detail')->where('fsg_code', $fsg_code)->delete();
- 
-       
-    $item_code = $request->input('item_codes');
-    if($request->allocate_qty != "")
+    public function update(Request $request, $id)
     {
-        $allocate_qtys=count($request->allocate_qty);
-    }
-        
-    if(count($item_code)>0)
-    { 
-                for($x=0; $x<count($item_code); $x++)
-                {
-                          # code...
-       
-                    $data2[]=array(
-                    'fsg_code' =>$fsg_code,
-                    'fsg_date' => $request->fsg_date,
-                    'po_code' => $request->po_code,
-                    'challan_no'=>$request->challan_no,
-                    'challan_date' =>$request->challan_date,
-                    'invoice_no' =>$request->invoice_no,
-                    'invoice_date'=>$request->invoice_date,
-                    'item_code'=>$request->item_codes[$x], 
-                  
-                    'item_qty' => $request->item_qtys[$x],
-                    'item_rate' => $request->item_rates[$x],
-                    );
-                   
-                 }
-             FabricSummaryGRNDetailModel::insert($data2);
-                      
-        }
-        for($y=0;$y<$allocate_qtys; $y++) 
-        {
-            
-               $data3 = array(
-                    "po_code"=> $request->po_code,
-                    "po_date"=> $request->fsg_date,
-                    "tr_code"=> $fsg_code,
-                    "tr_date"=> $request->fsg_date,
-                    'bom_code'=> $request->stock_bom_code[$y],
-                    'sales_order_no'=>$request->sales_order_no[$y],
-                    'cat_id'=>$request->cat_id[$y],
-                    'class_id'=>$request->class_id[$y],
-                    "item_code"=> $request->item_code[$y],
-                    'unit_id' => 0,
-                    'qty' => $request->allocate_qty[$y],
-                    "tr_type"=> 1,
-                );
+        // echo '<pre>';print_R($_POST);exit;
+        // DB::enableQueryLog();
     
-        StockAssociationForFabricModel::insert($data3);
-        }    
-            return redirect()->route('FabricSummaryGRN.index')->with('message', 'Update Record Succesfully');
+        $fsg_code = base64_decode($request->fsg_code);
+    
+        $data1 = [
+            'fsg_code' => $fsg_code,
+            'fsg_date' => $request->fsg_date,
+            'po_code' => $request->po_code,
+            'chk_code' => $request->chk_code,
+            'challan_no' => $request->challan_no,
+            'po_type_id' => $request->po_type_id,
+            'supplier_id' => $request->supplier_id,
+            'challan_date' => $request->challan_date,
+            'invoice_no' => $request->invoice_no,
+            'invoice_date' => $request->invoice_date,
+            'transport_id' => $request->transport_id,
+            'freight_paid' => $request->freight_paid,
+            'total_qty' => $request->total_qty,
+            'narration' => $request->narration,
+            'c_code' => $request->c_code,
+            'userId' => $request->userId,
+            'delflag' => '0'
+        ];
+    
+        try {
+            // ✅ Begin transaction
+            DB::beginTransaction();
+    
+            // 🔹 1️⃣ Update master
+            $FabricSummaryGRNMasterList = FabricSummaryGRNMasterModel::findOrFail($id);
+            $FabricSummaryGRNMasterList->fill($data1)->save();
+    
+            // 🔹 2️⃣ Delete old details
+            DB::table('fabric_summary_grn_detail')->where('fsg_code', $fsg_code)->delete();
+    
+            // 🔹 3️⃣ Insert new detail rows
+            $item_code = $request->input('item_codes', []);
+            if (!empty($item_code)) {
+                $data2 = [];
+                for ($x = 0; $x < count($item_code); $x++) {
+                    $data2[] = [
+                        'fsg_code' => $fsg_code,
+                        'fsg_date' => $request->fsg_date,
+                        'po_code' => $request->po_code,
+                        'challan_no' => $request->challan_no,
+                        'challan_date' => $request->challan_date,
+                        'invoice_no' => $request->invoice_no,
+                        'invoice_date' => $request->invoice_date,
+                        'item_code' => $request->item_codes[$x],
+                        'item_qty' => $request->item_qtys[$x],
+                        'item_rate' => $request->item_rates[$x],
+                    ];
+                }
+    
+                FabricSummaryGRNDetailModel::insert($data2);
+            }
+    
+            // 🔹 4️⃣ Insert stock association rows
+            if (!empty($request->allocate_qty)) {
+                for ($y = 0; $y < count($request->allocate_qty); $y++) {
+                    $data3 = [
+                        "po_code" => $request->po_code,
+                        "po_date" => $request->fsg_date,
+                        "tr_code" => $fsg_code,
+                        "tr_date" => $request->fsg_date,
+                        'bom_code' => $request->stock_bom_code[$y],
+                        'sales_order_no' => $request->sales_order_no[$y],
+                        'cat_id' => $request->cat_id[$y],
+                        'class_id' => $request->class_id[$y],
+                        "item_code" => $request->item_code[$y],
+                        'unit_id' => 0,
+                        'qty' => $request->allocate_qty[$y],
+                        "tr_type" => 1,
+                    ];
+    
+                    StockAssociationForFabricModel::insert($data3);
+                }
+            }
+    
+            // ✅ Commit all if successful
+            DB::commit();
+    
+            return redirect()
+                ->route('FabricSummaryGRN.index')
+                ->with('message', 'Update Record Successfully');
+    
+        } catch (\Exception $e) {
+            // ❌ Rollback on error
+            DB::rollBack();
+    
+            // Optionally log error
+            \Log::error('FabricSummaryGRN Update Failed: ' . $e->getMessage());
+    
+            return redirect()
+                ->back()
+                ->with('error', 'Something went wrong during update. Please try again.');
+        }
     }
 
- 
- 
  
  
  public function GetPOColorList(Request $request)

@@ -377,9 +377,9 @@ elseif($job_status_id==3) { @endphp
                      <th nowrap>FOB Rate</th> 
                      <th nowrap>Narration</th>
                      <th nowrap>User</th>
-                     <th>Print</th>
-                     <th>Edit</th>
-                     <th>Delete</th>
+                     <th class="text-center">Print</th>
+                     <th class="text-center">Edit</th>
+                     <th class="text-center">Delete</th>
                   </tr>
                </thead>
                <tbody>
@@ -479,9 +479,9 @@ elseif($job_status_id==3) { @endphp
           },
           {data: 'narration', name: 'narration'},
           {data: 'username', name: 'username'},
-          {data: 'action1', name: 'action1',orderable: false, searchable: false},
-          {data: 'action2', name: 'action2',orderable: false, searchable: false},
-          {data: 'action3', name: 'action3',orderable: false, searchable: false},
+          {data: 'action1', name: 'action1',orderable: false, searchable: false, className: 'text-center'},
+          {data: 'action2', name: 'action2',orderable: false, searchable: false, className: 'text-center'},
+          {data: 'action3', name: 'action3',orderable: false, searchable: false, className: 'text-center'},
         ],
         columnDefs: [
         {
