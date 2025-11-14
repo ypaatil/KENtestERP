@@ -505,7 +505,7 @@
                                 <div class="info-row">
                                     <div class="label">GRN/Inward Date </div>
                                     <div class="colon">:</div>
-                                    <div class="value"> {{ $TrimsInwardMaster[0]->trimDate }}</div>
+                                    <div class="value"> {{\Carbon\Carbon::parse ( $TrimsInwardMaster[0]->trimDate)->format('d-m-Y')  }}</div>
                                 </div>
                                 <div class="info-row">
                                     <div class="label">PO Number</div>
@@ -672,16 +672,16 @@
 
                                 <td class="text-end">{{ number_format($rowDetail->item_qty,2) }}</td>
                                 <td class="text-center">{{ $rowDetail->unit_name }}</td>
-                                <td class="text-end">{{ number_format($rowDetail->item_rate,2) }}</td>
+                                <td class="text-end">{{ number_format($rowDetail->item_rate,4) }}</td>
                                 <td class="text-end">{{ money_format('%!i',$Amount)}}</td>
                                 @if($tax_type_id==1)
                                 <td class="text-end">{{money_format('%!i',$CGST)}} <br> ({{$rowDetail->cgst_per}}%)</td>
                                 <td class="text-end">{{money_format('%!i',$SGST)}}<br> ({{$rowDetail->sgst_per}}%)</td>
-                                <td>0</td>
+                                <td class="text-end">0</td>
                                 <td style="text-align:right;">{{money_format('%!i',$TotalAmount)}}</td>
                                 @else
-                                <td>0</td>
-                                <td>0</td>
+                                <td class="text-end">0</td>
+                                <td class="text-end">0</td>
                                 <td class="text-end">{{money_format('%!i',$IGST)}}<br> ({{$rowDetail->igst_per}}%)</td>
                                 <td class="text-end">{{money_format('%!i',$TotalAmount)}}</td>
                                 @endif
