@@ -502,13 +502,11 @@ $updateBOMItem = DB::select("update bom_fabric_details set usedFlag= 1   where  
         
     }
     
-     public function GetPartyDetails(Request $request)
-    {
-        
-            $ac_code= $request->input('ac_code');
-            $PartyRecords = DB::select("select state_id ,gst_no from ledger_master where ac_code='".$ac_code."' and delflag=0");
-            return json_encode($PartyRecords);
-         
+    public function GetPartyDetails(Request $request)
+    { 
+            $sr_no= $request->sr_no;
+            $PartyRecords = DB::select("select state_id ,gst_no from ledger_details where sr_no ='".$sr_no."'");
+            return json_encode($PartyRecords);         
     }
     
     
