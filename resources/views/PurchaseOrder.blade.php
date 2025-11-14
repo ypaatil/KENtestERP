@@ -625,7 +625,7 @@ ini_set('memory_limit', '10G');
       // --- 1️⃣ Enable / Disable bom_code safely
       if (bom_type.length === 0 && class_id.length === 0) {
          if (po_type_id != 2) {
-            // $("#bomdis").empty();
+            $("#bomdis").empty();
             if(po_type_id == 2)
             { 
                $("#bom_code").prop("disabled", true);
@@ -803,27 +803,6 @@ ini_set('memory_limit', '10G');
                   });
                
                });
-            
-               // var clsArr = [];
-               // $('tbody > tr[class^="cls_"]').each(function(i) 
-               // {
-               //     clsArr.push($(this)[0]);
-               // });
-               // console.log(clsArr);
-               // $(clsArr).each(function() 
-               // {
-               //     let className = $(this).attr('class');  
-                  
-               //     if (typeof className === 'string') 
-               //     { 
-               //         let parts = className.split('_');
-               //         let numericValue = parts[1];
-               //         $(".cls_" + numericValue).remove();
-               //     }
-               // });
-            
-            
-               
          }
          else
          {
@@ -848,13 +827,13 @@ ini_set('memory_limit', '10G');
       } 
       else
       {
-         // $("#bomdis").html("");
          if(po_type_id==2)
          { 
             $("#bom_code").attr('disabled')
          }
          else
          {
+            $("#bomdis").html("");
             $("#bom_code").removeAttr('disabled')
          }
       }
