@@ -1091,15 +1091,13 @@ class PurchaseOrderController extends Controller
         
     }
     
-     public function GetPartyDetails(Request $request)
+    public function GetPartyDetails(Request $request)
     {
-        
-            $ac_code= $request->input('ac_code');
-            $PartyRecords = DB::select("select state_id ,gst_no from ledger_master where ac_code='".$ac_code."' and delflag=0");
-            return json_encode($PartyRecords);
-         
+        $sr_no = $request->bill_to;
+        $PartyRecords = DB::select("SELECT state_id, gst_no FROM ledger_details WHERE sr_no = ?", [$sr_no]);
+        return response()->json($PartyRecords);
     }
-    
+        
     public function GetClassLists(Request $request)
     {
         $bom_types = array_map('trim', explode(',', $request->cat_id)); 
@@ -1126,7 +1124,7 @@ class PurchaseOrderController extends Controller
                                      ->where('c.cat_id', '=', $cat_id);
                             })
                             ->whereIn('t.sales_order_no', $sales_order_nos)
-                            ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
+                            ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"), DB::raw(value: "'Sewing Trims' as cat_name"))
                             ->groupBy('t.class_id', 'c.class_name');
                         $queries[] = $q;
             
@@ -1137,14 +1135,14 @@ class PurchaseOrderController extends Controller
                                      ->where('c.cat_id', '=', $cat_id);
                             })
                             ->whereIn('t.sales_order_no', $sales_order_nos)
-                            ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
+                            ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"), DB::raw(value: "'Packing Trims' as cat_name"))
                             ->groupBy('t.class_id', 'c.class_name');
                         $queries[] = $q;
                     }
                     elseif ($cat_id == 1) {
                                                  
                         $q = DB::table('classification_master as t')
-                        ->select('t.class_id', 't.class_name', DB::raw("$cat_id as cat_id"))
+                        ->select('t.class_id', 't.class_name', DB::raw("$cat_id as cat_id"), DB::raw(value: "'Fabric' as cat_name"))
                         ->where('t.cat_id', '=', $cat_id)
                         ->groupBy('t.class_id', 't.class_name');
 
@@ -1161,7 +1159,7 @@ class PurchaseOrderController extends Controller
                             $join->on('c.class_id', '=', 't.class_id')
                                  ->where('c.cat_id', '=', $cat_id);
                         })
-                        ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
+                        ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"), DB::raw(value: "'Sewing Trims' as cat_name"))
                         ->groupBy('t.class_id', 'c.class_name');
                     $queries[] = $q;
         
@@ -1171,7 +1169,7 @@ class PurchaseOrderController extends Controller
                             $join->on('c.class_id', '=', 't.class_id')
                                  ->where('c.cat_id', '=', $cat_id);
                         })
-                        ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
+                        ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"), DB::raw("'Packing Trims' as cat_name"))
                         ->groupBy('t.class_id', 'c.class_name');
                     $queries[] = $q;
                 }elseif ($cat_id == 1) {
@@ -1180,12 +1178,12 @@ class PurchaseOrderController extends Controller
                             $join->on('c.class_id', '=', 't.class_id')
                                  ->where('c.cat_id', '=', $cat_id);
                         })
-                        ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"))
+                        ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"), DB::raw("'Fabric' as cat_name"))
                         ->groupBy('t.class_id', 'c.class_name');
                     $queries[] = $q;
                 }elseif ($cat_id == 4) {
                     $q = DB::table('classification_master as t')
-                        ->select('t.class_id', 't.class_name', DB::raw("$cat_id as cat_id"))
+                        ->select('t.class_id', 't.class_name', DB::raw("$cat_id as cat_id"), DB::raw("'Other' as cat_name"))
                         ->where('t.cat_id', '=', $cat_id)
                         ->groupBy('t.class_id', 't.class_name');
                     $queries[] = $q;
@@ -1203,9 +1201,9 @@ class PurchaseOrderController extends Controller
             $ClassList = collect();
         }
         
-        $html = '<option value="">--Select Classification--</option>';
+        $html = '';
         foreach ($ClassList as $row) {
-            $html .= '<option value="'.$row->class_id.'">'.$row->class_name.'</option>';
+            $html .= '<option value="'.$row->class_id.'" data-bomtype="'.$row->cat_name.'" >'.$row->class_name.'</option>';
         }
     
         return response()->json(['html' => $html]);
@@ -2002,7 +2000,7 @@ class PurchaseOrderController extends Controller
             // DB::enableQueryLog();
             $data= DB::select('select item_master.*,bom_fabric_details.*, sum(bom_fabric_details.bom_qty) as bom_qty, (sum(bom_fabric_details.bom_qty) 
                 - (select ifnull(sum(item_qty),0) from purchaseorder_detail where bom_fabric_details.item_code = purchaseorder_detail.item_code AND bom_fabric_details.sales_order_no = purchaseorder_detail.sales_order_no 
-                AND bom_fabric_details.sales_order_no = purchaseorder_detail.sales_order_no)) as item_qty from bom_fabric_details
+                AND bom_fabric_details.sales_order_no = purchaseorder_detail.sales_order_no)) as item_qty,classification_master.class_name from bom_fabric_details
               inner join item_master on item_master.item_code=bom_fabric_details.item_code
               inner join classification_master on classification_master.class_id=item_master.class_id
               where item_master.class_id in('.$class_ids.') and bom_code in ('.$bom_code.') GROUP BY  bom_fabric_details.sales_order_no,bom_fabric_details.item_code'); 
@@ -2070,13 +2068,18 @@ class PurchaseOrderController extends Controller
                         
                         $itemlist=DB::table('item_master')->where('delflag','=','0')->where('item_code','=', $value->item_code)->get();
                         $unitlist=DB::table('unit_master')->where('delflag','=','0')->where('unit_id','=', $value->unit_id)->get();
-        
-                        $html .='<tr class="cls_'.$value->class_id.'">';
+                        $html .='<tr class="cls_'.$value->class_id.'" data-cat="Fabric">';
                         $html .='
-                        <td><input type="text" name="id[]" value="'.$no.'" id="id" style="width:50px; height:30px;"/></td>
-                        <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);" value="X" > <button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left">+</button> <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left">?</button></td>
-                    
+                        <td><input type="text" name="id[]" value="'.$no.'" id="id" style="width:50px; height:30px;"/></td>           
+                        <td><button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left" disabled>+</button></td> 
+                        <td>  
+                            <button type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);">X</button> 
+                        </td>        
+                        <td>  
+                            <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left unit_conv" disabled>?</button>
+                        </td>                    
                         <td><input type="text"  name="sales_order_no[]" value="'.$value->sales_order_no.'" id="sales_order_no" style="width:80px;"  readOnly/> </td>
+                        <td>'.$value->class_name.'</td> 
                         <td>'.$value->item_code.'</td>
                         <td> <select name="item_codes[]"  id="item_code" style="width:250px; height:30px;"  disabled>
                         <option value="">--Select Item--</option>';
@@ -2141,7 +2144,8 @@ class PurchaseOrderController extends Controller
         
         
           $data= DB::select('select  item_master.*,bom_trim_fabric_details.*,sum(bom_trim_fabric_details.bom_qty) as bom_qty, (sum(bom_trim_fabric_details.bom_qty) 
-                - (select ifnull(sum(item_qty),0) from purchaseorder_detail where bom_trim_fabric_details.item_code = purchaseorder_detail.item_code AND bom_trim_fabric_details.sales_order_no = purchaseorder_detail.sales_order_no)) as item_qty  from bom_trim_fabric_details
+                - (select ifnull(sum(item_qty),0) from purchaseorder_detail where bom_trim_fabric_details.item_code = purchaseorder_detail.item_code 
+                AND bom_trim_fabric_details.sales_order_no = purchaseorder_detail.sales_order_no)) as item_qty,classification_master.class_name  from bom_trim_fabric_details
           inner join item_master on item_master.item_code=bom_trim_fabric_details.item_code
           inner join classification_master on classification_master.class_id=item_master.class_id
           where usedFlag=0 and item_master.class_id in('.$class_ids.') and bom_code in ('.$bom_code.') GROUP BY bom_trim_fabric_details.sales_order_no, bom_trim_fabric_details.item_code'); 
@@ -2216,11 +2220,18 @@ class PurchaseOrderController extends Controller
                         $itemlist=DB::table('item_master')->where('delflag','=','0')->where('item_code','=', $value->item_code)->get();
                         $unitlist=DB::table('unit_master')->where('delflag','=','0')->where('unit_id','=', $value->unit_id)->get();
                         
-                        $html .='<tr class="cls_'.$value->class_id.'">';
+                        $html .='<tr class="cls_'.$value->class_id.'" data-cat="Fabric">';
                         $html .='
-                        <td><input type="text" name="id[]" value="'.$no.'" id="id" style="width:50px; height:30px;"/></td>
-                        <td> <input type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);" value="X" > <button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left">+</button><button type="button" onclick="setConversion(this);" class="btn btn-success pull-left">?</button></td>
+                        <td><input type="text" name="id[]" value="'.$no.'" id="id" style="width:50px; height:30px;"/></td> 
+                        <td><button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left" disabled>+</button></td> 
+                        <td>  
+                            <button type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);">X</button> 
+                        </td>     
+                        <td>  
+                            <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left unit_conv" disabled>?</button>
+                        </td>     
                         <td><input type="text"  name="sales_order_no[]" value="'.$value->sales_order_no.'" id="sales_order_no" style="width:80px;"  readOnly/> </td>
+                        <td>'.$value->class_name.'</td> 
                         <td>'.$value->item_code.'</td>
                         <td> <select name="item_codes[]"  id="item_code" style="width:250px; height:30px;"  disabled>
                         <option value="">--Select Item--</option>';
@@ -2298,7 +2309,8 @@ class PurchaseOrderController extends Controller
        // echo $bom_code;
         //   DB::enableQueryLog();
           $data= DB::select('select item_master.*, bom_sewing_trims_details.*,sum(bom_sewing_trims_details.bom_qty) as bom_qty, (sum(bom_sewing_trims_details.bom_qty) 
-                - (select ifnull(sum(item_qty),0) from purchaseorder_detail where bom_sewing_trims_details.item_code = purchaseorder_detail.item_code AND bom_sewing_trims_details.sales_order_no = purchaseorder_detail.sales_order_no)) as item_qty from bom_sewing_trims_details
+                - (select ifnull(sum(item_qty),0)from purchaseorder_detail where bom_sewing_trims_details.item_code = purchaseorder_detail.item_code
+                 AND bom_sewing_trims_details.sales_order_no = purchaseorder_detail.sales_order_no)) as item_qty,classification_master.class_name  from bom_sewing_trims_details
           inner join item_master on item_master.item_code=bom_sewing_trims_details.item_code
           inner join classification_master on classification_master.class_id=item_master.class_id
           where item_master.class_id in('.$class_ids.') and bom_code in ('.$bom_code.') GROUP BY  bom_sewing_trims_details.sales_order_no, bom_sewing_trims_details.item_code'); 
@@ -2401,11 +2413,18 @@ class PurchaseOrderController extends Controller
                         $itemlist=DB::table('item_master')->where('delflag','=','0')->where('item_code','=', $value->item_code)->get();
                         $unitlist=DB::table('unit_master')->where('delflag','=','0')->where('unit_id','=', $value->unit_id)->get();
                         
-                        $html .='<tr class="cls_'.$value->class_id.'">';
+                        $html .='<tr class="cls_'.$value->class_id.'" data-cat="Sewing">';
                         $html .='
                         <td><input type="text" name="id[]" value="'.$no.'" id="id" style="width:50px; height:30px;"/></td>
-                        <td> <input type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);" value="X" > <button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left">+</button><button type="button" onclick="setConversion(this);" class="btn btn-success pull-left">?</button></td>
+                        <td><button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left" disabled>+</button></td> 
+                        <td>  
+                            <button type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);">X</button> 
+                        </td> 
+                        <td>  
+                            <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left unit_conv">?</button>
+                        </td>    
                         <td><input type="text"  name="sales_order_no[]" value="'.$value->sales_order_no.'" id="sales_order_no" style="width:80px;"  readOnly/> </td>
+                        <td>'.$value->class_name.'</td> 
                         <td>'.$value->item_code.'</td>
                         <td> <select name="item_codes[]"  id="item_code" style="width:250px; height:30px;"  disabled>
                         <option value="">--Select Item--</option>';
@@ -2417,7 +2436,7 @@ class PurchaseOrderController extends Controller
                         }
                         $html.='</select></td> 
                         <td><input type="text"  name="hsn_code[]" value="'.$value->hsn_code.'" id="hsn_code" style="width:80px;"  readOnly/> </td>';
-                        $html .='<td> <select name="unit_id[]"  id="unit_id" style="width:100px;  height:30px;" required  >
+                        $html .='<td> <select name="unit_id[]"  id="unit_id" style="width:100px;  height:30px;" disabled>
                         <option value="">--Select Unit--</option>';
                         foreach($unitlist as  $rowunit)
                         {
@@ -2508,7 +2527,8 @@ class PurchaseOrderController extends Controller
         
         $bom_code=rtrim($bom_code,",");
         $data= DB::select('select  item_master.*,bom_packing_trims_details.*,sum(bom_packing_trims_details.bom_qty) as bom_qty, (sum(bom_packing_trims_details.bom_qty) 
-                - (select ifnull(sum(item_qty),0) from purchaseorder_detail where bom_packing_trims_details.item_code = purchaseorder_detail.item_code AND bom_packing_trims_details.sales_order_no = purchaseorder_detail.sales_order_no)) as item_qty 
+                - (select ifnull(sum(item_qty),0)from purchaseorder_detail where bom_packing_trims_details.item_code = purchaseorder_detail.item_code
+                 AND bom_packing_trims_details.sales_order_no = purchaseorder_detail.sales_order_no)) as item_qty,classification_master.class_name  
         from bom_packing_trims_details
         inner join item_master on item_master.item_code=bom_packing_trims_details.item_code
         inner join classification_master on classification_master.class_id=item_master.class_id
@@ -2600,11 +2620,18 @@ class PurchaseOrderController extends Controller
                         $itemlist=DB::table('item_master')->where('delflag','=','0')->where('item_code','=', $value->item_code)->get();
                         $unitlist=DB::table('unit_master')->where('delflag','=','0')->where('unit_id','=', $value->unit_id)->get();
                         
-                        $html .='<tr class="cls_'.$value->class_id.'">';
+                        $html .='<tr class="cls_'.$value->class_id.'" data-cat="Packing">';
                         $html .='
                         <td><input type="text" name="id[]" value="'.$no.'" id="id" style="width:50px; height:30px;"/></td>
-                        <td><button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left">+</button> <input type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);" value="X" > <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left">?</button></td>
+                        <td> <button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left" disabled>+</button> </td> 
+                        <td>  
+                            <button type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);">X</button> 
+                        </td>    
+                        <td>  
+                            <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left unit_conv" disabled>?</button>
+                        </td>   
                         <td><input type="text"  name="sales_order_no[]" value="'.$value->sales_order_no.'" id="sales_order_no" style="width:80px;"  readOnly/> </td>
+                        <td>'.$value->class_name.'</td>
                         <td>'.$value->item_code.'</td>
                         <td> <select name="item_codes[]"  id="item_code" style="width:250px; height:30px;"  disabled>
                         <option value="">--Select Item--</option>';
