@@ -439,7 +439,7 @@
 
             table.second th:nth-child(7),
             table.second td:nth-child(7) {
-                width: 150px !important;
+                width: auto !important;
             }
 
             table.second th:nth-child(8),
@@ -464,7 +464,15 @@
 
             table.second th:nth-child(12),
             table.second td:nth-child(12) {
-                width: 100px !important;
+                width: auto !important;
+            }
+             table.second th:nth-child(13),
+            table.second td:nth-child(13) {
+                width: auto !important;
+            }
+             table.second th:nth-child(14),
+            table.second td:nth-child(14) {
+                width: auto !important;
             }
 
         }
@@ -511,7 +519,7 @@
                         <div class="green-part"></div>
                     </div>
 
-                    <h3 class=" fw-bold text-center"> Gate Pass/ Delivery Note-Fabric</h3>
+                    <h3 class=" fw-bold text-center"> Gate Pass/ Delivery Challan-Fabric</h3>
 
                     <!-- Sales Info -->
                     <div class="row g-0  border-top border-bottom ">
@@ -601,90 +609,128 @@
 
 
                         </div>
-                        <div class="col-md-6 p-2">
+                        <!-- <div class="col-md-6 p-2">
                             <div class="">
                                 <p><b>Shipping To: </b></p>
                                 <p><b></b></p>
 
                             </div>
 
-                        </div>
+                        </div> -->
                     </div>
 
                     <!-- Assortment Table -->
-                    <h4 class="text-center fw-bold "> Fabric Roll wise Details</h4>
+                    <h4 class="text-center fw-bold">Item Details</h4>
                     <table class="table table-bordered table-sm second">
                         <thead>
                             <tr>
-                                <th>Sr No</th>
+                                <th>Sr. No.</th>
                                 <th>Item Code</th>
-                                <th>Item Name </th>
-                                <th>HSN No.</th>
-                                <th>Color </th>
-                                <th>Part </th>
-
-                                <th style="width: 170px;">Quality</th>
+                                <th>Item Name</th>
+                                <th>HSN Code</th>
+                                <th >Description / Quality</th>
                                 <th>Width</th>
-                                <th>Qty </th>
-                                <th>UOM </th>
-                                <th>Rate </th>
-                                <th>Amount </th>
-
+                                <th>Quantity</th>
+                                <th>UOM</th>
+                                <th>Rate</th>
+                                <th>Amount (Before Tax)</th>
+                                <th>CGST</th>
+                                <th>SGST</th>
+                                <th>IGST</th>
+                                <th>Amount (After Tax)</th>
                             </tr>
                         </thead>
                         <tbody>
                             @php
-
-                            $FabricOutwardDetailstables = App\Models\FabricOutwardDetailModel::select('item_master.color_name','unit_master.unit_name','item_master.item_name','item_master.hsn_code','fabric_outward_details.width',
-                            'fabric_outward_details.item_code','item_master.item_description','inward_details.item_rate',
-                            'item_master.dimension','part_master.part_name',DB::raw('sum(fabric_outward_details.meter) as meter'))->join('item_master','item_master.item_code', '=', 'fabric_outward_details.item_code')
-                            ->join('part_master','part_master.part_id', '=', 'fabric_outward_details.part_id')
-                            ->join('unit_master','unit_master.unit_id', '=', 'item_master.unit_id')
+                            $FabricOutwardDetailstables = App\Models\FabricOutwardDetailModel::select(
+                            'item_master.color_name',
+                            'unit_master.unit_name',
+                            'item_master.item_name',
+                            'item_master.hsn_code',
+                            'fabric_outward_details.width',
+                            'fabric_outward_details.item_code',
+                            'item_master.item_description',
+                            'inward_details.item_rate',
+                            'item_master.dimension',
+                            'part_master.part_name',
+                            DB::raw('sum(fabric_outward_details.meter) as meter')
+                            )
+                            ->join('item_master','item_master.item_code','=','fabric_outward_details.item_code')
+                            ->join('part_master','part_master.part_id','=','fabric_outward_details.part_id')
+                            ->join('unit_master','unit_master.unit_id','=','item_master.unit_id')
                             ->join('inward_details','inward_details.track_code','=','fabric_outward_details.track_code')
                             ->where('fabric_outward_details.fout_code','=', $FabricOutwardMaster[0]->fout_code)
-                            ->groupby('fabric_outward_details.item_code')
+                            ->groupBy('fabric_outward_details.item_code')
                             ->get();
 
-
-                            $no=1; $amt=0; @endphp
-                            @foreach($FabricOutwardDetailstables as $rowDetail)
-                            <tr>
-                                <td class="text-end">{{ $no }}</td>
-                                <td class="text-center">{{ $rowDetail->item_code }}</td>
-                                <td class="text-start"> {{ $rowDetail->item_name }}</td>
-                                <td class="text-center">{{ $rowDetail->hsn_code }}</td>
-                                <td class="text-start">{{ $rowDetail->color_name }}</td>
-                                <td class="text-start">{{ $rowDetail->part_name }}</td>
-                                <td class="text-start">{{ $rowDetail->item_description }}</td>
-                                <td class="text-end">{{ $rowDetail->width }}</td>
-                                <td class="text-end">{{ number_format($rowDetail->meter,2) }}</td>
-                                <td class="text-center">{{$rowDetail->unit_name}}</td>
-                                <td class="text-end">{{ $rowDetail->item_rate }}</td>
-                                <td class="text-end">{{ number_format($rowDetail->item_rate*$rowDetail->meter,2)}}</td>
-                            </tr>
-
-                            @php $no=$no+1;
-                            $amt=$amt+($rowDetail->item_rate*$rowDetail->meter);
+                            $no = 1;
+                            $amt = 0;
+                            $cgst_total = 0;
+                            $sgst_total = 0;
+                            $igst_total = 0;
+                            $after_tax_total = 0;
                             @endphp
+
+                            @foreach($FabricOutwardDetailstables as $rowDetail)
+                            @php
+                            $beforeTax = $rowDetail->item_rate * $rowDetail->meter;
+
+                            // tax calculation based on state
+                            if($FabricOutwardMaster[0]->state_id == 27){
+                            $cgst = $beforeTax * 2.5 / 100;
+                            $sgst = $beforeTax * 2.5 / 100;
+                            $igst = 0;
+                            } else {
+                            $cgst = 0;
+                            $sgst = 0;
+                            $igst = $beforeTax * 5 / 100;
+                            }
+
+                            $afterTax = $beforeTax + $cgst + $sgst + $igst;
+
+                            $amt += $beforeTax;
+                            $cgst_total += $cgst;
+                            $sgst_total += $sgst;
+                            $igst_total += $igst;
+                            $after_tax_total += $afterTax;
+                            @endphp
+
+                            <tr>
+                                <td class="text-end">{{ $no++ }}</td>
+                                <td class="text-center">{{ $rowDetail->item_code }}</td>
+                                <td class="text-start">{{ $rowDetail->item_name }}</td>
+                                <td class="text-center">{{ $rowDetail->hsn_code }}</td>
+                                <td class="text-start">{{ $rowDetail->item_description }}</td>
+                                <td class="text-end">{{ number_format($rowDetail->width, 2) }}</td>
+                                <td class="text-end">{{ number_format($rowDetail->meter, 2) }}</td>
+                                <td class="text-center">{{ $rowDetail->unit_name }}</td>
+                                <td class="text-end">{{ number_format($rowDetail->item_rate, 2) }}</td>
+                                <td class="text-end">{{ number_format($beforeTax, 2) }}</td>
+                                <td class="text-end">{{ number_format($cgst, 2) }}</td>
+                                <td class="text-end">{{ number_format($sgst, 2) }}</td>
+                                <td class="text-end">{{ number_format($igst, 2) }}</td>
+                                <td class="text-end">{{ number_format($afterTax, 2) }}</td>
+                            </tr>
                             @endforeach
+                        </tbody>
+
                         <tfoot>
                             <tr>
-                                <td colspan="6"><b> </b></td>
-                                <td class="text-end"> <b>Total Taga: </b></td>
-                                <td class="text-end"><b> {{ $FabricOutwardMaster[0]->total_taga_qty }} </b></td>
-                                <td style="font-weight:bold;" class="text-end">Total Meter</td>
-                                <td style="font-weight:bold;" class="text-end">{{ number_format($FabricOutwardMaster[0]->total_meter,2) }}</td>
-                                <td style="font-weight:bold;" class="text-end">Gross Amount</td>
-                                <td style="font-weight:bold;" class="text-end">{{ number_format($amt) }}</td>
-
+                                <td colspan="6" class="text-end"><b>Total Meter:</b></td>
+                                <td class="text-end fw-bold">{{ number_format($FabricOutwardMaster[0]->total_meter, 2) }}</td>
+                                <td colspan="2" class="text-end fw-bold">Gross Amount</td>
+                                <td class="text-end fw-bold">{{ number_format($amt, 2) }}</td>
+                                <td class="text-end fw-bold">{{ number_format($cgst_total, 2) }}</td>
+                                <td class="text-end fw-bold">{{ number_format($sgst_total, 2) }}</td>
+                                <td class="text-end fw-bold">{{ number_format($igst_total, 2) }}</td>
+                                <td class="text-end fw-bold">{{ number_format($after_tax_total, 2) }}</td>
                             </tr>
                             <tr>
-                                <td colspan="12" class="text-center"><b>NOT FOR SALE, FOR JOB WORK ONLY</b></td>
+                                <td colspan="14" class="text-center"><b>NOT FOR SALE, FOR JOB WORK ONLY</b></td>
                             </tr>
                         </tfoot>
-                        </tbody>
-                        </tbody>
                     </table>
+
                     @php
                     $number = round($amt);
                     $no = $number;
@@ -692,18 +738,16 @@
                     $hundred = null;
                     $digits_1 = strlen($no);
                     $i = 0;
-                    $str = array();
-                    $words = array('0' => '', '1' => 'one', '2' => 'two',
-                    '3' => 'three', '4' => 'four', '5' => 'five', '6' => 'six',
-                    '7' => 'seven', '8' => 'eight', '9' => 'nine',
-                    '10' => 'ten', '11' => 'eleven', '12' => 'twelve',
-                    '13' => 'thirteen', '14' => 'fourteen',
-                    '15' => 'fifteen', '16' => 'sixteen', '17' => 'seventeen',
-                    '18' => 'eighteen', '19' =>'nineteen', '20' => 'twenty',
-                    '30' => 'thirty', '40' => 'forty', '50' => 'fifty',
-                    '60' => 'sixty', '70' => 'seventy',
-                    '80' => 'eighty', '90' => 'ninety');
-                    $digits = array('', 'hundred', 'thousand', 'lakh', 'crore');
+                    $str = [];
+                    $words = [
+                    '0' => '', '1' => 'one', '2' => 'two', '3' => 'three', '4' => 'four', '5' => 'five',
+                    '6' => 'six', '7' => 'seven', '8' => 'eight', '9' => 'nine', '10' => 'ten',
+                    '11' => 'eleven', '12' => 'twelve', '13' => 'thirteen', '14' => 'fourteen',
+                    '15' => 'fifteen', '16' => 'sixteen', '17' => 'seventeen', '18' => 'eighteen',
+                    '19' =>'nineteen', '20' => 'twenty', '30' => 'thirty', '40' => 'forty',
+                    '50' => 'fifty', '60' => 'sixty', '70' => 'seventy', '80' => 'eighty', '90' => 'ninety'
+                    ];
+                    $digits = ['', 'hundred', 'thousand', 'lakh', 'crore'];
                     while ($i < $digits_1) {
                         $divider=($i==2) ? 10 : 100;
                         $number=floor($no % $divider);
@@ -712,53 +756,66 @@
                         if ($number) {
                         $plural=(($counter=count($str)) && $number> 9) ? 's' : null;
                         $hundred = ($counter == 1 && $str[0]) ? ' and ' : null;
-                        $str [] = ($number < 21) ? $words[$number] . " " . $digits[$counter] . $plural . " " . $hundred
-                            :
-                            $words[floor($number / 10) * 10]
-                            . " " . $words[$number % 10] . " "
-                            . $digits[$counter] . $plural . " " . $hundred;
+                        $str[] = ($number < 21)
+                            ? $words[$number] . " " . $digits[$counter] . $plural . " " . $hundred
+                            : $words[floor($number / 10) * 10] . " " . $words[$number % 10] . " " . $digits[$counter] . $plural . " " . $hundred;
                             } else $str[]=null;
                             }
                             $str=array_reverse($str);
                             $result=implode('', $str);
-                            $points=($point) ? "." . $words[$point / 10] . " " .
-                            $words[$point=$point % 10] : '' ;
+                            $points=($point) ? "." . $words[$point / 10] . " " . $words[$point=$point % 10] : '' ;
 
+                            // --- TAX LOGIC ---
+                            if ($FabricOutwardMaster[0]->state_id == 27) {
+                            $CGSTTotal = round($amt * (2.5 / 100));
+                            $SGSTTotal = round($amt * (2.5 / 100));
+                            $IGSTTotal = 0;
+                            $tamt = $amt + $CGSTTotal + $SGSTTotal;
+                            } else {
+                            $CGSTTotal = 0;
+                            $SGSTTotal = 0;
+                            $IGSTTotal = round($amt * (5 / 100));
+                            $tamt = $amt + $IGSTTotal;
+                            }
+
+                            // Round off & Grand total
+                            $roundedTotal = round($tamt);
+                            $roundOff = round($roundedTotal - $tamt, 2);
                             @endphp
 
 
-                            <table class="table table-bordered border  border-dark  ms-auto  summary-table" style="width: 500px;">
-                            @if($FabricOutwardMaster[0]->state_id==27)
-                            <tr>
-                                <th class="text-start">CGST (2.5%) :</th>
-                                <td class="text-end">{{round($amt*(2.5/100))}}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-start">SGST (2.5%) : </th>
-                                <td class="text-end"> {{round($amt*(2.5/100))}}</td>
-                            </tr>
-                            <tr>
-                                <th class="text-start">Total Amount : </th>
-                                <td class="text-end"> &#8377;{{number_format($amt + round($amt*(2.5/100)) + round($amt*(2.5/100)))}}</td>
-                            </tr>
-
-
-                            @else
-                            <tr>
-
-                                <th class="text-start">IGST (5%) : </th>
-                                <td class="text-end"> {{round($amt*(5/100))}}</td>
-                            </tr>
-                            <tr>
-
-                                <th class="text-start">Total Amount : </th>
-                                <th class="text-end">&#8377; {{number_format($amt + round($amt*(5/100)))}}</th>
-                            </tr>
-
-                            @endif
-
+                            <table class="table table-bordered border border-dark ms-auto summary-table" style="width: 500px;">
+                                <tr>
+                                    <th class="text-start">Amount (Before Tax)</th>
+                                    <td class="text-end">&#8377;{{ number_format($amt, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-start">SGST</th>
+                                    <td class="text-end">&#8377;{{ number_format($SGSTTotal, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-start">CGST</th>
+                                    <td class="text-end">&#8377;{{ number_format($CGSTTotal, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-start">IGST</th>
+                                    <td class="text-end">&#8377;{{ number_format($IGSTTotal, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-start">Amount (After Tax)</th>
+                                    <td class="text-end">&#8377;{{ number_format($tamt, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-start">Round Off</th>
+                                    <td class="text-end">{{ $roundOff >= 0 ? '+' : '' }}&#8377;{{ number_format($roundOff, 2) }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="text-start">Grand Total</th>
+                                    <td class="text-end fw-bold">&#8377;{{ number_format($roundedTotal, 2) }}</td>
+                                </tr>
                             </table>
-                            <table class="table">
+
+                            <table class="table" style="margin-top:100px;">
                                 <tr>
                                     <th>Prepared By:</th>
                                     <th>Checked By:</th>

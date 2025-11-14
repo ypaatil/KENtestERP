@@ -549,7 +549,7 @@
                                 <div class="info-row">
                                     <div class="label">Job/Cutting PO No</div>
                                     <div class="colon">:</div>
-                                    <div class="value"></div>
+                                    <div class="value">{{ $TrimsOutwardMaster[0]->vw_code }} </div>
                                 </div>
                                 <div class="info-row">
                                     <div class="label">Style</div>
@@ -568,7 +568,7 @@
                         </div>
                         <div class="col-md-6 p-2">
                             <p><b>Company Name: </b></p>
-                            <p><b>Ken Global Designs Pvt Ltd</b> <br> Gat No.- 298/299, A/P Kondigre Kolhapur Mahrashtra - 416101</p>
+                            <p><b>Ken Global Designs Pvt Ltd</b> <br> Gat No.- 298/299, A/P Kondigre Kolhapur Maharashtra - 416101</p>
 
                             <div class="info-row">
                                 <div class="label">PAN NO</div>
@@ -583,7 +583,7 @@
                             <div class="info-row">
                                 <div class="label">STATE</div>
                                 <div class="colon">:</div>
-                                <div class="value"> </div>
+                                <div class="value"> MAHARASTRA</div>
                             </div>
 
                         </div>
@@ -633,13 +633,15 @@
                                 <th>HSN Code</th>
                                 <th>Qty</th>
                                 <th>UOM</th>
+                                 <th>Rate</th>
+                                    <th>Amt.(Before Tax)</th>
                                 <th>CGST</th>
                                 <th>SGST</th>
                                 <th>IGST</th>
 
-                                <th>Rate</th>
-                                <th>Amount</th>
-                                <th>Total Amount</th>
+                               
+                             
+                                <th> Amt.(After Tax)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -692,6 +694,8 @@
                                 <td class="text-end">{{ $rowDetail->hsn_code }} </td>
                                 <td class="text-end"> {{ round($rowDetail->item_qty,2) }}</td>
                                 <td class="text-end">{{ $rowDetail->unit_name }}</td>
+                                 <td class="text-end">{{ $rowDetail->item_rate }}</td>
+                                   <td class="text-end">{{ number_format($rowDetail->item_rate*$rowDetail->item_qty) }}</td>
 
                                 @if($rowDetail->state_id==27)
                                 <td class="text-end">
@@ -712,8 +716,8 @@
                                 </td>
                                 @endif
 
-                                <td class="text-end">{{ $rowDetail->item_rate }}</td>
-                                <td class="text-end">{{ number_format($rowDetail->item_rate*$rowDetail->item_qty) }}</td>
+                               
+                              
                                 <td class="text-end">
 
                                     @if($rowDetail->state_id==27)
@@ -756,12 +760,12 @@
                         <tbody>
                             <tr>
 
-                                <td colspan="4" style="text-align:right;" class="text-end"> <b>Total Qty: </b></td>
+                                <td colspan="2" style="text-align:right;" class="text-end"> <b>Total Qty: </b></td>
                                 <td class="text-end"><b> {{ number_format($totalqty)}} </b></td>
 
-                                <td style="font-weight:bold;" class="text-end">Total Amount :</td>
+                                <td colspan="2" style="font-weight:bold;" class="text-end">Total (Before Tax):</td>
                                 <td style="font-weight:bold;" class="text-end">{{ number_format($amt) }}</td>
-                                <td style="font-weight:bold;" class="text-end">Net Amount :</td>
+                                <td colspan="2" style="font-weight:bold;" class="text-end">Total (After Tax):</td>
                                 <td style="font-weight:bold;" class="text-end">{{number_format($tamt)}}</td>
                             </tr>
                             <tr>
