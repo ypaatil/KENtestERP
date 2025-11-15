@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Fabric Inward</title>
+    <title>Fabric Inward | Ken Global Designs Pvt. Ltd.</title>
     <!-- Web Fonts -->
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' type='text/css'>
     <!-- Stylesheets -->
@@ -339,7 +339,7 @@
 
             table.second th:nth-child(2),
             table.second td:nth-child(2) {
-                width: 160px !important;
+                width: auto !important;
             }
 
             table.second th:nth-child(3),
@@ -349,7 +349,7 @@
 
             table.second th:nth-child(4),
             table.second td:nth-child(4) {
-                width: 150px !important;
+                width: 160px !important;
 
             }
 
@@ -582,10 +582,11 @@
                         <thead>
                             <tr>
                                 <th>Sr No</th>
-                                <th>Item Name</th>
+                                
                                 <th>HSN Code </th>
 
                                 <th>Quality</th>
+                                <th>Item Name</th>
                                 <th>Qty</th>
                                 <th>UOM</th>
                                 <th>Rate</th>
@@ -668,14 +669,14 @@
                             @endphp
                             <tr>
                                 <td class="text-end">{{ $no }}</td>
-                                <td class="text-start">({{ $rowDetail->item_code }}) {{ $rowDetail->item_name }} </td>
+                                
                                 <td class="text-center">{{ $rowDetail->hsn_code }}</td>
 
                                 <td class="text-start">{{ $rowDetail->item_description }}</td>
-
+                                <td class="text-start">({{ $rowDetail->item_code }}) {{ $rowDetail->item_name }} </td>
                                 <td class="text-end">{{ number_format($rowDetail->meter,2) }}</td>
-                                <td>{{ $rowDetail->unit_name}}</td>
-                                <td class="text-end">{{ $rowDetail->item_rate }}</td>
+                                <td class="text-center">{{ $rowDetail->unit_name}}</td>
+                                <td class="text-end">{{ number_format($rowDetail->item_rate,2) }}</td>
                                 <td class="text-end">{{ money_format('%!i',$Amount)}}</td>
                                 @if($tax_type_id==1)
                                 <td class="text-end">{{money_format('%!i',($CGST))}} <br> ({{$rowDetail->cgst_per}}%)</td>
@@ -704,10 +705,10 @@
                             <tr>
                                 <td class="text-end" colspan="4">Total Meter:</td>
                                 <td class="text-end">{{ number_format($FabricInwardMaster[0]->total_meter,2) }}</td>
-                                <th colspan="2" class="text-end">  Total (Before Tax): </th>
+                                <th colspan="2" class="text-end">  Total Amount <br> (Before Tax): </th>
                                 
                                 <td class="text-end">{{  money_format('%!i',$amt) }}</td>
-                                <th colspan="3" class="text-end" >Total (After Tax):</th>
+                                <th colspan="3" class="text-end" >Total Amount <br> (After Tax):</th>
                                
 
                                 <td class="text-end"> {{money_format('%!i',$tamt)}}</td>
