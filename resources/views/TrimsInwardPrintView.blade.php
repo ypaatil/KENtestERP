@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Trims Inward</title>
+    <title>Trims Inward | Ken Global Designs Pvt. Ltd.</title>
     <!-- Web Fonts -->
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' type='text/css'>
     <!-- Stylesheets -->
@@ -488,7 +488,7 @@
                         <div class="green-part"></div>
                     </div>
 
-                    <h3 class="mb-0 fw-bold  text-center"> Goods Receipt Note-Trim</h3>
+                    <h3 class=" fw-bold  text-center"> Goods Receipt Note-Trim</h3>
 
                     <!-- Sales Info -->
                     <div class="row g-0  border-top border-bottom ">
