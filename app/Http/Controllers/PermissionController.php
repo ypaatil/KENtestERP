@@ -54,12 +54,14 @@ class PermissionController extends Controller
         $user_typelist = DB::table('user_type')->get();
         
         $processlist = DB::table('process_master')->get();
+
+        $potypelist = DB::table('po_type_master')->get();
         
         $GPOApprovelist = DB::table('gpo_approval_master')->where('delflag','=', '0')->get();
         
         $formlist = UserManagement::where('delflag','=', '0')->get();
 
-        return view('User_Management', compact('formlist','VendorList','workerlist','user_typelist','maxuserid','processlist','GPOApprovelist'));
+        return view('User_Management', compact('formlist','VendorList','workerlist','user_typelist','maxuserid','processlist','GPOApprovelist','potypelist'));
     }
 
     /**
@@ -78,7 +80,7 @@ class PermissionController extends Controller
                 'address' => 'required',
                 'username' => 'required',
                 'password' => 'required',
-                 'vendorId' => 'required',
+                'vendorId' => 'required',
         ]);
 
         $input = $request->all();
@@ -175,6 +177,20 @@ class PermissionController extends Controller
                 //dd(DB::getQueryLog());
             }
         }
+              
+        DB::table('po_type_auth')->where('username', $request->username)->delete();    
+        if(count($request->po_type_id) > 0)
+        {
+            foreach($request->po_type_id as $row)
+            { 
+                //DB::enableQueryLog();
+                DB::table('po_type_auth')->insert([ 
+                    'username' => $username,
+                    'po_type_id' => $row
+                ]);
+                //dd(DB::getQueryLog());
+            }
+        }
         
         
         DB::table('sales_head_auth')->where('username', $request->username)->delete();    
@@ -230,9 +246,11 @@ class PermissionController extends Controller
       
         $GPOApprovelist = DB::table('gpo_approval_master')->where('delflag','=', '0')->get();
         
+        $potypelist = DB::table('po_type_master')->get();
+
         $permissions = Permission::find($id);
         
-        return view('User_Management', compact('permissions','VendorList','workerlist','user_typelist','formlist','formlistbyuser','processlist','GPOApprovelist'));
+        return view('User_Management', compact('permissions','VendorList','workerlist','user_typelist','formlist','formlistbyuser','processlist','GPOApprovelist','potypelist'));
     }
 
     /**
@@ -363,6 +381,19 @@ class PermissionController extends Controller
             }
         }
         
+        DB::table('po_type_auth')->where('username', $request->username)->delete();    
+        if(count($request->po_type_id) > 0)
+        {
+            foreach($request->po_type_id as $row)
+            { 
+                //DB::enableQueryLog();
+                DB::table('po_type_auth')->insert([ 
+                    'username' => $username,
+                    'po_type_id' => $row
+                ]);
+                //dd(DB::getQueryLog());
+            }
+        }
         
         DB::table('sales_head_auth')->where('username', $request->username)->delete();   
         if($request->sales_head_id != "")

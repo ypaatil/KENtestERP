@@ -219,6 +219,23 @@
                       </tr> 
                       @endforeach 
                  </table> 
+                 <h3 class="m-3"><b>PO Type Access</b></h3>
+                 <table id="table3" class="table table-hover display  pb-30">
+                      @php
+                            $poTypeData = DB::SELECT("SELECT * FROM po_type_master WHERE delflag=0");      
+                      @endphp
+                      @foreach($poTypeData as $potype) 
+                      @php 
+                            $po_type_auth = DB::SELECT("SELECT count(*) as total_count FROM po_type_auth WHERE username='".$permissions->username."' AND po_type_id=".$potype->po_type_id);
+                         
+                            $total_count = isset($po_type_auth[0]->total_count) ? $po_type_auth[0]->total_count : 0;
+                      @endphp
+                      <tr>
+                          <th>{{$potype->po_type_name}}</th>
+                          <td><input type="checkbox" name="po_type_id[]"  value="{{$potype->po_type_id}}"  {{ $total_count > 0 ?  'checked="checked"' : ''  }}></td> 
+                      </tr> 
+                      @endforeach 
+                 </table> 
                </div>
                <div class="col-md-4" style="background: #d3a922;padding: 3px;">  
                   <h3 class="m-3"><b>Sales Head</b></h3>
@@ -468,6 +485,21 @@
                       <tr>
                           <th>{{$orderGroup->order_group_name}}</th>
                           <td><input type="checkbox" name="og_id[]"  value="{{$orderGroup->og_id}}"></td> 
+                      </tr> 
+                      @endforeach 
+                 </table> 
+                 <br/>
+                 <br/>
+                 <br/>
+                 <h3 class="m-3"><b>PO Type Access</b></h3>
+                 <table id="table3" class="table table-hover display  pb-30">
+                      @php
+                            $poTypeData = DB::SELECT("SELECT * FROM po_type_master WHERE delflag=0");    
+                      @endphp
+                      @foreach($poTypeData as $potype) 
+                      <tr>
+                          <th>{{$potype->po_type_name}}</th>
+                          <td><input type="checkbox" name="po_type_id[]"  value="{{$potype->po_type_id}}" ></td> 
                       </tr> 
                       @endforeach 
                  </table> 

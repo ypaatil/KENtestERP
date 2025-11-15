@@ -231,7 +231,7 @@ class PurchaseOrderController extends Controller
         $firmlist = DB::table('firm_master')->get();
         $ledgerlist = LedgerModel::SELECT('ledger_master.*', 'business_type.Bt_name')->join('business_type', "business_type.Bt_id","=","ledger_master.bt_id")->where('ledger_master.delflag','=', '0')->whereIn('ledger_master.bt_id', [1])->where('ledger_master.ac_code','>', '39')->get();
         $buyerlist = LedgerModel::SELECT('ledger_master.*', 'business_type.Bt_name')->join('business_type', "business_type.Bt_id","=","ledger_master.bt_id")->where('ledger_master.delflag','=', '0')->where('ledger_master.bt_id', '=', 2)->get();
-        $POTypeList = POTypeModel::where('po_type_master.delflag','=', '0')->get();
+        $POTypeList = POTypeModel::join('po_type_auth', "po_type_auth.po_type_id","=","po_type_master.po_type_id")->where('po_type_auth.username','=',Session::get('username'))->where('po_type_master.delflag','=', '0')->get();
         $ClassList = ClassificationModel::where('delflag','=', '0')->get();
         $gstlist = DB::table('tax_type_master')->get();
         $itemlist = DB::table('item_master')->get();
@@ -405,8 +405,6 @@ class PurchaseOrderController extends Controller
             PurchaseOrderDetailModel::insert($data2);
             }
             
-            
-            
             $item_code=rtrim($item_code,",");
             if (!empty($item_code)) {
                 // If item_code is an array, convert it to a quoted string
@@ -496,8 +494,8 @@ class PurchaseOrderController extends Controller
         $gstlist = DB::table('tax_type_master')->get();
         $itemlist = DB::table('item_master')->get();
         $unitlist = DB::table('unit_master')->get();
-        $CatList = CategoryModel::where('delflag','=', '0')->get();
-        $POTypeList = POTypeModel::where('po_type_master.delflag','=', '0')->get();
+        $CatList = CategoryModel::where('delflag','=', '0')->get(); 
+        $POTypeList = POTypeModel::join('po_type_auth', "po_type_auth.po_type_id","=","po_type_master.po_type_id")->where('po_type_auth.username','=',Session::get('username'))->where('po_type_master.delflag','=', '0')->get();
         $purchasefetch = PurchaseOrderModel::find($id);
         $BOMLIST = DB::table('bom_master')->select('bom_code','sales_order_no')->get();
         $buyerlist = LedgerModel::SELECT('ledger_master.*', 'business_type.Bt_name')->join('business_type', "business_type.Bt_id","=","ledger_master.bt_id")->where('ledger_master.delflag','=', '0')->where('ledger_master.bt_id', '=', 2)->get();
@@ -514,16 +512,12 @@ class PurchaseOrderController extends Controller
         $detailpurchase = PurchaseOrderDetailModel::select('purchaseorder_detail.*','item_master.item_name','item_master.cat_id','item_master.item_image_path',
         DB::raw("(select ifnull(sum(inward_details.meter),0) from inward_details where inward_details.item_code= purchaseorder_detail.item_code    and inward_details.po_code='".$purchasefetch->pur_code."') as FabGRNQty"),
         DB::raw("(select ifnull(sum(trimsInwardDetail.item_qty),0) from trimsInwardDetail where trimsInwardDetail.item_code= purchaseorder_detail.item_code    and po_code='".$purchasefetch->pur_code."') as TrimGRNQty")
-        ,'item_master.class_id')->
-            join('item_master','item_master.item_code', '=', 'purchaseorder_detail.item_code')
-           
-        ->where('pur_code','=', $purchasefetch->pur_code)->get();
-       
-    
+        ,'item_master.class_id')->join('item_master','item_master.item_code', '=', 'purchaseorder_detail.item_code')->where('pur_code','=', $purchasefetch->pur_code)->get();
+
         $ship_to_details = DB::select("select * from ledger_details");
         $bill_to_details = DB::select("select * from ledger_details where ac_code = ".$purchasefetch->Ac_code);
         
-        return view('PurchaseOrderEdit',compact('purchasefetch','ship_to_details','bill_to_details','CatList','firmlist','ledgerlist','is_approved','gstlist','ClassList','itemlist','detailpurchase','unitlist','POTypeList','BOMLIST', 'buyerlist'));
+        return view('PurchaseOrderEdit', compact('purchasefetch','ship_to_details','bill_to_details','CatList','firmlist','ledgerlist','is_approved','gstlist','ClassList','itemlist','detailpurchase','unitlist','POTypeList','BOMLIST', 'buyerlist'));
     }
 
     /**

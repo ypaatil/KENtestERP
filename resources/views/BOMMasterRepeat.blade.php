@@ -1852,7 +1852,7 @@
 
          //   $.ajax({
          //       dataType: "json",
-         //       url: "{{ route('GetSewingTrimItemList') }}",
+         //       url: "",
          //       data:{'tr_code':sales_order_no},
          //       success: function(data)
          //       {
@@ -1862,7 +1862,7 @@
          
          //   $.ajax({
          //       dataType: "json",
-         //       url: "{{ route('GetPackingTrimItemList') }}",
+         //       url: "",
          //       data:{'tr_code':sales_order_no},
          //       success: function(data)
          //       {
