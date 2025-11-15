@@ -488,7 +488,7 @@
                         <div class="green-part"></div>
                     </div>
 
-                    <h3 class=" fw-bold  text-center"> Goods Receipt Note-Trim</h3>
+                    <h3 class="fw-bold  text-center"> Goods Receipt Note-Trim</h3>
 
                     <!-- Sales Info -->
                     <div class="row g-0  border-top border-bottom ">
