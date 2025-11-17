@@ -368,6 +368,7 @@
         var currentDate = getSearchParams("currentDate");
        
         var URL = "LoadTrimsStockDataTrialCloned?currentDate="+currentDate+"&job_status_id="+job_status_id;  
+         
         $.ajax({
             dataType: "json",
             type: "GET", 
@@ -378,7 +379,7 @@
                 $(".table-responsive").addClass("hide");
             },
             success: function(data)
-            { 
+            {                 
                 if ( $.fn.DataTable.isDataTable('#dt')) 
                 {
                    $('#dt').DataTable().destroy();
@@ -399,22 +400,26 @@
                                 {
                                     extend: 'copyHtml5',
                                     text: 'Copy',
-                                    title: exportTitle
+                                    title: exportTitle,
+                                    exportOptions: commonExportOptions()
                                 },
                                 {
                                     extend: 'excelHtml5',
                                     text: 'Excel',
-                                    title: exportTitle
+                                    title: exportTitle,
+                                    exportOptions: commonExportOptions()
                                 },
                                 {
                                     extend: 'csvHtml5',
                                     text: 'CSV',
-                                    title: exportTitle
+                                    title: exportTitle,
+                                    exportOptions: commonExportOptions()
                                 },
                                 {
                                     extend: 'pdfHtml5',
                                     text: 'PDF',
                                     title: exportTitle,
+                                    exportOptions: commonExportOptions(),
                                     orientation: 'landscape',     // or 'portrait'
                                     pageSize: 'A4',               // A4, A3, etc.
                                     customize: function (doc) {
@@ -424,7 +429,8 @@
                                 {
                                     extend: 'print',
                                     text: 'Print Table',
-                                    title: exportTitle
+                                    title: exportTitle,
+                                    exportOptions: commonExportOptions()
                                 }
                     ],
                     data: myArray,

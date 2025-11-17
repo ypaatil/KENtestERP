@@ -162,7 +162,6 @@ setlocale(LC_MONETARY, 'en_IN');
                      const val  = String(data[i].item_value).replace(/,/g, "");
                      total_size_qty  += parseFloat(qty) || 0;
                      total_item_value += parseFloat(val) || 0; 
-
                 }
                 
                 let formatted_qty = parseFloat(total_size_qty).toLocaleString('en-IN', {
@@ -239,18 +238,18 @@ setlocale(LC_MONETARY, 'en_IN');
          });
         // End script for filter search and apply
 
-    function ClearReport()
-    {   
-        removeFilterColor() ;
-        $("#sales_order_no").val("").trigger('change');
-        tableData(0);        
-    }
-  
-    $( document ).ready(function() 
-    {    
-         removeFilterColor();
-         tableData(0);               
-    });
+         function ClearReport()
+         {   
+            removeFilterColor() ;
+            $("#sales_order_no").val("").trigger('change');
+            tableData(0);        
+         }
+      
+         $( document ).ready(function() 
+         {    
+               removeFilterColor();
+               tableData(0);               
+         });
     
 </script>
 @endsection
