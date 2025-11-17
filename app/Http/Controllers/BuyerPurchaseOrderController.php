@@ -2913,7 +2913,10 @@ ifnull( (vendor_purchase_order_detail.size_qty_total),0) as order_qty,
         $CountryList = Country::where('country_master.delflag','=', '0')->get();
         $JobStatusList= DB::table('job_status_master')->get();
         $OrderCategoryList= DB::table('order_category')->get();
-        return view('BuyerPurchaseOrderMaster',compact('OrderCategoryList','OrderGroupList','MerchantList','PDMerchantList','ItemList','BrandList','SeasonList','MainStyleList','SubStyleList','CurrencyList','PaymentTermsList','DeliveryTermsList','ShipmentList','CountryList','WarehouseList', 'Ledger', 'FGList','UnitList','SizeList','ColorList','counter_number', 'JobStatusList'));
+        $InOutList= DB::table('in_out_master')->get();
+        $OrderTypeList= DB::table('order_type_master')->get();
+
+        return view('BuyerPurchaseOrderMaster',compact('OrderTypeList','OrderCategoryList','InOutList','OrderGroupList','MerchantList','PDMerchantList','ItemList','BrandList','SeasonList','MainStyleList','SubStyleList','CurrencyList','PaymentTermsList','DeliveryTermsList','ShipmentList','CountryList','WarehouseList', 'Ledger', 'FGList','UnitList','SizeList','ColorList','counter_number', 'JobStatusList'));
     }
 
     /**
@@ -3393,8 +3396,10 @@ $data2[]=array(
         $BOMCheck= DB::table('bom_master')->where('bom_master.sales_order_no',$BuyerPurchaseOrderMasterList->tr_code)->count();
          
         $StyleNoList = StyleNoModel::where('style_no_master.delflag','=', 0)->get();
+        $InOutList= DB::table('in_out_master')->get();
+        $OrderTypeList= DB::table('order_type_master')->get();
                 
-        return view('BuyerPurchaseOrderMasterEdit',compact('OrderCategoryList','StyleNoList','costing_count','sam','OrderGroupList','BOMCheck','ShippedQty','is_approved','MerchantList','PDMerchantList','SizeDetailList','ItemList','BrandList','SeasonList','MainStyleList','SubStyleList','CurrencyList','PaymentTermsList','DeliveryTermsList','ShipmentList','CountryList','WarehouseList','BuyerPurchaseOrderMasterList','UnitList', 'Ledger','FGList','SizeList', 'ColorList',  'JobStatusList','BuyerPurchaseOrderDetaillist'));
+        return view('BuyerPurchaseOrderMasterEdit',compact('OrderTypeList', 'OrderCategoryList', 'InOutList','StyleNoList','costing_count','sam','OrderGroupList','BOMCheck','ShippedQty','is_approved','MerchantList','PDMerchantList','SizeDetailList','ItemList','BrandList','SeasonList','MainStyleList','SubStyleList','CurrencyList','PaymentTermsList','DeliveryTermsList','ShipmentList','CountryList','WarehouseList','BuyerPurchaseOrderMasterList','UnitList', 'Ledger','FGList','SizeList', 'ColorList',  'JobStatusList','BuyerPurchaseOrderDetaillist'));
     }
 
    
@@ -3505,7 +3510,12 @@ $data2[]=array(
                         $html .='</tr>';
                         $nos++;
         }
-        return response()->json(['html' => $html]);
+        return response()->json(
+                ['html' => mb_convert_encoding($html, 'UTF-8', 'UTF-8')],
+                200,
+                [],
+                JSON_INVALID_UTF8_IGNORE
+            );
     }
     /**
      * Update the specified resource in storage.

@@ -67,10 +67,11 @@
                         <label for="in_out_id" class="form-label">Execution SBU</label>
                         <select name="in_out_id" class="form-select select2" id="in_out_id" required>
                            <option value="">--Select Execution SBU--</option>
-                           <option value="1" {{ $BuyerPurchaseOrderMasterList->in_out_id == 1 ? 'selected="selected"' : '' }}>Inhouse</option>
-                           <option value="2" {{ $BuyerPurchaseOrderMasterList->in_out_id == 2 ? 'selected="selected"' : '' }}>Outsource</option> 
+                           @foreach($InOutList as  $row) 
+                           <option value="{{ $row->in_out_id }}" {{ $row->in_out_id == $BuyerPurchaseOrderMasterList->in_out_id ? 'selected="selected"' : '' }}>{{ $row->in_out_name }}</option> 
+                           @endforeach 
                         </select>
-                     </div>
+                     </div> 
                   </div>
                   <div class="col-md-2">
                      <div class="mb-3">
@@ -82,10 +83,10 @@
                      <div class="mb-3">
                         <label for="order_type" class="form-label">Order Type</label>
                         <select name="order_type" class="form-select select2"   id="order_type" required>
-                           <option value="">--Select Order Type--</option>
-                           <option value="1" {{ $BuyerPurchaseOrderMasterList->order_type == 1 ? 'selected="selected"' : '' }}>FOB</option>
-                           <option value="3" {{ $BuyerPurchaseOrderMasterList->order_type == 3 ? 'selected="selected"' : '' }}>Job Work</option>
-                           <option value="2"  {{ $BuyerPurchaseOrderMasterList->order_type == 2 ? 'selected="selected"' : '' }}>Stock</option>
+                           <option value="">--Select Order Type--</option>                            
+                           @foreach($OrderTypeList as  $row) 
+                           <option value="{{ $row->orderTypeId }}" {{ $row->orderTypeId == $BuyerPurchaseOrderMasterList->order_type ? 'selected="selected"' : '' }}>{{ $row->order_type }}</option> 
+                           @endforeach 
                         </select>
                      </div>
                   </div>
@@ -175,7 +176,7 @@
                   <div class="col-md-2">
                      <div class="mb-3">
                         <label for="exchange_rate" class="form-label">Exchange Rate</label>
-                        <input type="number" step="any" name="exchange_rate" class="form-control" id="exchange_rate" value="{{$BuyerPurchaseOrderMasterList->exchange_rate}}" @if($BuyerPurchaseOrderMasterList->og_id == 1) disabled @endif onkeyup="calOrderRate();">
+                        <input type="number" step="any" name="exchange_rate" class="form-control" id="exchange_rate" value="{{$BuyerPurchaseOrderMasterList->exchange_rate}}" @if($BuyerPurchaseOrderMasterList->og_id == 1) readOnly @endif onkeyup="calOrderRate();">
                      </div>
                   </div>
                   <div class="col-md-2">
@@ -736,13 +737,13 @@
                 alert("Rupees is not allowed for Export orders. Please select another currency.");
                 $("#currency_id").val(""); // reset currency
                 $("#exchange_rate").val("");
-                $("#exchange_rate").attr('readonly', false);
+                $("#exchange_rate").attr('readonly', true);
                 $("#inr_rate").val(0);
                 $("#order_rate").val(0);
             } else {
                 // Any other currency
                 $("#exchange_rate").val("");
-                $("#exchange_rate").attr('readonly', false);
+                $("#exchange_rate").attr('readonly', true);
                 $("#inr_rate").val(0);
                 $("#order_rate").val(0);
             }

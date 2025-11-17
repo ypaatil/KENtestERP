@@ -59,8 +59,9 @@
                         <label for="in_out_id" class="form-label">Execution SBU</label>
                         <select name="in_out_id" class="form-select select2" id="in_out_id" required>
                            <option value="">--Select Execution SBU--</option>
-                           <option value="1">Inhouse</option>
-                           <option value="2">Outsource</option> 
+                           @foreach($InOutList as  $row) 
+                           <option value="{{ $row->in_out_id }}">{{ $row->in_out_name }}</option> 
+                           @endforeach 
                         </select>
                      </div>
                   </div>
@@ -74,10 +75,10 @@
                      <div class="mb-3">
                         <label for="order_type" class="form-label">Order Type</label>
                         <select name="order_type" class="form-select select2"   id="order_type" required>
-                           <option value="">--Select Order Type--</option>
-                           <option value="1">FOB</option>
-                           <option value="3">Job Work</option>
-                           <option value="2">Stock</option>
+                           <option value="">--Select Order Type--</option>                   
+                           @foreach($OrderTypeList as  $row) 
+                           <option value="{{ $row->orderTypeId }}">{{ $row->order_type }}</option> 
+                           @endforeach 
                         </select>
                      </div>
                   </div>
