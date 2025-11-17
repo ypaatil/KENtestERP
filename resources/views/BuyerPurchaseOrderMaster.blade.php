@@ -88,9 +88,7 @@
                         <select name="og_id" class="form-select" id="og_id" required onchange="SetCurrency();">
                            <option value="">--Select Market Type--</option>
                            @foreach($OrderGroupList as  $row)
-                           {
                            <option value="{{ $row->og_id }}">{{ $row->order_group_name }}</option>
-                           }
                            @endforeach
                         </select>
                      </div>
@@ -112,9 +110,7 @@
                         <select name="Ac_code" class="form-select select2" id="Ac_code" required onchange="getSeasonList(this.value); getBrandList(this.value);GetDestinationForSalesOrderList();" >
                            <option value="">--Select Buyer/Party--</option>
                            @foreach($Ledger as  $row)
-                           {
                            <option value="{{ $row->ac_code }}">{{ $row->ac_short_name }}</option>
-                           }
                            @endforeach
                         </select>
                      </div>
@@ -125,9 +121,7 @@
                         <select name="brand_id" class="form-select" id="brand_id" required>
                            <option value="">--Select Buyer Brand--</option>
                            @foreach($BrandList as  $row)
-                           {
                            <option value="{{ $row->brand_id }}">{{ $row->brand_name }}</option>
-                           }
                            @endforeach
                         </select>
                      </div>
@@ -144,9 +138,7 @@
                         <select name="currency_id" class="form-select" id="currency_id" required onchange="ExchangeCurrency();">
                            <option value="">--Select Currency--</option>
                            @foreach($CurrencyList as  $row)
-                           {
                            <option value="{{ $row->cur_id }}">{{ $row->currency_name }}</option>
-                           }
                            @endforeach
                         </select>
                      </div>
@@ -175,9 +167,7 @@
                         <select name="season_id" class="form-select" id="season_id" required>
                            <option value="">--Select Season--</option>
                            @foreach($SeasonList as  $row)
-                           {
                            <option value="{{ $row->season_id }}">{{ $row->season_name }}</option>
-                           }
                            @endforeach
                         </select>
                      </div>
@@ -188,9 +178,7 @@
                         <select name="mainstyle_id" class="form-select select2" id="mainstyle_id"  onchange="getSubStyle(this.value)" required>
                            <option value="">--Select Style--</option>
                            @foreach($MainStyleList as  $row)
-                           {
                            <option value="{{ $row->mainstyle_id }}">{{ $row->mainstyle_name }}</option>
-                           }
                            @endforeach
                         </select>
                      </div>
@@ -390,9 +378,7 @@
                         <select name="unit_ids"  id="unit_ids"  class="form-select"   required>
                            <option value="">--Select Unit--</option>
                            @foreach($UnitList as  $row)
-                           {
                            <option value="{{ $row->unit_id }}">{{ $row->unit_name }}</option>
-                           }
                            @endforeach
                         </select>
                      </div>
@@ -407,9 +393,7 @@
                         <select name="merchant_id" class="form-select" id="merchant_id" required>
                            <option value="">--Select Merchant--</option>
                            @foreach($MerchantList as  $row)
-                           {
                            <option value="{{ $row->merchant_id }}">{{ $row->merchant_name }}</option>
-                           }
                            @endforeach
                         </select>
                      </div>
@@ -420,9 +404,7 @@
                         <select name="PDMerchant_id" class="form-select" id="PDMerchant_id" required>
                            <option value="">--Select PD Merchant--</option>
                            @foreach($PDMerchantList as  $row)
-                           {
                            <option value="{{ $row->PDMerchant_id }}">{{ $row->PDMerchant_name }}</option>
-                           }
                            @endforeach
                         </select>
                      </div>
@@ -555,39 +537,36 @@
         }); 
     });
     
-    function SetCurrency() 
-    {
-        var og_id = $("#og_id").val(); // 1 = Domestic, 2 = Export
-    
-        if (og_id == 1) { // Domestic
-            // Force Rupees
-            $("#currency_id").val(1);
-            $("#currency_id").attr('disabled', true);
-            $("#exchange_rate").val(1);
-            $("#exchange_rate").attr('readonly', true);
-            $("#order_rate").val(0);
-            $("#inr_rate").val(0);
-        } else if (og_id == 2) { // Export
-            // Allow selecting only non-Rupee currency
-            $("#currency_id").val(""); // clear selection
-            $("#currency_id").attr('disabled', false);
-            $("#exchange_rate").val("");
-            $("#exchange_rate").attr('readonly', false);
-            $("#order_rate").val(0);
-            $("#inr_rate").val(0);
-        } else {
-            // Default case
-            $("#currency_id").attr('disabled', false);
-            $("#exchange_rate").attr('readonly', false);
-            $("#order_rate").val(0);
-            $("#inr_rate").val(0);
-        }
-    }
+   function SetCurrency() 
+   {
+      var og_id = $("#og_id").val(); // 1 = Domestic, 2 = Export     
+      $.ajax({
+         type: "GET",
+         url: "{{ route('GetCurrencyOrderGroupWise') }}",
+         data:{'og_id':og_id },
+         success: function(data)
+         {
+               $("#currency_id").html(data.html);
+         }
+      });
+
+      if (og_id == 1) { // Domestic
+         $("#currency_id").attr('disabled', true);
+         $("#exchange_rate").val(1).attr('readonly', true);
+         $("#order_rate, #inr_rate").val(0);
+
+      } else if (og_id == 2) { // Export
+         $("#currency_id").attr('disabled', false);
+         $("#exchange_rate").val("").attr('readonly', false);
+         $("#order_rate, #inr_rate").val(0);
+      } 
+   }
+
     
     function ExchangeCurrency() {
         var currency_id = $("#currency_id").val();
         var og_id = $("#og_id").val();
-    
+
         if (og_id == 1) { 
             // Domestic: always Rupees
             $("#currency_id").val(1);
@@ -599,8 +578,7 @@
         } else if (og_id == 2) { 
             // Export: Rupees is NOT allowed
             if (currency_id == 1) {
-                alert("Rupees is not allowed for Export orders. Please select another currency.");
-                $("#currency_id").val(""); // reset currency
+                alert("Rupees is not allowed for Export orders. Please select another currency."); 
                 $("#exchange_rate").val("");
                 $("#order_rate").val(0);
                 $("#exchange_rate").attr('readonly', false);
@@ -630,16 +608,16 @@
 
     function GetDestinationForSalesOrderList()
     {
-        var Ac_code = $("#Ac_code").val();
-        $.ajax({
-           type: "GET",
-           url: "{{ route('GetDestinationForSalesOrderList') }}",
-           data:{'Ac_code':Ac_code },
-           success: function(data)
-           {
-                $("#warehouse_id").html(data.html);
-           }
-       });
+         var Ac_code = $("#Ac_code").val();
+         $.ajax({
+            type: "GET",
+            url: "{{ route('GetDestinationForSalesOrderList') }}",
+            data:{'Ac_code':Ac_code },
+            success: function(data)
+            {
+                  $("#warehouse_id").html(data.html);
+            }
+         });
     }
     
     function checkDuplicateColor(row)

@@ -688,39 +688,36 @@
     
     
 
-    function SetCurrency() 
-    {
-        var og_id = $("#og_id").val(); // 1 = Domestic, 2 = Export
-    
-        if (og_id == 1) { // Domestic
-            // Force Rupees
-            $("#currency_id").val(1);
-            $("#currency_id").attr('disabled', true);
-            $("#exchange_rate").val(1);
-            $("#exchange_rate").attr('readonly', true);
-            $("#order_rate").val(0);
-            $("#inr_rate").val(0);
-        } else if (og_id == 2) { // Export
-            // Allow selecting only non-Rupee currency
-            $("#currency_id").val(""); // clear selection
-            $("#currency_id").attr('disabled', false);
-            $("#exchange_rate").val("");
-            $("#exchange_rate").attr('readonly', false);
-            $("#order_rate").val(0);
-            $("#inr_rate").val(0);
-        } else {
-            // Default case
-            $("#currency_id").attr('disabled', false);
-            $("#exchange_rate").attr('readonly', false);
-            $("#order_rate").val(0);
-            $("#inr_rate").val(0);
-        }
-    }
+   function SetCurrency() 
+   {
+      var og_id = $("#og_id").val(); // 1 = Domestic, 2 = Export     
+      $.ajax({
+         type: "GET",
+         url: "{{ route('GetCurrencyOrderGroupWise') }}",
+         data:{'og_id':og_id },
+         success: function(data)
+         {
+               $("#currency_id").html(data.html);
+         }
+      });
+
+      if (og_id == 1) { // Domestic
+         $("#currency_id").attr('disabled', true);
+         $("#exchange_rate").val(1).attr('readonly', true);
+         $("#order_rate, #inr_rate").val(0);
+
+      } else if (og_id == 2) { // Export
+         $("#currency_id").attr('disabled', false);
+         $("#exchange_rate").val("").attr('readonly', false);
+         $("#order_rate, #inr_rate").val(0);
+      } 
+   }
+
     
     function ExchangeCurrency() {
         var currency_id = $("#currency_id").val();
         var og_id = $("#og_id").val();
-    
+
         if (og_id == 1) { 
             // Domestic: always Rupees
             $("#currency_id").val(1);
@@ -729,28 +726,23 @@
             $("#exchange_rate").attr('readonly', true);
             $("#inr_rate").val(0);
             $("#order_rate").val(0);
-        } 
-        else if (og_id == 2) 
-        { 
+        } else if (og_id == 2) { 
             // Export: Rupees is NOT allowed
             if (currency_id == 1) {
-                alert("Rupees is not allowed for Export orders. Please select another currency.");
-                $("#currency_id").val(""); // reset currency
+                alert("Rupees is not allowed for Export orders. Please select another currency."); 
                 $("#exchange_rate").val("");
-                $("#exchange_rate").attr('readonly', true);
-                $("#inr_rate").val(0);
                 $("#order_rate").val(0);
+                $("#exchange_rate").attr('readonly', false);
             } else {
                 // Any other currency
                 $("#exchange_rate").val("");
-                $("#exchange_rate").attr('readonly', true);
-                $("#inr_rate").val(0);
                 $("#order_rate").val(0);
+                $("#exchange_rate").attr('readonly', false);
             }
+            $("#inr_rate").val(0);
+            $("#order_rate").val(0);
             $("#currency_id").attr('disabled', false);
-        } 
-        else
-        {
+        } else {
             // Default fallback
             $("#currency_id").attr('disabled', false);
             $("#exchange_rate").attr('readonly', false);

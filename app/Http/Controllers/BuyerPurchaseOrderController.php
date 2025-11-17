@@ -8627,4 +8627,27 @@ if($request->hasFile('doc_path1'))
         return response()->json(['html' => $html]);
     }
      
+    public function GetCurrencyOrderGroupWise(Request $request)
+    {
+        if($request->og_id == 1)
+        {            
+            $currencyData = DB::SELECT("SELECT * FROM currency_master WHERE cur_id = 1");
+        }
+        else
+        {
+            $currencyData = DB::SELECT("SELECT * FROM currency_master WHERE cur_id != 1");
+        }
+                 
+        $html = '';        
+        foreach ($currencyData as $row)  
+        {
+            $html .= '<option value="'.$row->cur_id.'">'.$row->currency_name.'</option>';
+        }
+        
+        return response()->json(
+            ['html' => mb_convert_encoding($html, 'UTF-8', 'UTF-8')],
+            200,
+            [],
+            JSON_INVALID_UTF8_IGNORE);
+    }
 }
