@@ -175,7 +175,7 @@
                   <div class="col-md-2">
                      <div class="mb-3">
                         <label for="exchange_rate" class="form-label">Exchange Rate</label>
-                        <input type="number" step="any" name="exchange_rate" class="form-control" id="exchange_rate" value="{{$BuyerPurchaseOrderMasterList->exchange_rate}}" required onkeyup="calOrderRate();">
+                        <input type="number" step="any" name="exchange_rate" class="form-control" id="exchange_rate" value="{{$BuyerPurchaseOrderMasterList->exchange_rate}}" @if($BuyerPurchaseOrderMasterList->og_id == 1) disabled @endif onkeyup="calOrderRate();">
                      </div>
                   </div>
                   <div class="col-md-2">
