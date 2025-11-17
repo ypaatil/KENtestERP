@@ -92,6 +92,20 @@ ini_set('memory_limit', '10G');
    @keyframes spin {
    to { transform: rotate(360deg); }
    }
+   
+
+    /* Hide arrows in Chrome, Safari, Edge, Opera */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    /* Hide arrows in Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+    
 </style>
 <div class="row">
    <div class="col-12">
@@ -185,11 +199,21 @@ ini_set('memory_limit', '10G');
                   </div>
                   <div class="col-md-2">
                      <div class="mb-3">
-                        <label for="po_type_id" class="form-label">PO</label>
+                        <label for="po_type_id" class="form-label">PO Type</label>
                         <select name="po_type_id" class="form-select select2" id="po_type_id" onchange="PODisabled();" >
                            <option value="">Type</option>
                            @foreach($POTypeList as  $rowpo)
                            <option value="{{ $rowpo->po_type_id  }}">{{ $rowpo->po_type_name }}</option>
+                           @endforeach
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3">
+                     <div class="mb-3">
+                        <label for="bom_code" class="form-label">BOM</label>
+                        <select name="bom_codes[]" class="form-select select2" id="bom_code" multiple disabled>
+                           @foreach($BOMLIST as  $rowbom)
+                           <option value="{{ $rowbom->bom_code  }}">{{$rowbom->sales_order_no}}</option>
                            @endforeach
                         </select>
                      </div>
@@ -201,16 +225,6 @@ ini_set('memory_limit', '10G');
                            <option value="">--- Select ---</option>
                            @foreach($buyerlist as  $row)
                            <option value="{{ $row->ac_code  }}">{{ $row->ac_name }}</option>
-                           @endforeach
-                        </select>
-                     </div>
-                  </div>
-                  <div class="col-md-3">
-                     <div class="mb-3">
-                        <label for="bom_code" class="form-label">BOM</label>
-                        <select name="bom_codes[]" class="form-select select2" id="bom_code" multiple disabled>
-                           @foreach($BOMLIST as  $rowbom)
-                           <option value="{{ $rowbom->bom_code  }}">{{$rowbom->sales_order_no}}</option>
                            @endforeach
                         </select>
                      </div>
@@ -228,7 +242,7 @@ ini_set('memory_limit', '10G');
                   </div>
                   <div class="col-md-2">
                      <div class="mb-3">
-                        <label for="class_id" class="form-label">Classificaion</label>
+                        <label for="class_id" class="form-label">Classification</label>
                         <select name="class_id[]" class="form-select select2" id="class_id" onchange="getBomDetail();DropdownEmpty();" multiple>
                            @foreach($ClassList as  $rowclass)
                            <option value="{{ $rowclass->class_id  }}">{{ $rowclass->class_name }} </option>
@@ -261,9 +275,7 @@ ini_set('memory_limit', '10G');
                               <th>SGST%</th>
                               <th>SAMT</th>
                               <th>IGST%</th>
-                              <th>IAMT</th>
-                              <th>Disc%</th>
-                              <th>Discount</th>
+                              <th>IAMT</th> 
                               <th>Amount</th>
                               <th>MOQ</th>
                               <th>Freight</th>
@@ -320,10 +332,8 @@ ini_set('memory_limit', '10G');
                               <td><input type="number" step="any" name="pur_sgsts[]" readOnly value="0" class=""  id="pur_sgst" style="width:80px; height:30px;"/></td>
                               <td><input type="number" step="any" name="samts[]" readOnly  value="0" class="GSTAMT"  id="samt" style="width:80px; height:30px;"/></td>
                               <td><input type="number" step="any" name="pur_igsts[]" readOnly value="0" class=""  id="pur_igst" style="width:80px; height:30px;"/></td>
-                              <td><input type="number" step="any" name="iamts[]" readOnly value="0" class="GSTAMT"  id="iamt" style="width:80px; height:30px;"/></td>
-                              <td><input type="number" step="any" name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;"/></td>
-                              <td><input type="number" step="any" name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;"/></td>
-                              <td><input type="number" step="any" name="amounts[]" readOnly value="0" class="GROSS"  id="amount" style="width:80px; height:30px;"/></td>
+                              <td><input type="number" step="any" name="iamts[]" readOnly value="0" class="GSTAMT"  id="iamt" style="width:80px; height:30px;"/></td> 
+                              <td><input type="hidden" step="any" name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;"/><input type="hidden" step="any" name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;"/><input type="number" step="any" name="amounts[]" readOnly value="0" class="GROSS"  id="amount" style="width:80px; height:30px;"/></td>
                               <td><input type="text" value="0" name="moq[]" id="moq" style="width:80px;  height:30px;" readOnly/></td>
                               <td><input type="number" step="any" name="freight_amt[]" class="FREIGHT" id="freight_amt" value="0" onkeyup="calFreightAmt(this);" style="width:80px; height:30px;"></td>
                               <td><input type="number" step="any" name="total_amounts[]" readOnly class="TOTAMT" value=""  id="total_amount" style="width:80px; height:30px;"/>
@@ -360,9 +370,7 @@ ini_set('memory_limit', '10G');
                               <th>SGST%</th>
                               <th>SAMT</th>
                               <th>IGST%</th>
-                              <th>IAMT</th>
-                              <th>Disc%</th>
-                              <th>Discount</th>
+                              <th>IAMT</th> 
                               <th>Amount</th>
                               <th>MOQ</th>
                               <th>Freight</th>
@@ -454,11 +462,11 @@ ini_set('memory_limit', '10G');
                      <div class="mb-3">
                         <label for="term_and_conditions" class="form-label">Terms and Conditions</label>
                         <textarea name="terms_and_conditions" class="form-control" id="editor1" >
-                            <p>1. We have right to reject any goods which is rejected by our QC and vendor will be sole responsible for rejection.<br />
-                            2 .We reserves the right to reject the goods if we find them defective even at the later stage and to recover the cost of material and losses if any from the<br />
+                            <p>1. Ken Global Designs Pvt Ltd have right to reject any goods which is rejected by our QC and vendor will be sole responsible for rejection.<br />
+                            2 .Ken Global Designs Pvt Ltd reserves the right to reject the goods if we find them defective even at the later stage and to recover the cost of material and losses if any from the<br />
                             sellers.<br />
                             3. Payment shall be made for the actual quantity received by us and our records shall be final and conclusive on this point.<br />
-                            4. We will be entitled to deduct Discount as mentioned in the order.<br />
+                            4. Ken Global Designs Pvt Ltd will be entitled to deduct Discount as mentioned in the order.<br />
                             5. Any dispute arise with respect to this PO shall be subjected to &quot;Ichalkaranji Jurisdiction&quot;.<br />
                             6. You will allow our customers &amp; quality person to do visit to your factory to verify the quality of material supplied by you so also to see the system of quality<br />
                             control followed by you.<br />
@@ -567,6 +575,26 @@ ini_set('memory_limit', '10G');
 </script>
 
 <script> 
+
+    $(document).on('keydown', 'input[type="number"]', function(e) {
+        const invalidKeys = ['e', 'E', '+', '-'];
+    
+        // Block invalid keys
+        if (invalidKeys.includes(e.key)) {
+            e.preventDefault();
+            return;
+        }
+    
+        // Allow one dot only
+        if (e.key === '.') {
+            // If already contains a dot, block it
+            if ($(this).val().includes('.')) {
+                e.preventDefault();
+            }
+            return;
+        }
+    });
+
     function hasTableRows(tbodyId) {
       var $tbody = $("#" + tbodyId);
       var rowCount = $tbody.find("tr").length;
@@ -1014,7 +1042,7 @@ ini_set('memory_limit', '10G');
            var a = +amounts[i].value;
            sum1 += parseFloat(a);
            }
-           document.getElementById("Gross_amount").value = sum1.toFixed(4);
+           document.getElementById("Gross_amount").value = sum1.toFixed(2);
            
            
            
@@ -1026,7 +1054,7 @@ ini_set('memory_limit', '10G');
            var a = +amounts[i].value;
            sum1 += parseFloat(a);
            }
-           document.getElementById("Gst_amount").value = sum1.toFixed(4);
+           document.getElementById("Gst_amount").value = sum1.toFixed(2);
            
            sum1 = 0.0;
            var amounts = document.getElementsByClassName('TOTAMT');
@@ -1036,7 +1064,7 @@ ini_set('memory_limit', '10G');
            var a = +amounts[i].value;
            sum1 += parseFloat(a);
            }
-           document.getElementById("Net_amount").value = sum1.toFixed(0);
+           document.getElementById("Net_amount").value = sum1.toFixed(2);
            
            
            sum1 = 0.0;
@@ -1047,7 +1075,7 @@ ini_set('memory_limit', '10G');
            var a = +amounts[i].value;
            sum1 += parseFloat(a);
            }
-           document.getElementById("totFreightAmt").value = sum1.toFixed(0);
+           document.getElementById("totFreightAmt").value = sum1.toFixed(2);
            
            
            
@@ -1070,7 +1098,7 @@ ini_set('memory_limit', '10G');
            var a = +amounts[i].value;
            sum1 += parseFloat(a);
            }
-           document.getElementById("total_qty").value = sum1.toFixed(4); 
+           document.getElementById("total_qty").value = sum1.toFixed(2); 
            
    }
    

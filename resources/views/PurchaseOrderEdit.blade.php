@@ -13,6 +13,19 @@ ini_set('memory_limit', '10G');
     {
         width: 266px !important;
     }
+
+    /* Hide arrows in Chrome, Safari, Edge, Opera */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    /* Hide arrows in Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+    
 </style>
 <div class="row">
    <div class="col-12">
@@ -131,7 +144,7 @@ ini_set('memory_limit', '10G');
                   </div>
                   <div class="col-md-2">
                      <div class="mb-3">
-                        <label for="formrow-inputState" class="form-label">PO</label>
+                        <label for="formrow-inputState" class="form-label">PO Type</label>
                         <select name="po_type_id" class="form-select select2" id="po_type_id" onchange="getPartyDetails();PODisabled();" disabled>
                            <option value="">Type</option>
                            @foreach($POTypeList as  $rowpo)
@@ -146,17 +159,6 @@ ini_set('memory_limit', '10G');
                   </div>
                   <div class="col-md-3">
                      <div class="mb-3">
-                        <label for="buyer_id" class="form-label">Buyer</label>
-                        <select name="buyer_id" class="form-select select2" id="buyer_id" disabled>
-                           <option value="">--- Select ---</option>
-                           @foreach($buyerlist as  $row)
-                           <option value="{{ $row->ac_code  }}" {{ $row->ac_code == $purchasefetch->buyer_id ? 'selected="selected"' : '' }} >{{ $row->ac_name }}</option>
-                           @endforeach
-                        </select>
-                     </div>
-                  </div>
-                  <div class="col-md-3">
-                     <div class="mb-3">
                         <label for="formrow-inputState" class="form-label">BOM</label>
                         <select name="bom_codes[]" class="form-select select2" id="bom_code" multiple disabled>
                            @php $bom_ids = explode(',', $purchasefetch->bom_code);   @endphp
@@ -164,6 +166,17 @@ ini_set('memory_limit', '10G');
                            <option value="{{ $rowbom->bom_code  }}"
                            @if(in_array($rowbom->bom_code, $bom_ids)) selected @endif  
                            >{{ $rowbom->bom_code }}  ({{$rowbom->sales_order_no}})</option>
+                           @endforeach
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-3">
+                     <div class="mb-3">
+                        <label for="buyer_id" class="form-label">Buyer</label>
+                        <select name="buyer_id" class="form-select select2" id="buyer_id" disabled>
+                           <option value="">--- Select ---</option>
+                           @foreach($buyerlist as  $row)
+                           <option value="{{ $row->ac_code  }}" {{ $row->ac_code == $purchasefetch->buyer_id ? 'selected="selected"' : '' }} >{{ $row->ac_name }}</option>
                            @endforeach
                         </select>
                      </div>
@@ -183,7 +196,7 @@ ini_set('memory_limit', '10G');
                   </div>
                   <div class="col-md-2">
                      <div class="mb-3">
-                        <label for="formrow-inputState" class="form-label">Classificaion </label>
+                        <label for="formrow-inputState" class="form-label">Classification </label>
                         <select name="class_id[]" class="form-select select2" id="class_id" onchange="getBomDetail();" multiple  disabled>
                            @php  $class_ids = explode(',', $purchasefetch->class_id);   @endphp
                            @foreach($ClassList as  $rowclass)
@@ -218,9 +231,7 @@ ini_set('memory_limit', '10G');
                               <th>SGST%</th>
                               <th>SAMT</th>
                               <th>IGST%</th>
-                              <th>IAMT</th>
-                              <th>Disc%</th>
-                              <th>Discount</th>
+                              <th>IAMT</th> 
                               <th>Amount</th>
                               <th>MOQ</th>
                               <th>Freight</th>
@@ -261,10 +272,8 @@ ini_set('memory_limit', '10G');
                               <td><input type="number" step="any" name="pur_sgsts[]" readOnly value="0" class=""  id="pur_sgst" style="width:80px; height:30px;" required/></td>
                               <td><input type="number" step="any" name="samts[]" readOnly  value="0" class="GSTAMT"  id="samt" style="width:80px; height:30px;" required/></td>
                               <td><input type="number" step="any" name="pur_igsts[]" readOnly value="0" class=""  id="pur_igst" style="width:80px; height:30px;" required/></td>
-                              <td><input type="number" step="any" name="iamts[]" readOnly value="0" class="GSTAMT"  id="iamt" style="width:80px; height:30px;" required/></td>
-                              <td><input type="number" step="any" name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;" required/></td>
-                              <td><input type="number" step="any" name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;" required/></td>
-                              <td><input type="number" step="any" name="amounts[]" readOnly value="0" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
+                              <td><input type="number" step="any" name="iamts[]" readOnly value="0" class="GSTAMT"  id="iamt" style="width:80px; height:30px;" required/></td> 
+                              <td><input type="hidden" step="any" name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;"/><input type="hidden" step="any" name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;" /><input type="number" step="any" name="amounts[]" readOnly value="0" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
                               <td><input type="text" value="0" name="moq[]" id="moq" style="width:80px;  height:30px;" readOnly/></td>
                               <td><input type="number" step="any" name="freight_amt[]" onkeyup="calFreightAmt(this);" class="FREIGHT" id="freight_amt" value="0" style="width:80px; height:30px;"></td>
                               <td><input type="number" step="any" name="total_amounts[]" readOnly class="TOTAMT" value=""  id="total_amount" style="width:80px; height:30px;" required/>
@@ -374,10 +383,8 @@ ini_set('memory_limit', '10G');
                               <td><input readOnly style="width:80px;height:30px;" readOnly type="number" step="any" id="pur_sgst" class="" name="pur_sgsts[]" value="{{ $row->pur_sgst }}"></td>
                               <td><input style="width:80px;height:30px;"  type="number" readOnly step="any" id="samt" class="GSTAMT" name="samts[]" value="{{ $row->samt }}"></td>
                               <td><input readOnly style="width:80px;height:30px;" readOnly type="number" step="any" id="pur_igst" class="" name="pur_igsts[]" value="{{ $row->pur_igst }}"></td>
-                              <td><input  style="width:80px;height:30px;"  type="number" readOnly step="any" id="iamt" class="GSTAMT" name="iamts[]" value="{{ $row->iamt }}"></td>
-                              <td><input style="width:100px;height:30px;" type="number" step="any" id="disc_per" class="" name="disc_pers[]" value="{{ $row->disc_per }}" @php  if(Session::get('user_type')!=1 && $is_approved==1){ echo 'readOnly'; } @endphp></td>
-                              <td><input readOnly style="width:80px;height:30px;" readOnly  type="number" id="disc_amount" step="any" class="" name="disc_amounts[]" value="{{ $row->disc_amount }}" ></td>
-                              <td><input  style="width:80px;height:30px;"  type="number" readOnly step="any" id="amount" class="GROSS" name="amounts[]" value="{{ $row->amount }}"></td>
+                              <td><input  style="width:80px;height:30px;"  type="number" readOnly step="any" id="iamt" class="GSTAMT" name="iamts[]" value="{{ $row->iamt }}"></td> 
+                              <td><input readOnly style="width:80px;height:30px;" readOnly  type="hidden" id="disc_amount" step="any" class="hide" name="disc_amounts[]" value="{{ $row->disc_amount }}" ><input style="width:100px;height:30px;" type="hidden" step="any" id="disc_per" class="hide" name="disc_pers[]" value="{{ $row->disc_per }}" @php  if(Session::get('user_type')!=1 && $is_approved==1){ echo 'readOnly'; } @endphp><input  style="width:80px;height:30px;"  type="number" readOnly step="any" id="amount" class="GROSS" name="amounts[]" value="{{ $row->amount }}"></td>
                               <td><input type="text"  name="moq[]" id="moq" value="{{ $row->moq }}" style="width:80px;  height:30px;" readOnly/></td>
                               <td><input type="text" name="freight_amt[]" class="FREIGHT" id="freight_amt" value="{{ $row->freight_amt }}" style="width:80px;height:30px;"></td>
                               <td><input  style="width:80px;height:30px;"  type="number" readOnly step="any" id="total_amount" class="TOTAMT" name="total_amounts[]" value="{{ $row->total_amount }}">
@@ -414,9 +421,7 @@ ini_set('memory_limit', '10G');
                               <th>SGST%</th>
                               <th>SAMT</th>
                               <th>IGST%</th>
-                              <th>IAMT</th>
-                              <th>Disc%</th>
-                              <th>Discount</th>
+                              <th>IAMT</th> 
                               <th>Amount</th>
                               <th>MOQ</th>
                               <th>Freight</th>
@@ -548,6 +553,25 @@ ini_set('memory_limit', '10G');
 <script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
 <script src="https://cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
 <script> 
+    $(document).on('keydown', 'input[type="number"]', function(e) {
+        const invalidKeys = ['e', 'E', '+', '-'];
+    
+        // Block invalid keys
+        if (invalidKeys.includes(e.key)) {
+            e.preventDefault();
+            return;
+        }
+    
+        // Allow one dot only
+        if (e.key === '.') {
+            // If already contains a dot, block it
+            if ($(this).val().includes('.')) {
+                e.preventDefault();
+            }
+            return;
+        }
+    });
+
    $(document).ready(function () {
        var maxSelection = 0;
        $("#bom_code").change(function () 
@@ -1464,7 +1488,7 @@ ini_set('memory_limit', '10G');
        var a = +amounts[i].value;
        sum3 += parseFloat(a);
        }
-       document.getElementById("Net_amount").value = sum3.toFixed(0);
+       document.getElementById("Net_amount").value = sum3.toFixed(2);
        
        
        sum4 = 0.0;
@@ -1475,7 +1499,7 @@ ini_set('memory_limit', '10G');
        var a = +amounts[i].value;
        sum4 += parseFloat(a);
        }
-       document.getElementById("totFreightAmt").value = sum4.toFixed(0);
+       document.getElementById("totFreightAmt").value = sum4.toFixed(2);
        
        
        var sum = 0.0;
@@ -1496,7 +1520,7 @@ ini_set('memory_limit', '10G');
            var a = +amounts[i].value;
            sum5 += parseFloat(a);
        }
-       document.getElementById("total_qty").value = sum5.toFixed(4);
+       document.getElementById("total_qty").value = sum5.toFixed(2);
    
    }
    

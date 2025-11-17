@@ -1379,9 +1379,7 @@ class PurchaseOrderController extends Controller
                         <td><input type="number" step="any" name="samts[]" readOnly  value="'.number_format((float)$Samt, 2, '.', '').'" class="GSTAMT"  id="samt" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any" name="pur_igsts[]" readOnly value="'.$IPer.'" class=""  id="pur_igst" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any" name="iamts[]" readOnly value="'.number_format((float)$Iamt, 2, '.', '').'" class="GSTAMT"  id="iamt" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any" name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any" name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any" name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
+                        <td><input type="hidden" step="any" name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;" /><input type="hidden" step="any" name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;"/><input type="number" step="any" name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
                         <td><input type="text" value="'.$value->moq.'"   style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="number" step="any" name="freight_amt[]" onkeyup="calFreightAmt(this);"  class="FREIGHT" id="freight_amt" value="0" style="width:80px; height:30px;"></td>
                         <td><input type="number" step="any" name="total_amounts[]" readOnly class="TOTAMT" value="'.number_format((float)$TAmount, 2, '.', '').'"  id="total_amount" style="width:80px; height:30px;" required/>
@@ -1525,9 +1523,7 @@ class PurchaseOrderController extends Controller
                         <td><input type="number" step="any"    name="samts[]" readOnly  value="'.number_format((float)$Samt, 2, '.', '').'" class="GSTAMT"  id="samt" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"    name="pur_igsts[]" readOnly value="'.$IPer.'" class=""  id="pur_igst" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"    name="iamts[]" readOnly value="'.number_format((float)$Iamt, 2, '.', '').'" class="GSTAMT"  id="iamt" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
+                        <td><input type="hidden" step="any"    name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;"/><input type="hidden" step="any"    name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;"/><input type="number" step="any"    name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
                         <td><input type="text" value="'.$value->moq.'"   style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="number" step="any"  name="freight_amt[]" onkeyup="calFreightAmt(this);" class="FREIGHT" id="freight_amt" value="0" style="width:80px; height:30px;"></td>
                         <td><input type="number" step="any"    name="total_amounts[]" readOnly class="TOTAMT" value="'.number_format((float)$TAmount, 2, '.', '').'"  id="total_amount" style="width:80px; height:30px;" required/>
@@ -1723,9 +1719,7 @@ class PurchaseOrderController extends Controller
                         <td><input type="number" step="any"    name="samts[]" readOnly  value="'.number_format((float)$Samt, 2, '.', '').'" class="GSTAMT"  id="samt" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"    name="pur_igsts[]" readOnly value="'.$IPer.'" class=""  id="pur_igst" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"    name="iamts[]" readOnly value="'.number_format((float)$Iamt, 2, '.', '').'" class="GSTAMT"  id="iamt" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
+                        <td><input type="hidden" step="any"    name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;"/><input type="hidden" step="any"    name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;" /><input type="number" step="any"    name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
                         <td><input type="text" value="'.$value->moq.'"   style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="number" step="any"  name="freight_amt[]" onkeyup="calFreightAmt(this);" class="FREIGHT" id="freight_amt" value="0" style="width:80px; height:30px;"></td>
                         <td><input type="number" step="any"    name="total_amounts[]" readOnly class="TOTAMT" value="'.number_format((float)$TAmount, 2, '.', '').'"  id="total_amount" style="width:80px; height:30px;" required/>
@@ -1918,19 +1912,17 @@ class PurchaseOrderController extends Controller
                         <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($button_qty,2).'"  value="'.round($button_qty,2).'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
                         </td>
-                        <td><input type="number" step="any"    name="item_rates[]" min="0" max="'.$button_rate.'" value="'.$button_rate.'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
-                        <td><input type="number" step="any"    name="pur_cgsts[]" readOnly value="'.$CPer.'" class="pur_cgsts"  id="pur_cgst" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"   name="camts[]" readOnly value="'.number_format((float)$Camt, 2, '.', '').'" class="GSTAMT"  id="camt" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="pur_sgsts[]" readOnly value="'.$SPer.'" class=""  id="pur_sgst" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="samts[]" readOnly  value="'.number_format((float)$Samt, 2, '.', '').'" class="GSTAMT"  id="samt" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="pur_igsts[]" readOnly value="'.$IPer.'" class=""  id="pur_igst" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="iamts[]" readOnly value="'.number_format((float)$Iamt, 2, '.', '').'" class="GSTAMT"  id="iamt" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
-                        <td><input type="text" value="'.$value->moq.'"   style="width:80px;  height:30px;" readOnly/></td>
+                        <td><input type="number" step="any"  name="item_rates[]" min="0" max="'.$button_rate.'" value="'.$button_rate.'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
+                        <td><input type="number" step="any"  name="pur_cgsts[]" readOnly value="'.$CPer.'" class="pur_cgsts"  id="pur_cgst" style="width:80px; height:30px;" required/></td>
+                        <td><input type="number" step="any"  name="camts[]" readOnly value="'.number_format((float)$Camt, 2, '.', '').'" class="GSTAMT"  id="camt" style="width:80px; height:30px;" required/></td>
+                        <td><input type="number" step="any"  name="pur_sgsts[]" readOnly value="'.$SPer.'" class=""  id="pur_sgst" style="width:80px; height:30px;" required/></td>
+                        <td><input type="number" step="any"  name="samts[]" readOnly  value="'.number_format((float)$Samt, 2, '.', '').'" class="GSTAMT"  id="samt" style="width:80px; height:30px;" required/></td>
+                        <td><input type="number" step="any"  name="pur_igsts[]" readOnly value="'.$IPer.'" class=""  id="pur_igst" style="width:80px; height:30px;" required/></td>
+                        <td><input type="number" step="any"  name="iamts[]" readOnly value="'.number_format((float)$Iamt, 2, '.', '').'" class="GSTAMT"  id="iamt" style="width:80px; height:30px;" required/></td>
+                        <td><input type="hidden" step="any"  name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;"/><input type="hidden" step="any"    name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;"/><input type="number" step="any"    name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
+                        <td><input type="text" value="'.$value->moq.'"  style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="number" step="any"  name="freight_amt[]" onkeyup="calFreightAmt(this);" class="FREIGHT" id="freight_amt" value="0" style="width:80px; height:30px;"></td>
-                        <td><input type="number" step="any"    name="total_amounts[]" readOnly class="TOTAMT" value="'.number_format((float)$TAmount, 2, '.', '').'"  id="total_amount" style="width:80px; height:30px;" required/>
+                        <td><input type="number" step="any"  name="total_amounts[]" readOnly class="TOTAMT" value="'.number_format((float)$TAmount, 2, '.', '').'"  id="total_amount" style="width:80px; height:30px;" required/>
                         
                         
                          <input type="hidden" step="any"  name="conQtys[]" readOnly     value="0" style="width:80px; height:30px;">
@@ -2124,9 +2116,7 @@ class PurchaseOrderController extends Controller
                         <td><input type="number" step="any" name="samts[]" readOnly  value="'.number_format((float)$Samt, 2, '.', '').'" class="GSTAMT"  id="samt" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any" name="pur_igsts[]" readOnly value="'.$IPer.'" class=""  id="pur_igst" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any" name="iamts[]" readOnly value="'.number_format((float)$Iamt, 2, '.', '').'" class="GSTAMT"  id="iamt" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any" name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any" name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any" name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
+                        <td><input type="hidden" step="any" name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;"/><input type="hidden" step="any" name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;"/><input type="number" step="any" name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
                         <td><input type="text" value="'.$value->moq.'"   style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="number" step="any" name="freight_amt[]" onkeyup="calFreightAmt(this);"  class="FREIGHT" id="freight_amt" value="0" style="width:80px; height:30px;"></td>
                         <td><input type="number" step="any" name="total_amounts[]" readOnly class="TOTAMT" value="'.number_format((float)$TAmount, 2, '.', '').'"  id="total_amount" style="width:80px; height:30px;" required/>
@@ -2287,9 +2277,7 @@ class PurchaseOrderController extends Controller
                         <td><input type="number" step="any"    name="samts[]" readOnly  value="'.number_format((float)$Samt, 2, '.', '').'" class="GSTAMT"  id="samt" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"    name="pur_igsts[]" readOnly value="'.$IPer.'" class=""  id="pur_igst" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"    name="iamts[]" readOnly value="'.number_format((float)$Iamt, 2, '.', '').'" class="GSTAMT"  id="iamt" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
+                        <td><input type="hidden" step="any"    name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;"/><input type="hidden" step="any"    name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;"/><input type="number" step="any"    name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
                         <td><input type="text" value="'.$value->moq.'"   style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="number" step="any"  name="freight_amt[]" onkeyup="calFreightAmt(this);" class="FREIGHT" id="freight_amt" value="0" style="width:80px; height:30px;"></td>
                         <td><input type="number" step="any"    name="total_amounts[]" readOnly class="TOTAMT" value="'.number_format((float)$TAmount, 2, '.', '').'"  id="total_amount" style="width:80px; height:30px;" required/>
@@ -2502,9 +2490,7 @@ class PurchaseOrderController extends Controller
                         <td><input type="number" step="any"    name="samts[]" readOnly  value="'.number_format((float)$Samt, 2, '.', '').'" class="GSTAMT"  id="samt" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"    name="pur_igsts[]" readOnly value="'.$IPer.'" class=""  id="pur_igst" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"    name="iamts[]" readOnly value="'.number_format((float)$Iamt, 2, '.', '').'" class="GSTAMT"  id="iamt" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
+                        <td><input type="hidden" step="any"    name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;" /><input type="hidden" step="any"    name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;" /><input type="number" step="any"    name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
                         <td><input type="text" value="'.$value->moq.'"   style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="number" step="any"  name="freight_amt[]" onkeyup="calFreightAmt(this);" class="FREIGHT" id="freight_amt" value="0" style="width:80px; height:30px;"></td>
                         <td><input type="number" step="any"    name="total_amounts[]" readOnly class="TOTAMT" value="'.number_format((float)$TAmount, 2, '.', '').'"  id="total_amount" style="width:80px; height:30px;" required/>
@@ -2719,9 +2705,7 @@ class PurchaseOrderController extends Controller
                         <td><input type="number" step="any"    name="samts[]" readOnly  value="'.number_format((float)$Samt, 2, '.', '').'" class="GSTAMT"  id="samt" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"    name="pur_igsts[]" readOnly value="'.$IPer.'" class=""  id="pur_igst" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"    name="iamts[]" readOnly value="'.number_format((float)$Iamt, 2, '.', '').'" class="GSTAMT"  id="iamt" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;" required/></td>
-                        <td><input type="number" step="any"    name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
+                        <td><input type="hidden" step="any"    name="disc_amounts[]"  value="0" class=""  id="disc_amount" style="width:80px; height:30px;"/><input type="hidden" step="any"    name="disc_pers[]"  value="0" class=""  id="disc_per" style="width:80px; height:30px;"/><input type="number" step="any"    name="amounts[]" readOnly value="'.$value->total_amount.'" class="GROSS"  id="amount" style="width:80px; height:30px;" required/></td>
                         <td><input type="text" value="'.$value->moq.'"   style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="number" step="any"  name="freight_amt[]" onkeyup="calFreightAmt(this);" class="FREIGHT" id="freight_amt" value="0" style="width:80px; height:30px;"></td>
                         <td><input type="number" step="any"    name="total_amounts[]" readOnly class="TOTAMT" value="'.number_format((float)$TAmount, 2, '.', '').'"  id="total_amount" style="width:80px; height:30px;" required/>
