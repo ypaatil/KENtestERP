@@ -459,18 +459,18 @@ ini_set('memory_limit', '10G');
                         <input type="text" name="Net_amount" class="form-control" id="Net_amount" value="{{ $purchasefetch->Net_amount }}" readOnly>
                      </div>
                   </div>
-               </div>
-               <div class="row">
-                  <div class="col-md-4">
-                     <div class="mb-3">
-                        <label for="formrow-email-input" class="form-label">Delivery Address</label>
-                        <input type="text" name="deliveryAddress" class="form-control" id="deliveryAddress" value="{{ $purchasefetch->deliveryAddress  }}">
-                     </div>
-                  </div>
                   <div class="col-md-2">
                      <div class="mb-3">
                         <label for="delivery_date" class="form-label">Delivery Date</label>
                         <input type="date" name="delivery_date" class="form-control" id="delivery_date" value="{{ $purchasefetch->delivery_date  }}" required>
+                     </div>
+                  </div>
+               </div>
+               <div class="row">
+                  <div class="col-md-4 hide">
+                     <div class="mb-3">
+                        <label for="formrow-email-input" class="form-label">Delivery Address</label>
+                        <input type="text" name="deliveryAddress" class="form-control" id="deliveryAddress" value="{{ $purchasefetch->deliveryAddress  }}">
                      </div>
                   </div>
                   @php 

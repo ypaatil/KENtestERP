@@ -808,8 +808,8 @@
      @php  
      $user_type=Session::get('user_type');  
     // echo 'alert('.$SalesOrderCostingMasterList->is_approved.');';
-     if($SalesOrderCostingMasterList->is_approved==2 && $user_type!=1) {   @endphp
-     $("input").prop("readonly", true);
+     if($SalesOrderCostingMasterList->is_approved==2 || $user_type!=1) {   @endphp
+     $("input").prop("readonly",  false);
     //  $("select").prop("disabled", true);
     
      @php     }   @endphp 

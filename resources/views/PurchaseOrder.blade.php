@@ -406,6 +406,12 @@ ini_set('memory_limit', '10G');
                         <input type="text" name="Net_amount" class="form-control" id="Net_amount"  readOnly>
                      </div>
                   </div>
+                  <div class="col-md-2">
+                     <div class="mb-3">
+                        <label for="delivery_date" class="form-label">Delivery Date</label>
+                        <input type="date" name="delivery_date" class="form-control" id="delivery_date" required>
+                     </div>
+                  </div>
                </div>
                <div class="row">
                   <div class="col-md-4 hide">
@@ -414,17 +420,11 @@ ini_set('memory_limit', '10G');
                         <input type="text" name="deliveryAddress" class="form-control" id="deliveryAddress" value="GAT NO 298/299,A/P Kondigre,  Kolhapur, Maharashtra, 416101">
                      </div>
                   </div>
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="delivery_date" class="form-label">Delivery Date</label>
-                        <input type="date" name="delivery_date" class="form-control" id="delivery_date" required>
-                     </div>
-                  </div>
                   @php 
                   if(Session::get('userId') == 1 || Session::get('userId') == 2 || Session::get('userId') == 3)
                   {
                   @endphp
-                  <div class="col-md-2">
+                  <div class="col-md-2 hide">
                      <div class="mb-3">
                         <label for="po_status" class="form-label">Job Status</label>
                         <select name="po_status" class="form-select" id="po_status" onchange="setCloseDate(this);" disabled>
@@ -433,7 +433,7 @@ ini_set('memory_limit', '10G');
                         </select>
                      </div>
                   </div>
-                  <div class="col-md-2">
+                  <div class="col-md-2 hide">
                      <div class="mb-3">
                         <label for="closeDate" class="form-label">Close Date</label>
                         <input type="date" name="closeDate" class="form-control" id="closeDate" value="" readonly >

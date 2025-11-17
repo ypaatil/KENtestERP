@@ -1340,7 +1340,8 @@ class PurchaseOrderController extends Controller
                         $html .='<tr class="cls_'.$value->class_id.'">';
                         $html .='
                         <td><input type="text" name="id[]" value="'.$no.'" id="id" style="width:50px; height:30px;"/></td>
-                        <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);" value="X" > <button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left">+</button> <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left">?</button></td>
+                        <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);" value="X" > 
+                        <button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left">+</button> <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left">?</button></td>
                     
                         <td><input type="text"  name="sales_order_no[]" value="'.$value->sales_order_no.'" id="sales_order_no" style="width:80px;"  readOnly/> </td>
                         <td>'.$value->item_code.'</td>
@@ -1485,7 +1486,8 @@ class PurchaseOrderController extends Controller
                         $html .='<tr class="cls_'.$value->class_id.'">';
                         $html .='
                         <td><input type="text" name="id[]" value="'.$no.'" id="id" style="width:50px; height:30px;"/></td>
-                        <td> <input type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);" value="X" > <button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left">+</button><button type="button" onclick="setConversion(this);" class="btn btn-success pull-left">?</button></td>
+                        <td> <input type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);" value="X" > 
+                        <button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left">+</button><button type="button" onclick="setConversion(this);" class="btn btn-success pull-left">?</button></td>
                         <td><input type="text"  name="sales_order_no[]" value="'.$value->sales_order_no.'" id="sales_order_no" style="width:80px;"  readOnly/> </td>
                         <td>'.$value->item_code.'</td>
                         <td> <select name="item_codes[]"  id="item_code" style="width:250px; height:30px;"  disabled>
@@ -1670,7 +1672,8 @@ class PurchaseOrderController extends Controller
                         $html .='<tr class="cls_'.$value->class_id.'">';
                         $html .='
                         <td><input type="text" name="id[]" value="'.$no.'" id="id" style="width:50px; height:30px;"/></td>
-                        <td> <input type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);" value="X" > <button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left">+</button><button type="button" onclick="setConversion(this);" class="btn btn-success pull-left">?</button></td>
+                        <td> <input type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);" value="X" > 
+                        <button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left">+</button><button type="button" onclick="setConversion(this);" class="btn btn-success pull-left">?</button></td>
                         <td><input type="text"  name="sales_order_no[]" value="'.$value->sales_order_no.'" id="sales_order_no" style="width:80px;"  readOnly/> </td>
                         <td>'.$value->item_code.'</td>
                         <td> <select name="item_codes[]"  id="item_code" style="width:250px; height:30px;"  disabled>
@@ -1869,7 +1872,9 @@ class PurchaseOrderController extends Controller
                         $html .='<tr class="cls_'.$value->class_id.'">';
                         $html .='
                         <td><input type="text" name="id[]" value="'.$no.'" id="id" style="width:50px; height:30px;"/></td>
-                        <td><button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left">+</button> <input type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);" value="X" > <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left">?</button></td>
+                        <td><button type="button" onclick="insertRow();mycalc(); " class="btn btn-warning pull-left">+</button> 
+                        <button type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);"> X</button> 
+                        <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left">?</button></td>
                         <td><input type="text"  name="sales_order_no[]" value="'.$value->sales_order_no.'" id="sales_order_no" style="width:80px;"  readOnly/> </td>
                         <td>'.$value->item_code.'</td>
                         <td> <select name="item_codes[]"  id="item_code" style="width:250px; height:30px;"  disabled>
@@ -1971,7 +1976,6 @@ class PurchaseOrderController extends Controller
             //     dd($query);
            //echo $cat_id[0]->cat_id;  
         }   
-   
         if($cat_id[0]->cat_id=='1')
         {
          
@@ -2060,6 +2064,17 @@ class PurchaseOrderController extends Controller
                             $TAmount=$value->total_amount + $Iamt ;
                         } 
                         
+                       
+                        if($value->class_id==4)
+                        {
+                            $dis = '';
+                        }
+                        else
+                        {
+                            $dis = 'disabled';
+                        }
+
+
                         $itemlist=DB::table('item_master')->where('delflag','=','0')->where('item_code','=', $value->item_code)->get();
                         $unitlist=DB::table('unit_master')->where('delflag','=','0')->where('unit_id','=', $value->unit_id)->get();
                         $html .='<tr class="cls_'.$value->class_id.'" data-cat="Fabric">';
@@ -2070,7 +2085,7 @@ class PurchaseOrderController extends Controller
                             <button type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);">X</button> 
                         </td>        
                         <td>  
-                            <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left unit_conv" disabled>?</button>
+                            <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left unit_conv" '.$dis.'>?</button>
                         </td>                    
                         <td><input type="text"  name="sales_order_no[]" value="'.$value->sales_order_no.'" id="sales_order_no" style="width:80px;"  readOnly/> </td>
                         <td>'.$value->class_name.'</td> 
@@ -2209,7 +2224,17 @@ class PurchaseOrderController extends Controller
                             $Iamt=($value->total_amount * ($IPer/100));
                             $TAmount=$value->total_amount + $Iamt ;
                         } 
-                        
+                         
+                        if($value->class_id==4)
+                        {
+                            $dis = '';
+                        }
+                        else
+                        {
+                            $dis = 'disabled';
+                        }
+
+
                         
                         $itemlist=DB::table('item_master')->where('delflag','=','0')->where('item_code','=', $value->item_code)->get();
                         $unitlist=DB::table('unit_master')->where('delflag','=','0')->where('unit_id','=', $value->unit_id)->get();
@@ -2222,7 +2247,7 @@ class PurchaseOrderController extends Controller
                             <button type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);">X</button> 
                         </td>     
                         <td>  
-                            <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left unit_conv" disabled>?</button>
+                            <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left unit_conv" '.$dis.'>?</button>
                         </td>     
                         <td><input type="text"  name="sales_order_no[]" value="'.$value->sales_order_no.'" id="sales_order_no" style="width:80px;"  readOnly/> </td>
                         <td>'.$value->class_name.'</td> 
@@ -2403,7 +2428,17 @@ class PurchaseOrderController extends Controller
                             $Iamt=($value->total_amount * ($IPer/100));
                             $TAmount=$value->total_amount + $Iamt ;
                         } 
-                        
+                         
+                        if($value->class_id==4)
+                        {
+                            $dis = '';
+                        }
+                        else
+                        {
+                            $dis = 'disabled';
+                        }
+
+
                         $itemlist=DB::table('item_master')->where('delflag','=','0')->where('item_code','=', $value->item_code)->get();
                         $unitlist=DB::table('unit_master')->where('delflag','=','0')->where('unit_id','=', $value->unit_id)->get();
                         
@@ -2415,7 +2450,7 @@ class PurchaseOrderController extends Controller
                             <button type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);">X</button> 
                         </td> 
                         <td>  
-                            <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left unit_conv">?</button>
+                            <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left unit_conv" '.$dis.'>?</button>
                         </td>    
                         <td><input type="text"  name="sales_order_no[]" value="'.$value->sales_order_no.'" id="sales_order_no" style="width:80px;"  readOnly/> </td>
                         <td>'.$value->class_name.'</td> 
@@ -2610,6 +2645,15 @@ class PurchaseOrderController extends Controller
                             $TAmount=$value->total_amount + $Iamt ;
                         } 
                         
+                        if($value->class_id==4)
+                        {
+                            $dis = '';
+                        }
+                        else
+                        {
+                            $dis = 'disabled';
+                        }
+
                         
                         $itemlist=DB::table('item_master')->where('delflag','=','0')->where('item_code','=', $value->item_code)->get();
                         $unitlist=DB::table('unit_master')->where('delflag','=','0')->where('unit_id','=', $value->unit_id)->get();
@@ -2622,7 +2666,7 @@ class PurchaseOrderController extends Controller
                             <button type="button" class="btn btn-danger pull-left" onclick="deleteRow(this);">X</button> 
                         </td>    
                         <td>  
-                            <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left unit_conv" disabled>?</button>
+                            <button type="button" onclick="setConversion(this);" class="btn btn-success pull-left unit_conv"  '.$dis.'>?</button>
                         </td>   
                         <td><input type="text"  name="sales_order_no[]" value="'.$value->sales_order_no.'" id="sales_order_no" style="width:80px;"  readOnly/> </td>
                         <td>'.$value->class_name.'</td>

@@ -683,9 +683,7 @@ class BOMController extends Controller
             $CostTypeList= DB::table('costing_type_master')->get();
             $Ledger = LedgerModel::where('ledger_master.delflag','=', '0')->where('ledger_master.ac_code','>', '39')->get();
             $CurrencyList = CurrencyModel::where('currency_master.delflag','=', '0')->get();
-            
-            
-       
+             
             $UnitList = UnitModel::where('unit_master.delflag','=', '0')->get();
             $SeasonList = SeasonModel::where('season_master.delflag','=', '0')->get();
             //$ColorList = ColorModel::where('color_master.delflag','=', '1')->get();
