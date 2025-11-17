@@ -76,27 +76,48 @@
                         <th></th>
                      </tr>
                      <tr style="text-align:center; white-space:nowrap">
-                        <th nowrap>Vendor Name</th>
-                        <th nowrap>Process Order No</th>
-                        <th nowrap>Work Order No</th>
-                        <th nowrap>Sample Indent Code</th>
-                        <th nowrap>Trims Type</th>
-                        <th nowrap>Sales Order No</th>
-                        <th nowrap>Buyer Name</th>
-                        <th nowrap>Out No.</th>
-                        <th nowrap>Out Date.</th>
-                        <th nowrap>PO Code</th>
-                        <th nowrap>Supplier</th>
-                        <th nowrap>Bill To</th>
-                        <th nowrap>Item Code</th>
-                        <th nowrap>Item Name</th>
-                        <th nowrap>Out Qty</th>
-                        <th nowrap>Rate</th>
-                        <th nowrap>Amount</th>
-                        <th nowrap>Width</th>
-                        <th nowrap>Quality Name</th>
-                        <th nowrap>Color</th>
-                        <th nowrap>Item Description</th>
+                        <th nowrap>Vendor Name<span class="filter-icon">🔽</span><div class="filter-menu vendor-name"></div></th>
+
+                           <th nowrap>Process Order No<span class="filter-icon">🔽</span><div class="filter-menu process-order-no"></div></th>
+
+                           <th nowrap>Work Order No<span class="filter-icon">🔽</span><div class="filter-menu work-order-no"></div></th>
+
+                           <th nowrap>Sample Indent Code<span class="filter-icon">🔽</span><div class="filter-menu sample-indent-code"></div></th>
+
+                           <th nowrap>Trims Type<span class="filter-icon">🔽</span><div class="filter-menu trims-type"></div></th>
+
+                           <th nowrap>Sales Order No<span class="filter-icon">🔽</span><div class="filter-menu sales-order-no"></div></th>
+
+                           <th nowrap>Buyer Name<span class="filter-icon">🔽</span><div class="filter-menu buyer-name"></div></th>
+
+                           <th nowrap>Out No.<span class="filter-icon">🔽</span><div class="filter-menu out-no"></div></th>
+
+                           <th nowrap>Out Date.<span class="filter-icon">🔽</span><div class="filter-menu out-date"></div></th>
+
+                           <th nowrap>PO Code<span class="filter-icon">🔽</span><div class="filter-menu po-code"></div></th>
+
+                           <th nowrap>Supplier<span class="filter-icon">🔽</span><div class="filter-menu supplier"></div></th>
+
+                           <th nowrap>Bill To<span class="filter-icon">🔽</span><div class="filter-menu bill-to"></div></th>
+
+                           <th nowrap>Item Code<span class="filter-icon">🔽</span><div class="filter-menu item-code"></div></th>
+
+                           <th nowrap>Item Name<span class="filter-icon">🔽</span><div class="filter-menu item-name"></div></th>
+
+                           <th nowrap>Out Qty<span class="filter-icon">🔽</span><div class="filter-menu out-qty"></div></th>
+
+                           <th nowrap>Rate<span class="filter-icon">🔽</span><div class="filter-menu rate"></div></th>
+
+                           <th nowrap>Amount<span class="filter-icon">🔽</span><div class="filter-menu amount"></div></th>
+
+                           <th nowrap>Width<span class="filter-icon">🔽</span><div class="filter-menu width"></div></th>
+
+                           <th nowrap>Quality Name<span class="filter-icon">🔽</span><div class="filter-menu quality-name"></div></th>
+
+                           <th nowrap>Color<span class="filter-icon">🔽</span><div class="filter-menu color"></div></th>
+
+                           <th nowrap>Item Description<span class="filter-icon">🔽</span><div class="filter-menu item-description"></div></th>
+
                      </tr>
                   </thead>
                   <tbody></tbody>
@@ -117,7 +138,7 @@
         var fromDate = $("#fromDate").val();
         var toDate = $("#toDate").val();
         var currentURL = "";
-        
+        removeFilterColor() ;
         if(ele == 1)
         {
             currentURL = "TrimsOutwardData?fromDate="+fromDate+"&toDate="+toDate;  
@@ -143,17 +164,24 @@
             },
             dom: 'lBfrtip',
             buttons: [
-                { extend: 'copyHtml5', footer: true, title: exportTitle },
-                { extend: 'excelHtml5', footer: true, title: exportTitle },
-                { extend: 'csvHtml5', footer: true, title: exportTitle },
-                { extend: 'pdfHtml5', footer: true, title: exportTitle }
+                { extend: 'copyHtml5', footer: true, title: exportTitle,exportOptions: commonExportOptions() },
+                { extend: 'excelHtml5', footer: true, title: exportTitle,exportOptions: commonExportOptions() },
+                { extend: 'csvHtml5', footer: true, title: exportTitle,exportOptions: commonExportOptions() },
+                { extend: 'pdfHtml5', footer: true, title: exportTitle,exportOptions: commonExportOptions() }
             ],
+             initComplete: function () {
+                  buildAllMenusTrimOutwardDataReport();
+            },
             "footerCallback": function (row, data, start, end, display) {                
                  var total_size_qty = 0;
                   var total_amount = 0;  
-                for (var i = 0; i < data.length; i++) {
-                    total_size_qty += parseFloat(data[i].out_qty);
-                    total_amount += parseFloat(data[i].item_value);
+                for (var i = 0; i < data.length; i++) {                     
+                     const qty  = String(data[i].item_qty).replace(/,/g, "");
+                     const val  = String(data[i].item_value).replace(/,/g, "");
+                     total_size_qty  += parseFloat(qty) || 0;
+                     total_amount += parseFloat(val) || 0; 
+                    //total_size_qty += parseFloat(data[i].out_qty);
+                   // total_amount += parseFloat(data[i].item_value);
                 } 
                 
                 let formatted_qty = parseFloat(total_size_qty).toLocaleString('en-IN', {
@@ -197,15 +225,52 @@
         });
     }
     
+      // Start script for filter search and apply        
+         $(document).on('click', '.apply-btn', function() {
+         const menu = $(this).closest('.filter-menu');
+       
+         if (!validateFilterMenu(menu)) {
+               return;
+         }
+
+         if(menu.hasClass('vendor-name')) applySimpleFilter(0, menu);
+         else if(menu.hasClass('process-order-no')) applySimpleFilter(1, menu);
+         else if(menu.hasClass('work-order-no')) applySimpleFilter(2, menu);
+         else if(menu.hasClass('sample-indent-code')) applySimpleFilter(3, menu);
+         else if(menu.hasClass('trims-type')) applySimpleFilter(4, menu);
+         else if(menu.hasClass('sales-order-no')) applySimpleFilter(5, menu);
+         else if(menu.hasClass('buyer-name')) applySimpleFilter(6, menu);
+         else if(menu.hasClass('out-no')) applySimpleFilter(7, menu);
+         else if(menu.hasClass('out-date')) applyDateFilter(8, menu);
+         else if(menu.hasClass('po-code')) applySimpleFilter(9, menu);
+         else if(menu.hasClass('supplier')) applySimpleFilter(10, menu);
+         else if(menu.hasClass('bill-to')) applySimpleFilter(11, menu);
+         else if(menu.hasClass('item-code')) applySimpleFilter(12, menu);
+         else if(menu.hasClass('item-name')) applySimpleFilter(13, menu);
+         else if(menu.hasClass('out-qty')) applySimpleFilter(14, menu);
+         else if(menu.hasClass('rate')) applySimpleFilter(15, menu);
+         else if(menu.hasClass('amount')) applySimpleFilter(16, menu);
+         else if(menu.hasClass('width')) applySimpleFilter(17, menu);
+         else if(menu.hasClass('quality-name')) applySimpleFilter(18, menu);
+         else if(menu.hasClass('color')) applySimpleFilter(19, menu);
+         else if(menu.hasClass('item-description')) applySimpleFilter(20, menu);                       
+         $('.filter-menu').hide();
+         
+         buildAllMenusTrimOutwardDataReport(); 
+         updateFooterForTrimOutwardDataReport();           
+         });
+        // End script for filter search and apply
 
     function ClearReport()
     {
+        removeFilterColor() ;
         $("#sales_order_no").val("").trigger('change');
         tableData(0);
     }
   
     $( document ).ready(function() 
     { 
+       removeFilterColor() ;
         tableData(0);
        
     });

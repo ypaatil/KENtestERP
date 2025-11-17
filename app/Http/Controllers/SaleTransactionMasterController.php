@@ -1081,7 +1081,7 @@ public function CartonPackingList(Request $request)
         {
             $filter .= " AND sale_transaction_master.sale_code = '".$sale_code."'";
         }
-        
+      
         $SaleTransactionMasterList = DB::SELECT("SELECT sale_transaction_master.*,usermaster.username,lm1.ac_short_name as ac_name1,firm_master.firm_name,tax_type_master.tax_type_name,
                                         sales_head_master.sales_head_name
                                         FROM sale_transaction_master LEFT JOIN ledger_master as lm1 ON lm1.ac_code = sale_transaction_master.Ac_code
