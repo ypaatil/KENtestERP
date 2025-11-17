@@ -17,7 +17,7 @@
       </div>
    </div>
 </div>
-<div class="row">
+<div class="row hiddensection" >
    <div class="col-md-3">
       <div class="card mini-stats-wid" style="background-color:#152d9f;" >
          <div class="card-body">
@@ -127,7 +127,7 @@
                             </select>
                         </div>
                     </div> 
-                    <div class="col-md-3">
+                    <div class="col-md-3 hiddensection">
                         <div class="mb-3">
                             <label for="Ac_code" class="form-label">Buyer Name</label> 
                            <select name="Ac_code" class="form-control select2" id="Ac_code">
@@ -138,7 +138,7 @@
                             </select>
                         </div>
                     </div> 
-                    <div class="col-md-2">
+                    <div class="col-md-2 hiddensection">
                         <div class="mb-3">
                             <label for="sale_code" class="form-label">Invoice No</label> 
                            <select name="sale_code" class="form-control select2" id="sale_code">
