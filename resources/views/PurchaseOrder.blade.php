@@ -703,28 +703,39 @@ ini_set('memory_limit', '10G');
       }
 
       // --- 3️⃣ Handle removed types
-      if (removedTypes.length > 0) {
+      if (removedTypes.length > 0)
+      {
          removedTypes.forEach(function (removedType) {
             var stillUsed = isTypeUsedInTable(removedType);
 
-            // Remove class options linked to this type
+            // Remove options linked to this removed BOM type
             $("#class_id option").each(function () {
-               var relatedType = (($(this).data("bomtype") || "").toString().trim().toLowerCase());
-               if (relatedType === removedType && !stillUsed) {
-                  $(this).remove();
-               }
+                  var relatedType = (($(this).data("bomtype") || "").toString().trim().toLowerCase());
+                  if (relatedType === removedType && !stillUsed) {
+                     $(this).remove();
+                  }
             });
 
-            // Remove rows only if not used elsewhere
+            // 🔥 Remove selected values that no longer exist
+            $("#class_id").val(function (currentValues) {
+                  if (!currentValues) return null;
+
+                  return currentValues.filter(function (v) {
+                     return $("#class_id option[value='" + v + "']").length > 0;
+                  });
+            });
+
+            // Refresh Select2
+            $("#class_id").trigger('change');
+
+            // Remove rows from table
             if (!stillUsed) {
-               $("#bomdis tr").filter(function () {
-                  var rowCat = (($(this).data("cat") || "").toString().trim().toLowerCase());
-                  return rowCat === removedType;
-               }).fadeOut(150, function ()
-               { 
-                  $(this).remove(); 
-                   
-               });
+                  $("#bomdis tr").filter(function () {
+                     var rowCat = (($(this).data("cat") || "").toString().trim().toLowerCase());
+                     return rowCat === removedType;
+                  }).fadeOut(150, function () {
+                     $(this).remove();
+                  });
             }
          });
 
