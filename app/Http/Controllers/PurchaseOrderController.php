@@ -255,184 +255,153 @@ class PurchaseOrderController extends Controller
      */
     public function store(Request $request)
     {
-        
-       try 
-       {  
+        try {  
             DB::beginTransaction();
-           
-            $firm_id=$request->input('firm_id');      
-    
-            //DB::enableQueryLog();
-              $codefetch = DB::table('counter_number')->select(DB::raw("tr_no + 1 as 'tr_no',c_code,code"))
-              ->where('c_name','=','C1')
-              ->where('type','=','PurchaseOrder')
-               ->where('firm_id','=',$firm_id)
-              ->first();
-              //DB::enableQueryLog();
-            /*$query = DB::getQueryLog();
-            $query = end($query);
-            dd($query);*/
-    
-            
-            
-            if($request->input('bom_codes')!=''){$bom_code=implode(",",$request->input('bom_codes'));}else{ $bom_code='';}
-            
-            
+        
+            $firm_id = $request->input('firm_id');      
+
+            $codefetch = DB::table('counter_number')
+                ->select(DB::raw("tr_no + 1 as tr_no, c_code, code"))
+                ->where('c_name', 'C1')
+                ->where('type', 'PurchaseOrder')
+                ->where('firm_id', $firm_id)
+                ->first();
+
+            if ($request->input('bom_codes') != '') {
+                $bom_code = implode(",", $request->input('bom_codes'));
+            } else {
+                $bom_code = '';
+            }
+
             $bom_type = implode(",", (array)$request->input('bom_type', []));
             $class_ids = implode(",", (array)$request->input('class_id', []));
-            
-                    if($bom_type=='1')
-                    {
-                    
-                     $TrNo=$codefetch->code.'/25-26/'.'F'.$codefetch->tr_no;
-                    } 
-                    else if($class_ids == '148')
-                    {
-                        
-                       $TrNo=$codefetch->code.'/25-26/'.'S'.$codefetch->tr_no;
-                        
-                    }
-                    else
-                    {
-                        $TrNo=$codefetch->code.'/25-26/'.'T'.$codefetch->tr_no;
-                    }
-            
-            
-            
-            
-            $data = array('pur_code'=>$TrNo,
-            "bom_code"=>$bom_code,
-            "bom_type"=> $bom_type,
-            "class_id"=> $class_ids,
-            "pur_date"=> $request->input('pur_date'),
-            "Ac_code"=> $request->input('Ac_code'),
-            "po_type_id"=> $request->input('po_type_id'),
-            "tax_type_id"=> $request->input('tax_type_id'),
-            "total_qty"=> $request->input('total_qty'),
-            "Gross_amount"=> $request->input('Gross_amount'),
-            "Gst_amount"=> $request->input('Gst_amount'),
-            "totFreightAmt"=> $request->input('totFreightAmt'),
-            "Net_amount"=> $request->input('Net_amount'),
-            "narration"=> $request->input('narration'),
-            "firm_id"=> $request->input('firm_id'),
-            "c_code"=> $codefetch->c_code,
-            "gstNo"=> $request->input('gstNo'),
-            "address"=> $request->input('address'),
-            "deliveryAddress"=> $request->input('deliveryAddress'),
-            "supplierRef"=> $request->input('supplierRef'),
-            "terms_and_conditions"=> $request->input('terms_and_conditions'),
-            "delivery_date"=>$request->input('delivery_date'),
-            "po_status"=>$request->input('po_status') ? $request->input('po_status') : 1,
-            "closeDate"=>isset($request->closeDate) ? $request->closeDate : '',
-            "userId"=> $request->input('userId'),
-            "buyer_id"=> $request->buyer_id,
-            "bill_to"=> $request->bill_to,
-            "ship_to"=> $request->ship_to,
-            "reason_disapproval"=> "0",
-            "approveFlag"=> 0,
-            "delflag"=>0
-            );
-            
+
+            if ($bom_type == '1') {
+                $TrNo = $codefetch->code . '/25-26/' . 'F' . $codefetch->tr_no;
+            } else if ($class_ids == '148') {
+                $TrNo = $codefetch->code . '/25-26/' . 'S' . $codefetch->tr_no;
+            } else {
+                $TrNo = $codefetch->code . '/25-26/' . 'T' . $codefetch->tr_no;
+            }
+
+            $data = [
+                'pur_code' => $TrNo,
+                'bom_code' => $bom_code,
+                'bom_type' => $bom_type,
+                'class_id' => $class_ids,
+                'pur_date' => $request->pur_date,
+                'Ac_code' => $request->Ac_code,
+                'po_type_id' => $request->po_type_id,
+                'tax_type_id' => $request->tax_type_id,
+                'total_qty' => $request->total_qty,
+                'Gross_amount' => $request->Gross_amount,
+                'Gst_amount' => $request->Gst_amount,
+                'totFreightAmt' => $request->totFreightAmt,
+                'Net_amount' => $request->Net_amount,
+                'narration' => $request->narration,
+                'firm_id' => $firm_id,
+                'c_code' => $codefetch->c_code,
+                'gstNo' => $request->gstNo,
+                'address' => $request->address,
+                'deliveryAddress' => $request->deliveryAddress,
+                'supplierRef' => $request->supplierRef,
+                'terms_and_conditions' => $request->terms_and_conditions,
+                'delivery_date' => $request->delivery_date,
+                'po_status' => $request->po_status ? $request->po_status : 1,
+                'closeDate' => $request->closeDate ?? '',
+                'userId' => $request->userId,
+                'buyer_id' => $request->buyer_id,
+                'bill_to' => $request->bill_to,
+                'ship_to' => $request->ship_to,
+                'reason_disapproval' => '0',
+                'approveFlag' => 0,
+                'delflag' => 0
+            ];
+
             $closeDate = date('Y-m-d');
-            // Insert
-            $value = PurchaseOrderModel::insert($data);
+
+            PurchaseOrderModel::insert($data);
+
+            DB::update("UPDATE counter_number SET tr_no = tr_no + 1  
+                        WHERE c_name ='C1' AND type='PurchaseOrder' AND firm_id=?", [$firm_id]);
             
-            $update = DB::select("update counter_number set tr_no= tr_no + 1   where c_name ='C1' AND type='PurchaseOrder' AND firm_id='".$request->input('firm_id')."'");  
-            
-                
-            DB::SELECT("UPDATE dump_fabric_stock_data SET closeDate = '".$closeDate."' WHERE po_no='".$TrNo."'");
-            DB::SELECT("UPDATE dump_trim_stock_data SET closeDate = '".$closeDate."' WHERE po_no='".$TrNo."'");
-            if($value){
-            Session::flash('message','Insert successfully.');
-            }else{
-            Session::flash('message','Username already exists.');
-            }
-            
-            
-            $cnt = $request->input('cnt');
-            
-            $itemcodes=count($request->item_codes);
-            
-            //print_r($request->bom_type);
-            
-            if($itemcodes>0)
-            {
-            $item_code='';
-            for($x=0;$x<$itemcodes; $x++) {
-            # code...
-            
-            $data2[]=array(
-            'pur_code' =>$TrNo,
-            'pur_date' => $request->input('pur_date'),
-            "bom_code"=>$bom_code,
-            "bom_type"=> $bom_type,
-            "class_id"=> $class_ids,
-            'Ac_code' => $request->input('Ac_code'),
-            'sales_order_no' => $request->sales_order_no[$x],
-            'item_code' => $request->item_codes[$x],
-            'hsn_code' => $request->hsn_code[$x],
-            'unit_id' => $request->unit_id[$x],
-            'item_qty' => $request->item_qtys[$x],
-            'item_rate' => $request->item_rates[$x],
-            'disc_per' => $request->disc_pers[$x],
-            'disc_amount' => $request->disc_amounts[$x],
-            'pur_cgst' => $request->pur_cgsts[$x],
-            'camt' => $request->camts[$x],
-            'pur_sgst' => $request->pur_sgsts[$x],
-            'samt' => $request->samts[$x],
-            'pur_igst' => $request->pur_igsts[$x],
-            'iamt' => $request->iamts[$x],
-            'amount' => $request->amounts[$x],
-            'freight_hsn' => 0,
-            'freight_amt' => $request->freight_amt[$x],
-            'total_amount' => $request->total_amounts[$x],
-            'conQty'=> isset($request->conQtys[$x])?$request->conQtys[$x]:0, 
-            'unitIdM'=> isset($request->unitIdMs[$x]) ? $request->unitIdMs[$x] : $request->unit_id[$x],
-            'priUnitd'=> isset($request->priUnitds[$x])?$request->priUnitds[$x]: $request->unit_id[$x],
-            'SecConQty'=> isset($request->SecConQtys[$x])?$request->SecConQtys[$x]:0,
-            'secUnitId'=>isset($request->secUnitIds[$x])?$request->secUnitIds[$x]: $request->unit_id[$x],
-            'poQty'=> isset($request->poQtys[$x])? $request->poQtys[$x]:0,
-            'poUnitId'=>isset($request->poUnitIds[$x]) ? $request->poUnitIds[$x] : $request->unit_id[$x],
-            'rateM'=> isset($request->rateMs[$x])?$request->rateMs[$x]:0,
-            'totalQty'=> isset($request->totalQtys[$x])? $request->totalQtys[$x] :0,
-            'firm_id' => $request->firm_id);
-            
-            if($request->item_codes[$x] != '')
-            {
-                $item_code=$item_code.$request->item_codes[$x].',';
-            } 
-            
-            }
-            PurchaseOrderDetailModel::insert($data2);
-            }
-            
-            $item_code=rtrim($item_code,",");
-            if (!empty($item_code)) {
-                // If item_code is an array, convert it to a quoted string
-                if (is_array($item_code)) {
-                    $item_code = implode(",", array_map(function($item) {
-                        return "'".addslashes($item)."'";
-                    }, $item_code));
+            DB::update("UPDATE dump_fabric_stock_data SET closeDate=? WHERE po_no=?", [$closeDate, $TrNo]);
+            DB::update("UPDATE dump_trim_stock_data SET closeDate=? WHERE po_no=?", [$closeDate, $TrNo]);
+
+            $itemcodes = count($request->item_codes);
+            $data2 = [];
+            $item_code = '';
+
+            if ($itemcodes > 0) {
+                for ($x = 0; $x < $itemcodes; $x++) {
+
+                    $data2[] = [
+                        'pur_code' => $TrNo,
+                        'pur_date' => $request->pur_date,
+                        'bom_code' => $bom_code,
+                        'bom_type' => $bom_type,
+                        'class_id' => $class_ids,
+                        'Ac_code' => $request->Ac_code,
+
+                        'sales_order_no' => $request->sales_order_no[$x] ?? null,
+                        'item_code' => $request->item_codes[$x] ?? null,
+                        'hsn_code' => $request->hsn_code[$x] ?? null,
+                        'unit_id' => $request->unit_id[$x] ?? null,
+                        'item_qty' => $request->item_qtys[$x] ?? 0,
+                        'item_rate' => $request->item_rates[$x] ?? 0,
+                        'disc_per' => $request->disc_pers[$x] ?? 0,
+                        'disc_amount' => $request->disc_amounts[$x] ?? 0,
+                        'pur_cgst' => $request->pur_cgsts[$x] ?? 0,
+                        'camt' => $request->camts[$x] ?? 0,
+                        'pur_sgst' => $request->pur_sgsts[$x] ?? 0,
+                        'samt' => $request->samts[$x] ?? 0,
+                        'pur_igst' => $request->pur_igsts[$x] ?? 0,
+                        'iamt' => $request->iamts[$x] ?? 0,
+                        'amount' => $request->amounts[$x] ?? 0,
+                        'freight_hsn' => 0,
+                        'freight_amt' => $request->freight_amt[$x] ?? 0,
+                        'total_amount' => $request->total_amounts[$x] ?? 0,
+
+                        'conQty' => $request->conQtys[$x] ?? 0,
+                        'unitIdM' => $request->unitIdMs[$x] ?? ($request->unit_id[$x] ?? null),
+                        'priUnitd' => $request->priUnitds[$x] ?? ($request->unit_id[$x] ?? null),
+                        'SecConQty' => $request->SecConQtys[$x] ?? 0,
+                        'secUnitId' => $request->secUnitIds[$x] ?? ($request->unit_id[$x] ?? null),
+                        'poQty' => $request->poQtys[$x] ?? 0,
+                        'poUnitId' => $request->poUnitIds[$x] ?? ($request->unit_id[$x] ?? null),
+                        'rateM' => $request->rateMs[$x] ?? 0,
+                        'totalQty' => $request->totalQtys[$x] ?? 0,
+
+                        'firm_id' => $firm_id
+                    ];
+
+                    if (!empty($request->item_codes[$x])) {
+                        $item_code .= $request->item_codes[$x] . ',';
+                    }
                 }
-            
-                    $updateBOMItem = DB::update("UPDATE bom_fabric_details SET usedFlag = 1 WHERE bom_code = ? AND item_code IN ($item_code)", [$bom_code]);
+
+                PurchaseOrderDetailModel::insert($data2);
             }
-             
+
+            $item_code = rtrim($item_code, ",");
+
+            if (!empty($item_code)) {
+                DB::update("UPDATE bom_fabric_details 
+                            SET usedFlag = 1 
+                            WHERE bom_code=? AND item_code IN ($item_code)", [$bom_code]);
+            }
+
             DB::commit();
-            return redirect()->route('PurchaseOrder.index')->with('message', 'Add Record Succesfully');
-         }
-         catch (\Exception $e) 
-         {
-            // If an exception occurs, rollback the transaction and handle the exception
-             \Log::info('Message:: '.$e->getMessage().' line:: '.$e->getLine().' Code:: '.$e->getCode().' file:: '.$e->getFile());
-          
-              DB::rollBack();
-      
-            return redirect()->back()->withInput()->withErrors(['error' => $e->getMessage()]);
+            return redirect()->route('PurchaseOrder.index')->with('message', 'Add Record Successfully');
         }
 
-
+        catch (\Exception $e) {
+            DB::rollBack();
+            \Log::info("Message: ".$e->getMessage()." Line: ".$e->getLine());
+            return redirect()->back()->withInput()->withErrors(['error' => $e->getMessage()]);
+        }
     }
+
 
     /**
      * Display the specified resource.
