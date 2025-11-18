@@ -377,7 +377,7 @@ ini_set('memory_limit', '10G');
                               and bom_packing_trims_details.item_code='".$row->item_code."'");
                               }
                               @endphp
-                              <td><input  style="width:80px;height:30px;" type="number"  step="any" class="RATE" name="item_rates[]" value="{{ $row->item_rate }}" id="item_rate"  @php  if(Session::get('user_type')!=1 && $is_approved==1){ echo 'readOnly'; } @endphp required></td>
+                              <td><input  style="width:80px;height:30px;" type="number"  step="any" class="RATE" name="item_rates[]" max="{{ $row->item_rate }}" value="{{ $row->item_rate }}" id="item_rate"  @php  if(Session::get('user_type')!=1 && $is_approved==1){ echo 'readOnly'; } @endphp required></td>
                               <td><input readOnly style="width:80px;height:30px;" readOnly type="number" id="pur_cgst" step="any"  class="" name="pur_cgsts[]" value="{{ $row->pur_cgst }}"></td>
                               <td><input  style="width:80px;height:30px;"  type="number" readOnly step="any" id="camt" class="GSTAMT" name="camts[]" value="{{ $row->camt }}"></td>
                               <td><input readOnly style="width:80px;height:30px;" readOnly type="number" step="any" id="pur_sgst" class="" name="pur_sgsts[]" value="{{ $row->pur_sgst }}"></td>
@@ -539,6 +539,7 @@ ini_set('memory_limit', '10G');
       <button type="submit" id="Submit" class="btn btn-success w-md" onclick="EnableFields();">Save</button>
       <a href="{{ Route('PurchaseOrder.index') }}" class="btn btn-warning w-md">Cancel</a>
       </form>
+      <input type="hidden" id="userType" value="{{ Session::get('user_type') }}">
    </div>
    <!-- end card body -->
 </div>
@@ -687,31 +688,40 @@ ini_set('memory_limit', '10G');
             $("textarea").prop('disabled', false);
         
    @php   }   @endphp
-   
-   $(document).on("change", 'input[class^="ITEMQTY"],input[class^="RATE"]', function (event) 
-   {
-   @php  if(Session::get('user_type')!=1  ){   @endphp
-       var po_type_id=$('#po_type_id').val();
-          if(po_type_id!=2)
-         {
-               var value = $(this).val();
-   
-            var maxLength = parseFloat($(this).attr('max'));
-            var minLength = parseFloat($(this).attr('min')); 
-           if(value>maxLength){alert('Value can not be greater than '+maxLength);}
-           if ((value !== '') && (value.indexOf('.') === -1)) 
-           {
-                $(this).val(Math.max(Math.min(value, maxLength), minLength));
-           }
-    
+
+   $(document).on("change", 'input[class^="ITEMQTY"], input[class^="RATE"]', function () {
+
+      let userType = parseInt($("#userType").val());
+      if (userType !== 1) {
+
+         let po_type_id = $('#po_type_id').val();
+
+         // Allow validation ONLY when po_type_id is NOT 2 and NOT empty
+         if (po_type_id !== "2" || po_type_id !== "") {
+
+               let value = parseFloat($(this).val()) || 0;
+               let maxValue = parseFloat($(this).attr("max")) || 0;
+               let minValue = parseFloat($(this).attr("min")) || 0;
+
+               // Value exceeds max 
+               if (value > maxValue) {
+                  alert("Value cannot be greater than " + maxValue);
+                  $(this).val(maxValue);
+               }
+
+               // Restrict to min–max range ONLY if value is integer
+               if ($(this).val() !== '' && $(this).val().indexOf('.') === -1) {
+                  let finalValue = Math.max(Math.min(value, maxValue), minValue);
+                  $(this).val(finalValue);
+               }
          }
-         
-         @php   }   @endphp
-         
-         CalculateRow($(this).parent().parent('tr'));
+      }
+
+      // Calculate row after changes
+      CalculateRow($(this).closest('tr'));
    });
-   
-   
+
+      
    function calFreightAmt(row)
    {
        var freight_amt = $(row).val() ? $(row).val() : 0;
@@ -1525,26 +1535,7 @@ ini_set('memory_limit', '10G');
    }
    
    
-   $(document).on("change", 'input[class^="Qty"] ', function (event) 
-   {
-   
-    var po_type_id=$('#po_type_id').val();
-          if(po_type_id!=2)
-         {
-   var value = $(this).val();
-   var maxLength = parseInt($(this).attr('max'));
-   var minLength = parseInt($(this).attr('min')); 
-   if(value>maxLength){alert('Value can not be greater than '+maxLength);}
-   if ((value !== '') && (value.indexOf('.') === -1)) 
-   {
-       $(this).val(Math.max(Math.min(value, maxLength), minLength));
-   }
-   
-         }
-   
-   });
-   
-   
+ 
    
    function tds_payable()
    {
@@ -1802,23 +1793,7 @@ ini_set('memory_limit', '10G');
                  mycalc();
    }
    
-   $(document).on("change", 'input[class^="Qty"] ', function (event) 
-   {
-    var po_type_id=$('#po_type_id').val();
-          if(po_type_id!=2)
-         {
-       var value = $(this).val();
-   
-            var maxLength = parseInt($(this).attr('max'));
-            var minLength = parseInt($(this).attr('min')); 
-   if(value>maxLength){alert('Value can not be greater than '+maxLength);}
-   if ((value !== '') && (value.indexOf('.') === -1)) {
-              
-       $(this).val(Math.max(Math.min(value, maxLength), minLength));
-   }
-         }
-   
-   });
+  
  
    function GetClassesList()
    {
