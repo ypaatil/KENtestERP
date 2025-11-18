@@ -129,6 +129,21 @@
                             </select>
                         </div>
                     </div> 
+
+                     <div class="col-md-3">
+                         
+                         <div class="">
+                        <label for="formrow-inputState" class="form-label"></label>
+                        <div class="form-group" >
+                              <button type="submit" class="btn btn-primary w-md">Search</button>
+                              <a href="/SaleFilterReport" class="btn btn-danger w-md">Cancel</a>
+                        </div>
+                        </div>
+                           
+                        
+                    </div> 
+
+
                     <div class="col-md-3 hiddensectionbox">
                         <div class="mb-3">
                             <label for="Ac_code" class="form-label">Buyer Name</label> 
@@ -152,13 +167,7 @@
                         </div>
                     </div> 
                 </div> 
-                <div class="col-sm-6">
-                    <label for="formrow-inputState" class="form-label"></label>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-primary w-md">Search</button>
-                        <a href="/SaleFilterReport" class="btn btn-danger w-md">Cancel</a>
-                    </div>
-                    </div>
+               
                 </div>
                 </form>
             </div>
