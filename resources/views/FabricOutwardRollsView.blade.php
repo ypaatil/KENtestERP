@@ -373,31 +373,6 @@
 
             }
 
-            @media print {
-
-
-
-
-
-                .invoice-container h4 {
-                    font-size: 18pt;
-                    /* make text a little smaller for print */
-                }
-
-                .invoice-container p {
-                    font-size: 12pt;
-                }
-
-                td.text-start {
-                    text-align: left !important;
-                }
-
-                td.text-end {
-                    text-align: right !important;
-                }
-
-            }
-
             .table-bordered.summary-table tr th:first-child,
             .table-bordered.summary-table tr td:first-child,
             .table-bordered.summary-table tr th:last-child,
@@ -418,7 +393,7 @@
 
             table.second th:nth-child(3),
             table.second td:nth-child(3) {
-                width: 250px !important;
+                width: 220px !important;
             }
 
             table.second th:nth-child(4),
@@ -454,7 +429,7 @@
 
             table.second th:nth-child(10),
             table.second td:nth-child(10) {
-                width: auto !important;
+                width: 80px !important;
             }
 
             table.third th:nth-child(1),
@@ -482,9 +457,26 @@
             table.third td:nth-child(5) {
                 width: 100px !important;
             }
+        }
 
+        @media print {
 
+            .invoice-container h4 {
+                font-size: 18pt;
+                /* make text a little smaller for print */
+            }
 
+            .invoice-container p {
+                font-size: 12pt;
+            }
+
+            td.text-start {
+                text-align: left !important;
+            }
+
+            td.text-end {
+                text-align: right !important;
+            }
 
         }
     </style>
@@ -576,7 +568,7 @@
                         </div>
                         <div class="col-md-6 p-2">
                             <p><b>Company Name: </b></p>
-                            <p><b>Ken Global Designs Pvt Ltd</b> <br> Gat No.- 298/299, A/P Kondigre Kolhapur Mahrashtra - 416101</p>
+                            <p><b>Ken Global Designs Pvt Ltd</b> <br> Gat No.- 298/299, A/P Kondigre Kolhapur Maharashtra - 416101</p>
 
                             <div class="info-row">
                                 <div class="label">PAN NO</div>
@@ -647,11 +639,6 @@
                                 <th>Roll No/Track Code</th>
                                 <th>UOM </th>
                                 <th>Qty </th>
-
-
-
-
-
                             </tr>
                         </thead>
                         <tbody>
@@ -669,7 +656,7 @@
                             ->where('fabric_outward_details.fout_code','=', $FabricOutwardMaster[0]->fout_code)
                             ->get();
                             $no = 1;
-                            $totalMeter = 0; // 👈 Initialize total meter variable
+                            $totalMeter = 0; // Initialize total meter variable
                             $totalRolls = count($FabricOutwardDetailstables);
                             @endphp
                             @foreach($FabricOutwardDetailstables as $rowDetail)
@@ -686,10 +673,6 @@
                                 <td class="text-end">{{ $rowDetail->track_code }} </td>
                                 <td class="text-center"> {{ $rowDetail->unit_name }}</td>
                                 <td class="text-end"> {{ number_format($rowDetail->meter, 2) }} </td>
-
-
-
-
                             </tr>
 
 
@@ -714,7 +697,7 @@
                         </thead>
                     </table>
 
-                    <h4 class="text-center fw-bold" style="margin-top: -32px; ">Fabric Summary</h4>
+                    <h4 class="text-center fw-bold" style="margin-top:-30px;">Fabric Summary</h4>
 
                     <table class="table third table-bordered table-sm">
                         <thead>
@@ -753,7 +736,7 @@
                             @endforeach
                             <tr>
                                 <td colspan="4" class="text-end fw-bold"> Total Meter:</td>
-                                <td class="text-end fw-bold">{{ number_format($FabricOutwardMaster[0]->total_meter) }} </td>
+                                <td class="text-end fw-bold">{{ number_format($FabricOutwardMaster[0]->total_meter,2) }} </td>
                             </tr>
                             <tr>
                                 <th colspan="5" class="text-center">NOT FOR SALE, FOR JOB WORK ONLY</th>
@@ -761,12 +744,7 @@
                         </tbody>
                     </table>
 
-
-
-
-                 
-
-                    <table class="table">
+                    <table class="table" style="margin-top:100px;">
                         <tr>
                             <th>Prepared By:</th>
                             <th>Checked By:</th>
@@ -775,9 +753,6 @@
                         </tr>
 
                     </table>
-                   
-
-                  
                 </div>
 
             </main>
