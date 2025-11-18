@@ -2468,12 +2468,12 @@ class PurchaseOrderController extends Controller
                         
                         if($value->class_id == 12)
                         {
-                            $button_qty = $value->item_qty/144;
+                            $button_qty = round($value->item_qty/144,precision: 2);
                             $button_rate = $value->rate_per_unit * 144;
                         }
                         else
                         {
-                             $button_qty = $value->item_qty;
+                             $button_qty = round($value->item_qty);
                              $button_rate = $value->rate_per_unit;
                         }
                         
@@ -2481,7 +2481,7 @@ class PurchaseOrderController extends Controller
                         
                         <td><input type="text" value="'.round($value->bom_qty).'" name="bom_qty[]"  style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="text" value="'.$stock[0]->Stock.'"   style="width:80px;  height:30px;"  onclick="stockPopup(this,'.$value->item_code.');"  readOnly/></td>
-                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($button_qty).'"  value="'.round($button_qty).'" id="item_qty" style="width:80px;  height:30px;" required/>
+                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.$button_qty.'"  value="'.$button_qty.'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
                         </td>
                         <td><input type="number" step="any"    name="item_rates[]" min="0" max="'.$button_rate.'" value="'.$button_rate.'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
