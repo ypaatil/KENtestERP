@@ -620,14 +620,14 @@
 
 
                         </div>
-                        <div class="col-md-6 p-2">
+                        <!-- <div class="col-md-6 p-2">
                             <div class="">
                                 <p><b>Shipping To: </b></p>
                                 <p><b></b></p>
 
                             </div>
 
-                        </div>
+                        </div> -->
                     </div>
 
                     <!-- Assortment Table -->
@@ -680,7 +680,7 @@
                                 <td class="text-start">{{ $rowDetail->item_name }}</td>
 
                                 <td class="text-start">{{ $rowDetail->item_description }}</td>
-                                <td class="text-end">{{ $rowDetail->width }}</td>
+                                <td class="text-end">{{ number_format($rowDetail->width,2) }}</td>
                                 <td class="text-center">{{ $rowDetail->shade_name }}</td>
                                 <td class="text-end">{{ $rowDetail->roll_no }}</td>
                                 <td class="text-end">{{ $rowDetail->track_code }} </td>
@@ -696,10 +696,10 @@
                             @php $no++; @endphp
                             @endforeach
                             <tr>
-                                <td colspan="6" class="text-end">Total No. of Rolls:</td>
-                                <td class="text-end">{{ $totalRolls }}</td>
-                                <td colspan="2" class="text-end">Total Meter:</td>
-                                <td class="text-end">{{ number_format($totalMeter, 2) }}</td>
+                                <td colspan="6" class="text-end fw-bold">Total No. of Rolls:</td>
+                                <td class="text-end fw-bold">{{ $totalRolls }}</td>
+                                <td colspan="2" class="text-end fw-bold">Total Meter:</td>
+                                <td class="text-end fw-bold">{{ number_format($totalMeter, 2) }}</td>
                             </tr>
 
                         </tbody>
@@ -714,7 +714,7 @@
                         </thead>
                     </table>
 
-                    <h4 class="text-center fw-bold" style="margin-top: -32px; ">Fabric Item Name wise Summary</h4>
+                    <h4 class="text-center fw-bold" style="margin-top: -32px; ">Fabric Summary</h4>
 
                     <table class="table third table-bordered table-sm">
                         <thead>
@@ -747,13 +747,13 @@
                                 <td class="text-start">{{ $rowDetail->item_code }} {{ $rowDetail->item_name }}</td>
 
                                 <td class="text-start">{{ $rowDetail->item_description }}</td>
-                                <td class="text-end">{{ number_format($rowDetail->meter) }}</td>
+                                <td class="text-end">{{ number_format($rowDetail->meter,2) }}</td>
                             </tr>
                             @php $no++; @endphp
                             @endforeach
                             <tr>
-                                <td colspan="4" class="text-end"> Total Meter:</td>
-                                <td class="text-end">{{ number_format($FabricOutwardMaster[0]->total_meter) }} </td>
+                                <td colspan="4" class="text-end fw-bold"> Total Meter:</td>
+                                <td class="text-end fw-bold">{{ number_format($FabricOutwardMaster[0]->total_meter) }} </td>
                             </tr>
                             <tr>
                                 <th colspan="5" class="text-center">NOT FOR SALE, FOR JOB WORK ONLY</th>
