@@ -842,15 +842,9 @@
    }
    
    
-     $(document).on("input", 'input[name^="meter[]"],input[name^="item_rates[]"]', function (event) {
-          CalculateRow($(this).closest("tr"));
-         });
-      function CalculateRow(row)
-      {
-         var item_qtys=+row.find('input[name^="meter[]"]').val();
-         var item_rates=+row.find('input[name^="item_rates[]"]').val();
-         var amount=(parseFloat(item_qtys)*parseFloat(item_rates)).toFixed();
-         row.find('input[name^="amounts[]"]').val(amount);
+     $(document).on("input", 'input[name^="meter[]"],input[name^="item_rates[]"]', function (event) 
+     {
+         var row = $(this).closest("tr");
    	   var current_item_code = row.find('input[name^="item_codes[]"]').val();
          var po_qty = $(".item_code_" + current_item_code).find('.bal_qty').html();
 
@@ -869,16 +863,21 @@
 
          // 5% allowed quantity
          var allow_qty = parseFloat(po_qty) + (parseFloat(po_qty) * 0.05);
+ 
 
-         console.log("po_qty: " + po_qty);
-         console.log("allow_qty: " + allow_qty);
-         console.log("total: " + total);
-
-         if (total > allow_qty) {
+         if (parseFloat(total) > parseFloat(allow_qty)) {
             alert("Quantity is allow only 5%");
          }
 
-
+          CalculateRow($(this).closest("tr"));
+     });
+     
+      function CalculateRow(row)
+      {
+         var item_qtys=+row.find('input[name^="meter[]"]').val();
+         var item_rates=+row.find('input[name^="item_rates[]"]').val();
+         var amount=(parseFloat(item_qtys)*parseFloat(item_rates)).toFixed();
+         row.find('input[name^="amounts[]"]').val(amount);
           mycalc();
       }
    
