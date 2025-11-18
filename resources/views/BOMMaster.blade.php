@@ -112,6 +112,22 @@
     .panel-heading.active .panel-title a:after {
       transform: rotate(180deg);
     }
+    .panel-heading {
+        background: #f5f5f5 !important;
+        padding: 10px 15px !important;
+        border: 1px solid #ddd !important;
+    }
+    
+    .panel-title a {
+        display: block !important;
+        color: #333 !important;
+        font-weight: 600 !important;
+        text-decoration: none !important;
+    }
+    
+    .panel-title a.collapsed {
+        color: #333 !important;
+    }
 
 </style>
 <div class="row">
@@ -320,7 +336,7 @@
                         <div class="panel panel-default">
                            <div class="panel-heading">
                               <h4 class="panel-title">
-                                 <a data-toggle="collapse" data-parent="#accordion1" href="#collapse4">Fabric: </a>
+                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Fabric: </a>
                               </h4>
                            </div>
                            <div id="collapse4" class="panel-collapse collapse">
@@ -396,7 +412,7 @@
                         <div class="panel panel-default">
                            <div class="panel-heading">
                               <h4 class="panel-title">
-                                 <a data-toggle="collapse" data-parent="#accordion2" href="#collapse5">Trim Fabric: </a>
+                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">Trim Fabric: </a>
                               </h4>
                            </div>
                            <div id="collapse5" class="panel-collapse collapse">
@@ -490,7 +506,7 @@
                         <div class="panel panel-default">
                            <div class="panel-heading">
                               <h4 class="panel-title">
-                                 <a data-toggle="collapse" data-parent="#accordion3" href="#collapse2">Sewing Trims: </a>
+                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Sewing Trims: </a>
                               </h4>
                            </div>
                            <div id="collapse2" class="panel-collapse collapse">
@@ -588,7 +604,7 @@
                         <div class="panel panel-default">
                            <div class="panel-heading">
                               <h4 class="panel-title">
-                                 <a data-toggle="collapse" data-parent="#accordion4" href="#collapse3">Packing Trims:</a>
+                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Packing Trims:</a>
                               </h4>
                            </div>
                            <div id="collapse3" class="panel-collapse collapse">
@@ -787,7 +803,7 @@
           $('.panel-custom .panel-heading').on('click', function(e){
             // avoid double-toggle if clicking the <a> itself (Bootstrap handles that)
             if ($(e.target).is('a')) return;
-            var $t = $(this).find('a[data-toggle="collapse"]');
+            // var $t = $(this).find('a[data-toggle="collapse"]');
             if ($t.length) $t.trigger('click');
           });
         });

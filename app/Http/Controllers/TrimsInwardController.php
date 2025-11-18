@@ -890,10 +890,7 @@ from item_master where item_code='$value->item_code'"));
 
         return response()->json(['html' => $html]);
     }
-
-
-
-
+ 
     public function getPoForTrims(Request $request)
     {
         ini_set('memory_limit', '1G');
@@ -914,8 +911,7 @@ from item_master where item_code='$value->item_code'"));
 
         $html = '';
 
-        $html .= '<div class="table-wrap" id="trimInward">
-                <div class="table-responsive">
+        $html .= '<div class="table-responsive">
                        <table id="footable_2" class="table  table-bordered table-striped m-b-0  footable_2">
                 <thead>
                 <tr>
@@ -1028,8 +1024,7 @@ from item_master where item_code='$value->item_code'"));
 
         $html .= '<input type="number" value="' . count($data) . '" name="cnt" id="cnt" readonly="" hidden="true"  />';
         $html .= '</table>
-                   </div>
-                </div>';
+                   </div>';
         return response()->json(['html' => $html]);
     }
 

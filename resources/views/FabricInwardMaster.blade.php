@@ -133,7 +133,7 @@
                   </div>
                   <div class="col-md-2">
                      <div class="form-check form-check-primary mb-5">
-                        <input class="form-check-input" type="checkbox" id="is_opening" name="is_opening" style="font-size: 25px;margin-top: 30px;margin-left: 0px;" onclick="enable(this);">
+                        <input class="form-check-input" type="checkbox" id="is_opening" name="is_opening" style="font-size: 25px;margin-top: 30px;margin-left: 0px;" onclick="enable(this);DisabledPO(this);">
                         <label class="form-check-label" for="is_opening" style="margin-top: 30px;position: absolute;margin-left: 20px;font-size: 16px;">
                         Opening Stock
                         </label>
@@ -153,7 +153,7 @@
                     <select name="location_id" class="form-select select2  " id="location_id" required>
                        <option value="">--Location--</option>
                        @foreach($LocationList as  $row) 
-                            <option value="{{ $row->loc_id }}">{{ $row->location }}</option> 
+                            <option value="{{ $row->loc_id }}" {{ $row->loc_id == 1 ? 'selected="selected"' : '' }}>{{ $row->location }}</option> 
                        @endforeach
                     </select>
                  </div>
@@ -189,7 +189,7 @@
                      </div>
                   </div>
                </div>
-               <div class="table-wrap" id="pofetch">
+               <div class="table-wrap" id="fabricInward">
                   <div class="table-responsive">
                      <table id="footable_2" class="table  table-bordered table-striped m-b-0  footable_2">
                         <thead>
@@ -327,10 +327,40 @@
         $('#frmData').submit(function() {
             $('#Submit').prop('disabled', true);
         }); 
-    });
-     
-    function GetPurchaseBillDetails()
-    {
+   });
+   
+   function DisabledPO(el)
+   {
+      if($(el).is(":checked"))
+      {
+         $("#po_code").attr("disabled", true);
+         $("#po_type_id").val(2).attr("disabled", true);
+         $("#Ac_code").val(50).trigger('change').attr("disabled", true);
+
+         setTimeout(function() {
+               $("#bill_to").val(1083).trigger('change');
+         }, 1000);
+
+         $("#fge_code").attr("disabled", true).removeAttr("required");
+      }
+      else
+      {
+         $("#po_code").val("").trigger('change').attr("disabled", false);
+         $("#po_type_id").val(2).attr("disabled", false);
+         $("#Ac_code").val(50).trigger('change').attr("disabled", true);
+
+         setTimeout(function() {
+               $("#bill_to").val(1083).trigger('change');
+         }, 1000);
+ 
+         $("#fge_code").attr("disabled", false).removeAttr("required");
+      }
+      $("#bill_to").attr("disabled", true);
+   }
+ 
+       
+   function GetPurchaseBillDetails()
+   {
        var po_code = $("#po_code").val(); 
        
         $.ajax({
@@ -343,6 +373,11 @@
                $("#bill_to").html(data.detail); 
            }
         }); 
+       $("#bill_to").attr('disabled', true);
+        if(po_code !='')
+        {
+            $("#is_opening").prop('checked', false).attr('disabled', true);
+        }
     } 
     
    function GetVendorName(vpo_code)
@@ -360,20 +395,41 @@
                
           }
         });
+
+        
+        $.ajax({
+          type: "GET",
+          dataType:"json",
+          url: "{{ route('GetItemPucharseOrder') }}",
+          data:{'vpo_code':vpo_code},
+          success: function(data)
+          {
+              $('select[name="item_code[]"]').html(data.html); 
+          }
+        });
    }
+
    function GetOrderNo(ele)
    {
        if($(ele).is(":checked"))
        {
-          $('#workOrder').removeClass('hide');
-          $(ele).val(1);
+           $('#workOrder').removeClass('hide');
+           $(ele).val(1);
+           $("#po_code").removeAttr('onchange'); 
+           $("#is_opening").attr('checked', true).trigger("change").attr('disabled', true);
+           $("#po_code").attr('disabled', true);
+           $("#fge_code").val("").trigger("change").attr('disabled', true);
        }
        else
        {
+           $("#po_code").attr('onchange', 'getPODetails();GetPurchaseBillDetails();'); 
+           $("#is_opening").attr('checked', false).trigger("change").attr('disabled', true);
+           $("#po_code").attr('disabled', false);
+           $("#fge_code").val("").trigger("change").attr('disabled', false);
            $('#workOrder').addClass('hide');
            $(ele).val(0);
        }
-   }
+   }   
    
    function enable(opening)
    {  
@@ -413,8 +469,7 @@
           data:{'po_code':po_code,item_code:item_code},
           success: function(data)
           {
-               +row.find('input[name^="item_rates[]"]').val(data[0]['item_rate'])
-               
+               +row.find('input[name^="item_rates[]"]').val(data[0]['item_rate']);               
           }
         });   
    }
@@ -441,52 +496,44 @@
    
    function serBarocode()
    {
-              if($("#cp_id").val()==1)
-              {
-                       
-                      ++PBarcode;
-                      $("#track_code").val('P'.concat(PBarcode.toString()));
-                     //alert($("#track_code").val());
-              }
-              else if($("#cp_id").val()==2)
-              {       var CBar='';
-                      CBar='I' + parseInt(++CBarcode);
-                      $("#track_code").val(CBar);
-              }
+      if($("#cp_id").val()==1)
+      { 
+         ++PBarcode;
+         $("#track_code").val('P'.concat(PBarcode.toString()));
+         //alert($("#track_code").val());
+      }
+      else if($("#cp_id").val()==2)
+      {      
+         var CBar='';
+         CBar='I' + parseInt(++CBarcode);
+         $("#track_code").val(CBar);
+      }
    }
    
    
    
    $(document).ready(function()
    {
-       
         serBarocode();
-   });
-   
-   
-   
+   }); 
    
    function getPODetails()
-   {
-     
+   {     
       var po_code=$("#po_code").val();
-      
-      $.ajax({
-              type: "GET",
-              dataType:"json",
-              url: "{{ route('PODetail') }}",
-              data:{'po_code':po_code},
-              success: function(data){
-                  
-                  $("#po_type_id").val(data[0]['po_type_id']);
-                  $("#Ac_code").val(data[0]['Ac_code']);
-                 
-          }
-          });
-          
-          
-         
-   
+      if(po_code !='')
+      {
+         $.ajax({
+            type: "GET",
+            dataType:"json",
+            url: "{{ route('PODetail') }}",
+            data:{'po_code':po_code},
+            success: function(data)
+            {                     
+               $("#po_type_id").val(data[0]['po_type_id']);
+               $("#Ac_code").val(data[0]['Ac_code']);                  
+            }
+         }); 
+      } 
    }
    
    $(document).on("keyup", 'input[name^="gram_per_meter[]"],input[name^="meter[]"]', function (event) {
@@ -766,7 +813,7 @@
    }
    
    
-     $(document).on("keyup", 'input[name^="meter[]"],input[name^="item_rates[]"]', function (event) {
+     $(document).on("input", 'input[name^="meter[]"],input[name^="item_rates[]"]', function (event) {
           CalculateRow($(this).closest("tr"));
          });
       function CalculateRow(row)
@@ -872,21 +919,19 @@
    
    }); 
    
-   function gettable(po_code){
-   
-    //alert(pur_code);
-   
-   $.ajax({
-   type:"GET",
-   url:"{{ route('getPo') }}",
-   //dataType:"json",
-   data:{po_code:po_code},
-   success:function(response){
-   console.log(response);  
-      $("#item_code").html(response.html);
-   
-   }
-   });
+   function gettable(po_code)
+   { 
+      $.ajax({
+         type:"GET",
+         url:"{{ route('getPo') }}",
+         //dataType:"json",
+         data:{po_code:po_code},
+         success:function(response){
+         console.log(response);  
+            $("#item_code").html(response.html);
+         
+         }
+      });    
    }
    
    

@@ -3,7 +3,7 @@
 <style>
    .hide
    {
-        display:none!important;
+   display:none!important;
    }
 </style>
 <div class="row">
@@ -57,6 +57,18 @@
                   </div>
                   <div class="col-md-2">
                      <div class="mb-3">
+                        <label for="formrow-invoice_no-input" class="form-label">Invoice No</label>
+                        <input type="text" name="invoice_no" id="invoice_no" class="form-control" value="{{ $FabricInwardMasterList->invoice_no }}" id="formrow-invoice_no-input" required>
+                     </div>
+                  </div>
+                  <div class="col-md-2">
+                     <div class="mb-3">
+                        <label for="formrow-invoice_date-input" class="form-label">Invoice Date</label>
+                        <input type="date" name="invoice_date" id="invoice_date" class="form-control" id="formrow-invoice_date-input" value="{{ $FabricInwardMasterList->invoice_date }}">
+                     </div>
+                  </div>
+                  <div class="col-md-3">
+                     <div class="mb-3">
                         <label for="formrow-inputState" class="form-label">PO Code</label>   
                         <select name="po_code" class="form-select select2" id="po_code" onchange="getPODetails();"  disabled >
                            <option value="">PO code</option>
@@ -70,19 +82,22 @@
                         </select>
                      </div>
                   </div>
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="formrow-invoice_no-input" class="form-label">Invoice No</label>
-                        <input type="text" name="invoice_no" id="invoice_no" class="form-control" value="{{ $FabricInwardMasterList->invoice_no }}" id="formrow-invoice_no-input" required>
-                     </div>
-                  </div>
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="formrow-invoice_date-input" class="form-label">Invoice Date</label>
-                        <input type="date" name="invoice_date" id="invoice_date" class="form-control" id="formrow-invoice_date-input" value="{{ $FabricInwardMasterList->invoice_date }}">
-                     </div>
-                  </div>
                   <div class="col-md-3">
+                     <div class="mb-3">
+                        <label for="formrow-inputState" class="form-label">PO Type</label>
+                        <select name="po_type_id" class="form-select" id="po_type_id" onchange="getPartyDetails();"  disabled>
+                           <option value="">Type</option>
+                           @foreach($POTypeList as  $rowpo)
+                           {
+                           <option value="{{ $rowpo->po_type_id  }}"
+                           {{ $rowpo->po_type_id == $FabricInwardMasterList->po_type_id ? 'selected="selected"' : '' }}      
+                           >{{ $rowpo->po_type_name }}</option>
+                           }
+                           @endforeach
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-2">
                      <div class="mb-3">
                         <label for="formrow-inputState" class="form-label">Supplier</label>
                         <select name="Ac_code" class="form-select" id="Ac_code"  disabled>
@@ -97,19 +112,17 @@
                         </select>
                      </div>
                   </div>
-               </div>
-               <div class="row">
                   <div class="col-md-2">
-                      <div class="mb-3">
-                         <label for="bill_to" class="form-label">Bill To</label>
-                         <select name="bill_to" class="form-select" id="bill_to" disabled>
-                            @foreach($BillToList as  $row) 
-                                <option value="{{ $row->sr_no }}" {{ $row->sr_no == $FabricInwardMasterList->bill_to ? 'selected="selected"' : '' }} >{{ $row->trade_name }}({{$row->site_code}})</option> 
-                            @endforeach
-                         </select>
-                      </div>
-                  </div> 
-                  <div class="col-md-2">
+                     <div class="mb-3">
+                        <label for="bill_to" class="form-label">Bill To</label>
+                        <select name="bill_to" class="form-select" id="bill_to" disabled>
+                        @foreach($BillToList as  $row) 
+                        <option value="{{ $row->sr_no }}" {{ $row->sr_no == $FabricInwardMasterList->bill_to ? 'selected="selected"' : '' }} >{{ $row->trade_name }}({{$row->site_code}})</option> 
+                        @endforeach
+                        </select>
+                     </div>
+                  </div>
+                  <div class="col-md-2 hide">
                      <div class="mb-3">
                         <label for="formrow-inputState" class="form-label">CP Type</label>
                         <select name="cp_id" class="form-select" id="cp_id" required onchange="serBarocode();" disabled>
@@ -125,55 +138,65 @@
                      </div>
                   </div>
                   <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="formrow-inputState" class="form-label">PO</label>
-                        <select name="po_type_id" class="form-select" id="po_type_id" onchange="getPartyDetails();"  disabled>
-                           <option value="">Type</option>
-                           @foreach($POTypeList as  $rowpo)
-                           {
-                           <option value="{{ $rowpo->po_type_id  }}"
-                           {{ $rowpo->po_type_id == $FabricInwardMasterList->po_type_id ? 'selected="selected"' : '' }}      
-                           >{{ $rowpo->po_type_name }}</option>
-                           }
-                           @endforeach
-                        </select>
-                     </div>
-                  </div>
-                  <div class="col-md-2">
                      <div class="form-check form-check-primary mb-3">
-                        <input class="form-check-input" type="checkbox" id="is_opening" name="is_opening" onclick="enable(this.value);"
-                        @if($FabricInwardMasterList->is_opening==1)checked @endif    >
-                        <label class="form-check-label" for="is_opening">
+                        <input class="form-check-input" type="checkbox" id="is_opening" name="is_opening" style="font-size: 25px;margin-top: 30px;margin-left: 0px;" onclick="enable(this.value);"
+                        @if($FabricInwardMasterList->is_opening==1)checked @else disabled @endif    >
+                        <label class="form-check-label" for="is_opening" style="margin-top: 30px;position: absolute;margin-left: 20px;font-size: 16px;">
                         Opening Stock
                         </label>
                      </div>
                   </div>
-                 <div class="col-md-3">
-                    <label for="fge_code" class="form-label">Fabric Gate Code</label>
-                    <select name="fge_code" class="form-select select2" id="fge_code" disabled>
-                       <option value="">--Select--</option>
-                       @foreach($FGECodeList as  $row) 
-                            <option value="{{ $row->fge_code }}" {{ $row->fge_code == $FabricInwardMasterList->fge_code ? 'selected="selected"' : '' }} >{{ $row->fge_code }}</option> 
-                       @endforeach
-                    </select>
+                  <div class="col-md-3">
+                     <label for="fge_code" class="form-label">Fabric Gate Code</label>
+                     <select name="fge_code" class="form-select select2" id="fge_code" disabled>
+                        <option value="">--Select--</option>
+                        @foreach($FGECodeList as  $row) 
+                        <option value="{{ $row->fge_code }}" {{ $row->fge_code == $FabricInwardMasterList->fge_code ? 'selected="selected"' : '' }} >{{ $row->fge_code }}</option> 
+                        @endforeach
+                     </select>
                   </div>
                   <div class="col-md-3">
-                        <label for="formrow-inputState" class="form-label">Location/Warehouse</label>
-                        <select name="location_id" class="form-select select2  " id="location_id" required>
-                           <option value="">--Select Buyer--</option>
-                           @foreach($LocationList as  $row)
+                     <label for="formrow-inputState" class="form-label">Location/Warehouse</label>
+                     <select name="location_id" class="form-select select2" id="location_id" required>
+                        <option value="">--Select Buyer--</option>
+                        @foreach($LocationList as  $row)
+                        {
+                        <option value="{{ $row->loc_id }}"
+                        {{ $row->loc_id == $FabricInwardMasterList->location_id ? 'selected="selected"' : '' }}    
+                        >{{ $row->location }}</option>
+                        }
+                        @endforeach
+                     </select>
+                  </div>
+                  <div class="col-md-2 mt-4">
+                     <div class="mb-3">
+                        <div class="form-check form-check-primary mb-5">
+                           <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);" name="isReturnFabricInward" value="{{ $FabricInwardMasterList->isReturnFabricInward}}" {{ $FabricInwardMasterList->isReturnFabricInward == 1 ? 'checked="checked"' : '' }} >
+                           <label class="form-check-label" for="isReturnFabricInward">
+                           Is it retun fabric inward ? 
+                           </label>
+                        </div>
+                     </div>
+                  </div> 
+                  <div class="col-md-2 hide" id="workOrder">
+                     <div class="mb-3">
+                        <label for="" class="form-label">Vendor Process Order No.</label>   
+                        <select name="vpo_code" class="form-select select2" id="vpo_code" onchange="GetVendorName(this.value);">
+                           <option value="">--Select--</option>
+                           @foreach($vendorProcessOrderList as  $vendors)
                            {
-                           <option value="{{ $row->loc_id }}"
-                           {{ $row->loc_id == $FabricInwardMasterList->location_id ? 'selected="selected"' : '' }}    
-                           >{{ $row->location }}</option>
+                           <option value="{{ $vendors->vpo_code  }}"
+                           {{ $vendors->vpo_code == $FabricInwardMasterList->vpo_code ? 'selected="selected"' : '' }} 
+                           >{{ $vendors->vpo_code }}</option>
                            }
-                           @endforeach
+                        @endforeach
                         </select>
                      </div>
+                  </div>
                   <div class="col-md-2 hide" id="vendorData">
                      <div class="mb-3">
                         <label for="" class="form-label">Vendor Name</label>   
-                         <input type="text" name="vendorName" class="form-control" id="vendorName"  value=""  readonly style="width: 250px;"/>
+                        <input type="text" name="vendorName" class="form-control" id="vendorName"  value=""  readonly style="width: 250px;"/>
                      </div>
                   </div>
                </div>
@@ -200,44 +223,41 @@
                         </thead>
                         <tbody>
                            @php
-                             $dis = '';
+                           $dis = '';
                            @endphp
                            @if(count($FabricInwardDetails)>0)
                            @php $no=1; @endphp
                            @foreach($FabricInwardDetails as $List) 
                            @php
-                                $checkingData = DB::SELECT("SELECT count(*) as total_count FROM fabric_checking_details 
-                                                INNER JOIN fabric_checking_master ON fabric_checking_master.chk_code = fabric_checking_details.chk_code
-                                                WHERE fabric_checking_details.track_code='".$List->track_code."' AND fabric_checking_master.delflag=0");
-                                                
-                                $total_count = isset($checkingData[0]->total_count) ? $checkingData[0]->total_count : 0;
-                                
-                                if($total_count > 0)
-                                {
-                                    $dis = 'disabled';
-                                }
-                                else
-                                {
-                                    $dis = '';
-                                }
-                                
+                           $checkingData = DB::SELECT("SELECT count(*) as total_count FROM fabric_checking_details 
+                           INNER JOIN fabric_checking_master ON fabric_checking_master.chk_code = fabric_checking_details.chk_code
+                           WHERE fabric_checking_details.track_code='".$List->track_code."' AND fabric_checking_master.delflag=0");
+                           $total_count = isset($checkingData[0]->total_count) ? $checkingData[0]->total_count : 0;
+                           if($total_count > 0)
+                           {
+                           $dis = 'disabled';
+                           }
+                           else
+                           {
+                           $dis = '';
+                           }
                            @endphp
                            <tr>
                               <td><input type="text" name="id[]" value="@php echo $no; @endphp" id="id" style="width:50px;" {{$dis}} /></td>
                               <td><input type="text" name="item_codes[]" value="{{ $List->item_code }}" id="item_codes" style="width:80px;" {{$dis}} /></td>
                               <td>
                                  <select name="item_code[]"  id="item_code" style="width:200px; height:30px;" required onchange="getRateFromPO(this);" {{$dis}} > 
-                                    <option value="{{ $List->item_code }}">{{ $List->item_name }}</option> 
+                                 <option value="{{ $List->item_code }}">{{ $List->item_name }}</option>
                                  </select>
                               </td>
                               <td>
                                  <select name="part_id[]"  id="part_id" style="width:200px; height:30px;" required  {{$dis}} >
-                                    <option value="">--Part--</option>
-                                    @foreach($PartList as  $row)
-                                    <option value="{{ $row->part_id }}"
-                                    {{ $row->part_id == $List->part_id ? 'selected="selected"' : '' }}       
-                                    >{{ $row->part_name }}</option>
-                                    @endforeach
+                                 <option value="">--Part--</option>
+                                 @foreach($PartList as  $row)
+                                 <option value="{{ $row->part_id }}"
+                                 {{ $row->part_id == $List->part_id ? 'selected="selected"' : '' }}       
+                                 >{{ $row->part_name }}</option>
+                                 @endforeach
                                  </select>
                               </td>
                               <td><input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="{{ $List->taga_qty }}" id="taga_qty1" style="width:50px;"/><input type="number" step="0.01"class="METER" name="meter[]" onkeyup="mycalc();" value="{{ $List->meter }}" id="meter1" style="width:80px; height:30px;" required  {{$dis}}  /></td>
@@ -257,22 +277,22 @@
                               <td><input type="text" name="id[]" value="1" id="id" style="width:50px;"  {{$dis}}  /></td>
                               <td>
                                  <select name="item_code[]" class="item"  id="item_code" style="width:100px;" required onchange="getRateFromPO(this);"  {{$dis}} >
-                                    <option value="">--Item--</option>
-                                    @foreach($ItemList as  $row)
-                                    {
-                                    <option value="{{ $row->item_code }}">{{ $row->item_name }}</option>
-                                    }
-                                    @endforeach
+                                 <option value="">--Item--</option>
+                                 @foreach($ItemList as  $row)
+                                 {
+                                 <option value="{{ $row->item_code }}">{{ $row->item_name }}</option>
+                                 }
+                                 @endforeach
                                  </select>
                               </td>
                               <td>
                                  <select name="part_id[]" class="part"   id="part_id" style="width:100px;" required  {{$dis}} >
-                                    <option value="">--Part--</option>
-                                    @foreach($PartList as  $row)
-                                    {
-                                    <option value="{{ $row->part_id }}">{{ $row->part_name }}</option>
-                                    }
-                                    @endforeach
+                                 <option value="">--Part--</option>
+                                 @foreach($PartList as  $row)
+                                 {
+                                 <option value="{{ $row->part_id }}">{{ $row->part_name }}</option>
+                                 }
+                                 @endforeach
                                  </select>
                               </td>
                               <td><input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="1" id="taga_qty1" style="width:50px;"/><input type="number" step="0.01" class="METER" name="meter[]" onkeyup="mycalc();" value="0" id="meter1" style="width:80px;" required  {{$dis}}  /></td>
@@ -333,31 +353,6 @@
          <input type="text" readOnly name="total_amount" class="form-control" id="total_amount" value="{{ $FabricInwardMasterList->total_amount }}" required>
          </div>
          </div>
-         <div class="col-md-2 mt-4">
-         <div class="mb-3">
-         <div class="form-check form-check-primary mb-5">
-         <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);" name="isReturnFabricInward" value="{{ $FabricInwardMasterList->isReturnFabricInward}}" {{ $FabricInwardMasterList->isReturnFabricInward == 1 ? 'checked="checked"' : '' }} >
-         <label class="form-check-label" for="isReturnFabricInward">
-         Is it retun fabric inward ? 
-         </label>
-         </div>
-         </div>
-         </div> 
-         <div class="col-md-2 hide" id="workOrder">
-         <div class="mb-3">
-         <label for="" class="form-label">Vendor Process Order No.</label>   
-         <select name="vpo_code" class="form-select select2" id="vpo_code" onchange="GetVendorName(this.value);">
-         <option value="">--Select--</option>
-         @foreach($vendorProcessOrderList as  $vendors)
-         {
-         <option value="{{ $vendors->vpo_code  }}"
-         {{ $vendors->vpo_code == $FabricInwardMasterList->vpo_code ? 'selected="selected"' : '' }} 
-         >{{ $vendors->vpo_code }}</option>
-         }
-         @endforeach
-         </select>
-         </div>
-         </div>
          <div class="col-sm-8">
          <div class="mb-3">
          <label for="formrow-inputState" class="form-label">Narration</label>
@@ -413,7 +408,7 @@
    {
           GetVendorName(vpo_code);
    }
-
+   
    GetOrderNo($("#isReturnFabricInward"));
    function GetVendorName(vpo_code)
    {

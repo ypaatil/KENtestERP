@@ -462,11 +462,11 @@ ini_set('memory_limit', '10G');
                      <div class="mb-3">
                         <label for="term_and_conditions" class="form-label">Terms and Conditions</label>
                         <textarea name="terms_and_conditions" class="form-control" id="editor1" >
-                            <p>1. Ken Global Designs Pvt Ltd have right to reject any goods which is rejected by our QC and vendor will be sole responsible for rejection.<br />
-                            2 .Ken Global Designs Pvt Ltd reserves the right to reject the goods if we find them defective even at the later stage and to recover the cost of material and losses if any from the<br />
+                            <p>1. Ken Global Designs Private Limited have right to reject any goods which is rejected by our QC and vendor will be sole responsible for rejection.<br />
+                            2 .Ken Global Designs Private Limited reserves the right to reject the goods if we find them defective even at the later stage and to recover the cost of material and losses if any from the<br />
                             sellers.<br />
                             3. Payment shall be made for the actual quantity received by us and our records shall be final and conclusive on this point.<br />
-                            4. Ken Global Designs Pvt Ltd will be entitled to deduct Discount as mentioned in the order.<br />
+                            4. Ken Global Designs Private Limited will be entitled to deduct Discount as mentioned in the order.<br />
                             5. Any dispute arise with respect to this PO shall be subjected to &quot;Ichalkaranji Jurisdiction&quot;.<br />
                             6. You will allow our customers &amp; quality person to do visit to your factory to verify the quality of material supplied by you so also to see the system of quality<br />
                             control followed by you.<br />

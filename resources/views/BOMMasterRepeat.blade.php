@@ -112,6 +112,22 @@
     input[type=number] {
       -moz-appearance: textfield;
     }
+    .panel-heading {
+            background: #f5f5f5 !important;
+            padding: 10px 15px !important;
+            border: 1px solid #ddd !important;
+        }
+        
+        .panel-title a {
+            display: block !important;
+            color: #333 !important;
+            font-weight: 600 !important;
+            text-decoration: none !important;
+        }
+        
+        .panel-title a.collapsed {
+            color: #333 !important;
+        }
 
 </style>
 <div class="row">
@@ -421,7 +437,7 @@
                            <div class="panel panel-default">
                               <div class="panel-heading">
                                  <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Fabric: </a>
+                                    <a data-toggle="collapse" data-parent="#collapse4" href="#collapse4">Fabric: </a>
                                  </h4>
                               </div>
                               <div id="collapse4" class="panel-collapse collapse">
@@ -580,7 +596,7 @@
                            <div class="panel panel-default">
                               <div class="panel-heading">
                                  <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">Trim Fabric: </a>
+                                    <a data-toggle="collapse" data-parent="#collapse5" href="#collapse5">Trim Fabric: </a>
                                  </h4>
                               </div>
                               <div id="collapse5" class="panel-collapse collapse">
@@ -778,7 +794,7 @@
                            <div class="panel panel-default">
                               <div class="panel-heading">
                                  <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Sewing Trims: </a>
+                                    <a data-toggle="collapse" data-parent="#collapse2" href="#collapse2">Sewing Trims: </a>
                                  </h4>
                               </div>
                               <div id="collapse2" class="panel-collapse collapse">
@@ -817,7 +833,7 @@
                                                    <tr>
                                                       <td><input type="text" name="id" value="{{$no}}" id="id" style="width:50px;"/></td>
                                                       <td>
-                                                         <select name="class_ids[]"  class="select2" id="class_ids" style="width:200px; height:30px;"   onchange="CalculateQtyRowPros10(this)" >
+                                                         <select name="class_ids[]"  class="select2" id="class_ids" style="width:200px; height:30px;"   onchange="CalculateQtyRowPros10(this);">
                                                          <option value="">--Classification--</option>
                                                          @foreach($ClassList2 as  $row)
                                                          {
@@ -897,7 +913,7 @@
                                                    <tr>
                                                       <td><input type="text" name="ids" value="1" id="id" style="width:50px;"/></td>
                                                       <td>
-                                                         <select name="class_ids[]" class="select2"  id="class_ids" style="width:200px; height:30px;"  onchange="CalculateQtyRowPros10(this)" >
+                                                         <select name="class_ids[]" class="select2"  id="class_ids" style="width:200px; height:30px;"  onchange="CalculateQtyRowPros10(this);">
                                                             <option value="">--Classification--</option>
                                                             @foreach($ClassList2 as  $row)
                                                             {
@@ -973,7 +989,7 @@
                            <div class="panel panel-default">
                               <div class="panel-heading">
                                  <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Packing Trims:</a>
+                                    <a data-toggle="collapse" data-parent="#collapse3" href="#collapse3">Packing Trims:</a>
                                  </h4>
                               </div>
                               <div id="collapse3" class="panel-collapse collapse">
@@ -1012,7 +1028,7 @@
                                                    <tr>
                                                       <td><input type="text" name="idss" value="1" id="id" style="width:50px;"/></td>
                                                       <td>
-                                                         <select name="class_idss[]"  class="select2" id="class_idss" style="width:200px; height:30px;"  onchange="CalculateQtyRowPros11(this);">
+                                                         <select name="class_idss[]"  class="select2" id="class_idss" style="width:200px; height:30px;"  onchange="CalculateQtyRowPros11(this);" >
                                                          <option value="">--Classification--</option>
                                                          @foreach($ClassList3 as  $row)
                                                          {
@@ -1252,7 +1268,8 @@
 <script src="https://cdn.ckeditor.com/4.15.0/standard/ckeditor.js"></script>
 <!-- end row -->
 <script>
-    
+        
+ 
     $(document).on('keydown', 'input[type="number"]', function(e) {
         const invalidKeys = ['e', 'E', '+', '-'];
     
@@ -1618,23 +1635,25 @@
     
                 const color_id = Array.isArray(color_val) ? color_val.join(",") : (color_val || "");
                 const size_id = Array.isArray(size_val) ? size_val.join(",") : (size_val || "");
-    
-                $.ajax({
-                    type: "GET",
-                    dataType: "json",
-                    url: "{{ route('ItemWiseSalesOrderCosting') }}",
-                    data: { item_code, sales_order_no, color_id, size_id },
-                    success: function (data) {
-                        const qty = (data && data[0] && data[0].bom_qty) ? data[0].bom_qty : 0;
-                        findInput(row, 'bom_qtys_expect[]').val(qty);
-    
-                        const bom_qty1 = parseFloat(findInput(row, 'bom_qtys_expect[]').val() || 0) || 0;
-                        const bom_qty2 = parseFloat(findInput(row, 'bom_qtys1[]').val() || 0) || 0;
-                        toggleRowState(row, bom_qty1, bom_qty2);
-                        resolve();
-                    },
-                    error: function () { resolve(); }
-                });
+                if(item_code !== '' && sales_order_no !='' && color_id !='' && size_id !='')
+                {
+                    $.ajax({
+                        type: "GET",
+                        dataType: "json",
+                        url: "{{ route('ItemWiseSalesOrderCosting') }}",
+                        data: { item_code, sales_order_no, color_id, size_id },
+                        success: function (data) {
+                            const qty = (data && data[0] && data[0].bom_qty) ? data[0].bom_qty : 0;
+                            findInput(row, 'bom_qtys_expect[]').val(qty);
+        
+                            const bom_qty1 = parseFloat(findInput(row, 'bom_qtys_expect[]').val() || 0) || 0;
+                            const bom_qty2 = parseFloat(findInput(row, 'bom_qtys1[]').val() || 0) || 0;
+                            toggleRowState(row, bom_qty1, bom_qty2);
+                            resolve();
+                        },
+                        error: function () { resolve(); }
+                    });
+                }
             });
         }
     
@@ -1648,22 +1667,25 @@
                 const color_id = Array.isArray(color_val) ? color_val.join(",") : (color_val || "");
                 const size_id = Array.isArray(size_val) ? size_val.join(",") : (size_val || "");
     
-                $.ajax({
-                    type: "GET",
-                    dataType: "json",
-                    url: "{{ route('PackingWiseSalesOrderCosting') }}",
-                    data: { item_code, sales_order_no, color_id, size_id },
-                    success: function (data) {
-                        const qty = (data && data[0] && data[0].bom_qty) ? data[0].bom_qty : 0;
-                        findInput(row, 'bom_qtyss_expect[]').val(qty);
-    
-                        const bom_qty1 = parseFloat(findInput(row, 'bom_qtyss_expect[]').val() || 0) || 0;
-                        const bom_qty2 = parseFloat(findInput(row, 'bom_qtyss1[]').val() || 0) || 0;
-                        toggleRowState(row, bom_qty1, bom_qty2);
-                        resolve();
-                    },
-                    error: function () { resolve(); }
-                });
+                if(item_code !== '' && sales_order_no !='' && color_id !='' && size_id !='')
+                {
+                    $.ajax({
+                            type: "GET",
+                            dataType: "json",
+                            url: "{{ route('PackingWiseSalesOrderCosting') }}",
+                            data: { item_code, sales_order_no, color_id, size_id },
+                            success: function (data) {
+                                const qty = (data && data[0] && data[0].bom_qty) ? data[0].bom_qty : 0;
+                                findInput(row, 'bom_qtyss_expect[]').val(qty);
+            
+                                const bom_qty1 = parseFloat(findInput(row, 'bom_qtyss_expect[]').val() || 0) || 0;
+                                const bom_qty2 = parseFloat(findInput(row, 'bom_qtyss1[]').val() || 0) || 0;
+                                toggleRowState(row, bom_qty1, bom_qty2);
+                                resolve();
+                            },
+                            error: function () { resolve(); }
+                        });
+                }
             });
         }
     
@@ -1751,7 +1773,8 @@
    
    function getSalesOrderDetails(sales_order_no)
    {
-    $.ajax({
+                    
+        $.ajax({
            type: "GET",
            dataType:"json",
            url: "{{ route('SalesOrderCostingStatus') }}",
@@ -1880,7 +1903,7 @@
                      $("#class_idsx").html(data.html);
                }
             });
-            
+           
          //   setTimeout(function()
          //   {
          //       $("#footable_4 > tbody").each(function()
@@ -1935,12 +1958,59 @@
                      });
                   }
                });
+                
             }
          }
       });
+               
        
+           
+         
+            //     SewingList(sales_order_no);
+            //     PackingList(sales_order_no);   
+           
+              setTimeout(function()
+            {
+                SewingList();
+                PackingList();
+            }, 1500);
    } 
-       
+   
+    function SewingList()
+    {
+        var sales_order_no = $("#sales_order_no").val();
+        $.ajax({
+            dataType: "json",
+            url: "{{ route('GetSewingClassList') }}",
+            data: { 'tr_code': sales_order_no },
+            success: function(data1)
+            { 
+                // Update ONLY selects that exist
+                $("select[name='class_ids[]']").each(function () {
+                    $(this).empty().append(data1.html);
+                });
+            }
+        });
+    }
+    
+    function PackingList()
+    {
+        var sales_order_no = $("#sales_order_no").val();
+        $.ajax({
+            dataType: "json",
+            url: "{{ route('GetPackingClassList') }}",
+            data: { 'tr_code': sales_order_no },
+            success: function(data2)
+            { 
+                // Update ONLY selects that exist
+                $("select[name='class_idss[]']").each(function () {
+                    $(this).empty().append(data2.html);
+                });
+            }
+        });
+    }
+
+
    
    // $(document).on('change', 'select[name^="class_ids[]"]', function()
    // {CalculateQtyRowPros10($(this).closest("tr"));});

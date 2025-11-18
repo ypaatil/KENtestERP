@@ -135,6 +135,22 @@
     input[type=number] {
       -moz-appearance: textfield;
     }
+    .panel-heading {
+            background: #f5f5f5 !important;
+            padding: 10px 15px !important;
+            border: 1px solid #ddd !important;
+        }
+        
+        .panel-title a {
+            display: block !important;
+            color: #333 !important;
+            font-weight: 600 !important;
+            text-decoration: none !important;
+        }
+        
+        .panel-title a.collapsed {
+            color: #333 !important;
+        }
 
 </style>
 <div class="row">
@@ -449,7 +465,7 @@
                            <div class="panel panel-default">
                               <div class="panel-heading">
                                  <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse4">Fabric: </a>
+                                    <a data-toggle="collapse" data-parent="#collapse4" href="#collapse4">Fabric: </a>
                                  </h4>
                               </div>
                               <div id="collapse4" class="panel-collapse collapse">
@@ -519,7 +535,7 @@
                                                       @endphp
                                                       <td><textarea type="text"  name="colors[]"   id="colors" style="width:200px; height:30px;" readonly>{{$data}}</textarea></td>                                             
                                                       <td><input type="text"    name="description[]" value="{{$List->description}}" id="description" style="width:200px; height:30px;" readOnly/></td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->consumption}}" @endif name="consumption[]" value="{{$List->consumption}}" id="consumption" style="width:80px; height:30px;" /></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->consumption}}" @endif name="consumption[]" value="{{$List->consumption}}" id="consumption" style="width:80px; height:30px;" @if($List->item_count>0){{'readonly'}}  @endif /></td>
                                                       <td>
                                                          <select name="unit_id[]" class=" " id="unit_id" style="width:100px; height:30px;" disabled>
                                                             <option value="">--Unit List--</option>
@@ -532,8 +548,8 @@
                                                             @endforeach
                                                          </select>
                                                       </td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1)  min="0" max="{{$List->rate_per_unit}}" @endif name="rate_per_unit[]" value="{{$List->rate_per_unit}}" id="rate_per_unit" style="width:80px; height:30px;"  /></td>
-                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->wastage}}" @endif name="wastage[]" value="{{$List->wastage}}" id="wastage" style="width:80px; height:30px;" /></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1)  min="0" max="{{$List->rate_per_unit}}" @endif name="rate_per_unit[]" value="{{$List->rate_per_unit}}" id="rate_per_unit" style="width:80px; height:30px;"  @if($List->item_count>0){{'readonly'}}  @endif /></td>
+                                                      <td><input type="number" step="any" @if(Session::get('user_type')!=1) min="0" max="{{$List->wastage}}" @endif name="wastage[]" value="{{$List->wastage}}" id="wastage" style="width:80px; height:30px;" @if($List->item_count>0){{'readonly'}} @endif /></td>
                                                       <td><input type="number" step="any"  min="0" max="{{$List->bom_qty}}"    name="bom_qty[]" value="{{$List->bom_qty}}" id="bom_qty" style="width:80px; height:30px;" readOnly/>
                                                          <input type="hidden" name="bom_qty1[]" value="{{$List->item_qty}}" id="bom_qty1" style="width:80px; height:30px;" readOnly/>
                                                          <input type="hidden" name="bom_qty_expect[]" value="0" id="bom_qty_expect1" style="width:80px; height:30px;" readOnly/>
@@ -541,7 +557,7 @@
                                                       <td><input type="number" step="any" class="FABRIC"   name="total_amount[]" value="{{$List->total_amount}}" id="total_amount" style="width:80px; height:30px;" readOnly/></td>
                                                       <td><input type="text" name="remark[]" value="{{$List->remark}}" id="remark" style="width:80px; height:30px;" /></td>
                                                       <td><input type="button" readOnly name="Fbutton[]"   class="btn btn-warning pull-left" value="+"></td>
-                                                      <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone1(this);" value="X" @if($List->item_count_fab >0) {{'disabled'}} @endif></td>
+                                                      <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone1(this);" value="X"  @if($List->item_count>0){{'disabled'}} @endif></td>
                                                    </tr>
                                                    @php 
                                                    $oldArray[]=['sr_no'=>$no,'item_code'=>$List->item_code,'consumption'=>$List->consumption,'description'=>$List->description,'rate_per_unit'=>$List->rate_per_unit,'wastage'=>$List->wastage,'bom_qty'=>$List->bom_qty,'total_amount'=>$List->total_amount];
@@ -611,7 +627,7 @@
                            <div class="panel panel-default">
                               <div class="panel-heading">
                                  <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse5">Trim Fabric: </a>
+                                    <a data-toggle="collapse" data-parent="#collapse5" href="#collapse5">Trim Fabric: </a>
                                  </h4>
                               </div>
                               <div id="collapse5" class="panel-collapse collapse">
@@ -809,7 +825,7 @@
                            <div class="panel panel-default">
                               <div class="panel-heading">
                                  <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">Sewing Trims: </a>
+                                    <a data-toggle="collapse" data-parent="#collapse2" href="#collapse2">Sewing Trims: </a>
                                  </h4>
                               </div>
                               <div id="collapse2" class="panel-collapse collapse">
@@ -1022,7 +1038,7 @@
                            <div class="panel panel-default">
                               <div class="panel-heading">
                                  <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">Packing Trims:</a>
+                                    <a data-toggle="collapse" data-parent="#collapse3" href="#collapse3">Packing Trims:</a>
                                  </h4>
                               </div>
                               <div id="collapse3" class="panel-collapse collapse">

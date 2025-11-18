@@ -241,7 +241,8 @@ class PurchaseOrderController extends Controller
         //$BOMLIST = DB::table('bom_master')->select('bom_code','sales_order_no')->get();
         $BOMLIST= DB::select("select bom_code, sales_order_no from bom_master where sales_order_no in 
             (select sales_order_no from sales_order_costing_master 
-            INNER JOIN buyer_purchse_order_master ON buyer_purchse_order_master.tr_code = sales_order_costing_master.sales_order_no where sales_order_costing_master.is_approved=2 OR buyer_purchse_order_master.og_id = 4)");
+            INNER JOIN buyer_purchse_order_master ON buyer_purchse_order_master.tr_code = sales_order_costing_master.sales_order_no 
+            where  buyer_purchse_order_master.job_status_id=1 AND sales_order_costing_master.is_approved=2 OR buyer_purchse_order_master.og_id = 4)");
         
         return view('PurchaseOrder',compact('firmlist','ledgerlist','buyerlist','gstlist','itemlist','ClassList','code','unitlist','POTypeList','BOMLIST'));     
     }
@@ -2104,7 +2105,7 @@ class PurchaseOrderController extends Controller
                         $max=0;
                         if($value->moq>$value->bom_qty || $value->moq>$value->item_qty){$max=$value->moq;}else{$max=$value->item_qty ?? $value->bom_qty;}
                         $html.='
-                        <td><input type="text" value="'.round($value->bom_qty,2).'" name="bom_qty[]"  style="width:80px;  height:30px;" readOnly/></td>
+                        <td><input type="text" value="'.round($value->bom_qty).'" name="bom_qty[]"  style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="text" value="'.$stock[0]->Stock.'"   style="width:80px;  height:30px;" onclick="stockPopup(this,'.$value->item_code.');" readOnly/></td>
                         <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($max,2).'"  value="'.round($value->item_qty,2).'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
@@ -2265,7 +2266,7 @@ class PurchaseOrderController extends Controller
                         if($value->moq>$value->bom_qty || $value->moq>$value->item_qty){$max=$value->moq;}else{$max=$value->item_qty ?? $value->bom_qty;}
                         $html.='
                         
-                        <td><input type="text" value="'.round($value->bom_qty,2).'" name="bom_qty[]"  style="width:80px;  height:30px;" readOnly/></td>
+                        <td><input type="text" value="'.round($value->bom_qty).'" name="bom_qty[]"  style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="text" value="'.$stock[0]->Stock.'"   style="width:80px;  height:30px;"  onclick="stockPopup(this,'.$value->item_code.');" readOnly/></td>
                         <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($max,2).'"  value="'.round($value->item_qty,2).'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
