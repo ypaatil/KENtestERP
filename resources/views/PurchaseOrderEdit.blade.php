@@ -708,7 +708,7 @@ ini_set('memory_limit', '10G');
          
          @php   }   @endphp
          
-   
+         CalculateRow($(this).parent().parent('tr'));
    });
    
    

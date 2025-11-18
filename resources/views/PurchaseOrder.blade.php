@@ -952,24 +952,7 @@ ini_set('memory_limit', '10G');
       
       
       });
-   
-   $(document).on("change", 'input[class^="ITEMQTY"],input[class^="RATE"]', function (event) 
-   {
-              var po_type_id=$('#po_type_id').val();
-             if(po_type_id!=2)
-            {  var value = $(this).val();
-              var maxLength = parseFloat($(this).attr('max'));
-              var minLength = parseFloat($(this).attr('min')); 
-              if(value>maxLength){alert('Value can not be greater than '+maxLength);}
-              if ((value !== '') && (value.indexOf('.') === -1)) 
-              {
-                   $(this).val(Math.max(Math.min(value, maxLength), minLength));
-              }
-              
-            }
-      
-     
-   });
+  
    
    function EnableFields()
    {        
@@ -1396,7 +1379,27 @@ ini_set('memory_limit', '10G');
            }
         });  
    }
-   
+    
+   $(document).on("change", 'input[class^="ITEMQTY"],input[class^="RATE"]', function (event) 
+   {
+            var po_type_id=$('#po_type_id').val();
+            if(po_type_id!=2)
+            {  var value = $(this).val();
+              var maxLength = parseFloat($(this).attr('max'));
+              var minLength = parseFloat($(this).attr('min')); 
+              if(value>maxLength)
+              {
+                  alert('Value can not be greater than '+maxLength);
+              } 
+              if ((value !== '') && (value.indexOf('.') === -1)) 
+              {
+                   $(this).val(Math.max(Math.min(value, maxLength), minLength));
+              }
+              
+            }
+       CalculateRow($(this).parent().parent('tr'));
+     
+   });
    $("table.footable_2").on("keyup", 'input[name^="item_qtys[]"],input[name^="item_rates[]"],input[name^="disc_pers[]"],input[name^="disc_amounts[]"],input[name^="pur_cgsts[]"],input[name^="camts[]"],input[name^="pur_sgsts[]"],input[name^="pur_igsts[]"],input[name^="iamts[]"],input[name^="amounts[]"],input[name^="freight_amt[]"],input[name^="total_amounts[]"]', function (event) {
        CalculateRow($(this).closest("tr"));
    });
@@ -1405,7 +1408,7 @@ ini_set('memory_limit', '10G');
    
        function CalculateRow(row)
        {
-   
+            console.log("hii");
            var item_qtys=+row.find('input[name^="item_qtys[]"]').val();
            var item_rates=+row.find('input[name^="item_rates[]"]').val();
            var disc_pers=+row.find('input[name^="disc_pers[]"]').val();
@@ -1426,6 +1429,7 @@ ini_set('memory_limit', '10G');
             if(item_qtys>0)
             {
                
+            console.log("ms");
                     Amount=item_qtys*item_rates;
                     disc_amt=(Amount*(disc_pers/100));
                     row.find('input[name^="disc_amounts[]"]').val((disc_amt).toFixed(4));
@@ -1434,6 +1438,7 @@ ini_set('memory_limit', '10G');
                  
                 if(pur_igsts!=0)
                 {
+            console.log("bg");
                      Iamt=(Amount*(pur_igsts/100));
                      row.find('input[name^="iamts[]"]').val((Iamt).toFixed(4));
                      TAmount=Amount+Iamt+freight_amt;
@@ -1441,6 +1446,11 @@ ini_set('memory_limit', '10G');
                 }
                 else
                 {
+            console.log("sdf");
+            
+            console.log("Amount="+Amount);
+            console.log("pur_cgsts="+pur_cgsts);
+            
                      Camt=(Amount*(pur_cgsts/100));
                      row.find('input[name^="camts[]"]').val((Camt).toFixed(4));
                      

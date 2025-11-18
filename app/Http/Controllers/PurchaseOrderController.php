@@ -1368,9 +1368,9 @@ class PurchaseOrderController extends Controller
                         $max=0;
                         if($value->moq>$value->bom_qty || $value->moq>$value->item_qty){$max=$value->moq;}else{$max=$value->item_qty ?? $value->bom_qty;}
                         $html.='
-                        <td><input type="text" value="'.round($value->bom_qty,2).'" name="bom_qty[]"  style="width:80px;  height:30px;" readOnly/></td>
+                        <td><input type="text" value="'.round($value->bom_qty).'" name="bom_qty[]"  style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="text" value="'.$stock[0]->Stock.'"   style="width:80px;  height:30px;" onclick="stockPopup(this,'.$value->item_code.');" readOnly/></td>
-                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($max,2).'"  value="'.round($value->item_qty,2).'" id="item_qty" style="width:80px;  height:30px;" required/>
+                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($max).'"  value="'.round($value->item_qty).'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
                         </td>
                         <td><input type="number" step="any" name="item_rates[]" min="0" max="'.$value->rate_per_unit.'" value="'.$value->rate_per_unit.'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
@@ -2107,7 +2107,7 @@ class PurchaseOrderController extends Controller
                         $html.='
                         <td><input type="text" value="'.round($value->bom_qty).'" name="bom_qty[]"  style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="text" value="'.$stock[0]->Stock.'"   style="width:80px;  height:30px;" onclick="stockPopup(this,'.$value->item_code.');" readOnly/></td>
-                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($max,2).'"  value="'.round($value->item_qty,2).'" id="item_qty" style="width:80px;  height:30px;" required/>
+                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($max).'"  value="'.round($value->item_qty).'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
                         </td>
                         <td><input type="number" step="any" name="item_rates[]" min="0" max="'.$value->rate_per_unit.'" value="'.$value->rate_per_unit.'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
@@ -2268,7 +2268,7 @@ class PurchaseOrderController extends Controller
                         
                         <td><input type="text" value="'.round($value->bom_qty).'" name="bom_qty[]"  style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="text" value="'.$stock[0]->Stock.'"   style="width:80px;  height:30px;"  onclick="stockPopup(this,'.$value->item_code.');" readOnly/></td>
-                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($max,2).'"  value="'.round($value->item_qty,2).'" id="item_qty" style="width:80px;  height:30px;" required/>
+                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($max).'"  value="'.round($value->item_qty).'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
                         </td>
                         <td><input type="number" step="any"    name="item_rates[]" min="0" max="'.$value->rate_per_unit.'" value="'.$value->rate_per_unit.'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
@@ -2481,7 +2481,7 @@ class PurchaseOrderController extends Controller
                         
                         <td><input type="text" value="'.round($value->bom_qty).'" name="bom_qty[]"  style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="text" value="'.$stock[0]->Stock.'"   style="width:80px;  height:30px;"  onclick="stockPopup(this,'.$value->item_code.');"  readOnly/></td>
-                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($button_qty,2).'"  value="'.round($button_qty,2).'" id="item_qty" style="width:80px;  height:30px;" required/>
+                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($button_qty).'"  value="'.round($button_qty).'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
                         </td>
                         <td><input type="number" step="any"    name="item_rates[]" min="0" max="'.$button_rate.'" value="'.$button_rate.'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
@@ -2696,7 +2696,7 @@ class PurchaseOrderController extends Controller
                         
                         <td><input type="text" value="'.round($value->bom_qty).'" name="bom_qty[]"  style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="text" value="'.$stock[0]->Stock.'"   style="width:80px;  height:30px;"  onclick="stockPopup(this,'.$value->item_code.');" readOnly/></td>
-                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($button_qty,2).'"  value="'.round($button_qty,2).'" id="item_qty" style="width:80px;  height:30px;" required/>
+                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($button_qty).'"  value="'.round($button_qty).'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
                         </td>
                         <td><input type="number" step="any"    name="item_rates[]" min="0" max="'.$button_rate.'" value="'.$button_rate.'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
