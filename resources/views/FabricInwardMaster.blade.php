@@ -5,6 +5,10 @@
    {
    display:none!important;
    }
+   .text-right
+   {
+      text-align: right;
+   }
 </style>
 <div class="row">
    <div class="col-12">
@@ -188,6 +192,23 @@
                          <input type="text" name="vendorName" class="form-control" id="vendorName"  value=""  readonly style="width: 250px;"/>
                      </div>
                   </div>
+               </div> <div class="table-wrap" id="PurchaseTbl">
+                  <div class="table-responsive">
+                     <table id="footable_1" class="table  table-bordered table-striped m-b-0  footable_2">
+                        <thead>
+                           <tr class="text-center">
+                              <th>Sr No.</th>
+                              <th>Item Code</th>
+                              <th>Item Name</th>
+                              <th>PO Qty</th> 
+                              <th>To Be Received</th> 
+                              <th>Balance Qty</th> 
+                           </tr>
+                        </thead>
+                        <tbody id="PurchaseTbody">
+                        </tbody>
+                     </table>
+                  </div>
                </div>
                <div class="table-wrap" id="fabricInward">
                   <div class="table-responsive">
@@ -206,7 +227,8 @@
                               <th nowrap>Suplier Roll No.</th>
                               <th>TrackCode</th>
                               <th>Print</th>
-                              <th>Add/Remove</th>
+                              <th>Add</th>
+                              <th>Remove</th>
                            </tr>
                         </thead>
                         <tbody>
@@ -244,7 +266,10 @@
                               <td><input type="text" name="track_code[]"  id="track_code" style="width:80px;height:30px;"  readOnly/></td>
                               <td><i   style="font-size:25px;" onclick="CalculateRowPrint(this);" name="print"  class="fa fa-print" ></td>
                               <td>
-                                 <input type="button"  style="width:40px;" onclick="insertcone(); " name="print" value="+" class="btn btn-warning pull-left AButton"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" >
+                                 <input type="button"  style="width:40px;" onclick="insertcone(); " name="print" value="+" class="btn btn-warning pull-left AButton">
+                              </td>
+                              <td>
+                                 <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" >
                               </td>
                            </tr>
                         </tbody>
@@ -262,7 +287,8 @@
                               <th>Suplier Roll No.</th>
                               <th>TrackCode</th>
                               <th>Print</th>
-                              <th>Add/Remove</th>
+                              <th>Add</th>
+                              <th>Remove</th>
                            </tr>
                         </tfoot>
                         <input type="number" value="1" name="cntrr" id="cntrr" readonly="" hidden="true"  />
@@ -389,7 +415,6 @@
           data:{'vpo_code':vpo_code},
           success: function(data)
           {
-              console.log(data);
                $("#vendorName").val(data.html);
                $('#vendorData').removeClass('hide');
                
@@ -416,14 +441,14 @@
            $('#workOrder').removeClass('hide');
            $(ele).val(1);
            $("#po_code").removeAttr('onchange'); 
-           $("#is_opening").attr('checked', true).trigger("change").attr('disabled', true);
-           $("#po_code").attr('disabled', true);
+           $("#is_opening").attr('disabled', false).prop('checked', true).trigger("change");
+           $("#po_code").val("").attr('disabled', true).trigger("change");
            $("#fge_code").val("").trigger("change").attr('disabled', true);
        }
        else
        {
            $("#po_code").attr('onchange', 'getPODetails();GetPurchaseBillDetails();'); 
-           $("#is_opening").attr('checked', false).trigger("change").attr('disabled', true);
+           $("#is_opening").prop('checked', false).trigger("change").attr('disabled', true);
            $("#po_code").attr('disabled', false);
            $("#fge_code").val("").trigger("change").attr('disabled', false);
            $('#workOrder').addClass('hide');
@@ -462,16 +487,19 @@
         $(row).parent().parent('tr').find('td input[name="item_codes[]"]').val(item_code);  
         var row = $(row).closest('tr'); 
         
-        $.ajax({
-          type: "GET",
-          dataType:"json",
-          url: "{{ route('ItemRateFromPO') }}",
-          data:{'po_code':po_code,item_code:item_code},
-          success: function(data)
-          {
-               +row.find('input[name^="item_rates[]"]').val(data[0]['item_rate']);               
-          }
-        });   
+        if(po_code != '')
+        {
+            $.ajax({
+               type: "GET",
+               dataType:"json",
+               url: "{{ route('ItemRateFromPO') }}",
+               data:{'po_code':po_code,item_code:item_code},
+               success: function(data)
+               {
+                     +row.find('input[name^="item_rates[]"]').val(data[0]['item_rate']);              
+               }
+            });   
+        }
    }
    
    
@@ -542,13 +570,14 @@
       });
     	
    function CalculateRow(row)
-   { 
-   	var gram_per_meter=+row.find('input[name^="gram_per_meter[]"]').val();
-          var meter=+row.find('input[name^="meter[]"]').val();
-    	var kg=parseFloat(parseFloat(meter).toFixed(2) * parseFloat(gram_per_meter).toFixed(2)).toFixed(2);
+   {  
+   	   var gram_per_meter=+row.find('input[name^="gram_per_meter[]"]').val();
+         var meter=+row.find('input[name^="meter[]"]').val();
+
+    	   var kg=parseFloat(parseFloat(meter).toFixed(2) * parseFloat(gram_per_meter).toFixed(2)).toFixed(2);
     	
-          row.find('input[name^="kg[]"]').val(kg.toFixed(2));
-   	mycalc();
+         row.find('input[name^="kg[]"]').val(kg.toFixed(2));
+   	   mycalc();
    }
    
    
@@ -556,7 +585,7 @@
       
           CalculateRowPrint($(this).closest("tr"));
           
-      });
+   });
     	
    function CalculateRowPrint(btn)
    { 
@@ -724,7 +753,7 @@
    
    var cell4 = row.insertCell(9);
    var t4=document.createElement("input");
-   t4.style="display: table-cell; width:80px;height:30px;";
+   t4.style="display: table-cell; width:100px;height:30px;";
    t4.type="number";
    t4.step="any";
    t4.required="true";
@@ -769,14 +798,14 @@
    btnAdd.setAttribute("onclick", "insertcone();CalculateRowPrint(this);");
    cell8.appendChild(btnAdd);
    
-   
+   var cell9=row.insertCell(13);
    var btnRemove = document.createElement("INPUT");
    btnRemove.id = "Dbutton";
    btnRemove.type = "button";
    btnRemove.className="btn btn-danger pull-left";
    btnRemove.value = "X";
    btnRemove.setAttribute("onclick", "deleteRowcone(this)");
-   cell8.appendChild(btnRemove);
+   cell9.appendChild(btnRemove);
    
    var w = $(window);
    var row = $('#footable_3').find('tr').eq(indexcone);
@@ -818,50 +847,77 @@
          });
       function CalculateRow(row)
       {
-          var item_qtys=+row.find('input[name^="meter[]"]').val();
-          var item_rates=+row.find('input[name^="item_rates[]"]').val();
-          var amount=(parseFloat(item_qtys)*parseFloat(item_rates)).toFixed();
-          row.find('input[name^="amounts[]"]').val(amount);
+         var item_qtys=+row.find('input[name^="meter[]"]').val();
+         var item_rates=+row.find('input[name^="item_rates[]"]').val();
+         var amount=(parseFloat(item_qtys)*parseFloat(item_rates)).toFixed();
+         row.find('input[name^="amounts[]"]').val(amount);
+   	   var current_item_code = row.find('input[name^="item_codes[]"]').val();
+         var po_qty = $(".item_code_" + current_item_code).find('.bal_qty').html();
+
+         // calculate total
+         var total = 0;
+
+         $("#footable_2 > tbody > tr").each(function() {
+
+            var item_code = $(this).find('input[name="item_codes[]"]').val();
+
+            if (current_item_code === item_code) {
+               var meter = parseFloat($(this).find('input[name="meter[]"]').val()) || 0;
+               total = total + meter;
+            }
+         });
+
+         // 5% allowed quantity
+         var allow_qty = parseFloat(po_qty) + (parseFloat(po_qty) * 0.05);
+
+         console.log("po_qty: " + po_qty);
+         console.log("allow_qty: " + allow_qty);
+         console.log("total: " + total);
+
+         if (total > allow_qty) {
+            alert("Quantity is allow only 5%");
+         }
+
+
           mycalc();
       }
    
    
    function mycalc()
-   {  
-   document.getElementById("total_taga_qty").value =document.getElementById('cntrr').value;
-   
-   sum1 = 0.0;
-   var amounts = document.getElementsByClassName('METER');
-   //alert("value="+amounts[0].value);
-   for(var i=0; i<amounts .length; i++)
-   { 
-   var a = +amounts[i].value;
-   sum1 += parseFloat(a);
-   }
-   document.getElementById("total_meter").value = sum1.toFixed(2);
-   
-   
-   sum1 = 0.0;
-   var amounts = document.getElementsByClassName('KG');
-   //alert("value="+amounts[0].value);
-   for(var i=0; i<amounts .length; i++)
-   { 
-   var a = +amounts[i].value;
-   sum1 += parseFloat(a);
-   }
-   document.getElementById("total_kg").value = sum1.toFixed(2);
-   
-   
-   sum1 = 0.0;
-   var amounts = document.getElementsByClassName('AMT');
-   //alert("value="+amounts[0].value);
-   for(var i=0; i<amounts .length; i++)
-   { 
-   var a = +amounts[i].value;
-   sum1 += parseFloat(a);
-   }
-   document.getElementById("total_amount").value = sum1.toFixed(2);
-   
+   {    
+         document.getElementById("total_taga_qty").value =document.getElementById('cntrr').value;
+         
+         sum1 = 0.0;
+         var amounts = document.getElementsByClassName('METER');
+         //alert("value="+amounts[0].value);
+         for(var i=0; i<amounts .length; i++)
+         { 
+         var a = +amounts[i].value;
+         sum1 += parseFloat(a);
+         }
+         document.getElementById("total_meter").value = sum1.toFixed(2);
+         
+         
+         sum1 = 0.0;
+         var amounts = document.getElementsByClassName('KG');
+         //alert("value="+amounts[0].value);
+         for(var i=0; i<amounts .length; i++)
+         { 
+         var a = +amounts[i].value;
+         sum1 += parseFloat(a);
+         }
+         document.getElementById("total_kg").value = sum1.toFixed(2);
+         
+         
+         sum1 = 0.0;
+         var amounts = document.getElementsByClassName('AMT');
+         //alert("value="+amounts[0].value);
+         for(var i=0; i<amounts .length; i++)
+         { 
+         var a = +amounts[i].value;
+         sum1 += parseFloat(a);
+         }
+         document.getElementById("total_amount").value = sum1.toFixed(2);  
    
    }
    
@@ -927,7 +983,7 @@
          //dataType:"json",
          data:{po_code:po_code},
          success:function(response){
-         console.log(response);  
+            
             $("#item_code").html(response.html);
          
          }
@@ -935,31 +991,41 @@
    }
    
    
-   function getDetails(po_code){
-   
-   $.ajax({
-   type:"GET",
-   url:"{{ route('getPoMasterDetail') }}",
-   //dataType:"json",
-   data:{po_code:po_code},
-   success:function(response){
-   console.log(response);
-   
-   $("#Ac_code").val(response[0].Ac_code);
-   $("#invoice_no").val(response[0].supplierRef);
-   $("#invoice_date").val(response[0].pur_date);
-   $("#po_type_id").val(response[0].po_type_id);
-   $("#in_narration").val(response[0].narration);
-   
-   gettable(po_code);
-   
-   
-   document.getElementById('Ac_code').disabled =true;
-   document.getElementById('po_type_id').disabled=true;
-   
-   
-   }
-   });
+   function getDetails(po_code)
+   {
+         $.ajax({
+            type:"GET",
+            url:"{{ route('getPoMasterDetail') }}",
+            //dataType:"json",
+            data:{po_code:po_code},
+            success:function(response)
+            {
+               
+                  
+                  $("#Ac_code").val(response[0].Ac_code);
+                  $("#invoice_no").val(response[0].supplierRef);
+                  $("#invoice_date").val(response[0].pur_date);
+                  $("#po_type_id").val(response[0].po_type_id);
+                  $("#in_narration").val(response[0].narration);
+                  
+                  gettable(po_code);
+
+                  document.getElementById('Ac_code').disabled =true;
+                  document.getElementById('po_type_id').disabled=true;
+            }
+            
+         });
+
+            
+         $.ajax({
+            type:"GET",
+            url:"{{ route('GetPurchaseDetailItemCodeWise') }}", 
+            data:{po_code:po_code},
+            success:function(response){
+               $("#PurchaseTbody").html(response.html);
+            
+            }
+         });  
    } 
 </script>
 <!-- end row -->

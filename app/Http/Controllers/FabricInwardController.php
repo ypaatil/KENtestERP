@@ -1396,15 +1396,43 @@ P2
     }
 
 
-  public function getItemRateFromPO(Request $request)
+    public function getItemRateFromPO(Request $request)
     { 
         $po_code= $request->input('po_code');
         $item_code= $request->input('item_code');
-        $Rate = DB::select("select  item_rate from    purchaseorder_detail
+        $Rate = DB::select("select  item_rate from  purchaseorder_detail
         where purchaseorder_detail.pur_code='". $po_code."' and item_code='".$item_code."'");
         return json_encode($Rate);
     }
 
+    public function GetPurchaseDetailItemCodeWise(Request $request)
+    { 
+        $po_code= $request->input('po_code'); 
+        $PurchaseData = DB::select("select  purchaseorder_detail.item_rate, sum(item_qty) as item_qty,  
+                        (SELECT sum(inward_details.meter) FROM inward_details
+                        WHERE inward_details.po_code = purchaseorder_detail.pur_code AND inward_details.item_code = purchaseorder_detail.item_code) as to_be_received,
+                        item_master.item_name,item_master.item_code from  purchaseorder_detail 
+                        INNER JOIN item_master ON item_master.item_code = purchaseorder_detail.item_code 
+                        where purchaseorder_detail.pur_code='". $po_code."' GROUP BY purchaseorder_detail.item_code");
+
+        $html = '';
+        $sr_no = 1;
+        foreach($PurchaseData as $row)
+        {
+             $html .= '<tr class="item_code_'.$row->item_code.'">
+                            <td class="text-center">'.($sr_no++).'</td>  
+                            <td class="text-center">'.$row->item_code.'</td>  
+                            <td>'.$row->item_name.'</td>  
+                            <td class="text-center">'.$row->item_qty.'</td>    
+                            <td class="text-center">'.$row->to_be_received.'</td>    
+                            <td class="text-center bal_qty">'.($row->item_qty-$row->to_be_received).'</td>    
+                    </tr>'; 
+        }
+
+        return response()->json(['html' => $html]);
+    }
+
+    
 
     // public function FabricGRNData()
     // {
@@ -3625,6 +3653,30 @@ P2
     
         // Return JSON response
         return response()->json(['html' => $jsonData, 'currentDate' => $currentDate]);
+    }
+
+    public function GetItemPucharseOrder(Request $request)
+    {
+        // DB::enableQueryLog();
+        $vendorPurchaseOrderList = DB::query()
+            ->fromSub(function ($query) use ($request) {
+                $query->from('vendor_purchase_order_packing_trims_details')
+                    ->select('vendor_purchase_order_packing_trims_details.item_code')
+                    ->where('vpo_code', $request->vpo_code);
+            }, 'combined')
+            ->join('item_master', 'item_master.item_code', '=', 'combined.item_code')
+            ->select('item_master.item_code', 'item_master.item_name')
+            ->get();
+        // dd(DB::getQueryLog());
+        $html = '<option value="">--Select Item--</option>';
+
+        if ($vendorPurchaseOrderList->count() > 0) {
+            foreach ($vendorPurchaseOrderList as $row) {
+                $html .= '<option value="' . $row->item_code . '">(' . $row->item_code . ') ' . $row->item_name . '</option>';
+            }
+        }
+
+        return response()->json(['html' => $html]);
     }
 
 }
