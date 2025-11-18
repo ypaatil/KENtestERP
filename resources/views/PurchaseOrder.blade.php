@@ -957,6 +957,7 @@ ini_set('memory_limit', '10G');
    function EnableFields()
    {        
         $("select").prop('disabled', false);
+        $("input").prop('disabled', false);
    }
    
    
