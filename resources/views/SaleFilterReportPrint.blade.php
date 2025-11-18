@@ -3,7 +3,9 @@
 @php setlocale(LC_MONETARY, 'en_IN'); @endphp
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
-
+<style>
+.hiddensectionbox{ display:none }
+</style>
 <div class="row">
    <div class="col-12">
       <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -17,7 +19,7 @@
       </div>
    </div>
 </div>
-<div class="row hiddensection" >
+<div class="row hiddensectionbox" >
    <div class="col-md-3">
       <div class="card mini-stats-wid" style="background-color:#152d9f;" >
          <div class="card-body">
@@ -127,7 +129,7 @@
                             </select>
                         </div>
                     </div> 
-                    <div class="col-md-3 hiddensection">
+                    <div class="col-md-3 hiddensectionbox">
                         <div class="mb-3">
                             <label for="Ac_code" class="form-label">Buyer Name</label> 
                            <select name="Ac_code" class="form-control select2" id="Ac_code">
@@ -138,7 +140,7 @@
                             </select>
                         </div>
                     </div> 
-                    <div class="col-md-2 hiddensection">
+                    <div class="col-md-2 hiddensectionbox">
                         <div class="mb-3">
                             <label for="sale_code" class="form-label">Invoice No</label> 
                            <select name="sale_code" class="form-control select2" id="sale_code">
