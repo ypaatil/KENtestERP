@@ -428,30 +428,13 @@ function syncAllDateHierarchies(colIndex) {
 
 
 
- 
- /* function applySimpleFilter(col, menu) {
-  const table = $('#dt').DataTable();
-  const vals = menu.find('.opt:checked').map((i,e)=>e.value).get();    
 
-  // Save checked values
-  savedFilterStates[col] = vals;
-
-  // Save visible options at this moment
-  const visibleOptions = menu.find('.opt').map((i,e)=>e.value).get();
-  savedVisibleValues[col] = visibleOptions;
-
-  // Mark this as parent
-  lastParentFilterCol = col;
-
-  // Apply search
-  table.column(col).search(vals.length ? vals.join('|') : '❌', true, false).draw();
-}
-*/
 
 function escapeRegex(text) {
     return text.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
   
+/*
 function applySimpleFilter(col, menu) {
     const table = $('#dt').DataTable();
     
@@ -459,16 +442,34 @@ function applySimpleFilter(col, menu) {
     let valsD = menu.find('.opt:checked').map((i, e) => {
         return e.value.replace(/\\/g, "");
     }).get();
-
+    console.log(valsD);
     savedFilterStates[col] = valsD;
      
     const visibleOptions = menu.find('.opt').map((i, e) => e.value).get();   
     savedVisibleValues[col] = visibleOptions;
     lastParentFilterCol = col;
  
-    // Apply search safely
     const pattern = vals.length ? vals.join('|') : '❌';
     
+    table.column(col).search(pattern, true, false).draw();
+    }  */
+
+    function applySimpleFilter(col, menu) {
+    const table = $('#dt').DataTable();
+
+    const vals = menu.find('.opt:checked').map((i, e) => e.value).get();
+    savedFilterStates[col] = vals;
+
+    const visibleOptions = menu.find('.opt').map((i, e) => e.value).get();
+    savedVisibleValues[col] = visibleOptions;
+    lastParentFilterCol = col;
+
+    // Exact-match regex pattern
+    const pattern = vals.length
+        ? vals.map(v => "^" + escapeRegex(v) + "$").join("|")
+        : "";
+
+    // Apply REGEX filter, exact match only
     table.column(col).search(pattern, true, false).draw();
 }
 
