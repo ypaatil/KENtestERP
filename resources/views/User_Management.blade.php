@@ -20,7 +20,7 @@
          <h4 class="mb-sm-0 font-size-18">User Master</h4>
          <div class="page-title-right">
             <ol class="breadcrumb m-0">
-               <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
+               <li class="breadcrumb-item"><a href="javascript: void(0);">Master</a></li>
                <li class="breadcrumb-item active">User Master</li>
             </ol>
          </div>
@@ -32,7 +32,7 @@
    <div class="col-xl-12">
       <div class="card">
          <div class="card-body">
-            <h4 class="card-title mb-4">Form Grid Layout</h4>
+            <h4 class="card-title mb-4">User Master</h4>
             @if ($errors->any())
             <div class="col-md-6">
                <div class="alert alert-danger">
@@ -260,7 +260,7 @@
                <table id="myTable1" class="table table-hover display  pb-30">
                   <thead>
                      <tr>
-                        <th>SrNo</th>
+                        <th>Sr No</th>
                         <th>Form Name</th>
                         <th>Read</th>
                         <th>Write</th>
@@ -270,7 +270,7 @@
                   </thead>
                   <tfoot>
                      <tr>
-                        <th>SrNo</th>
+                        <th>Sr No</th>
                         <th>Form Name</th>
                         <th>Read</th>
                         <th>Write</th>

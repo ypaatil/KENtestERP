@@ -255,28 +255,47 @@ class PurchaseOrderController extends Controller
      */
     public function store(Request $request)
     {
+        // -----------------------------------------------------------
+        // CLEAN ALL ARRAY INPUTS TO REMOVE EMPTY FIRST ROW
+        // -----------------------------------------------------------
+        $clean = $request->all();
+    
+        foreach ($clean as $key => $val) {
+            if (is_array($val)) {
+                // remove empty, null, "" rows + reindex
+                $clean[$key] = array_values(array_filter($val, function ($v) {
+                    return $v !== null && $v !== "" && $v !== " ";
+                }));
+            }
+        }
+    
+        // Replace request arrays with cleaned version
+        $request->merge($clean);
+    
         try {
             DB::beginTransaction();
-
+    
             $firm_id = $request->firm_id;
-
+    
+            // ----------------------------------------------
             // Fetch next counter number
+            // ----------------------------------------------
             $codefetch = DB::table('counter_number')
                 ->select(DB::raw("tr_no + 1 as tr_no, c_code, code"))
                 ->where('c_name', 'C1')
                 ->where('type', 'PurchaseOrder')
                 ->where('firm_id', $firm_id)
                 ->first();
-
+    
             if (!$codefetch) {
                 throw new \Exception("Counter number not configured.");
             }
-
-            // Clean BOM / Class data
+    
+            // Clean main BOM data
             $bom_code = $request->bom_codes ? implode(",", $request->bom_codes) : '';
             $bom_type = implode(",", (array)$request->input('bom_type', []));
             $class_ids = implode(",", (array)$request->input('class_id', []));
-
+    
             // Generate Transaction No
             if ($bom_type == '1') {
                 $TrNo = $codefetch->code . '/25-26/' . 'F' . $codefetch->tr_no;
@@ -285,9 +304,9 @@ class PurchaseOrderController extends Controller
             } else {
                 $TrNo = $codefetch->code . '/25-26/' . 'T' . $codefetch->tr_no;
             }
-
-            // Main purchase order data
-            $data = [
+    
+            // Insert PO master
+            PurchaseOrderModel::insert([
                 'pur_code' => $TrNo,
                 'bom_code' => $bom_code,
                 'bom_type' => $bom_type,
@@ -319,109 +338,96 @@ class PurchaseOrderController extends Controller
                 'reason_disapproval' => '0',
                 'approveFlag' => 0,
                 'delflag' => 0
-            ];
-
-            PurchaseOrderModel::insert($data);
-
-            // Update PO counter
+            ]);
+    
+            // Update Counter No
             DB::update(
                 "UPDATE counter_number SET tr_no = tr_no + 1  
                 WHERE c_name ='C1' AND type='PurchaseOrder' AND firm_id=?",
                 [$firm_id]
             );
-
-            // Close date update in dump tables
+    
+            // Dump tables close date update
             $closeDate = date('Y-m-d');
             DB::update("UPDATE dump_fabric_stock_data SET closeDate=? WHERE po_no=?", [$closeDate, $TrNo]);
             DB::update("UPDATE dump_trim_stock_data SET closeDate=? WHERE po_no=?", [$closeDate, $TrNo]);
-
-            // -----------------------------------
-            // SAFE DETAIL ROW INSERTION
-            // -----------------------------------
-
-            // Clean item codes (remove empty rows)
-            $item_codes = array_filter($request->item_codes ?? []);
-            $item_codes = array_values($item_codes); // reindex cleanly
-            $itemCount  = count($item_codes);
-
-            $data2 = [];
+    
+            // -----------------------------------------------------------
+            // SAFE DETAIL INSERT
+            // -----------------------------------------------------------
+            $detailRows = [];
             $usedItemCodes = [];
-
-            for ($x = 0; $x < $itemCount; $x++) {
-
-                if (empty($item_codes[$x])) {
-                    continue;
-                }
-
-                $data2[] = [
-                    'pur_code'   => $TrNo,
-                    'pur_date'   => $request->pur_date,
-                    'bom_code'   => $bom_code,
-                    'bom_type'   => $bom_type,
-                    'class_id'   => $class_ids,
-                    'Ac_code'    => $request->Ac_code,
-
-                    'sales_order_no' => $request->sales_order_no[$x] ?? null,
-                    'item_code'      => $item_codes[$x],
-                    'hsn_code'       => $request->hsn_code[$x] ?? null,
-                    'unit_id'        => $request->unit_id[$x] ?? null,
-                    'item_qty'       => $request->item_qtys[$x] ?? 0,
-                    'item_rate'      => $request->item_rates[$x] ?? 0,
-                    'disc_per'       => $request->disc_pers[$x] ?? 0,
-                    'disc_amount'    => $request->disc_amounts[$x] ?? 0,
-                    'pur_cgst'       => $request->pur_cgsts[$x] ?? 0,
-                    'camt'           => $request->camts[$x] ?? 0,
-                    'pur_sgst'       => $request->pur_sgsts[$x] ?? 0,
-                    'samt'           => $request->samts[$x] ?? 0,
-                    'pur_igst'       => $request->pur_igsts[$x] ?? 0,
-                    'iamt'           => $request->iamts[$x] ?? 0,
-                    'amount'         => $request->amounts[$x] ?? 0,
+    
+            $rowCount = count($request->item_codes);
+    
+            for ($i = 0; $i < $rowCount; $i++) {
+    
+                // Already cleaned, so no blank rows
+                $detailRows[] = [
+                    'pur_code'       => $TrNo,
+                    'pur_date'       => $request->pur_date,
+                    'bom_code'       => $bom_code,
+                    'bom_type'       => $bom_type,
+                    'class_id'       => $class_ids,
+                    'Ac_code'        => $request->Ac_code,
+    
+                    'sales_order_no' => $request->sales_order_no[$i] ?? null,
+                    'item_code'      => $request->item_codes[$i] ?? null,
+                    'hsn_code'       => $request->hsn_code[$i] ?? null,
+                    'unit_id'        => $request->unit_id[$i] ?? null,
+                    'item_qty'       => $request->item_qtys[$i] ?? 0,
+                    'item_rate'      => $request->item_rates[$i] ?? 0,
+    
+                    'disc_per'       => $request->disc_pers[$i] ?? 0,
+                    'disc_amount'    => $request->disc_amounts[$i] ?? 0,
+                    'pur_cgst'       => $request->pur_cgsts[$i] ?? 0,
+                    'camt'           => $request->camts[$i] ?? 0,
+                    'pur_sgst'       => $request->pur_sgsts[$i] ?? 0,
+                    'samt'           => $request->samts[$i] ?? 0,
+                    'pur_igst'       => $request->pur_igsts[$i] ?? 0,
+                    'iamt'           => $request->iamts[$i] ?? 0,
+                    'amount'         => $request->amounts[$i] ?? 0,
+    
                     'freight_hsn'    => 0,
-                    'freight_amt'    => $request->freight_amt[$x] ?? 0,
-                    'total_amount'   => $request->total_amounts[$x] ?? 0,
-
-                    'conQty'     => $request->conQtys[$x] ?? 0,
-                    'unitIdM'    => $request->unitIdMs[$x] ?? ($request->unit_id[$x] ?? null),
-                    'priUnitd'   => $request->priUnitds[$x] ?? ($request->unit_id[$x] ?? null),
-                    'SecConQty'  => $request->SecConQtys[$x] ?? 0,
-                    'secUnitId'  => $request->secUnitIds[$x] ?? ($request->unit_id[$x] ?? null),
-                    'poQty'      => $request->poQtys[$x] ?? 0,
-                    'poUnitId'   => $request->poUnitIds[$x] ?? ($request->unit_id[$x] ?? null),
-                    'rateM'      => $request->rateMs[$x] ?? 0,
-                    'totalQty'   => $request->totalQtys[$x] ?? 0,
-
-                    'firm_id'    => $firm_id
+                    'freight_amt'    => $request->freight_amt[$i] ?? 0,
+                    'total_amount'   => $request->total_amounts[$i] ?? 0,
+    
+                    'firm_id' => $firm_id
                 ];
-
-                $usedItemCodes[] = $item_codes[$x];
+    
+                $usedItemCodes[] = $request->item_codes[$i];
             }
-
-            // Insert detail rows if any
-            if (!empty($data2)) {
-                PurchaseOrderDetailModel::insert($data2);
+    
+            if (!empty($detailRows)) {
+                PurchaseOrderDetailModel::insert($detailRows);
             }
-
-            // Update usedFlag
+    
+            // -----------------------------------------------------------
+            // SAFE BOM UPDATE
+            // -----------------------------------------------------------
+            $usedItemCodes = array_filter($usedItemCodes);
+    
             if (!empty($usedItemCodes)) {
-                $codes = implode(",", $usedItemCodes);
+    
+                $placeholders = implode(',', array_fill(0, count($usedItemCodes), '?'));
+    
                 DB::update(
                     "UPDATE bom_fabric_details SET usedFlag = 1 
-                    WHERE bom_code=? AND item_code IN ($codes)",
-                    [$bom_code]
+                     WHERE bom_code=? 
+                     AND item_code IN ($placeholders)",
+                    array_merge([$bom_code], $usedItemCodes)
                 );
             }
-
+    
             DB::commit();
             return redirect()->route('PurchaseOrder.index')->with('message', 'Add Record Successfully');
-        }
-
-        catch (\Exception $e) {
+    
+        } catch (\Exception $e) {
             DB::rollBack();
             \Log::info("Message: ".$e->getMessage()." Line: ".$e->getLine());
             return redirect()->back()->withInput()->withErrors(['error' => $e->getMessage()]);
         }
     }
-
 
 
     /**
@@ -1103,35 +1109,55 @@ class PurchaseOrderController extends Controller
             if($po_type_id != 2)
             {
                     if ($cat_id == 2) {
-                        $q = DB::table('bom_sewing_trims_details as t')
-                            ->join('classification_master as c', function ($join) use ($cat_id) {
-                                $join->on('c.class_id', '=', 't.class_id')
-                                     ->where('c.cat_id', '=', $cat_id);
-                            })
-                            ->whereIn('t.sales_order_no', $sales_order_nos)
-                            ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"), DB::raw(value: "'Sewing Trims' as cat_name"))
-                            ->groupBy('t.class_id', 'c.class_name');
-                        $queries[] = $q;
+                      $q = DB::table('bom_sewing_trims_details as t')
+                                ->join('classification_master as c', function ($join) use ($cat_id) {
+                                    $join->on('c.class_id', '=', 't.class_id')
+                                         ->where('c.cat_id', '=', $cat_id);
+                                })
+                                ->whereIn('t.sales_order_no', $sales_order_nos)
+                                ->select(
+                                    't.class_id',
+                                    'c.class_name',
+                                    DB::raw("$cat_id as cat_id"),
+                                    DB::raw("'Sewing Trims' as cat_name")
+                                )
+                                ->groupBy('t.class_id', 'c.class_name');
+                            
+                            $queries[] = $q;
+
             
                     } elseif ($cat_id == 3) {
-                        $q = DB::table('bom_packing_trims_details as t')
+                       $q = DB::table('bom_packing_trims_details as t')
                             ->join('classification_master as c', function ($join) use ($cat_id) {
                                 $join->on('c.class_id', '=', 't.class_id')
                                      ->where('c.cat_id', '=', $cat_id);
                             })
                             ->whereIn('t.sales_order_no', $sales_order_nos)
-                            ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"), DB::raw(value: "'Packing Trims' as cat_name"))
+                            ->select(
+                                't.class_id',
+                                'c.class_name',
+                                DB::raw("$cat_id as cat_id"),
+                                DB::raw("'Packing Trims' as cat_name")
+                            )
                             ->groupBy('t.class_id', 'c.class_name');
+                        
                         $queries[] = $q;
+
                     }
                     elseif ($cat_id == 1) {
                                                  
-                        $q = DB::table('classification_master as t')
-                        ->select('t.class_id', 't.class_name', DB::raw("$cat_id as cat_id"), DB::raw(value: "'Fabric' as cat_name"))
-                        ->where('t.cat_id', '=', $cat_id)
-                        ->groupBy('t.class_id', 't.class_name');
-
+                      $q = DB::table('classification_master as t')
+                            ->select(
+                                't.class_id',
+                                't.class_name',
+                                DB::raw("$cat_id as cat_id"),
+                                DB::raw("'Fabric' as cat_name")
+                            )
+                            ->where('t.cat_id', '=', $cat_id)
+                            ->groupBy('t.class_id', 't.class_name');
+                        
                         $queries[] = $q;
+
                          
                     }
             }
@@ -1139,14 +1165,21 @@ class PurchaseOrderController extends Controller
             {
                 if ($cat_id == 2) 
                 {
-                    $q = DB::table('bom_sewing_trims_details as t')
+                     $q = DB::table('bom_sewing_trims_details as t')
                         ->join('classification_master as c', function ($join) use ($cat_id) {
                             $join->on('c.class_id', '=', 't.class_id')
                                  ->where('c.cat_id', '=', $cat_id);
                         })
-                        ->select('t.class_id', 'c.class_name', DB::raw("$cat_id as cat_id"), DB::raw(value: "'Sewing Trims' as cat_name"))
+                        ->select(
+                            't.class_id',
+                            'c.class_name',
+                            DB::raw("$cat_id as cat_id"),
+                            DB::raw("'Sewing Trims' as cat_name")
+                        )
                         ->groupBy('t.class_id', 'c.class_name');
+                    
                     $queries[] = $q;
+
         
                 } elseif ($cat_id == 3) {
                     $q = DB::table('bom_packing_trims_details as t')
@@ -1964,12 +1997,15 @@ class PurchaseOrderController extends Controller
          
             $table="bom_fabric_details"; 
            // $bom_codeids=explode(",",$request->bom_code);
-            foreach($bom_codeids as $bom)
-            {
-                $bom_code=$bom_code."'".$bom."',";
-                
-            }
-            $bom_code=rtrim($bom_code,",");
+            // Convert array to safe comma-separated quoted list
+            $bom_code = implode(",", array_map(function($b) {
+                return "'" . trim($b) . "'";
+            }, $bom_codeids));
+            
+            // If empty → block query
+            // if ($bom_code == "") {
+            //     return response()->json(['error' => 'No BOM codes found'], 400);
+            // }
             // echo  $bom_code; exit;
             //  DB::enableQueryLog();
      
@@ -2520,7 +2556,7 @@ class PurchaseOrderController extends Controller
                         
                         if($value->class_id == 12)
                         {
-                            $button_qty = round($value->item_qty/144,precision: 2);
+                            $button_qty = round($value->item_qty/144, 2);
                             $button_rate = $value->rate_per_unit * 144;
                         }
                         else

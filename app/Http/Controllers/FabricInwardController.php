@@ -156,7 +156,7 @@ class FabricInwardController extends Controller
         $ItemList = ItemModel::where('item_master.delflag','=', '0')->where('item_master.cat_id','=', '1')->get();
         $Ledger = LedgerModel::where('ledger_master.delflag','=', '0')->whereIn('ledger_master.bt_id', [1,2,4])->get();
         $FGList =  DB::table('fg_master')->get();
-        $POList = PurchaseOrderModel::where('purchase_order.bom_type','=', '1')->get();
+        $POList = PurchaseOrderModel::where('purchase_order.bom_type','=', '1')->where('purchase_order.po_status','=', '1')->get();
         $POTypeList = POTypeModel::where('po_type_master.delflag','=', '0')->get();
         $gstlist = DB::table('tax_type_master')->get();
         $BOMLIST = DB::table('bom_master')->select('bom_code','sales_order_no')->get();
@@ -3660,8 +3660,8 @@ P2
         // DB::enableQueryLog();
         $vendorPurchaseOrderList = DB::query()
             ->fromSub(function ($query) use ($request) {
-                $query->from('vendor_purchase_order_packing_trims_details')
-                    ->select('vendor_purchase_order_packing_trims_details.item_code')
+                $query->from('vendor_purchase_order_fabric_details')
+                    ->select('vendor_purchase_order_fabric_details.item_code')
                     ->where('vpo_code', $request->vpo_code);
             }, 'combined')
             ->join('item_master', 'item_master.item_code', '=', 'combined.item_code')

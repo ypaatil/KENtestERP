@@ -441,9 +441,11 @@
            $('#workOrder').removeClass('hide');
            $(ele).val(1);
            $("#po_code").removeAttr('onchange'); 
-           $("#is_opening").attr('disabled', false).prop('checked', true).trigger("change");
+           $("#is_opening").attr('disabled', true).prop('checked', true).trigger("change");
            $("#po_code").val("").attr('disabled', true).trigger("change");
            $("#fge_code").val("").trigger("change").attr('disabled', true);
+           $("#Ac_code").val(50).trigger("change").attr('disabled', true);
+           $("#bill_to").val(26).trigger("change").attr('disabled', true);
        }
        else
        {
