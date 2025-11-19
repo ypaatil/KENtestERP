@@ -255,11 +255,12 @@ class PurchaseOrderController extends Controller
      */
     public function store(Request $request)
     {
-        try {  
+        try {
             DB::beginTransaction();
-        
-            $firm_id = $request->input('firm_id');      
 
+            $firm_id = $request->firm_id;
+
+            // Fetch next counter number
             $codefetch = DB::table('counter_number')
                 ->select(DB::raw("tr_no + 1 as tr_no, c_code, code"))
                 ->where('c_name', 'C1')
@@ -267,15 +268,16 @@ class PurchaseOrderController extends Controller
                 ->where('firm_id', $firm_id)
                 ->first();
 
-            if ($request->input('bom_codes') != '') {
-                $bom_code = implode(",", $request->input('bom_codes'));
-            } else {
-                $bom_code = '';
+            if (!$codefetch) {
+                throw new \Exception("Counter number not configured.");
             }
 
+            // Clean BOM / Class data
+            $bom_code = $request->bom_codes ? implode(",", $request->bom_codes) : '';
             $bom_type = implode(",", (array)$request->input('bom_type', []));
             $class_ids = implode(",", (array)$request->input('class_id', []));
 
+            // Generate Transaction No
             if ($bom_type == '1') {
                 $TrNo = $codefetch->code . '/25-26/' . 'F' . $codefetch->tr_no;
             } else if ($class_ids == '148') {
@@ -284,6 +286,7 @@ class PurchaseOrderController extends Controller
                 $TrNo = $codefetch->code . '/25-26/' . 'T' . $codefetch->tr_no;
             }
 
+            // Main purchase order data
             $data = [
                 'pur_code' => $TrNo,
                 'bom_code' => $bom_code,
@@ -307,7 +310,7 @@ class PurchaseOrderController extends Controller
                 'supplierRef' => $request->supplierRef,
                 'terms_and_conditions' => $request->terms_and_conditions,
                 'delivery_date' => $request->delivery_date,
-                'po_status' => $request->po_status ? $request->po_status : 1,
+                'po_status' => $request->po_status ?? 1,
                 'closeDate' => $request->closeDate ?? '',
                 'userId' => $request->userId,
                 'buyer_id' => $request->buyer_id,
@@ -318,77 +321,94 @@ class PurchaseOrderController extends Controller
                 'delflag' => 0
             ];
 
-            $closeDate = date('Y-m-d');
-
             PurchaseOrderModel::insert($data);
 
-            DB::update("UPDATE counter_number SET tr_no = tr_no + 1  
-                        WHERE c_name ='C1' AND type='PurchaseOrder' AND firm_id=?", [$firm_id]);
-            
+            // Update PO counter
+            DB::update(
+                "UPDATE counter_number SET tr_no = tr_no + 1  
+                WHERE c_name ='C1' AND type='PurchaseOrder' AND firm_id=?",
+                [$firm_id]
+            );
+
+            // Close date update in dump tables
+            $closeDate = date('Y-m-d');
             DB::update("UPDATE dump_fabric_stock_data SET closeDate=? WHERE po_no=?", [$closeDate, $TrNo]);
             DB::update("UPDATE dump_trim_stock_data SET closeDate=? WHERE po_no=?", [$closeDate, $TrNo]);
 
-            $itemcodes = count($request->item_codes);
+            // -----------------------------------
+            // SAFE DETAIL ROW INSERTION
+            // -----------------------------------
+
+            // Clean item codes (remove empty rows)
+            $item_codes = array_filter($request->item_codes ?? []);
+            $item_codes = array_values($item_codes); // reindex cleanly
+            $itemCount  = count($item_codes);
+
             $data2 = [];
-            $item_code = '';
+            $usedItemCodes = [];
 
-            if ($itemcodes > 0) {
-                for ($x = 0; $x < $itemcodes; $x++) {
+            for ($x = 0; $x < $itemCount; $x++) {
 
-                    $data2[] = [
-                        'pur_code' => $TrNo,
-                        'pur_date' => $request->pur_date,
-                        'bom_code' => $bom_code,
-                        'bom_type' => $bom_type,
-                        'class_id' => $class_ids,
-                        'Ac_code' => $request->Ac_code,
-
-                        'sales_order_no' => $request->sales_order_no[$x] ?? null,
-                        'item_code' => $request->item_codes[$x] ?? null,
-                        'hsn_code' => $request->hsn_code[$x] ?? null,
-                        'unit_id' => $request->unit_id[$x] ?? null,
-                        'item_qty' => $request->item_qtys[$x] ?? 0,
-                        'item_rate' => $request->item_rates[$x] ?? 0,
-                        'disc_per' => $request->disc_pers[$x] ?? 0,
-                        'disc_amount' => $request->disc_amounts[$x] ?? 0,
-                        'pur_cgst' => $request->pur_cgsts[$x] ?? 0,
-                        'camt' => $request->camts[$x] ?? 0,
-                        'pur_sgst' => $request->pur_sgsts[$x] ?? 0,
-                        'samt' => $request->samts[$x] ?? 0,
-                        'pur_igst' => $request->pur_igsts[$x] ?? 0,
-                        'iamt' => $request->iamts[$x] ?? 0,
-                        'amount' => $request->amounts[$x] ?? 0,
-                        'freight_hsn' => 0,
-                        'freight_amt' => $request->freight_amt[$x] ?? 0,
-                        'total_amount' => $request->total_amounts[$x] ?? 0,
-
-                        'conQty' => $request->conQtys[$x] ?? 0,
-                        'unitIdM' => $request->unitIdMs[$x] ?? ($request->unit_id[$x] ?? null),
-                        'priUnitd' => $request->priUnitds[$x] ?? ($request->unit_id[$x] ?? null),
-                        'SecConQty' => $request->SecConQtys[$x] ?? 0,
-                        'secUnitId' => $request->secUnitIds[$x] ?? ($request->unit_id[$x] ?? null),
-                        'poQty' => $request->poQtys[$x] ?? 0,
-                        'poUnitId' => $request->poUnitIds[$x] ?? ($request->unit_id[$x] ?? null),
-                        'rateM' => $request->rateMs[$x] ?? 0,
-                        'totalQty' => $request->totalQtys[$x] ?? 0,
-
-                        'firm_id' => $firm_id
-                    ];
-
-                    if (!empty($request->item_codes[$x])) {
-                        $item_code .= $request->item_codes[$x] . ',';
-                    }
+                if (empty($item_codes[$x])) {
+                    continue;
                 }
 
+                $data2[] = [
+                    'pur_code'   => $TrNo,
+                    'pur_date'   => $request->pur_date,
+                    'bom_code'   => $bom_code,
+                    'bom_type'   => $bom_type,
+                    'class_id'   => $class_ids,
+                    'Ac_code'    => $request->Ac_code,
+
+                    'sales_order_no' => $request->sales_order_no[$x] ?? null,
+                    'item_code'      => $item_codes[$x],
+                    'hsn_code'       => $request->hsn_code[$x] ?? null,
+                    'unit_id'        => $request->unit_id[$x] ?? null,
+                    'item_qty'       => $request->item_qtys[$x] ?? 0,
+                    'item_rate'      => $request->item_rates[$x] ?? 0,
+                    'disc_per'       => $request->disc_pers[$x] ?? 0,
+                    'disc_amount'    => $request->disc_amounts[$x] ?? 0,
+                    'pur_cgst'       => $request->pur_cgsts[$x] ?? 0,
+                    'camt'           => $request->camts[$x] ?? 0,
+                    'pur_sgst'       => $request->pur_sgsts[$x] ?? 0,
+                    'samt'           => $request->samts[$x] ?? 0,
+                    'pur_igst'       => $request->pur_igsts[$x] ?? 0,
+                    'iamt'           => $request->iamts[$x] ?? 0,
+                    'amount'         => $request->amounts[$x] ?? 0,
+                    'freight_hsn'    => 0,
+                    'freight_amt'    => $request->freight_amt[$x] ?? 0,
+                    'total_amount'   => $request->total_amounts[$x] ?? 0,
+
+                    'conQty'     => $request->conQtys[$x] ?? 0,
+                    'unitIdM'    => $request->unitIdMs[$x] ?? ($request->unit_id[$x] ?? null),
+                    'priUnitd'   => $request->priUnitds[$x] ?? ($request->unit_id[$x] ?? null),
+                    'SecConQty'  => $request->SecConQtys[$x] ?? 0,
+                    'secUnitId'  => $request->secUnitIds[$x] ?? ($request->unit_id[$x] ?? null),
+                    'poQty'      => $request->poQtys[$x] ?? 0,
+                    'poUnitId'   => $request->poUnitIds[$x] ?? ($request->unit_id[$x] ?? null),
+                    'rateM'      => $request->rateMs[$x] ?? 0,
+                    'totalQty'   => $request->totalQtys[$x] ?? 0,
+
+                    'firm_id'    => $firm_id
+                ];
+
+                $usedItemCodes[] = $item_codes[$x];
+            }
+
+            // Insert detail rows if any
+            if (!empty($data2)) {
                 PurchaseOrderDetailModel::insert($data2);
             }
 
-            $item_code = rtrim($item_code, ",");
-
-            if (!empty($item_code)) {
-                DB::update("UPDATE bom_fabric_details 
-                            SET usedFlag = 1 
-                            WHERE bom_code=? AND item_code IN ($item_code)", [$bom_code]);
+            // Update usedFlag
+            if (!empty($usedItemCodes)) {
+                $codes = implode(",", $usedItemCodes);
+                DB::update(
+                    "UPDATE bom_fabric_details SET usedFlag = 1 
+                    WHERE bom_code=? AND item_code IN ($codes)",
+                    [$bom_code]
+                );
             }
 
             DB::commit();
@@ -401,6 +421,7 @@ class PurchaseOrderController extends Controller
             return redirect()->back()->withInput()->withErrors(['error' => $e->getMessage()]);
         }
     }
+
 
 
     /**
