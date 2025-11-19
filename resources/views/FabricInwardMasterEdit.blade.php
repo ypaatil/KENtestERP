@@ -70,7 +70,7 @@
                   <div class="col-md-3">
                      <div class="mb-3">
                         <label for="formrow-inputState" class="form-label">PO Code</label>   
-                        <select name="po_code" class="form-select select2" id="po_code" onchange="getPODetails();"  disabled >
+                        <select name="po_code" class="form-select select2" id="po_code" onchange="getPODetails();DisabledPO(this);"  disabled >
                            <option value="">PO code</option>
                            @foreach($POList as  $rowpol)
                            {
@@ -387,8 +387,9 @@
         }); 
     });
     
-    function GetPurchaseBillDetails()
-    {
+       
+   function GetPurchaseBillDetails()
+   {
        var po_code = $("#po_code").val(); 
        
         $.ajax({
@@ -401,7 +402,14 @@
                $("#bill_to").html(data.detail); 
            }
         }); 
+       $("#bill_to").attr('disabled', true);
+       $("#isReturnFabricInward").prop('checked', false).attr('disabled', true);
+        if(po_code !='')
+        {
+            $("#is_opening").prop('checked', false).attr('disabled', true);
+        }
     } 
+    
     
    var vpo_code = $("#vpo_code").val();
    if(vpo_code != "")
@@ -602,7 +610,36 @@
          
    
    }
-   
+
+   function DisabledPO(el)
+   {
+      if($(el).is(":checked"))
+      {
+         $("#po_code").attr("disabled", true);
+         $("#po_type_id").val(2).attr("disabled", true);
+         $("#Ac_code").val(50).trigger('change').attr("disabled", true);
+         $("#isReturnFabricInward").prop('checked', false).attr("disabled", true);
+         setTimeout(function() {
+               $("#bill_to").val(1083).trigger('change');
+         }, 1000);
+
+         $("#fge_code").attr("disabled", true).removeAttr("required");
+      }
+      else
+      {
+         $("#po_code").val("").trigger('change').attr("disabled", false);
+         $("#po_type_id").val(2).attr("disabled", false);
+         $("#Ac_code").val(50).trigger('change').attr("disabled", true);
+
+         setTimeout(function() {
+               $("#bill_to").val(1083).trigger('change');
+         }, 1000);
+ 
+         $("#fge_code").attr("disabled", false).removeAttr("required");
+      }
+      $("#bill_to").attr("disabled", true);
+   }
+
    var PBarcode=$("#PBarcode").val();
    var CBarcode=$("#CBarcode").val();
    

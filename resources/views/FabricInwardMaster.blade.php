@@ -362,7 +362,7 @@
          $("#po_code").attr("disabled", true);
          $("#po_type_id").val(2).attr("disabled", true);
          $("#Ac_code").val(50).trigger('change').attr("disabled", true);
-
+         $("#isReturnFabricInward").prop('checked', false).attr("disabled", true);
          setTimeout(function() {
                $("#bill_to").val(1083).trigger('change');
          }, 1000);
@@ -400,6 +400,7 @@
            }
         }); 
        $("#bill_to").attr('disabled', true);
+       $("#isReturnFabricInward").prop('checked', false).attr('disabled', true);
         if(po_code !='')
         {
             $("#is_opening").prop('checked', false).attr('disabled', true);
