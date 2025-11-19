@@ -453,7 +453,7 @@
                         <div class="col-md-3" id="workOrder">
                            <div class="mb-3">
                               <label for="" class="form-label">Vendor Process Order No.</label>   
-                              <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value);">
+                              <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value); GetFabricOutwardData(this);">
                                  <option value="">Vendor Process Order No.</option>
                                  @foreach($vendorProcessOrderList as  $vendors)
                                  <option value="{{ $vendors->vpo_code }}" 
@@ -488,7 +488,7 @@
                                     <th>Balance Qty</th> 
                                  </tr>
                               </thead>
-                              <tbody id="PurchaseTbody">
+                              <tbody id="OutwardTbody">
                               </tbody>
                            </table>
                         </div>
@@ -718,6 +718,20 @@
         }
     } 
     
+   function GetFabricOutwardData()
+   {
+         var vw_code = $("#vw_code").val();
+         $.ajax({
+            type:"GET",
+            url:"{{ route('GetFabricInwardOutwardData') }}", 
+            data:{vpo_code:vw_code},
+            success:function(response)
+            {
+               $("#OutwardTbody").html(response.html);            
+            }
+         });  
+   }
+
    function GetVendorName(vpo_code)
    {
         $.ajax({
@@ -731,7 +745,7 @@
                $('#vendorData').removeClass('hide');
                
           }
-        });
+         });
 
         
         $.ajax({

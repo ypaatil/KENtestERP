@@ -3679,4 +3679,31 @@ P2
         return response()->json(['html' => $html]);
     }
 
+     public function GetFabricInwardOutwardData(Request $request)
+    {
+        $detailData = DB::SELECT("SELECT sum(meter) as total_meter,(select sum(inward_details.meter) FROM inward_details WHERE inward_details.item_code = fabric_outward_details.item_code) as received,
+                        item_master.item_name, fabric_outward_details.item_code  FROM fabric_outward_details 
+                        INNER JOIN item_master ON item_master.item_code = fabric_outward_details.item_code
+                        WHERE fabric_outward_details.vpo_code='".$request->vpo_code."' GROUP BY fabric_outward_details.item_code");
+                                  
+        $html = '';
+        $sr_no = 1; 
+        
+        foreach($detailData as $row)
+        {
+            $html .='<tr>
+                       <td>'.($sr_no++).'</td> 
+                       <td>'.$row->item_code.'</td>
+                       <td>'.$row->item_name.'</td>
+                       <td>'.$row->total_meter.'</td>
+                       <td>'.$row->received.'</td>
+                       <td>'.($row->total_meter-$row->received).'</td>
+                    </tr>';
+        }
+        
+        return response()->json(['html'=>$html]);
+    }
+ 
+
+
 }
