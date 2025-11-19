@@ -1240,7 +1240,9 @@ from item_master where item_code='$value->item_code'"));
         $toDate =  isset($request->toDate) ? $request->toDate : date("Y-m-d");
 
         if ($request->ajax()) {
-            $TrimsInwardDetails = TrimsInwardDetailModel::leftJoin('ledger_master', 'ledger_master.ac_code', '=', 'trimsInwardDetail.Ac_code')
+            // Old Query
+            //DB::enableQueryLog();
+          /*  $TrimsInwardDetails = TrimsInwardDetailModel::leftJoin('ledger_master', 'ledger_master.ac_code', '=', 'trimsInwardDetail.Ac_code')
                 ->leftJoin('trimsInwardMaster', 'trimsInwardMaster.trimCode', '=', 'trimsInwardDetail.trimCode')
                 ->leftJoin('item_master', 'item_master.item_code', '=', 'trimsInwardDetail.item_code')
                 ->leftJoin('purchase_order', 'purchase_order.pur_code', '=', 'trimsInwardDetail.po_code')
@@ -1271,10 +1273,69 @@ from item_master where item_code='$value->item_code'"));
                     'item_master.color_name',
                     'item_master.item_description',
                     'rack_master.rack_name'
-                ]);
+                ]); */
+
+                // New Query
+                $TrimsInwardDetails = TrimsInwardDetailModel::query()
+
+    // JOIN trimsInwardMaster (main parent)
+    ->leftJoin('trimsInwardMaster as TIM', 'TIM.trimCode', '=', 'trimsInwardDetail.trimCode')
+
+    // JOIN item master with filter inside JOIN (MUCH FASTER)
+    ->leftJoin('item_master as IM', function($q){
+        $q->on('IM.item_code', '=', 'trimsInwardDetail.item_code')
+          ->where('IM.cat_id', '!=', 4);
+    })
+
+    // JOIN purchase order
+    ->leftJoin('purchase_order as PO', 'PO.pur_code', '=', 'trimsInwardDetail.po_code')
+
+    // Buyer name
+    ->leftJoin('ledger_master as LM1', 'LM1.ac_code', '=', 'PO.buyer_id')
+
+    // 2nd buyer name
+    ->leftJoin('ledger_master as LM2', 'LM2.ac_code', '=', 'TIM.buyer_id')
+
+    // Rack
+    ->leftJoin('rack_master as RM', 'RM.rack_id', '=', 'trimsInwardDetail.rack_id')
+
+    // Vendor work order
+    ->leftJoin('vendor_work_order_master as VW', 'VW.vw_code', '=', 'TIM.vw_code')
+
+    // Vendor name
+    ->leftJoin('ledger_master as LM3', 'LM3.ac_code', '=', 'VW.vendorId')
+
+    // FAST replacement for 2 slow subqueries
+    ->leftJoin('ledger_details as LD', function($q){
+        $q->on('LD.sr_no', '=', 'PO.bill_to')
+          ->orOn('LD.ac_code', '=', 'TIM.Ac_code');
+    })
+
+    // FAST because TIM.trimDate is indexed
+    ->whereBetween('TIM.trimDate', [$fromDate, $toDate])
+
+    ->get([
+        'trimsInwardDetail.*',
+        'LM1.ac_short_name as buyer',
+        'TIM.is_opening',
+        'TIM.invoice_no',
+        'TIM.po_code',
+        'LM1.ac_short_name as BuyerName1',
+        'LM2.ac_short_name as BuyerName2',
+        'TIM.invoice_date',
+        'IM.dimension',
+        'IM.item_name',
+        'IM.color_name',
+        'IM.item_description',
+        'TIM.vw_code',
+        'LM3.ac_short_name as vendorName',
+        'LD.trade_name',
+        'LD.site_code',
+        'RM.rack_name',
+    ]);
 
 
-            //dd(DB::getQueryLog());
+            //return $sql = DB::getQueryLog();
             return Datatables::of($TrimsInwardDetails)
 
                 ->addColumn('trimDate', function ($row) {
@@ -1320,7 +1381,7 @@ from item_master where item_code='$value->item_code'"));
                     $bill_name =  $row->trade_name . '(' . $row->site_code . ')';
                     return $bill_name;
                 })
-                ->rawColumns(['sales_order_no', 'buyer', 'item_value', 'item_qty', 'trimDate', 'invoice_date', 'bill_name'])
+                ->rawColumns(['sales_order_no', 'buyer', 'item_value', 'item_qty', 'trimDate', 'invoice_date', 'bill_name','sql'])
 
                 ->make(true);
         }
