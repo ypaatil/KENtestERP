@@ -1323,6 +1323,7 @@ from item_master where item_code='$value->item_code'"));
         'LM1.ac_short_name as BuyerName1',
         'LM2.ac_short_name as BuyerName2',
         'TIM.invoice_date',
+        'LM1.ac_name',
         'IM.dimension',
         'IM.item_name',
         'IM.color_name',
