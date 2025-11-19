@@ -28,323 +28,634 @@
    <div class="col-xl-12">
       <div class="card">
          <div class="card-body">
-            <h4 class="card-title mb-4">Fabric Inward</h4>
-            @if ($errors->any())
-            <div class="col-md-6">
-               <div class="alert alert-danger">
-                  <ul>
-                     @foreach ($errors->all() as $error)
-                     <li>{{ $error }}</li>
-                     @endforeach
-                  </ul>
-               </div>
-            </div>
-            @endif
-            <form action="{{route('FabricInward.store')}}" method="POST" enctype="multipart/form-data" id="frmData">
-               @csrf 
-               <div class="row">
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="in_date" class="form-label">In Date</label>
-                        <input type="date" name="in_date" class="form-control" id="in_date" value="{{date('Y-m-d')}}" required>
-                        @foreach($counter_number as  $row)
-                        <input type="hidden" name="in_code" class="form-control" id="in_code" value="{{ 'GRN/21-22/FP'.''.$row->tr_no }}">
-                        <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $row->c_code }}">
-                        <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
-                        <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
-                        @endforeach
-                        <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input">
-                     </div>
-                  </div>
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="invoice_no" class="form-label">Invoice No</label>
-                        <input type="text" name="invoice_no" id="invoice_no" class="form-control" id="invoice_no" required>
-                     </div>
-                  </div>
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="invoice_date" class="form-label">Invoice Date</label>
-                        <input type="date" name="invoice_date" id="invoice_date" class="form-control" id="invoice_date" value="{{date('Y-m-d')}}">
-                     </div>
-                  </div>
-                  <div class="col-md-3">
-                     <div class="mb-3">
-                        <label for="po_code" class="form-label">PO No.</label>   
-                        <select name="po_code" class="form-select select2" id="po_code" onchange="getDetails(this.value);GetPurchaseBillDetails();"   >
-                           <option value="">PO code</option>
-                           @foreach($POList as  $rowpol)
-                           {
-                           <option value="{{ $rowpol->pur_code  }}"
-                           {{ $rowpol->pur_code == request()->po_code ? 'selected="selected"' : '' }} 
-                           >{{ $rowpol->pur_code }}</option>
-                           }
+            <!-- TAB HEADER -->
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+               <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab">
+                     Delivery
+                  </button>
+               </li>
+               <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="return-tab" data-bs-toggle="tab" data-bs-target="#return" type="button" role="tab">
+                     Return
+                  </button>
+               </li>
+            </ul>
+
+            <!-- TAB CONTENT -->
+            <div class="tab-content mt-4" id="myTabContent">
+
+               <!-- ===================================================
+                        DELIVERY TAB — FULL ORIGINAL FORM
+               ==================================================== -->
+               <div class="tab-pane fade show active" id="delivery" role="tabpanel">
+
+                  @if ($errors->any())
+                  <div class="col-md-6">
+                     <div class="alert alert-danger">
+                        <ul>
+                           @foreach ($errors->all() as $error)
+                           <li>{{ $error }}</li>
                            @endforeach
-                        </select>
+                        </ul>
                      </div>
                   </div>
-                  <div class="col-md-3">
-                     <div class="mb-3">
-                        <label for="po_type_id" class="form-label">PO Type</label>
-                        <select name="po_type_id" class="form-select" id="po_type_id" required >
-                           <option value="">Type</option>
-                           @foreach($POTypeList as  $rowpo)
-                           {
-                           <option value="{{ $rowpo->po_type_id  }}">{{ $rowpo->po_type_name }}</option>
-                           }
-                           @endforeach
-                        </select>
-                     </div>
-                  </div>
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="formrow-inputState" class="form-label">Supplier</label>
-                        <select name="Ac_code" class="form-select   " id="Ac_code" required>
-                           <option value="">--Select Supplier--</option>
-                           @foreach($Ledger as  $row)
-                           {
-                           <option value="{{ $row->ac_code }}">{{ $row->ac_name }}</option>
-                           }
-                           @endforeach
-                        </select>
-                     </div>
-                  </div>
-                   <div class="col-md-2">
-                      <div class="mb-3">
-                         <label for="bill_to" class="form-label">Bill To</label>
-                         <select name="bill_to" class="form-select" id="bill_to" disabled>
-                            <option value="">--Select--</option>
-                            @foreach($BillToList as  $row) 
-                                <option value="{{ $row->sr_no }}">{{ $row->trade_name }}({{$row->site_code}})</option> 
-                            @endforeach
-                         </select>
-                      </div>
-                   </div> 
-                  <div class="col-md-2 hide">
-                     <div class="mb-3">
-                        <label for="cp_id" class="form-label">CP Type</label>
-                        <select name="cp_id" class="form-select" id="cp_id" required onchange="serBarocode();"  disabled>
-                           <option value="">--Select CP Type--</option>
-                           @foreach($CPList as  $rowCP)
-                           {
-                           <option value="{{ $rowCP->cp_id }}"
-                           @php if($rowCP->cp_id ==1){echo 'selected';} @endphp
-                           >{{ $rowCP->cp_name }}</option>
-                           }
-                           @endforeach
-                        </select>
-                     </div>
-                  </div>
-                  <div class="col-md-2">
-                     <div class="form-check form-check-primary mb-5">
-                        <input class="form-check-input" type="checkbox" id="is_opening" name="is_opening" style="font-size: 25px;margin-top: 30px;margin-left: 0px;" onclick="enable(this);DisabledPO(this);">
-                        <label class="form-check-label" for="is_opening" style="margin-top: 30px;position: absolute;margin-left: 20px;font-size: 16px;">
-                        Opening Stock
-                        </label>
-                     </div>
-                  </div>
-                <div class="col-md-3">
-                    <label for="fge_code" class="form-label">Fabric Gate Code</label>
-                    <select name="fge_code" class="form-select select2" id="fge_code" required>
-                       <option value="">--Select--</option>
-                       @foreach($FGECodeList as  $row) 
-                            <option value="{{ $row->fge_code }}">{{ $row->fge_code }}</option> 
-                       @endforeach
-                    </select>
-                 </div>
-                <div class="col-md-3">
-                    <label for="location_id" class="form-label">Location/Warehouse</label>
-                    <select name="location_id" class="form-select select2  " id="location_id" required>
-                       <option value="">--Location--</option>
-                       @foreach($LocationList as  $row) 
-                            <option value="{{ $row->loc_id }}" {{ $row->loc_id == 1 ? 'selected="selected"' : '' }}>{{ $row->location }}</option> 
-                       @endforeach
-                    </select>
-                 </div>
-                  <div class="col-md-2 mt-4">
-                     <div class="mb-3">
-                        <div class="form-check form-check-primary mb-5">
-                           <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);" name="isReturnFabricInward">
-                           <label class="form-check-label" for="isReturnFabricInward">
-                           Is it retun fabric inward ? 
-                           </label>
+                  @endif
+
+                  <form action="{{route('FabricInward.store')}}" method="POST" enctype="multipart/form-data" id="frmData">
+                     @csrf 
+                     <div class="row">
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="in_date" class="form-label">In Date</label>
+                              <input type="date" name="in_date" class="form-control" id="in_date" value="{{date('Y-m-d')}}" required>
+                              @foreach($counter_number as  $row)
+                              <input type="hidden" name="in_code" class="form-control" id="in_code" value="{{ 'GRN/21-22/FP'.''.$row->tr_no }}">
+                              <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $row->c_code }}">
+                              <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
+                              <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
+                              @endforeach
+                              <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input">
+                           </div>
+                        </div>
+
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="invoice_no" class="form-label">Invoice No</label>
+                              <input type="text" name="invoice_no" id="invoice_no" class="form-control" required>
+                           </div>
+                        </div>
+
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="invoice_date" class="form-label">Invoice Date</label>
+                              <input type="date" name="invoice_date" id="invoice_date" class="form-control" value="{{date('Y-m-d')}}">
+                           </div>
+                        </div>
+
+                        <div class="col-md-3">
+                           <div class="mb-3">
+                              <label for="po_code" class="form-label">PO No.</label>   
+                              <select name="po_code" class="form-select select2" id="po_code" onchange="getDetails(this.value);GetPurchaseBillDetails();">
+                                 <option value="">PO code</option>
+                                 @foreach($POList as  $rowpol)
+                                 <option value="{{ $rowpol->pur_code }}" 
+                                    {{ $rowpol->pur_code == request()->po_code ? 'selected="selected"' : '' }}>
+                                    {{ $rowpol->pur_code }}
+                                 </option>
+                                 @endforeach
+                              </select>
+                           </div>
+                        </div>
+
+                        <div class="col-md-3">
+                           <div class="mb-3">
+                              <label for="po_type_id" class="form-label">PO Type</label>
+                              <select name="po_type_id" class="form-select" id="po_type_id" required >
+                                 <option value="">Type</option>
+                                 @foreach($POTypeList as  $rowpo)
+                                 <option value="{{ $rowpo->po_type_id }}">{{ $rowpo->po_type_name }}</option>
+                                 @endforeach
+                              </select>
+                           </div>
+                        </div>
+
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="Ac_code" class="form-label">Supplier</label>
+                              <select name="Ac_code" class="form-select" id="Ac_code" required>
+                                 <option value="">--Select Supplier--</option>
+                                 @foreach($Ledger as  $row)
+                                 <option value="{{ $row->ac_code }}">{{ $row->ac_name }}</option>
+                                 @endforeach
+                              </select>
+                           </div>
+                        </div>
+
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="bill_to" class="form-label">Bill To</label>
+                              <select name="bill_to" class="form-select" id="bill_to" disabled>
+                                 <option value="">--Select--</option>
+                                 @foreach($BillToList as  $row)
+                                 <option value="{{ $row->sr_no }}">{{ $row->trade_name }}({{$row->site_code}})</option>
+                                 @endforeach
+                              </select>
+                           </div>
+                        </div>
+
+                        <div class="col-md-2 hide">
+                           <div class="mb-3">
+                              <label for="cp_id" class="form-label">CP Type</label>
+                              <select name="cp_id" class="form-select" id="cp_id" required onchange="serBarocode();" disabled>
+                                 <option value="">--Select CP Type--</option>
+                                 @foreach($CPList as  $rowCP)
+                                 <option value="{{ $rowCP->cp_id }}" 
+                                    @php if($rowCP->cp_id ==1){echo 'selected';} @endphp>
+                                    {{ $rowCP->cp_name }}
+                                 </option>
+                                 @endforeach
+                              </select>
+                           </div>
+                        </div>
+
+                        <div class="col-md-2">
+                           <div class="form-check form-check-primary mb-5">
+                              <input class="form-check-input" type="checkbox" id="is_opening" name="is_opening" 
+                                 style="font-size: 25px;margin-top: 30px;margin-left: 0px;" 
+                                 onclick="enable(this);DisabledPO(this);">
+
+                              <label class="form-check-label" 
+                                 for="is_opening" 
+                                 style="margin-top: 30px;position: absolute;margin-left: 20px;font-size: 16px;">
+                                 Opening Stock
+                              </label>
+                           </div>
+                        </div>
+
+                        <div class="col-md-3">
+                           <label for="fge_code" class="form-label">Fabric Gate Code</label>
+                           <select name="fge_code" class="form-select select2" id="fge_code" required>
+                              <option value="">--Select--</option>
+                              @foreach($FGECodeList as  $row)
+                              <option value="{{ $row->fge_code }}">{{ $row->fge_code }}</option> 
+                              @endforeach
+                           </select>
+                        </div>
+
+                        <div class="col-md-3">
+                           <label for="location_id" class="form-label">Location/Warehouse</label>
+                           <select name="location_id" class="form-select select2" id="location_id" required>
+                              <option value="">--Location--</option>
+                              @foreach($LocationList as  $row)
+                              <option value="{{ $row->loc_id }}" {{ $row->loc_id == 1 ? 'selected="selected"' : '' }}>
+                                 {{ $row->location }}
+                              </option> 
+                              @endforeach
+                           </select>
                         </div>
                      </div>
-                  </div>
-                  <div class="col-md-2 hide" id="workOrder">
-                     <div class="mb-3">
-                        <label for="" class="form-label">Vendor Process Order No.</label>   
-                        <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value);" >
-                           <option value="">Vendor Process Order No.</option>
-                           @foreach($vendorProcessOrderList as  $vendors)
-                           {
-                           <option value="{{ $vendors->vpo_code  }}"
-                           {{ $vendors->vpo_code == request()->vpo_code ? 'selected="selected"' : '' }} 
-                           >{{ $vendors->vpo_code }}</option>
-                           }
+
+                     <!-- PURCHASE TABLE -->
+                     <div class="table-wrap" id="PurchaseTbl">
+                        <div class="table-responsive">
+                           <table id="footable_1" class="table table-bordered table-striped m-b-0 footable_2">
+                              <thead>
+                                 <tr class="text-center">
+                                    <th>Sr No.</th>
+                                    <th>Item Code</th>
+                                    <th>Item Name</th>
+                                    <th>PO Qty</th> 
+                                    <th>Received</th> 
+                                    <th>Balance Qty</th> 
+                                 </tr>
+                              </thead>
+                              <tbody id="PurchaseTbody">
+                              </tbody>
+                           </table>
+                        </div>
+                     </div>
+
+                     <!-- FABRIC INWARD TABLE -->
+                     <div class="table-wrap" id="fabricInward">
+                        <div class="table-responsive">
+                           <table id="footable_2" class="table table-bordered table-striped m-b-0 footable_2">
+                              <thead>
+                                 <tr>
+                                    <th>Roll No</th>
+                                    <th>Item Code</th>
+                                    <th>Item Name</th>
+                                    <th>Part</th>
+                                    <th>Meter</th>
+                                    <th>Gram/Meter</th>
+                                    <th>KG</th>
+                                    <th>Rate Per Meter</th>
+                                    <th>Amount</th>
+                                    <th nowrap>Suplier Roll No.</th>
+                                    <th>Track Code</th>
+                                    <th>Print</th>
+                                    <th>Add</th>
+                                    <th>Remove</th>
+                                 </tr>
+                              </thead>
+
+                              <tbody>
+                                 <tr>
+                                    <td><input type="text" name="id[]" value="1" id="id" style="width:50px;"></td>
+
+                                    <td><input type="text" name="item_codes[]" value="" id="item_codes" style="width:80px;" readonly></td>
+
+                                    <td>
+                                       <select name="item_code[]" id="item_code" class="select2" style="width:200px;height:30px;" required onchange="getRateFromPO(this);">
+                                          <option value="">--Item--</option>
+                                          @foreach($ItemList as  $row)
+                                          <option value="{{ $row->item_code }}">{{ $row->item_name }}</option>
+                                          @endforeach
+                                       </select>
+                                    </td>
+
+                                    <td>
+                                       <select name="part_id[]" id="part_id" class="select2" style="width:200px;height:30px;" required>
+                                          <option value="">--Part--</option>
+                                          @foreach($PartList as  $row)
+                                          <option value="{{ $row->part_id }}" {{ $row->part_id == 1 ? 'selected="selected"' : '' }}>
+                                             {{ $row->part_name }}
+                                          </option>
+                                          @endforeach
+                                       </select>
+                                    </td>
+
+                                    <td>
+                                       <input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="1" id="taga_qty1" style="width:50px;height:30px;">
+                                       <input type="number" step="any" class="METER" name="meter[]" onkeyup="mycalc();" value="0" id="meter1" style="width:80px;height:30px;" required>
+                                    </td>
+
+                                    <td><input type="number" step="any" name="gram_per_meter[]" value="0" id="gram_per_meter" style="width:80px;height:30px;" required></td>
+
+                                    <td><input type="number" step="any" @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; } @endphp class="KG" 
+                                       name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;height:30px;" required></td>
+
+                                    <td>
+                                       <input type="number" step="any" name="item_rates[]" value="0" id="item_rates" style="width:80px;height:30px;" 
+                                          @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; } @endphp required>
+                                    </td>
+
+                                    <td><input type="number" step="any" class="AMT" readOnly name="amounts[]" value="0" id="amounts" style="width:80px;height:30px;" required></td>
+
+                                    <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;"></td>
+
+                                    <td><input type="text" name="track_code[]" id="track_code" style="width:80px;height:30px;" readOnly></td>
+
+                                    <td><i style="font-size:25px;" onclick="CalculateRowPrint(this);" name="print" class="fa fa-print"></i></td>
+
+                                    <td>
+                                       <input type="button" style="width:40px;" onclick="insertcone();" name="print" value="+" class="btn btn-warning pull-left AButton">
+                                    </td>
+
+                                    <td>
+                                       <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X">
+                                    </td>
+                                 </tr>
+                              </tbody>
+
+                              <tfoot>
+                                 <tr>
+                                    <th>Roll No</th>
+                                    <th>Item Code</th>
+                                    <th>Item Name</th>
+                                    <th>Part</th>
+                                    <th>Meter</th>
+                                    <th>Gram/Meter</th>
+                                    <th>KG</th>
+                                    <th>Rate Per Meter</th>
+                                    <th>Amount</th>
+                                    <th>Suplier Roll No.</th>
+                                    <th>Track Code</th>
+                                    <th>Print</th>
+                                    <th>Add</th>
+                                    <th>Remove</th>
+                                 </tr>
+                              </tfoot>
+
+                              <input type="number" value="1" name="cntrr" id="cntrr" readonly hidden>
+                           </table>
+                        </div>
+                     </div>
+
+                     <div class="row">
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="total_meter" class="form-label">Total Meter</label>
+                              <input type="number" readOnly step="0.01" name="total_meter" class="form-control" id="total_meter" value="0">
+                           </div>
+                        </div>
+
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="total_kg" class="form-label">Total KG</label>
+                              <input type="number" readOnly step="0.01" name="total_kg" class="form-control" id="total_kg" value="0">
+                           </div>
+                        </div>
+
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="total_taga_qty" class="form-label">Total Taga</label>
+                              <input type="number" readOnly name="total_taga_qty" class="form-control" id="total_taga_qty" value="1">
+                           </div>
+                        </div>
+
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="total_amount" class="form-label">Total Amount</label>
+                              <input type="text" name="total_amount" readOnly class="form-control" id="total_amount" required>
+                           </div>
+                        </div>
+                     </div>
+
+                     <div class="row">
+                        <div class="col-sm-6">
+                           <div class="mb-3">
+                              <label for="in_narration" class="form-label">Narration</label>
+                              <input type="text" name="in_narration" class="form-control" id="in_narration">
+                           </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                           <label class="form-label"></label>
+                           <div class="form-group">
+                              <button type="submit" class="btn btn-primary w-md" onclick="UpdateBarcode(); EnableFields();" id="Submit">Submit</button>
+                              <a href="{{ Route('FabricInward.index') }}" class="btn btn-warning w-md">Cancel</a>
+                           </div>
+                        </div>
+                     </div>
+
+                  </form>
+               </div>
+
+               <div class="tab-pane fade" id="return" role="tabpanel">
+                  
+                  @if ($errors->any())
+                  <div class="col-md-6">
+                     <div class="alert alert-danger">
+                        <ul>
+                           @foreach ($errors->all() as $error)
+                           <li>{{ $error }}</li>
                            @endforeach
-                        </select>
+                        </ul>
                      </div>
                   </div>
-                  <div class="col-md-2 hide" id="vendorData">
-                     <div class="mb-3">
-                        <label for="" class="form-label">Vendor Name</label>   
-                         <input type="text" name="vendorName" class="form-control" id="vendorName"  value=""  readonly style="width: 250px;"/>
+                  @endif
+
+                  <form action="{{route('FabricInward.store')}}" method="POST" enctype="multipart/form-data" id="frmData">
+                     @csrf 
+                     <div class="row">
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="in_date" class="form-label">Date</label>
+                              <input type="date" name="in_date" class="form-control" id="in_date" value="{{date('Y-m-d')}}" required>
+                              @foreach($counter_number as  $row)
+                              <input type="hidden" name="in_code" class="form-control" id="in_code" value="{{ 'GRN/21-22/FP'.''.$row->tr_no }}">
+                              <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $row->c_code }}">
+                              <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
+                              <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
+                              @endforeach
+                              <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input">
+                           </div>
+                        </div>
+
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="invoice_no" class="form-label">DC No</label>
+                              <input type="text" name="invoice_no" id="invoice_no" class="form-control" required>
+                           </div>
+                        </div>
+
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="invoice_date" class="form-label">DC Date</label>
+                              <input type="date" name="invoice_date" id="invoice_date" class="form-control" value="{{date('Y-m-d')}}">
+                           </div>
+                        </div>
+                        <div class="col-md-3">
+                           <label for="fge_code" class="form-label">Fabric Gate Code</label>
+                           <select name="fge_code" class="form-select select2" id="fge_code" required>
+                              <option value="">--Select--</option>
+                              @foreach($FGECodeList as  $row)
+                              <option value="{{ $row->fge_code }}">{{ $row->fge_code }}</option> 
+                              @endforeach
+                           </select>
+                        </div>
+
+                        <div class="col-md-3">
+                           <label for="location_id" class="form-label">Location/Warehouse</label>
+                           <select name="location_id" class="form-select select2" id="location_id" required>
+                              <option value="">--Location--</option>
+                              @foreach($LocationList as  $row)
+                              <option value="{{ $row->loc_id }}" {{ $row->loc_id == 1 ? 'selected="selected"' : '' }}>
+                                 {{ $row->location }}
+                              </option> 
+                              @endforeach
+                           </select>
+                        </div>
+
+                        <div class="col-md-2 mt-4">
+                           <div class="mb-3">
+                              <div class="form-check form-check-primary mb-5">
+                                 <input class="form-check-input" type="checkbox" id="isReturnFabricInward" 
+                                    onchange="GetOrderNo(this);" name="isReturnFabricInward">
+
+                                 <label class="form-check-label" for="isReturnFabricInward">
+                                 Is it retun fabric inward ? 
+                                 </label>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="col-md-3" id="workOrder">
+                           <div class="mb-3">
+                              <label for="" class="form-label">Vendor Process Order No.</label>   
+                              <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value);">
+                                 <option value="">Vendor Process Order No.</option>
+                                 @foreach($vendorProcessOrderList as  $vendors)
+                                 <option value="{{ $vendors->vpo_code }}" 
+                                    {{ $vendors->vpo_code == request()->vpo_code ? 'selected="selected"' : '' }}>
+                                    {{ $vendors->vpo_code }}
+                                 </option>
+                                 @endforeach
+                              </select>
+                           </div>
+                        </div>
+
+                        <div class="col-md-3" id="vendorData">
+                           <div class="mb-3">
+                              <label for="" class="form-label">Vendor Name</label>   
+                              <input type="text" name="vendorName" class="form-control" id="vendorName" readonly>
+                           </div>
+                        </div>
+
                      </div>
-                  </div>
-               </div> <div class="table-wrap" id="PurchaseTbl">
-                  <div class="table-responsive">
-                     <table id="footable_1" class="table  table-bordered table-striped m-b-0  footable_2">
-                        <thead>
-                           <tr class="text-center">
-                              <th>Sr No.</th>
-                              <th>Item Code</th>
-                              <th>Item Name</th>
-                              <th>PO Qty</th> 
-                              <th>To Be Received</th> 
-                              <th>Balance Qty</th> 
-                           </tr>
-                        </thead>
-                        <tbody id="PurchaseTbody">
-                        </tbody>
-                     </table>
-                  </div>
+
+                     <!-- PURCHASE TABLE -->
+                     <div class="table-wrap" id="PurchaseTbl">
+                        <div class="table-responsive">
+                           <table id="footable_1" class="table table-bordered table-striped m-b-0 footable_2">
+                              <thead>
+                                 <tr class="text-center">
+                                    <th>Sr No.</th>
+                                    <th>Item Code</th>
+                                    <th>Item Name</th>
+                                    <th>Outward Qty</th> 
+                                    <th>Received</th> 
+                                    <th>Balance Qty</th> 
+                                 </tr>
+                              </thead>
+                              <tbody id="PurchaseTbody">
+                              </tbody>
+                           </table>
+                        </div>
+                     </div>
+
+                     <!-- FABRIC INWARD TABLE -->
+                     <div class="table-wrap" id="fabricInward">
+                        <div class="table-responsive">
+                           <table id="footable_2" class="table table-bordered table-striped m-b-0 footable_2">
+                              <thead>
+                                 <tr>
+                                    <th>Roll No</th>
+                                    <th>Item Code</th>
+                                    <th>Item Name</th>
+                                    <th>Part</th>
+                                    <th>Meter</th>
+                                    <th>Gram/Meter</th>
+                                    <th>KG</th>
+                                    <th>Rate Per Meter</th>
+                                    <th>Amount</th>
+                                    <th nowrap>Suplier Roll No.</th>
+                                    <th>Track Code</th>
+                                    <th>Print</th>
+                                    <th>Add</th>
+                                    <th>Remove</th>
+                                 </tr>
+                              </thead>
+
+                              <tbody>
+                                 <tr>
+                                    <td><input type="text" name="id[]" value="1" id="id" style="width:50px;"></td>
+
+                                    <td><input type="text" name="item_codes[]" value="" id="item_codes" style="width:80px;" readonly></td>
+
+                                    <td>
+                                       <select name="item_code[]" id="item_code" class="select2" style="width:200px;height:30px;" required onchange="getRateFromPO(this);">
+                                          <option value="">--Item--</option>
+                                          @foreach($ItemList as  $row)
+                                          <option value="{{ $row->item_code }}">{{ $row->item_name }}</option>
+                                          @endforeach
+                                       </select>
+                                    </td>
+
+                                    <td>
+                                       <select name="part_id[]" id="part_id" class="select2" style="width:200px;height:30px;" required>
+                                          <option value="">--Part--</option>
+                                          @foreach($PartList as  $row)
+                                          <option value="{{ $row->part_id }}" {{ $row->part_id == 1 ? 'selected="selected"' : '' }}>
+                                             {{ $row->part_name }}
+                                          </option>
+                                          @endforeach
+                                       </select>
+                                    </td>
+
+                                    <td>
+                                       <input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="1" id="taga_qty1" style="width:50px;height:30px;">
+                                       <input type="number" step="any" class="METER" name="meter[]" onkeyup="mycalc();" value="0" id="meter1" style="width:80px;height:30px;" required>
+                                    </td>
+
+                                    <td><input type="number" step="any" name="gram_per_meter[]" value="0" id="gram_per_meter" style="width:80px;height:30px;" required></td>
+
+                                    <td><input type="number" step="any" @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; } @endphp class="KG" 
+                                       name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;height:30px;" required></td>
+
+                                    <td>
+                                       <input type="number" step="any" name="item_rates[]" value="0" id="item_rates" style="width:80px;height:30px;" 
+                                          @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; } @endphp required>
+                                    </td>
+
+                                    <td><input type="number" step="any" class="AMT" readOnly name="amounts[]" value="0" id="amounts" style="width:80px;height:30px;" required></td>
+
+                                    <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;"></td>
+
+                                    <td><input type="text" name="track_code[]" id="track_code" style="width:80px;height:30px;" readOnly></td>
+
+                                    <td><i style="font-size:25px;" onclick="CalculateRowPrint(this);" name="print" class="fa fa-print"></i></td>
+
+                                    <td>
+                                       <input type="button" style="width:40px;" onclick="insertcone();" name="print" value="+" class="btn btn-warning pull-left AButton">
+                                    </td>
+
+                                    <td>
+                                       <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X">
+                                    </td>
+                                 </tr>
+                              </tbody>
+
+                              <tfoot>
+                                 <tr>
+                                    <th>Roll No</th>
+                                    <th>Item Code</th>
+                                    <th>Item Name</th>
+                                    <th>Part</th>
+                                    <th>Meter</th>
+                                    <th>Gram/Meter</th>
+                                    <th>KG</th>
+                                    <th>Rate Per Meter</th>
+                                    <th>Amount</th>
+                                    <th>Suplier Roll No.</th>
+                                    <th>Track Code</th>
+                                    <th>Print</th>
+                                    <th>Add</th>
+                                    <th>Remove</th>
+                                 </tr>
+                              </tfoot>
+
+                              <input type="number" value="1" name="cntrr" id="cntrr" readonly hidden>
+                           </table>
+                        </div>
+                     </div>
+
+                     <div class="row">
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="total_meter" class="form-label">Total Meter</label>
+                              <input type="number" readOnly step="0.01" name="total_meter" class="form-control" id="total_meter" value="0">
+                           </div>
+                        </div>
+
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="total_kg" class="form-label">Total KG</label>
+                              <input type="number" readOnly step="0.01" name="total_kg" class="form-control" id="total_kg" value="0">
+                           </div>
+                        </div>
+
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="total_taga_qty" class="form-label">Total Taga</label>
+                              <input type="number" readOnly name="total_taga_qty" class="form-control" id="total_taga_qty" value="1">
+                           </div>
+                        </div>
+
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="total_amount" class="form-label">Total Amount</label>
+                              <input type="text" name="total_amount" readOnly class="form-control" id="total_amount" required>
+                           </div>
+                        </div>
+                     </div>
+
+                     <div class="row">
+                        <div class="col-sm-6">
+                           <div class="mb-3">
+                              <label for="in_narration" class="form-label">Narration</label>
+                              <input type="text" name="in_narration" class="form-control" id="in_narration">
+                           </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                           <label class="form-label"></label>
+                           <div class="form-group">
+                              <button type="submit" class="btn btn-primary w-md" onclick="UpdateBarcode(); EnableFields();" id="Submit">Submit</button>
+                              <a href="{{ Route('FabricInward.index') }}" class="btn btn-warning w-md">Cancel</a>
+                           </div>
+                        </div>
+                     </div>
+
+                  </form>
                </div>
-               <div class="table-wrap" id="fabricInward">
-                  <div class="table-responsive">
-                     <table id="footable_2" class="table  table-bordered table-striped m-b-0  footable_2">
-                        <thead>
-                           <tr>
-                              <th>Roll No</th>
-                              <th>Item Code</th>
-                              <th>Item Name</th>
-                              <th>Part</th>
-                              <th>Meter</th>
-                              <th>Gram/Meter</th>
-                              <th>KG</th>
-                              <th>Rate Per Meter</th>
-                              <th>Amount</th>
-                              <th nowrap>Suplier Roll No.</th>
-                              <th>TrackCode</th>
-                              <th>Print</th>
-                              <th>Add</th>
-                              <th>Remove</th>
-                           </tr>
-                        </thead>
-                        <tbody>
-                           <tr>
-                              <td><input type="text" name="id[]" value="1" id="id" style="width:50px;"/></td>
-                              <td><input type="text" name="item_codes[]" value="" id="item_codes" style="width:80px;" readonly/></td>
-                              <td>
-                                 <select name="item_code[]"   id="item_code" class="select2" style="width:200px;height:30px;" required  onchange="getRateFromPO(this);">
-                                    <option value="">--Item--</option>
-                                    @foreach($ItemList as  $row)
-                                    {
-                                    <option value="{{ $row->item_code }}">{{ $row->item_name }}</option>
-                                    }
-                                    @endforeach
-                                 </select>
-                              </td>
-                              <td>
-                                 <select name="part_id[]"  id="part_id" class="select2" style="width:200px;height:30px;" required>
-                                    <option value="">--Part--</option>
-                                    @foreach($PartList as  $row)
-                                    {
-                                    <option value="{{ $row->part_id }}"
-                                    {{ $row->part_id == 1 ? 'selected="selected"' : '' }}  
-                                    >{{ $row->part_name }}</option>
-                                    }
-                                    @endforeach
-                                 </select>
-                              </td>
-                              <td><input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="1" id="taga_qty1" style="width:50px;height:30px;"/><input type="number" step="any" class="METER" name="meter[]" onkeyup="mycalc();" value="0" id="meter1" style="width:80px;height:30px;" required/></td>
-                              <td><input type="number" step="any"  name="gram_per_meter[]" value="0" id="gram_per_meter" style="width:80px;height:30px;" required/></td>
-                              <td><input type="number" step="any" @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; }@endphp class="KG" name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;height:30px;"  required/></td>
-                              <td><input type="number" step="any"    name="item_rates[]"   value="0" id="item_rates" style="width:80px;height:30px;" @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; }@endphp required/>
-                              <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" required/></td>
-                              <td><input type="text"  class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"/></td>
-                              <td><input type="text" name="track_code[]"  id="track_code" style="width:80px;height:30px;"  readOnly/></td>
-                              <td><i   style="font-size:25px;" onclick="CalculateRowPrint(this);" name="print"  class="fa fa-print" ></td>
-                              <td>
-                                 <input type="button"  style="width:40px;" onclick="insertcone(); " name="print" value="+" class="btn btn-warning pull-left AButton">
-                              </td>
-                              <td>
-                                 <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" >
-                              </td>
-                           </tr>
-                        </tbody>
-                        <tfoot>
-                           <tr>
-                              <th>Roll No</th>
-                              <th>Item Code</th>
-                              <th>Item Name</th>
-                              <th>Part</th>
-                              <th>Meter</th>
-                              <th>Gram/Meter</th>
-                              <th>KG</th>
-                              <th>Rate Per Meter</th>
-                              <th>Amount</th>
-                              <th>Suplier Roll No.</th>
-                              <th>TrackCode</th>
-                              <th>Print</th>
-                              <th>Add</th>
-                              <th>Remove</th>
-                           </tr>
-                        </tfoot>
-                        <input type="number" value="1" name="cntrr" id="cntrr" readonly="" hidden="true"  />
-                     </table>
-                  </div>
-               </div>
-               <div class="row">
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="total_meter" class="form-label">Total Meter</label>
-                        <input type="number" readOnly step="0.01"  name="total_meter" class="form-control" id="total_meter" value="0">
-                     </div>
-                  </div>
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="total_kg" class="form-label">Total KG</label>
-                        <input type="number" readOnly step="0.01"  name="total_kg" class="form-control" id="total_kg" value="0">
-                     </div>
-                  </div>
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="total_qty" class="form-label">Total Taga</label>
-                        <input type="number"  readOnly   name="total_taga_qty" class="form-control" id="total_taga_qty" value="1">
-                     </div>
-                  </div>
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="total_amount" class="form-label">Total Amount</label>
-                        <input type="text" name="total_amount" readOnly class="form-control" id="total_amount" required>
-                     </div>
-                  </div> 
-               </div>
-               <div class="row">
-                  <div class="col-sm-6">
-                     <div class="mb-3">
-                        <label for="in_narration" class="form-label">Narration</label>
-                        <input type="text" name="in_narration" class="form-control" id="in_narration"  value=""  />
-                     </div>
-                  </div>
-                  <div class="col-sm-6">
-                     <label for="formrow-inputState" class="form-label"></label>
-                     <div class="form-group">
-                        <button type="submit" class="btn btn-primary w-md" onclick="UpdateBarcode(); EnableFields();" id="Submit">Submit</button>
-                        <a href="{{ Route('FabricInward.index') }}" class="btn btn-warning w-md">Cancel</a>
-                     </div>
-                  </div>
-               </div>
-            </form>
+
+            </div>
          </div>
-         <!-- end card body -->
       </div>
-      <!-- end card -->
    </div>
-   <!-- end col -->
-   <!-- end col -->
 </div>
+
 <!-- end row -->
 <script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
 <!-- end row -->
