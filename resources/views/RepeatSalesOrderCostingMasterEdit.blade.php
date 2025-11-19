@@ -68,7 +68,7 @@
                   <div class="col-md-2">
                      <div class="mb-3">
                         <label for="sales_order_no" class="form-label">Sales Order no</label>
-                        <select name="sales_order_no" class="form-select select2" id="sales_order_no" required  onChange="getSalesOrderDetails(this.value);DisableSalesOrder();" >
+                        <select name="sales_order_no" class="form-select select2" id="sales_order_no" required  onchange="getSalesOrderDetails(this.value);DisableSalesOrder();" >
                            <option value="">--Sales Order No--</option>
                            @foreach($SalesOrderList as  $rowsalesorder)
                            {
@@ -803,18 +803,7 @@
           }
     }
    
-   window.onload = function() {
-   
-     @php  
-     $user_type=Session::get('user_type');  
-    // echo 'alert('.$SalesOrderCostingMasterList->is_approved.');';
-     if($SalesOrderCostingMasterList->is_approved==2 || $user_type!=1) {   @endphp
-     $("input").prop("readonly",  false);
-    //  $("select").prop("disabled", true);
-    
-     @php     }   @endphp 
-     mycalc();
-   };
+   mycalc();
    
    function GetTotalmakingCost()
     {
@@ -938,6 +927,7 @@
    }
 
    getSalesOrderDetails($('#sales_order_no').val());
+   
    function getSalesOrderDetails(sales_order_no)
    {
          $.ajax({
@@ -1103,7 +1093,7 @@
                 $("#imgDiv").removeClass("hide");
            }
         });
-   }
+   } 
    function EnableFields()
    {
       $("select").removeAttr('disabled');
