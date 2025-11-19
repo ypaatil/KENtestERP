@@ -2076,7 +2076,7 @@ class PurchaseOrderController extends Controller
                         $html.='
                         <td><input type="text" value="'.round($value->bom_qty).'" name="bom_qty[]"  style="width:80px;  height:30px;" readOnly/></td>
                         <td><input type="text" value="'.$stock[0]->Stock.'"   style="width:80px;  height:30px;" onclick="stockPopup(this,'.$value->item_code.');" readOnly/></td>
-                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($max).'"  value="'.round($value->item_qty).'" id="item_qty" style="width:80px;  height:30px;" required/>
+                        <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($max).'"  value="'.( 0 + round($value->item_qty)).'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
                         </td>
                         <td><input type="number" step="any" name="item_rates[]" min="0" max="'.$value->rate_per_unit.'" value="'.$value->rate_per_unit.'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
