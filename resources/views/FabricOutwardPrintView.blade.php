@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Fabric Outward (GST Print)</title>
+    <title>Fabric Outward (GST Print) | Ken Global Designs Pvt. Ltd.</title>
     <!-- Web Fonts -->
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' type='text/css'>
     <!-- Stylesheets -->
@@ -184,7 +184,7 @@
 
                 table.table th,
                 table.table td {
-                    font-size: 11pt;
+                    font-size: 10pt;
                     color: #000 !important;
                     white-space: normal !important;
 
@@ -373,30 +373,6 @@
 
             }
 
-            @media print {
-
-
-
-
-
-                .invoice-container h4 {
-                    font-size: 18pt;
-                    /* make text a little smaller for print */
-                }
-
-                .invoice-container p {
-                    font-size: 12pt;
-                }
-
-                td.text-start {
-                    text-align: left !important;
-                }
-
-                td.text-end {
-                    text-align: right !important;
-                }
-
-            }
 
             .table-bordered.summary-table tr th:first-child,
             .table-bordered.summary-table tr td:first-child,
@@ -408,12 +384,12 @@
 
             table.second th:nth-child(1),
             table.second td:nth-child(1) {
-                width: 55px !important;
+                width: 53px !important;
             }
 
             table.second th:nth-child(2),
             table.second td:nth-child(2) {
-                width: auto !important;
+                width: 70px !important;
             }
 
             table.second th:nth-child(3),
@@ -423,7 +399,7 @@
 
             table.second th:nth-child(4),
             table.second td:nth-child(4) {
-                width: auto !important;
+                width: 70px !important;
 
             }
 
@@ -434,17 +410,17 @@
 
             table.second th:nth-child(6),
             table.second td:nth-child(6) {
-                width: auto !important;
+                width: 80px !important;
             }
 
             table.second th:nth-child(7),
             table.second td:nth-child(7) {
-                width: auto !important;
+                width: 60px !important;
             }
 
             table.second th:nth-child(8),
             table.second td:nth-child(8) {
-                width: auto !important;
+                width: 70px !important;
             }
 
             table.second th:nth-child(9),
@@ -454,26 +430,44 @@
 
             table.second th:nth-child(10),
             table.second td:nth-child(10) {
-                width: auto !important;
+                width: 80px !important;
             }
 
             table.second th:nth-child(11),
             table.second td:nth-child(11) {
-                width: auto !important;
+                width: 80px !important;
             }
 
             table.second th:nth-child(12),
             table.second td:nth-child(12) {
-                width: auto !important;
+                width: 80px !important;
             }
-             table.second th:nth-child(13),
+
+            table.second th:nth-child(13),
             table.second td:nth-child(13) {
-                width: auto !important;
+                width: 90px !important;
             }
-             table.second th:nth-child(14),
-            table.second td:nth-child(14) {
-                width: auto !important;
+        }
+
+        @media print {
+
+            .invoice-container h4 {
+                font-size: 18pt;
+                /* make text a little smaller for print */
             }
+
+            .invoice-container p {
+                font-size: 12pt;
+            }
+
+            td.text-start {
+                text-align: left !important;
+            }
+
+            td.text-end {
+                text-align: right !important;
+            }
+
 
         }
     </style>
@@ -565,7 +559,7 @@
                         </div>
                         <div class="col-md-6 p-2">
                             <p><b>Company Name: </b></p>
-                            <p><b>Ken Global Designs Pvt Ltd</b> <br> Gat No.- 298/299, A/P Kondigre Kolhapur Mahrashtra - 416101</p>
+                            <p><b>Ken Global Designs Pvt Ltd</b> <br> Gat No.- 298/299, A/P Kondigre Kolhapur Maharashtra - 416101</p>
 
                             <div class="info-row">
                                 <div class="label">PAN NO</div>
@@ -628,9 +622,9 @@
                                 <th>Item Code</th>
                                 <th>Item Name</th>
                                 <th>HSN Code</th>
-                                <th >Description / Quality</th>
-                                <th>Width</th>
-                                <th>Quantity</th>
+                                <th>Description / Quality</th>
+
+                                <th>Qty</th>
                                 <th>UOM</th>
                                 <th>Rate</th>
                                 <th>Amount (Before Tax)</th>
@@ -695,20 +689,32 @@
                             $after_tax_total += $afterTax;
                             @endphp
 
+
+
                             <tr>
                                 <td class="text-end">{{ $no++ }}</td>
                                 <td class="text-center">{{ $rowDetail->item_code }}</td>
                                 <td class="text-start">{{ $rowDetail->item_name }}</td>
                                 <td class="text-center">{{ $rowDetail->hsn_code }}</td>
                                 <td class="text-start">{{ $rowDetail->item_description }}</td>
-                                <td class="text-end">{{ number_format($rowDetail->width, 2) }}</td>
+
                                 <td class="text-end">{{ number_format($rowDetail->meter, 2) }}</td>
                                 <td class="text-center">{{ $rowDetail->unit_name }}</td>
                                 <td class="text-end">{{ number_format($rowDetail->item_rate, 2) }}</td>
                                 <td class="text-end">{{ number_format($beforeTax, 2) }}</td>
-                                <td class="text-end">{{ number_format($cgst, 2) }}</td>
-                                <td class="text-end">{{ number_format($sgst, 2) }}</td>
-                                <td class="text-end">{{ number_format($igst, 2) }}</td>
+                                @php
+                                if ($beforeTax > 0) {
+                                $cgst_percent = round(($cgst / $beforeTax) * 100, 2);
+                                $sgst_percent = round(($sgst / $beforeTax) * 100, 2);
+                                $igst_percent = round(($igst / $beforeTax) * 100, 2);
+                                } else {
+                                $cgst_percent = $sgst_percent = $igst_percent = 0;
+                                }
+                                @endphp
+
+                                <td class="text-end">{{ number_format($cgst, 2) }} <br>({{ $cgst_percent }}%)</td>
+                                <td class="text-end">{{ number_format($sgst, 2) }} <br>({{ $sgst_percent }}%)</td>
+                                <td class="text-end">{{ number_format($igst, 2) }} <br> ({{ $igst_percent }}%)</td>
                                 <td class="text-end">{{ number_format($afterTax, 2) }}</td>
                             </tr>
                             @endforeach
@@ -716,17 +722,16 @@
 
                         <tfoot>
                             <tr>
-                                <td colspan="6" class="text-end"><b>Total Meter:</b></td>
+                                <td colspan="5" class="text-end"><b>Total Meter:</b></td>
                                 <td class="text-end fw-bold">{{ number_format($FabricOutwardMaster[0]->total_meter, 2) }}</td>
-                                <td colspan="2" class="text-end fw-bold">Gross Amount</td>
+                                <td colspan="2" class="text-end fw-bold">Total Amount <br>(Before Tax):</td>
                                 <td class="text-end fw-bold">{{ number_format($amt, 2) }}</td>
-                                <td class="text-end fw-bold">{{ number_format($cgst_total, 2) }}</td>
-                                <td class="text-end fw-bold">{{ number_format($sgst_total, 2) }}</td>
-                                <td class="text-end fw-bold">{{ number_format($igst_total, 2) }}</td>
+                                <td class="text-end fw-bold" colspan="3">Total Amount <br>(After Tax):</td>
+
                                 <td class="text-end fw-bold">{{ number_format($after_tax_total, 2) }}</td>
                             </tr>
                             <tr>
-                                <td colspan="14" class="text-center"><b>NOT FOR SALE, FOR JOB WORK ONLY</b></td>
+                                <td colspan="13" class="text-center"><b>NOT FOR SALE, FOR JOB WORK ONLY</b></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -787,35 +792,35 @@
                             <table class="table table-bordered border border-dark ms-auto summary-table" style="width: 500px;">
                                 <tr>
                                     <th class="text-start">Amount (Before Tax)</th>
-                                    <td class="text-end">&#8377;{{ number_format($amt, 2) }}</td>
+                                    <td class="text-end">{{ number_format($amt, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">SGST</th>
-                                    <td class="text-end">&#8377;{{ number_format($SGSTTotal, 2) }}</td>
+                                    <td class="text-end">{{ number_format($SGSTTotal, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">CGST</th>
-                                    <td class="text-end">&#8377;{{ number_format($CGSTTotal, 2) }}</td>
+                                    <td class="text-end">{{ number_format($CGSTTotal, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">IGST</th>
-                                    <td class="text-end">&#8377;{{ number_format($IGSTTotal, 2) }}</td>
+                                    <td class="text-end">{{ number_format($IGSTTotal, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">Amount (After Tax)</th>
-                                    <td class="text-end">&#8377;{{ number_format($tamt, 2) }}</td>
+                                    <td class="text-end">{{ number_format($tamt, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">Round Off</th>
-                                    <td class="text-end">{{ $roundOff >= 0 ? '+' : '' }}&#8377;{{ number_format($roundOff, 2) }}</td>
+                                    <td class="text-end">{{ $roundOff >= 0 ? '+' : '' }}{{ number_format($roundOff, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">Grand Total</th>
-                                    <td class="text-end fw-bold">&#8377;{{ number_format($roundedTotal, 2) }}</td>
+                                    <td class="text-end fw-bold">{{ number_format($roundedTotal, 2) }}</td>
                                 </tr>
                             </table>
 
-                            <table class="table" style="margin-top:100px;">
+                            <table class="table" style="margin-top: 100px; ">
                                 <tr>
                                     <th>Prepared By:</th>
                                     <th>Checked By:</th>
