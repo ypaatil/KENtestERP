@@ -549,6 +549,27 @@ class VendorWorkOrderController extends Controller
         return view('VendorWorkOrderPrint', compact('BOMList'));     
     }
 
+     public function VWPrintView($vw_code)
+    {
+        
+       $BOMList = VendorWorkOrderModel::join('usermaster', 'usermaster.userId', '=', 'vendor_work_order_master.userId', 'left outer')
+        ->join('ledger_master', 'ledger_master.Ac_code', '=', 'vendor_work_order_master.vendorId', 'left outer')
+        ->join('season_master', 'season_master.season_id', '=', 'vendor_work_order_master.season_id', 'left outer')
+        ->join('currency_master', 'currency_master.cur_id', '=', 'vendor_work_order_master.currency_id', 'left outer')
+        ->join('costing_type_master', 'costing_type_master.cost_type_id', '=', 'vendor_work_order_master.cost_type_id', 'left outer')
+         ->join('main_style_master', 'main_style_master.mainstyle_id', '=', 'vendor_work_order_master.mainstyle_id', 'left outer') 
+        ->join('sub_style_master', 'sub_style_master.substyle_id', '=', 'vendor_work_order_master.substyle_id', 'left outer')  
+         ->join('fg_master', 'fg_master.fg_id', '=', 'vendor_work_order_master.fg_id', 'left outer')  
+         ->join('buyer_purchse_order_master', 'buyer_purchse_order_master.tr_code', '=', 'vendor_work_order_master.sales_order_no', 'left outer')    
+        ->where('vendor_work_order_master.delflag','=', '0')
+        ->where('vendor_work_order_master.vw_code','=', $vw_code)
+        ->get(['buyer_purchse_order_master.sam','vendor_work_order_master.*','usermaster.username','ledger_master.Ac_name','costing_type_master.cost_type_name','season_master.season_name',
+        'currency_master.currency_name','main_style_master.mainstyle_name','sub_style_master.substyle_name','fg_master.fg_name','ledger_master.pan_no as buyerpan','ledger_master.address']);
+
+          return view('VendorWorkOrderPrintView', compact('BOMList'));     
+    }
+
+
     /**
      * Show the form for editing the specified resource.
      *
