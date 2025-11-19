@@ -1,3 +1,29 @@
+@php
+function indianMoney($amount) {
+    if ($amount === null || $amount === '') return '0.00';
+
+    // Ensure number format (float, 2 decimals)
+    $amount = number_format((float)$amount, 2, '.', '');
+
+    // Split integer & decimal parts
+    $parts = explode('.', $amount);
+    $integer = $parts[0];
+    $decimal = $parts[1];
+
+    // Format Indian style (12,34,56,789)
+    $last3 = substr($integer, -3);
+    $rest = substr($integer, 0, -3);
+
+    if ($rest !== '') {
+        $rest = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", $rest);
+        $integer = $rest . "," . $last3;
+    }
+
+    return $integer . "." . $decimal;
+}
+@endphp
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -712,10 +738,10 @@
                                 }
                                 @endphp
 
-                                <td class="text-end">{{ number_format($cgst, 2) }} <br>({{ $cgst_percent }}%)</td>
-                                <td class="text-end">{{ number_format($sgst, 2) }} <br>({{ $sgst_percent }}%)</td>
-                                <td class="text-end">{{ number_format($igst, 2) }} <br> ({{ $igst_percent }}%)</td>
-                                <td class="text-end">{{ number_format($afterTax, 2) }}</td>
+                                <td class="text-end">{{ indianMoney($cgst, 2) }} <br>({{ $cgst_percent }}%)</td>
+                                <td class="text-end">{{ indianMoney($sgst, 2) }} <br>({{ $sgst_percent }}%)</td>
+                                <td class="text-end">{{ indianMoney($igst, 2) }} <br> ({{ $igst_percent }}%)</td>
+                                <td class="text-end">{{ indianMoney($afterTax, 2) }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -723,12 +749,12 @@
                         <tfoot>
                             <tr>
                                 <td colspan="5" class="text-end"><b>Total Meter:</b></td>
-                                <td class="text-end fw-bold">{{ number_format($FabricOutwardMaster[0]->total_meter, 2) }}</td>
+                                <td class="text-end fw-bold">{{ indianMoney($FabricOutwardMaster[0]->total_meter, 2) }}</td>
                                 <td colspan="2" class="text-end fw-bold">Total Amount <br>(Before Tax):</td>
-                                <td class="text-end fw-bold">{{ number_format($amt, 2) }}</td>
+                                <td class="text-end fw-bold">{{ indianMoney($amt, 2) }}</td>
                                 <td class="text-end fw-bold" colspan="3">Total Amount <br>(After Tax):</td>
 
-                                <td class="text-end fw-bold">{{ number_format($after_tax_total, 2) }}</td>
+                                <td class="text-end fw-bold">{{ indianMoney($after_tax_total, 2) }}</td>
                             </tr>
                             <tr>
                                 <td colspan="13" class="text-center"><b>NOT FOR SALE, FOR JOB WORK ONLY</b></td>
@@ -792,31 +818,31 @@
                             <table class="table table-bordered border border-dark ms-auto summary-table" style="width: 500px;">
                                 <tr>
                                     <th class="text-start">Amount (Before Tax)</th>
-                                    <td class="text-end">{{ number_format($amt, 2) }}</td>
+                                    <td class="text-end">{{ indianMoney($amt, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">SGST</th>
-                                    <td class="text-end">{{ number_format($SGSTTotal, 2) }}</td>
+                                    <td class="text-end">{{ indianMoney($SGSTTotal, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">CGST</th>
-                                    <td class="text-end">{{ number_format($CGSTTotal, 2) }}</td>
+                                    <td class="text-end">{{ indianMoney($CGSTTotal, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">IGST</th>
-                                    <td class="text-end">{{ number_format($IGSTTotal, 2) }}</td>
+                                    <td class="text-end">{{ indianMoney($IGSTTotal, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">Amount (After Tax)</th>
-                                    <td class="text-end">{{ number_format($tamt, 2) }}</td>
+                                    <td class="text-end">{{ indianMoney($tamt, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">Round Off</th>
-                                    <td class="text-end">{{ $roundOff >= 0 ? '+' : '' }}{{ number_format($roundOff, 2) }}</td>
+                                    <td class="text-end">{{ $roundOff >= 0 ? '+' : '' }}{{ indianMoney($roundOff, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">Grand Total</th>
-                                    <td class="text-end fw-bold">{{ number_format($roundedTotal, 2) }}</td>
+                                    <td class="text-end fw-bold">{{ indianMoney($roundedTotal ) }}</td>
                                 </tr>
                             </table>
 
@@ -847,6 +873,10 @@
             document.body.innerHTML = originalContents;
             location.reload();
         }
+
+        
+
+        
     </script>
 </body>
 
