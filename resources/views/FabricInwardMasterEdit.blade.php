@@ -427,19 +427,29 @@
           }
         });
    }
+
    function GetOrderNo(ele)
    {
        if($(ele).is(":checked"))
        {
-          $('#workOrder').removeClass('hide');
-          $(ele).val(1);
+           $('#workOrder').removeClass('hide');
+           $(ele).val(1);
+           $("#po_code").removeAttr('onchange'); 
+           $("#is_opening").attr('disabled', false).prop('checked', true).trigger("change");
+           $("#po_code").val("").attr('disabled', true).trigger("change");
+           $("#fge_code").val("").trigger("change").attr('disabled', true);
        }
        else
        {
+           $("#po_code").attr('onchange', 'getPODetails();GetPurchaseBillDetails();'); 
+           $("#is_opening").prop('checked', false).trigger("change").attr('disabled', true);
+           $("#po_code").attr('disabled', false);
+           $("#fge_code").val("").trigger("change").attr('disabled', false);
            $('#workOrder').addClass('hide');
            $(ele).val(0);
        }
    }
+    
    function getRateFromPO(row)
    {
        var po_code=$('#po_code').val();

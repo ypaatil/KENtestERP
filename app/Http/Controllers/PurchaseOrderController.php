@@ -1958,12 +1958,32 @@ class PurchaseOrderController extends Controller
             // ->whereIn('item_master.class_id', $class_ids)->whereIn('bom_code',$bom_codeids)->where('usedFlag',0)->get();
             
             // DB::enableQueryLog();
-            $data= DB::select('select item_master.*,bom_fabric_details.*, sum(bom_fabric_details.bom_qty) as bom_qty, (sum(bom_fabric_details.bom_qty) 
-                - (select ifnull(sum(item_qty),0) from purchaseorder_detail where bom_fabric_details.item_code = purchaseorder_detail.item_code AND bom_fabric_details.sales_order_no = purchaseorder_detail.sales_order_no 
-                AND bom_fabric_details.sales_order_no = purchaseorder_detail.sales_order_no)) as item_qty,classification_master.class_name from bom_fabric_details
-              inner join item_master on item_master.item_code=bom_fabric_details.item_code
-              inner join classification_master on classification_master.class_id=item_master.class_id
-              where item_master.class_id in('.$class_ids.') and bom_code in ('.$bom_code.') GROUP BY  bom_fabric_details.sales_order_no,bom_fabric_details.item_code'); 
+           $data = DB::select("SELECT 
+                                        item_master.*,
+                                        bom_fabric_details.*,
+                                        SUM(bom_fabric_details.bom_qty) AS bom_qty,
+                                        GREATEST(
+                                            (SUM(bom_fabric_details.bom_qty) 
+                                            - (
+                                                    SELECT IFNULL(SUM(item_qty),0) 
+                                                    FROM purchaseorder_detail 
+                                                    WHERE bom_fabric_details.item_code = purchaseorder_detail.item_code
+                                                    AND bom_fabric_details.sales_order_no = purchaseorder_detail.sales_order_no
+                                                )
+                                            ), 
+                                        0) AS item_qty,
+                                        classification_master.class_name
+                                    FROM bom_fabric_details
+                                    INNER JOIN item_master 
+                                        ON item_master.item_code = bom_fabric_details.item_code
+                                    INNER JOIN classification_master 
+                                        ON classification_master.class_id = item_master.class_id
+                                    WHERE item_master.class_id IN ($class_ids)
+                                    AND bom_code IN ($bom_code)
+                                    GROUP BY 
+                                        bom_fabric_details.sales_order_no,
+                                        bom_fabric_details.item_code");
+
                
             // dd(DB::getQueryLog());
         
@@ -2112,13 +2132,34 @@ class PurchaseOrderController extends Controller
         //**************** For Trim Fabric Data From Table *************************
         
         
-          $data= DB::select('select  item_master.*,bom_trim_fabric_details.*,sum(bom_trim_fabric_details.bom_qty) as bom_qty, (sum(bom_trim_fabric_details.bom_qty) 
-                - (select ifnull(sum(item_qty),0) from purchaseorder_detail where bom_trim_fabric_details.item_code = purchaseorder_detail.item_code 
-                AND bom_trim_fabric_details.sales_order_no = purchaseorder_detail.sales_order_no)) as item_qty,classification_master.class_name  from bom_trim_fabric_details
-          inner join item_master on item_master.item_code=bom_trim_fabric_details.item_code
-          inner join classification_master on classification_master.class_id=item_master.class_id
-          where usedFlag=0 and item_master.class_id in('.$class_ids.') and bom_code in ('.$bom_code.') GROUP BY bom_trim_fabric_details.sales_order_no, bom_trim_fabric_details.item_code'); 
-        // $query = DB::getQueryLog();
+       $data = DB::select("SELECT  
+                                    item_master.*,
+                                    bom_trim_fabric_details.*,
+                                    SUM(bom_trim_fabric_details.bom_qty) AS bom_qty,
+                                    GREATEST(
+                                        (
+                                            SUM(bom_trim_fabric_details.bom_qty) 
+                                            - (
+                                                SELECT IFNULL(SUM(item_qty),0) 
+                                                FROM purchaseorder_detail 
+                                                WHERE bom_trim_fabric_details.item_code = purchaseorder_detail.item_code
+                                                AND bom_trim_fabric_details.sales_order_no = purchaseorder_detail.sales_order_no
+                                            )
+                                        ),
+                                    0) AS item_qty,
+                                    classification_master.class_name
+                                FROM bom_trim_fabric_details
+                                INNER JOIN item_master 
+                                    ON item_master.item_code = bom_trim_fabric_details.item_code
+                                INNER JOIN classification_master 
+                                    ON classification_master.class_id = item_master.class_id
+                                WHERE usedFlag = 0
+                                AND item_master.class_id IN ($class_ids)
+                                AND bom_code IN ($bom_code)
+                                GROUP BY 
+                                    bom_trim_fabric_details.sales_order_no, 
+                                    bom_trim_fabric_details.item_code");
+  // $query = DB::getQueryLog();
         // $query = end($query);
         // dd($query);
          
@@ -2285,13 +2326,34 @@ class PurchaseOrderController extends Controller
         $bom_code=rtrim($bom_code,",");
        // echo $bom_code;
         //   DB::enableQueryLog();
-          $data= DB::select('select item_master.*, bom_sewing_trims_details.*,sum(bom_sewing_trims_details.bom_qty) as bom_qty, (sum(bom_sewing_trims_details.bom_qty) 
-                - (select ifnull(sum(item_qty),0)from purchaseorder_detail where bom_sewing_trims_details.item_code = purchaseorder_detail.item_code
-                 AND bom_sewing_trims_details.sales_order_no = purchaseorder_detail.sales_order_no)) as item_qty,classification_master.class_name  from bom_sewing_trims_details
-          inner join item_master on item_master.item_code=bom_sewing_trims_details.item_code
-          inner join classification_master on classification_master.class_id=item_master.class_id
-          where item_master.class_id in('.$class_ids.') and bom_code in ('.$bom_code.') GROUP BY  bom_sewing_trims_details.sales_order_no, bom_sewing_trims_details.item_code'); 
-        
+        $data = DB::select("
+                    SELECT 
+                        item_master.*,
+                        bom_sewing_trims_details.*,
+                        SUM(bom_sewing_trims_details.bom_qty) AS bom_qty,
+                        GREATEST(
+                            (
+                                SUM(bom_sewing_trims_details.bom_qty) 
+                                - (
+                                    SELECT IFNULL(SUM(item_qty),0)
+                                    FROM purchaseorder_detail 
+                                    WHERE bom_sewing_trims_details.item_code = purchaseorder_detail.item_code
+                                    AND bom_sewing_trims_details.sales_order_no = purchaseorder_detail.sales_order_no
+                                )
+                            ),
+                        0) AS item_qty,
+                        classification_master.class_name
+                    FROM bom_sewing_trims_details
+                    INNER JOIN item_master 
+                        ON item_master.item_code = bom_sewing_trims_details.item_code
+                    INNER JOIN classification_master 
+                        ON classification_master.class_id = item_master.class_id
+                    WHERE item_master.class_id IN ($class_ids)
+                    AND bom_code IN ($bom_code)
+                    GROUP BY 
+                        bom_sewing_trims_details.sales_order_no, 
+                        bom_sewing_trims_details.item_code");
+
         
         //On Request from Ken Team(Nikhil Bhosale), this condition removed to raise multiple po for the same item for the same sales order
         //  and bom_sewing_trims_details.item_code not in (select item_code from purchaseorder_detail where purchaseorder_detail.bom_code in  ('.$bom_code.'))
@@ -2300,8 +2362,8 @@ class PurchaseOrderController extends Controller
         // $query = end($query);
         // dd($query);   
          
-          foreach ($data as $value) 
-     {
+    foreach ($data as $value) 
+    {
         //   if($cat_id[0]->cat_id=='1')
         //   {
         //         $stock=DB::select(DB::raw("select ((select ifnull(sum(meter),0) from inward_details where item_code='".$value->item_code."')-
@@ -2511,14 +2573,34 @@ class PurchaseOrderController extends Controller
         }
         
         $bom_code=rtrim($bom_code,",");
-        $data= DB::select('select  item_master.*,bom_packing_trims_details.*,sum(bom_packing_trims_details.bom_qty) as bom_qty, (sum(bom_packing_trims_details.bom_qty) 
-                - (select ifnull(sum(item_qty),0)from purchaseorder_detail where bom_packing_trims_details.item_code = purchaseorder_detail.item_code
-                 AND bom_packing_trims_details.sales_order_no = purchaseorder_detail.sales_order_no)) as item_qty,classification_master.class_name  
-        from bom_packing_trims_details
-        inner join item_master on item_master.item_code=bom_packing_trims_details.item_code
-        inner join classification_master on classification_master.class_id=item_master.class_id
-        where item_master.class_id in('.$class_ids.') and
-        bom_code in ('.$bom_code.') GROUP BY  bom_packing_trims_details.sales_order_no,bom_packing_trims_details.item_code'); 
+        
+        $data = DB::select("SELECT  
+                    item_master.*,
+                    bom_packing_trims_details.*,
+                    SUM(bom_packing_trims_details.bom_qty) AS bom_qty,
+                    GREATEST(
+                        (
+                            SUM(bom_packing_trims_details.bom_qty) 
+                            - (
+                                SELECT IFNULL(SUM(item_qty),0)
+                                FROM purchaseorder_detail 
+                                WHERE bom_packing_trims_details.item_code = purchaseorder_detail.item_code
+                                AND bom_packing_trims_details.sales_order_no = purchaseorder_detail.sales_order_no
+                            )
+                        ),
+                    0) AS item_qty,
+                    classification_master.class_name
+                FROM bom_packing_trims_details
+                INNER JOIN item_master 
+                    ON item_master.item_code = bom_packing_trims_details.item_code
+                INNER JOIN classification_master 
+                    ON classification_master.class_id = item_master.class_id
+                WHERE item_master.class_id IN ($class_ids)
+                AND bom_code IN ($bom_code)
+                GROUP BY  
+                    bom_packing_trims_details.sales_order_no,
+                    bom_packing_trims_details.item_code");
+
         
         
         //On Request from Ken Team(Nikhil Bhosale), this condition removed to raise multiple po for the same item for the same sales order

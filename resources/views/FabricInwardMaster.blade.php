@@ -878,7 +878,7 @@
          var item_rates=+row.find('input[name^="item_rates[]"]').val();
          var amount=(parseFloat(item_qtys)*parseFloat(item_rates)).toFixed();
          row.find('input[name^="amounts[]"]').val(amount);
-          mycalc();
+         mycalc();
       }
    
    
