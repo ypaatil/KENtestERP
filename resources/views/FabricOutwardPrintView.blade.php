@@ -724,10 +724,10 @@ function indianMoney($amount) {
                                 <td class="text-center">{{ $rowDetail->hsn_code }}</td>
                                 <td class="text-start">{{ $rowDetail->item_description }}</td>
 
-                                <td class="text-end">{{ number_format($rowDetail->meter, 2) }}</td>
+                                <td class="text-end">{{ indianMoney($rowDetail->meter, 2) }}</td>
                                 <td class="text-center">{{ $rowDetail->unit_name }}</td>
                                 <td class="text-end">{{ number_format($rowDetail->item_rate, 2) }}</td>
-                                <td class="text-end">{{ number_format($beforeTax, 2) }}</td>
+                                <td class="text-end">{{ indianMoney($beforeTax, 2) }}</td>
                                 @php
                                 if ($beforeTax > 0) {
                                 $cgst_percent = round(($cgst / $beforeTax) * 100, 2);
