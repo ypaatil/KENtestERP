@@ -1,25 +1,25 @@
 @php
 function indianMoney($amount) {
-    if ($amount === null || $amount === '') return '0.00';
+if ($amount === null || $amount === '') return '0.00';
 
-    // Ensure number format (float, 2 decimals)
-    $amount = number_format((float)$amount, 2, '.', '');
+// Ensure number format (float, 2 decimals)
+$amount = number_format((float)$amount, 2, '.', '');
 
-    // Split integer & decimal parts
-    $parts = explode('.', $amount);
-    $integer = $parts[0];
-    $decimal = $parts[1];
+// Split integer & decimal parts
+$parts = explode('.', $amount);
+$integer = $parts[0];
+$decimal = $parts[1];
 
-    // Format Indian style (12,34,56,789)
-    $last3 = substr($integer, -3);
-    $rest = substr($integer, 0, -3);
+// Format Indian style (12,34,56,789)
+$last3 = substr($integer, -3);
+$rest = substr($integer, 0, -3);
 
-    if ($rest !== '') {
-        $rest = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", $rest);
-        $integer = $rest . "," . $last3;
-    }
+if ($rest !== '') {
+$rest = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", $rest);
+$integer = $rest . "," . $last3;
+}
 
-    return $integer . "." . $decimal;
+return $integer . "." . $decimal;
 }
 @endphp
 
@@ -724,10 +724,10 @@ function indianMoney($amount) {
                                 <td class="text-center">{{ $rowDetail->hsn_code }}</td>
                                 <td class="text-start">{{ $rowDetail->item_description }}</td>
 
-                                <td class="text-end">{{ indianMoney($rowDetail->meter, 2) }}</td>
+                                <td class="text-end">{{ indianMoney($rowDetail->meter ) }}</td>
                                 <td class="text-center">{{ $rowDetail->unit_name }}</td>
                                 <td class="text-end">{{ number_format($rowDetail->item_rate, 2) }}</td>
-                                <td class="text-end">{{ indianMoney($beforeTax, 2) }}</td>
+                                <td class="text-end">{{ indianMoney($beforeTax ) }}</td>
                                 @php
                                 if ($beforeTax > 0) {
                                 $cgst_percent = round(($cgst / $beforeTax) * 100, 2);
@@ -738,10 +738,10 @@ function indianMoney($amount) {
                                 }
                                 @endphp
 
-                                <td class="text-end">{{ indianMoney($cgst, 2) }} <br>({{ $cgst_percent }}%)</td>
-                                <td class="text-end">{{ indianMoney($sgst, 2) }} <br>({{ $sgst_percent }}%)</td>
-                                <td class="text-end">{{ indianMoney($igst, 2) }} <br> ({{ $igst_percent }}%)</td>
-                                <td class="text-end">{{ indianMoney($afterTax, 2) }}</td>
+                                <td class="text-end">{{ indianMoney($cgst ) }} <br>({{ $cgst_percent }}%)</td>
+                                <td class="text-end">{{ indianMoney($sgst ) }} <br>({{ $sgst_percent }}%)</td>
+                                <td class="text-end">{{ indianMoney($igst ) }} <br> ({{ $igst_percent }}%)</td>
+                                <td class="text-end">{{ indianMoney($afterTax ) }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -749,12 +749,12 @@ function indianMoney($amount) {
                         <tfoot>
                             <tr>
                                 <td colspan="5" class="text-end"><b>Total Meter:</b></td>
-                                <td class="text-end fw-bold">{{ indianMoney($FabricOutwardMaster[0]->total_meter, 2) }}</td>
+                                <td class="text-end fw-bold">{{ indianMoney($FabricOutwardMaster[0]->total_meter ) }}</td>
                                 <td colspan="2" class="text-end fw-bold">Total Amount <br>(Before Tax):</td>
-                                <td class="text-end fw-bold">{{ indianMoney($amt, 2) }}</td>
+                                <td class="text-end fw-bold">{{ indianMoney($amt ) }}</td>
                                 <td class="text-end fw-bold" colspan="3">Total Amount <br>(After Tax):</td>
 
-                                <td class="text-end fw-bold">{{ indianMoney($after_tax_total, 2) }}</td>
+                                <td class="text-end fw-bold">{{ indianMoney($after_tax_total ) }}</td>
                             </tr>
                             <tr>
                                 <td colspan="13" class="text-center"><b>NOT FOR SALE, FOR JOB WORK ONLY</b></td>
@@ -797,48 +797,50 @@ function indianMoney($amount) {
                             $points=($point) ? "." . $words[$point / 10] . " " . $words[$point=$point % 10] : '' ;
 
                             // --- TAX LOGIC ---
+                           
+                            // --- TAX LOGIC (NO ROUNDING, SAME AS FIRST TABLE) ---
                             if ($FabricOutwardMaster[0]->state_id == 27) {
-                            $CGSTTotal = round($amt * (2.5 / 100));
-                            $SGSTTotal = round($amt * (2.5 / 100));
+                            // Intra-state
+                            $CGSTTotal = $amt * 2.5 / 100;
+                            $SGSTTotal = $amt * 2.5 / 100;
                             $IGSTTotal = 0;
                             $tamt = $amt + $CGSTTotal + $SGSTTotal;
                             } else {
+                            // Inter-state
                             $CGSTTotal = 0;
                             $SGSTTotal = 0;
-                            $IGSTTotal = round($amt * (5 / 100));
+                            $IGSTTotal = $amt * 5 / 100;
                             $tamt = $amt + $IGSTTotal;
                             }
 
-                            // Round off & Grand total
-                            $roundedTotal = round($tamt);
-                            $roundOff = round($roundedTotal - $tamt, 2);
+                            // --- ROUND-OFF & GRAND TOTAL ---
+                            $roundedTotal = round($tamt); // Grand total
+                            $roundOff = $roundedTotal - $tamt; // Exact round-off (no round())
                             @endphp
-
-
                             <table class="table table-bordered border border-dark ms-auto summary-table" style="width: 500px;">
                                 <tr>
                                     <th class="text-start">Amount (Before Tax)</th>
-                                    <td class="text-end">{{ indianMoney($amt, 2) }}</td>
+                                    <td class="text-end">{{ indianMoney($amt ) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">SGST</th>
-                                    <td class="text-end">{{ indianMoney($SGSTTotal, 2) }}</td>
+                                    <td class="text-end">{{ indianMoney($SGSTTotal) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">CGST</th>
-                                    <td class="text-end">{{ indianMoney($CGSTTotal, 2) }}</td>
+                                    <td class="text-end">{{ indianMoney($CGSTTotal) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">IGST</th>
-                                    <td class="text-end">{{ indianMoney($IGSTTotal, 2) }}</td>
+                                    <td class="text-end">{{ indianMoney($IGSTTotal) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">Amount (After Tax)</th>
-                                    <td class="text-end">{{ indianMoney($tamt, 2) }}</td>
+                                    <td class="text-end">{{ indianMoney($tamt ) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">Round Off</th>
-                                    <td class="text-end">{{ $roundOff >= 0 ? '+' : '' }}{{ indianMoney($roundOff, 2) }}</td>
+                                    <td class="text-end">{{ $roundOff >= 0 ? '+' : '' }}{{ indianMoney($roundOff ) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">Grand Total</th>
@@ -873,10 +875,6 @@ function indianMoney($amount) {
             document.body.innerHTML = originalContents;
             location.reload();
         }
-
-        
-
-        
     </script>
 </body>
 
