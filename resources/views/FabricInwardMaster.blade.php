@@ -70,7 +70,7 @@
                               <label for="in_date" class="form-label">In Date</label>
                               <input type="date" name="in_date" class="form-control" id="in_date" value="{{date('Y-m-d')}}" required>
                               @foreach($counter_number as  $row)
-                              <input type="hidden" name="in_code" class="form-control" id="in_code" value="{{ 'GRN/21-22/FP'.''.$row->tr_no }}">
+                              <input type="hidden" name="in_code" class="form-control" id="in_code" value="{{ 'GRN/25-26/FP'.''.$row->tr_no }}">
                               <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $row->c_code }}">
                               <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
                               <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
@@ -388,32 +388,24 @@
 
                   <form action="{{route('FabricInward.store')}}" method="POST" enctype="multipart/form-data" id="frmData">
                      @csrf 
+                     @foreach($counter_number as  $row)
+                     <input type="hidden" name="in_code" class="form-control" id="in_code" value="{{ 'GRN/25-26/FP'.''.$row->tr_no }}">
+                     <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $row->c_code }}">
+                     <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
+                     <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
+                     @endforeach
                      <div class="row">
-                        <div class="col-md-2">
-                           <div class="mb-3">
-                              <label for="in_date" class="form-label">Date</label>
-                              <input type="date" name="in_date" class="form-control" id="in_date" value="{{date('Y-m-d')}}" required>
-                              @foreach($counter_number as  $row)
-                              <input type="hidden" name="in_code" class="form-control" id="in_code" value="{{ 'GRN/21-22/FP'.''.$row->tr_no }}">
-                              <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $row->c_code }}">
-                              <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
-                              <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
-                              @endforeach
-                              <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input">
-                           </div>
-                        </div>
-
-                        <div class="col-md-2">
-                           <div class="mb-3">
-                              <label for="invoice_no" class="form-label">DC No</label>
-                              <input type="text" name="invoice_no" id="invoice_no" class="form-control" required>
-                           </div>
-                        </div>
-
                         <div class="col-md-2">
                            <div class="mb-3">
                               <label for="invoice_date" class="form-label">DC Date</label>
                               <input type="date" name="invoice_date" id="invoice_date" class="form-control" value="{{date('Y-m-d')}}">
+                           </div>
+                        </div>
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="invoice_no" class="form-label">DC No</label>
+                              <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input">
+                              <input type="text" name="invoice_no" id="invoice_no" class="form-control" required>
                            </div>
                         </div>
                         <div class="col-md-3">
@@ -468,16 +460,15 @@
                         <div class="col-md-3" id="vendorData">
                            <div class="mb-3">
                               <label for="" class="form-label">Vendor Name</label>   
-                              <input type="text" name="vendorName" class="form-control" id="vendorName" readonly>
+                              <input type="text" name="vendorName" class="form-control" id="vendorName" readonly> 
                            </div>
                         </div>
-
                      </div>
 
                      <!-- PURCHASE TABLE -->
-                     <div class="table-wrap" id="PurchaseTbl">
+                     <div class="table-wrap" id="OutwardTbl">
                         <div class="table-responsive">
-                           <table id="footable_1" class="table table-bordered table-striped m-b-0 footable_2">
+                           <table id="footable_4" class="table table-bordered table-striped m-b-0">
                               <thead>
                                  <tr class="text-center">
                                     <th>Sr No.</th>
@@ -497,7 +488,7 @@
                      <!-- FABRIC INWARD TABLE -->
                      <div class="table-wrap" id="fabricInward">
                         <div class="table-responsive">
-                           <table id="footable_2" class="table table-bordered table-striped m-b-0 footable_2">
+                           <table id="footable_3" class="table table-bordered table-striped m-b-0 footable_2">
                               <thead>
                                  <tr>
                                     <th>Roll No</th>
@@ -562,12 +553,12 @@
 
                                     <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;"></td>
 
-                                    <td><input type="text" name="track_code[]" id="track_code" style="width:80px;height:30px;" readOnly></td>
+                                    <td><input type="text" name="track_code[]" id="track_code1" style="width:80px;height:30px;" readOnly></td>
 
                                     <td><i style="font-size:25px;" onclick="CalculateRowPrint(this);" name="print" class="fa fa-print"></i></td>
 
                                     <td>
-                                       <input type="button" style="width:40px;" onclick="insertcone();" name="print" value="+" class="btn btn-warning pull-left AButton">
+                                       <input type="button" style="width:40px;" onclick="insertcone1();" name="print" value="+" class="btn btn-warning pull-left AButton">
                                     </td>
 
                                     <td>
@@ -666,6 +657,10 @@
         }); 
    });
    
+   $("#return-tab").click(function () {
+      serBarocode1();
+   });
+
    function DisabledPO(el)
    {
       if($(el).is(":checked"))
@@ -849,9 +844,25 @@
        $("select").prop('disabled', false);
    }
    
+   function serBarocode1()
+   { 
+      if($("#cp_id").val()==1)
+      { 
+         ++PBarcode;
+         $("#track_code1").val('P'.concat(PBarcode.toString()));
+         //alert($("#track_code").val());
+      }
+      else if($("#cp_id").val()==2)
+      {      
+         var CBar='';
+         CBar='I' + parseInt(++CBarcode);
+         $("#track_code1").val(CBar);
+      }
+   }
+   
    
    function serBarocode()
-   {
+   { 
       if($("#cp_id").val()==1)
       { 
          ++PBarcode;
@@ -1153,6 +1164,204 @@
    }
    
    
+   var indexcone = 2;
+   
+   function insertcone1(){
+   
+   $("#item_code").select2("destroy");
+   $("#part_id").select2("destroy");
+   var table=document.getElementById("footable_3").getElementsByTagName('tbody')[0];
+   var row=table.insertRow(table.rows.length);
+   
+   var cell1=row.insertCell(0);
+   var t1=document.createElement("input");
+   t1.style="display: table-cell; width:50px;";
+   //t1.className="form-control col-sm-1";
+   
+   t1.id = "id"+indexcone;
+   t1.name= "id[]";
+   t1.value=indexcone;
+   
+   cell1.appendChild(t1);
+    
+   
+   var cell1=row.insertCell(1);
+   var t1=document.createElement("input");
+   t1.style="display: table-cell; width:80px;";
+   //t1.className="form-control col-sm-1";
+   
+   t1.id = "item_codes"+indexcone;
+   t1.name= "item_codes[]";
+   
+   cell1.appendChild(t1);
+    
+   var cell5 = row.insertCell(2);
+   var t5=document.createElement("select");
+   var x = $("#item_code"),
+   y = x.clone();
+   y.attr("id","item_code");
+   y.attr("name","item_code[]");
+   y.width(200);
+   y.height(30);
+   y.appendTo(cell5);
+   
+   
+   
+   var cell3 = row.insertCell(3);
+   var t3=document.createElement("select");
+   var x = $("#part_id"),
+   y = x.clone();
+   y.attr("id","part_id");
+   y.attr("name","part_id[]");
+   y.width(200);
+   y.height(30);
+   y.appendTo(cell3);
+   
+   
+   var t7=document.createElement("input");
+   t7.style="display: table-cell; width:80px;height:30px;";
+   t7.type="hidden";
+   t7.className="TAGAQTY";
+   t7.required="true";
+   t7.id = "taga_qty"+indexcone;
+   t7.name="taga_qty[]";
+   t7.onkeyup=mycalc();
+   t7.value="1";
+   cell3.appendChild(t7);
+   
+   var cell7 = row.insertCell(4);
+   var t8=document.createElement("input");
+   t8.style="display: table-cell; width:80px;height:30px;";
+   t8.type="text";
+   t8.step="any";
+   t8.className="METER";
+   t8.id = "meter"+indexcone;
+   t8.name="meter[]";
+   t8.onkeyup=mycalc();
+   cell7.appendChild(t8);
+   
+   var cell7 = row.insertCell(5);
+   var t8=document.createElement("input");
+   t8.style="display: table-cell; width:80px;height:30px;";
+   t8.type="text";
+   t8.step="any";
+   t8.id = "gram_per_meter"+indexcone;
+   t8.name="gram_per_meter[]";
+   t8.value=$('#gram_per_meter').val();
+   t8.onkeyup=mycalc();
+   cell7.appendChild(t8);
+   
+   var cell7 = row.insertCell(6);
+   var t8=document.createElement("input");
+   t8.style="display: table-cell; width:80px;height:30px;";
+   t8.type="text";
+   t8.step="any";
+   t8.className="KG";
+   t8.id = "kg"+indexcone;
+   t8.name="kg[]";
+   t8.readOnly=true;
+   t8.value=$('#kg').val();
+   t8.onkeyup=mycalc();
+   cell7.appendChild(t8);
+   
+   var cell3 = row.insertCell(7);
+   var t3=document.createElement("input");
+   t3.style="display: table-cell; width:80px;height:30px;";
+   t3.type="number";
+   t3.step="any";
+   t3.required="true";
+   t3.id = "item_rates"+indexcone;
+   t3.name="item_rates[]";
+   t3.value="0";
+   if($('#is_opening').prop('checked')) 
+   {t3.readOnly=false;}else{t3.readOnly=true;}
+   cell3.appendChild(t3);
+   
+   var cell3 = row.insertCell(8);
+   var t3=document.createElement("input");
+   t3.style="display: table-cell; width:80px;height:30px;";
+   t3.type="number";
+   t3.readOnly="true";
+   t3.step="any";
+   t3.required="true";
+   t3.className="AMT";
+   t3.id = "amounts"+indexcone;
+   t3.name="amounts[]";
+   t3.value="0";
+   cell3.appendChild(t3);
+   
+   var cell4 = row.insertCell(9);
+   var t4=document.createElement("input");
+   t4.style="display: table-cell; width:100px;height:30px;";
+   t4.type="number";
+   t4.step="any";
+   t4.required="true";
+   t4.className="suplier_roll_no";
+   t4.id = "suplier_roll_no"+indexcone;
+   t4.name="suplier_roll_no[]";
+   t4.value="";
+   cell4.appendChild(t4);
+   
+   var cell7 = row.insertCell(10);
+   var t7=document.createElement("input");
+   t7.style="display: table-cell; width:80px;height:30px;";
+   t7.type="text";
+   t7.readOnly=true;
+   t7.id = "track_code"+indexcone;
+   t7.name="track_code[]";
+   if($("#cp_id").val()==1)
+   {
+      ++PBarcode;
+     t7.value='P'+PBarcode;
+   }
+   else
+   {
+      ++CBarcode;
+      t7.value='I'+CBarcode;
+   } 
+   
+   
+   cell7.appendChild(t7);
+   
+   var cell7 = row.insertCell(11);
+   cell7.innerHTML='<i class="fa fa-print" name="print" style="font-size:25px;" onclick="CalculateRowPrint(this);"></i>';
+   
+   
+   var cell8=row.insertCell(12);
+   var btnAdd = document.createElement("INPUT");
+   btnAdd.id = "Abutton";
+   btnAdd.type = "button";
+   btnAdd.name = "print";
+   btnAdd.className="btn btn-warning pull-left";
+   btnAdd.value = "+";
+   btnAdd.setAttribute("onclick", "insertcone();CalculateRowPrint(this);");
+   cell8.appendChild(btnAdd);
+   
+   var cell9=row.insertCell(13);
+   var btnRemove = document.createElement("INPUT");
+   btnRemove.id = "Dbutton";
+   btnRemove.type = "button";
+   btnRemove.className="btn btn-danger pull-left";
+   btnRemove.value = "X";
+   btnRemove.setAttribute("onclick", "deleteRowcone(this)");
+   cell9.appendChild(btnRemove);
+   
+   var w = $(window);
+   var row = $('#footable_3').find('tr').eq(indexcone);
+   
+   if (row.length){
+   $('html,body').animate({scrollTop: row.offset().top - (w.height()/2)}, 1000 );
+   }
+   
+   document.getElementById('cntrr').value = parseInt(document.getElementById('cntrr').value)+1;
+   
+   indexcone++;
+   mycalc();
+   recalcIdcone();
+   
+   selselect();
+      
+   }
    
    function selselect()
    {
@@ -1169,36 +1378,64 @@
    }, 2000);
    }
    
-   
-     $(document).on("input", 'input[name^="meter[]"],input[name^="item_rates[]"]', function (event) 
-     {
-         var row = $(this).closest("tr");
-   	   var current_item_code = row.find('input[name^="item_codes[]"]').val();
-         var po_qty = $(".item_code_" + current_item_code).find('.bal_qty').html();
-
-         // calculate total
-         var total = 0;
-
-         $("#footable_2 > tbody > tr").each(function() {
-
-            var item_code = $(this).find('input[name="item_codes[]"]').val();
-
-            if (current_item_code === item_code) {
-               var meter = parseFloat($(this).find('input[name="meter[]"]').val()) || 0;
-               total = total + meter;
-            }
-         });
-
-         // 5% allowed quantity
-         var allow_qty = parseFloat(po_qty) + (parseFloat(po_qty) * 0.05);
  
 
-         if (parseFloat(total) > parseFloat(allow_qty)) {
-            alert("Quantity is allow only 5%");
-         }
+   $(document).on("input", 'input[name^="meter[]"]', function (event) 
+   {
+         var row = $(this).closest("tr");
 
+         var current_item_code = row.find('input[name^="item_codes[]"]').val();
+   
+         var total = 0;
+
+         if($("#isReturnFabricInward").is(":checked"))
+         {
+               var po_qty = $(".item_code_" + current_item_code).find('.bal_qty1').html();
+               $("#footable_3 > tbody > tr").each(function() {
+
+                  var item_code = $(this).find('input[name="item_codes[]"]').val();
+
+                  if (current_item_code === item_code) {
+                     var meter = parseFloat($(this).find('input[name="meter[]"]').val()) || 0;
+                     total = total + meter;
+                  }
+               }); 
+               // 5% allowed quantity
+               var allow_qty = parseFloat(po_qty) + (parseFloat(po_qty) * 0.05);
+      
+
+               if (parseFloat(total) > parseFloat(allow_qty)) {
+                  alert("Quantity is allow only 5%");
+               }
+         }
+         else
+         {
+            var po_qty = $(".item_code_" + current_item_code).find('.bal_qty').html();
+            $("#footable_2 > tbody > tr").each(function() {
+
+               var item_code = $(this).find('input[name="item_codes[]"]').val();
+
+               if (current_item_code === item_code) {
+                  var meter = parseFloat($(this).find('input[name="meter[]"]').val()) || 0;
+                  total = total + meter;
+               } 
+               // 5% allowed quantity
+               var allow_qty = parseFloat(po_qty) + (parseFloat(po_qty) * 0.05);
+      
+
+               if (parseFloat(total) > parseFloat(allow_qty)) {
+                  alert("Quantity is allow only 5%");
+               }
+            });
+         } 
+
+         CalculateRow($(this).closest("tr"));
+   });
+   
+   $(document).on("input", 'input[name^="item_rates[]"]', function (event) 
+   {
           CalculateRow($(this).closest("tr"));
-     });
+   });
      
       function CalculateRow(row)
       {
@@ -1248,7 +1485,7 @@
    
    }
    
-    $("table.footable_2").on('keyup', 'input[name^="gram_per_meter[]"]', function (event)   
+   $("table.footable_2").on('keyup', 'input[name^="gram_per_meter[]"]', function (event)   
    { 
            
       var row=$(this).closest("tr");

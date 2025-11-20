@@ -3681,7 +3681,8 @@ P2
 
      public function GetFabricInwardOutwardData(Request $request)
     {
-        $detailData = DB::SELECT("SELECT sum(meter) as total_meter,(select sum(inward_details.meter) FROM inward_details WHERE inward_details.item_code = fabric_outward_details.item_code) as received,
+        $detailData = DB::SELECT("SELECT sum(meter) as total_meter,(select ifnull(sum(inward_details.meter),0) FROM inward_details 
+                        WHERE inward_details.item_code = fabric_outward_details.item_code AND inward_details.vw_code = fabric_outward_details.vpo_code) as received,
                         item_master.item_name, fabric_outward_details.item_code  FROM fabric_outward_details 
                         INNER JOIN item_master ON item_master.item_code = fabric_outward_details.item_code
                         WHERE fabric_outward_details.vpo_code='".$request->vpo_code."' GROUP BY fabric_outward_details.item_code");
@@ -3691,13 +3692,13 @@ P2
         
         foreach($detailData as $row)
         {
-            $html .='<tr>
-                       <td>'.($sr_no++).'</td> 
-                       <td>'.$row->item_code.'</td>
+            $html .='<tr class="item_code_'.$row->item_code.'">
+                       <td class="text-center">'.($sr_no++).'</td> 
+                       <td class="text-center">'.$row->item_code.'</td>
                        <td>'.$row->item_name.'</td>
-                       <td>'.$row->total_meter.'</td>
-                       <td>'.$row->received.'</td>
-                       <td>'.($row->total_meter-$row->received).'</td>
+                       <td class="text-center">'.$row->total_meter.'</td>
+                       <td class="text-center">'.$row->received.'</td>
+                       <td class="text-center bal_qty1">'.($row->total_meter-$row->received).'</td>
                     </tr>';
         }
         
