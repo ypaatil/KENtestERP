@@ -884,10 +884,8 @@ public function SalesOrderPrintView($tr_code)
         //         WHERE buyer_purchse_order_master.delflag = 0 AND buyer_purchse_order_master.og_id != 4  AND order_close_date = '".$ReportDate."' $filter
         //         OR order_received_date <= '".$ReportDate."' AND  buyer_purchse_order_master.delflag = 0 AND buyer_purchse_order_master.og_id != 4 AND buyer_purchse_order_master.job_status_id IN(1) ".$filter);
          
- 
 
-
-     /*   $Buyer_Purchase_Order_List = DB::SELECT("
+       /*  $Buyer_Purchase_Order_List = DB::SELECT("
                 SELECT 
                     order_group_master.order_group_name,
                     buyer_purchse_order_master.*,
@@ -973,7 +971,7 @@ public function SalesOrderPrintView($tr_code)
                         OR buyer_purchse_order_master.order_close_date IS NULL
                     )
                     $filter 
-            ");  */
+            ");   */
 
 
        
@@ -1062,15 +1060,15 @@ public function SalesOrderPrintView($tr_code)
         AND bpo.order_received_date <= ?
         AND (bpo.order_close_date > ? OR bpo.order_close_date IS NULL)
 ", [
-    $ReportDate, // shipped_qty
-    $ReportDate, // shipped_qty2
-    $ReportDate, // adjust_qty / remark
-    $ReportDate, // fabric_issued
-    $ReportDate, // cut_qty
-    $ReportDate, // prod_qty
-    $ReportDate, // order_received_date
-    $ReportDate  // order_close_date
-    ]);     
+    $ReportDate, 
+    $ReportDate, 
+    $ReportDate, 
+    $ReportDate, 
+    $ReportDate, 
+    $ReportDate, 
+    $ReportDate, 
+    $ReportDate  
+    ]);      
        
         $total_valuec=0;
         $total_qtyc=0;
