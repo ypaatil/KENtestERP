@@ -38,7 +38,7 @@ if($job_status_id==1) { @endphp
       </div>
    </div>
 </div>
-<div class="row">
+<div class="row hide">
    <div class="col-md-3">
       <div class="card mini-stats-wid" style="background-color:#152d9f;" >
          <div class="card-body">
