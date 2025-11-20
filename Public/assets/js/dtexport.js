@@ -108,6 +108,15 @@ let lastParentFilterCol = null;
 let savedFilterStates = {};
 let savedVisibleValues = {};
 
+function escapeHtml(str) {
+    return str
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
 function buildSimpleFilter(selector, colIndex) {
  
   const table = $('#dt').DataTable();
@@ -148,11 +157,23 @@ try{
     <div class='options'>
   `;
  
-  valuesToShow.forEach(v => {
-   
+
+
+  /*valuesToShow.forEach(v => {   
     const checked = prevChecked.length === 0 || prevChecked.includes(v) ? 'checked' : '';
     html += `<label><input type='checkbox' class='opt' value='${v}' ${checked}> ${v}</label>`;
-  });
+  });*/
+
+  valuesToShow.forEach(v => {
+    const safeValue = escapeHtml(v); // Escape quotes and HTML
+    const checked = prevChecked.length === 0 || prevChecked.includes(v) ? 'checked' : '';
+
+    html += `
+        <label>
+            <input type="checkbox" class="opt" value="${safeValue}" ${checked}> 
+            ${v}
+        </label>`;
+});
 
   html += `
     </div>
