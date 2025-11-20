@@ -151,7 +151,7 @@
                                  <option value="">--Select CP Type--</option>
                                  @foreach($CPList as  $rowCP)
                                  <option value="{{ $rowCP->cp_id }}" 
-                                    @php if($rowCP->cp_id ==1){echo 'selected';} @endphp>
+                                    @if($rowCP->cp_id ==1){echo 'selected';} @endif>
                                     {{ $rowCP->cp_name }}
                                  </option>
                                  @endforeach
@@ -391,6 +391,9 @@
                      @foreach($counter_number as  $row)
                      <input type="hidden" name="in_code" class="form-control" id="in_code" value="{{ 'GRN/25-26/FP'.''.$row->tr_no }}">
                      <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $row->c_code }}">
+                     <input type="hidden" name="in_date" class="form-control" id="in_date" value="{{ date('Y-m-d') }}">
+                     <input type="hidden" name="cp_id" class="form-control" id="cp_id" value="1">
+                     <input type="hidden" name="Ac_code" class="form-control" id="Ac_code1" value="">
                      <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
                      <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
                      @endforeach
@@ -586,7 +589,7 @@
                                  </tr>
                               </tfoot>
 
-                              <input type="number" value="1" name="cntrr" id="cntrr" readonly hidden>
+                              <input type="number" value="1" name="cntrr" id="cntrr1" readonly hidden>
                            </table>
                         </div>
                      </div>
@@ -595,28 +598,28 @@
                         <div class="col-md-2">
                            <div class="mb-3">
                               <label for="total_meter" class="form-label">Total Meter</label>
-                              <input type="number" readOnly step="0.01" name="total_meter" class="form-control" id="total_meter" value="0">
+                              <input type="number" readOnly step="0.01" name="total_meter" class="form-control" id="total_meter1" value="0">
                            </div>
                         </div>
 
                         <div class="col-md-2">
                            <div class="mb-3">
                               <label for="total_kg" class="form-label">Total KG</label>
-                              <input type="number" readOnly step="0.01" name="total_kg" class="form-control" id="total_kg" value="0">
+                              <input type="number" readOnly step="0.01" name="total_kg" class="form-control" id="total_kg1" value="0">
                            </div>
                         </div>
 
                         <div class="col-md-2">
                            <div class="mb-3">
                               <label for="total_taga_qty" class="form-label">Total Taga</label>
-                              <input type="number" readOnly name="total_taga_qty" class="form-control" id="total_taga_qty" value="1">
+                              <input type="number" readOnly name="total_taga_qty" class="form-control" id="total_taga_qty1" value="1">
                            </div>
                         </div>
 
                         <div class="col-md-2">
                            <div class="mb-3">
                               <label for="total_amount" class="form-label">Total Amount</label>
-                              <input type="text" name="total_amount" readOnly class="form-control" id="total_amount" required>
+                              <input type="text" name="total_amount" readOnly class="form-control" id="total_amount1" required>
                            </div>
                         </div>
                      </div>
@@ -737,6 +740,7 @@
           success: function(data)
           {
                $("#vendorName").val(data.html);
+               $("#Ac_code1").val(data.ac_code);
                $('#vendorData').removeClass('hide');
                
           }
@@ -757,26 +761,26 @@
 
    function GetOrderNo(ele)
    {
-       if($(ele).is(":checked"))
-       {
-           $('#workOrder').removeClass('hide');
-           $(ele).val(1);
-           $("#po_code").removeAttr('onchange'); 
-           $("#is_opening").attr('disabled', true).prop('checked', true).trigger("change");
-           $("#po_code").val("").attr('disabled', true).trigger("change");
-           $("#fge_code").val("").trigger("change").attr('disabled', true);
-           $("#Ac_code").val(50).trigger("change").attr('disabled', true);
-           $("#bill_to").val(26).trigger("change").attr('disabled', true);
-       }
-       else
-       {
-           $("#po_code").attr('onchange', 'getPODetails();GetPurchaseBillDetails();'); 
-           $("#is_opening").prop('checked', false).trigger("change").attr('disabled', true);
-           $("#po_code").attr('disabled', false);
-           $("#fge_code").val("").trigger("change").attr('disabled', false);
-           $('#workOrder').addClass('hide');
-           $(ele).val(0);
-       }
+      //  if($(ele).is(":checked"))
+      //  {
+      //      $('#workOrder').removeClass('hide');
+      //      $(ele).val(1);
+      //      $("#po_code").removeAttr('onchange'); 
+      //      $("#is_opening").attr('disabled', true).prop('checked', true).trigger("change");
+      //      $("#po_code").val("").attr('disabled', true).trigger("change");
+      //      $("#fge_code").val("").trigger("change").attr('disabled', true);
+      //      $("#Ac_code").val(50).trigger("change").attr('disabled', true);
+      //      $("#bill_to").val(26).trigger("change").attr('disabled', true);
+      //  }
+      //  else
+      //  {
+      //      $("#po_code").attr('onchange', 'getPODetails();GetPurchaseBillDetails();'); 
+      //      $("#is_opening").prop('checked', false).trigger("change").attr('disabled', true);
+      //      $("#po_code").attr('disabled', false);
+      //      $("#fge_code").val("").trigger("change").attr('disabled', false);
+      //      $('#workOrder').addClass('hide');
+      //      $(ele).val(0);
+      //  }
    }   
    
    function enable(opening)
@@ -1074,7 +1078,7 @@
    t3.name="item_rates[]";
    t3.value="0";
    if($('#is_opening').prop('checked')) 
-   {t3.readOnly=false;}else{t3.readOnly=true;}
+   {t3.readOnly=false;}else{t3.readOnly=false;}
    cell3.appendChild(t3);
    
    var cell3 = row.insertCell(8);
@@ -1274,7 +1278,7 @@
    t3.name="item_rates[]";
    t3.value="0";
    if($('#is_opening').prop('checked')) 
-   {t3.readOnly=false;}else{t3.readOnly=true;}
+   {t3.readOnly=false;}else{t3.readOnly=false;}
    cell3.appendChild(t3);
    
    var cell3 = row.insertCell(8);
@@ -1353,7 +1357,7 @@
    $('html,body').animate({scrollTop: row.offset().top - (w.height()/2)}, 1000 );
    }
    
-   document.getElementById('cntrr').value = parseInt(document.getElementById('cntrr').value)+1;
+   document.getElementById('cntrr1').value = parseInt(document.getElementById('cntrr1').value)+1;
    
    indexcone++;
    mycalc();
@@ -1390,23 +1394,73 @@
 
          if($("#isReturnFabricInward").is(":checked"))
          {
-               var po_qty = $(".item_code_" + current_item_code).find('.bal_qty1').html();
-               $("#footable_3 > tbody > tr").each(function() {
+            var po_qty = parseFloat($(".item_code_" + current_item_code).find('.bal_qty1').html()) || 0;
+            var total = 0;
+
+            // First calculate total meter already entered
+            $("#footable_3 > tbody > tr").each(function () {
+
+               var item_code = $(this).find('input[name="item_codes[]"]').val();
+               if (current_item_code === item_code) {
+
+                  var meterVal = parseFloat($(this).find('input[name="meter[]"]').val()) || 0;
+                  total += meterVal;
+               }
+            });
+
+            // Now check the latest row where user typed meter
+            var currentMeterInput = $(this);
+            var entered = parseFloat(currentMeterInput.val()) || 0;
+
+            // Remaining quantity
+            var remaining = po_qty - (total - entered);
+
+            // Case 1: Total exceeded
+            if (total > po_qty) {
+
+               alert("Quantity is exceeding " + po_qty);
+
+               if (remaining <= 0) {
+                  currentMeterInput.val(0);
+               } else {
+                  currentMeterInput.val(remaining);
+               }
+
+               return;
+            }
+
+            // --- DISABLE NEXT ROWS IF FIRST ROW IS FULL ---
+            if (total >= po_qty) {
+
+               // Disable all remaining rows for this item
+               $("#footable_3 > tbody > tr").each(function () {
 
                   var item_code = $(this).find('input[name="item_codes[]"]').val();
 
                   if (current_item_code === item_code) {
-                     var meter = parseFloat($(this).find('input[name="meter[]"]').val()) || 0;
-                     total = total + meter;
-                  }
-               }); 
-               // 5% allowed quantity
-               var allow_qty = parseFloat(po_qty) + (parseFloat(po_qty) * 0.05);
-      
 
-               if (parseFloat(total) > parseFloat(allow_qty)) {
-                  alert("Quantity is allow only 5%");
+                        var meterInput = $(this).find('input[name="meter[]"]');
+
+                        // If this row is NOT the row with actual value (first filled row),
+                        // then force meter = 0 and disable it
+                        if (parseFloat(meterInput.val()) === 0) {
+
+                           meterInput.val(0);
+                           meterInput.prop("readonly", true);
+                        }
+                  }
+               });
+            } 
+            else 
+            {
+               // If remaining qty exists → allow but limit to remaining
+               if (entered > remaining) {
+                  alert("Only " + remaining + " meter remaining!");
+
+                  currentMeterInput.val(remaining);
                }
+            }
+
          }
          else
          {
@@ -1450,6 +1504,7 @@
    function mycalc()
    {    
          document.getElementById("total_taga_qty").value =document.getElementById('cntrr').value;
+         document.getElementById("total_taga_qty1").value =document.getElementById('cntrr1').value;
          
          sum1 = 0.0;
          var amounts = document.getElementsByClassName('METER');
@@ -1460,6 +1515,16 @@
          sum1 += parseFloat(a);
          }
          document.getElementById("total_meter").value = sum1.toFixed(2);
+
+         sum2 = 0.0;
+         var amounts = document.getElementsByClassName('METER');
+         //alert("value="+amounts[0].value);
+         for(var i=0; i<amounts .length; i++)
+         { 
+         var a = +amounts[i].value;
+         sum2 += parseFloat(a);
+         }
+         document.getElementById("total_meter1").value = sum2.toFixed(2);
          
          
          sum1 = 0.0;
@@ -1472,6 +1537,17 @@
          }
          document.getElementById("total_kg").value = sum1.toFixed(2);
          
+         sum4 = 0.0;
+         var amounts = document.getElementsByClassName('KG');
+         //alert("value="+amounts[0].value);
+         for(var i=0; i<amounts .length; i++)
+         { 
+         var a = +amounts[i].value;
+         sum4 += parseFloat(a);
+         }
+         document.getElementById("total_kg1").value = sum1.toFixed(2);
+         
+         
          
          sum1 = 0.0;
          var amounts = document.getElementsByClassName('AMT');
@@ -1482,6 +1558,16 @@
          sum1 += parseFloat(a);
          }
          document.getElementById("total_amount").value = sum1.toFixed(2);  
+
+         sum5 = 0.0;
+         var amounts = document.getElementsByClassName('AMT');
+         //alert("value="+amounts[0].value);
+         for(var i=0; i<amounts .length; i++)
+         { 
+            var a = +amounts[i].value;
+            sum5 += parseFloat(a);
+         }
+         document.getElementById("total_amount1").value = sum5.toFixed(2);  
    
    }
    

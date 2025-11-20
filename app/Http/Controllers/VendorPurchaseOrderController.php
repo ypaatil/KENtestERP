@@ -2774,13 +2774,10 @@ public function  POVsMaterialIssueReport(Request $request)
         }    
         
     public function GetVendorName(Request $request)
-    {
-
-           
-        $vendorData = DB::select("select ac_name from vendor_purchase_order_master INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId where vpo_code = '".$request->vpo_code."'");
-   
-
-        return response()->json(['html' => $vendorData[0]->ac_name]);
+    { 
+        $vendorData = DB::select("select ac_name, ledger_master.ac_code from vendor_purchase_order_master INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId where vpo_code = '".$request->vpo_code."'");
+    
+        return response()->json(['html' => $vendorData[0]->ac_name,'ac_code' => $vendorData[0]->ac_code]);
     }
         
     public function destroy($id)

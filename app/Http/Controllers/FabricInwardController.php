@@ -191,7 +191,7 @@ class FabricInwardController extends Controller
                 'total_kg'=>'required',
                 'total_taga_qty'=>'required',
                 'c_code'=>'required',
-                 ]);
+        ]);
     
   
     $item_code = $request->item_code; 
@@ -3666,7 +3666,9 @@ P2
             }, 'combined')
             ->join('item_master', 'item_master.item_code', '=', 'combined.item_code')
             ->select('item_master.item_code', 'item_master.item_name')
+            ->groupBy('combined.item_code', 'item_master.item_name')
             ->get();
+
         // dd(DB::getQueryLog());
         $html = '<option value="">--Select Item--</option>';
 
