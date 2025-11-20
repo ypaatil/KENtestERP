@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Trims Outward (Regular Print)</title>
+    <title>Trims Outward (Regular Print) | Ken Global Designs Pvt. Ltd.</title>
     <!-- Web Fonts -->
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' type='text/css'>
     <!-- Stylesheets -->
@@ -525,7 +525,7 @@
                                 <div class="info-row">
                                     <div class="label">Job/Cutting PO No</div>
                                     <div class="colon">:</div>
-                                    <div class="value"></div>
+                                    <div class="value"> {{ isset($TrimsOutwardMaster[0]->vw_code) ? $TrimsOutwardMaster[0]->vw_code :"" }}</div>
                                 </div>
                                 <div class="info-row">
                                     <div class="label">Style</div>
@@ -544,7 +544,7 @@
                         </div>
                         <div class="col-md-6 p-2">
                             <p><b>Company Name: </b></p>
-                            <p><b>Ken Global Designs Pvt Ltd</b> <br> Gat No.- 298/299, A/P Kondigre Kolhapur Mahrashtra - 416101</p>
+                            <p><b>Ken Global Designs Pvt Ltd</b> <br> Gat No.- 298/299, A/P Kondigre Kolhapur Maharashtra - 416101</p>
 
                             <div class="info-row">
                                 <div class="label">PAN NO</div>
@@ -559,7 +559,7 @@
                             <div class="info-row">
                                 <div class="label">STATE</div>
                                 <div class="colon">:</div>
-                                <div class="value"> MAHARASTRA</div>
+                                <div class="value"> MAHARASHTRA</div>
                             </div>
 
                         </div>
@@ -589,12 +589,12 @@
 
                         </div>
                         <div class="col-md-6 p-2">
-                            <div class="">
+                            <!-- <div class="">
                                 <p><b>Shipping To:</b></p>
                                 <p><b>{{$TrimsOutwardMaster[0]->ship_to}}</b> <br> </p>
 
 
-                            </div>
+                            </div> -->
 
                         </div>
                     </div>
@@ -634,7 +634,8 @@
                                 <td class="text-center">{{ $rowDetail->item_code }} </td>
                                 <td class="text-start">{{ $rowDetail->item_name }} </td>
                                 <td class="text-center">{{ $rowDetail->unit_name }} </td>
-                                <td class="text-end"> {{ round($rowDetail->item_qty,2) }}</td>
+                               <td class="text-end">{{ number_format($rowDetail->item_qty, 2, '.', ',') }}</td>
+
 
                             </tr>
                             @php $no=$no+1;

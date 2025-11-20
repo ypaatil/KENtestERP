@@ -583,7 +583,7 @@
                             <div class="info-row">
                                 <div class="label">STATE</div>
                                 <div class="colon">:</div>
-                                <div class="value"> MAHARASTRA</div>
+                                <div class="value"> MAHARASHTRA</div>
                             </div>
 
                         </div>
