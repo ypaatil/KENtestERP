@@ -376,7 +376,7 @@
                      <input type="hidden" name="in_date" class="form-control" id="in_date" value="{{ date('Y-m-d') }}">
                      <input type="hidden" name="cp_id" class="form-control" id="cp_id1" value="1">
                      <input type="hidden" name="Ac_code" class="form-control" id="Ac_code1" value="">
-                     <input type="hidden" name="tab_button" class="form-control" id="tab_button" value="1">
+                     <input type="hidden" name="tab_button" class="form-control" id="tab_button" value="2">
                      <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
                      <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
                      @endforeach
@@ -435,7 +435,7 @@
                         <div class="col-md-3 mt-4 m-0">
                            <div class="mb-3">
                               <div class="form-check form-check-primary mb-5">
-                                 <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" style="font-size: 30px;margin-left: 0px;margin-top: -3px;"/>
+                                 <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" onchange="DisableDropdown();" style="font-size: 30px;margin-left: 0px;margin-top: -3px;"/>
 
                                  <label class="form-check-label" for="isOutsideVendor" style="position: absolute;margin-left: 20px;font-size: 14px;">
                                        From Outsource Vendor
@@ -713,6 +713,8 @@
     
    function GetFabricOutwardData()
    {
+         $("#isReturnFabricInward").attr('disabled', true);
+         $("#isOutsideVendor").attr('disabled', true);
          var vpo_code = $("#vpo_code").val();
          $.ajax({
             type:"GET",
@@ -771,8 +773,7 @@
               $('#vpo_code').val(data.vpo_code).trigger('change'); 
               GetVendorName(data.vpo_code);
           }
-        });
-
+        }); 
 
    }
 
@@ -800,15 +801,31 @@
       //  }
    }   
    
+   function DisableDropdown()
+   {
+         if($("#isOutsideVendor").is(":checked"))
+         {
+            $("#isReturnFabricInward").attr('disabled', true); 
+            $("#vpo_code").attr('onchange', 'GetFabricOutwardData()');
+         }
+         else
+         {
+            $("#isReturnFabricInward").attr('disabled', false);  
+         }          
+
+   } 
+
    function GetDCDropdown()
    { 
          if($("#isReturnFabricInward").is(":checked"))
          {
+            $("#isOutsideVendor").attr('disabled', true);
             $("#invoice_no1").removeAttr('name').removeAttr('required').addClass("hide");
             $("#focd_code").attr('name', 'invoice_no').attr('required', true).removeClass("hide"); 
          }
          else
          {
+            $("#isOutsideVendor").attr('disabled', false);
             $("#invoice_no1").attr('name', 'invoice_no').attr('required', true).removeClass("hide");
             $("#focd_code").removeAttr('name').removeAttr('required').addClass("hide"); 
          }

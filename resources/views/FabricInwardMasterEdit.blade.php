@@ -26,12 +26,14 @@
          <div class="card-body">
             <ul class="nav nav-tabs" id="myTab" role="tablist">
                <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab">
+                  <button class="nav-link active" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab"
+                   @if($FabricInwardMasterList->tab_button==2) disabled @endif>
                   Delivery
                   </button>
                </li>
                <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="return-tab" data-bs-toggle="tab" data-bs-target="#return" type="button" role="tab">
+                  <button class="nav-link" id="return-tab" data-bs-toggle="tab" data-bs-target="#return" type="button" role="tab"
+                   @if($FabricInwardMasterList->tab_button==1) disabled @endif>
                   Return
                   </button>
                </li>
@@ -69,6 +71,7 @@
                            <input type="hidden" name="in_code" class="form-control" id="in_code" value="{{ $FabricInwardMasterList->in_code }}">
                            <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $FabricInwardMasterList->c_code }}">
                            <input type="hidden" name="created_at" class="form-control" id="created_at" value="{{ $FabricInwardMasterList->created_at }}">  
+                           <input type="hidden" name="tab_button" class="form-control" id="tab_button" value="1">
                            <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input">
                         </div>
                      </div>
@@ -387,6 +390,7 @@
                      <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $FabricInwardMasterList->c_code }}">
                      <input type="hidden" name="created_at" class="form-control" id="created_at" value="{{ $FabricInwardMasterList->created_at }}">  
                      <input type="hidden" name="cp_id" class="form-control" id="cp_id" value="1">
+                     <input type="hidden" name="tab_button" class="form-control" id="tab_button" value="1">
                      <input type="hidden" name="Ac_code" class="form-control" id="Ac_code1" value="{{ $FabricInwardMasterList->Ac_code }}">
                      <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input"> 
                      <div class="col-md-3">
@@ -434,10 +438,10 @@
                      <div class="col-md-3 mt-4 m-0">
                         <div class="mb-3">
                            <div class="form-check form-check-primary mb-5">
-                              <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);GetDCDropdown();" name="isReturnFabricInward" style="font-size: 30px;margin-left: 0px;margin-top: -3px;" @if($FabricInwardMasterList->isReturnFabricInward==1)checked @endif>
+                              <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);GetDCDropdown();" name="isReturnFabricInward" style="font-size: 30px;margin-left: 0px;margin-top: -3px;" @if($FabricInwardMasterList->isReturnFabricInward==1)checked @else disabled @endif>
 
                               <label class="form-check-label" for="isReturnFabricInward" style="position: absolute;margin-left: 20px;font-size: 14px;">
-                              Is it retun fabric inward ? 
+                                    Is it retun fabric inward ? 
                               </label>
                            </div>
                         </div>
@@ -445,7 +449,7 @@
                      <div class="col-md-3 mt-4 m-0">
                         <div class="mb-3">
                            <div class="form-check form-check-primary mb-5">
-                              <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" style="font-size: 30px;margin-left: 0px;margin-top: -3px;"  @if($FabricInwardMasterList->isOutsideVendor==1)checked @endif >
+                              <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" onchange="DisableDropdown();" style="font-size: 30px;margin-left: 0px;margin-top: -3px;"  @if($FabricInwardMasterList->isOutsideVendor==1)checked @else disabled @endif >
 
                               <label class="form-check-label" for="isOutsideVendor" style="position: absolute;margin-left: 20px;font-size: 14px;">
                               Is it retun cutting inward ? 
@@ -478,6 +482,25 @@
                            </select> 
                         </div>
                      </div>
+                  </div>   
+                  <!-- PURCHASE TABLE -->
+                  <div class="table-wrap" id="OutwardTbl">
+                     <div class="table-responsive">
+                        <table id="footable_4" class="table table-bordered table-striped m-b-0">
+                           <thead>
+                              <tr class="text-center">
+                                 <th>Sr No.</th>
+                                 <th>Item Code</th>
+                                 <th>Item Name</th>
+                                 <th>Outward Qty</th> 
+                                 <th>Received</th> 
+                                 <th>Balance Qty</th> 
+                              </tr>
+                           </thead>
+                           <tbody id="OutwardTbody">
+                           </tbody>
+                        </table>
+                     </div>
                   </div>
                   <input type="number" value="{{ count($FabricInwardDetails) }}" name="cntrr" id="cntrr" readonly="" hidden="true"  />
                   <div class="table-wrap">
@@ -485,7 +508,7 @@
                         <table id="footable_3" class="table  table-bordered table-striped m-b-0  footable_3">
                            <thead>
                               <tr>
-                                 <th>SrNo</th>
+                                 <th>Sr No</th>
                                  <th>Item Code</th>
                                  <th>Item Name</th>
                                  <th>Part</th>
@@ -495,12 +518,11 @@
                                  <th>Rate Per Meter</th>
                                  <th>Amount</th>
                                  <th nowrap>Suplier Roll No.</th>
-                                 <th>TrackCode</th>
-                                 <th>Print</th>
+                                 <th>Track Code</th>
                                  <th>Add/Remove</th>
                               </tr>
                            </thead>
-                           <tbody>
+                           <tbody id="detailTbl">
                               @php
                               $dis = '';
                               @endphp
@@ -581,7 +603,6 @@
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" required  {{$dis}} />
                                  <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
                                  <td><input type="text" name="track_code[]"  value="" id="track_code" style="width:80px;" {{$dis}}  /></td>
-                                 <td><i   style="font-size:25px;" onclick="CalculateRowPrint(this);" name="print"  class="fa fa-print" ></td>
                                  <td><input type="button" style="width:40px;" onclick="insertcone1();" name="print" value="+" class="btn btn-warning pull-left"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
                               </tr>
                               @endif
@@ -598,7 +619,7 @@
                                  <th>Rate Per Meter</th>
                                  <th>Amount</th>
                                  <th nowrap>Suplier Roll No.</th>
-                                 <th>TrackCode</th>
+                                 <th>Track Code</th>
                                  <th>Print</th>
                                  <th>Add/Remove</th>
                               </tr>
@@ -666,21 +687,52 @@
     });
     
        
+
+   function DisableDropdown()
+   {
+         if($("#isOutsideVendor").is(":checked"))
+         {
+            $("#isReturnFabricInward").attr('disabled', true); 
+         }
+         else
+         {
+            $("#isReturnFabricInward").attr('disabled', false); 
+         }
+   } 
+
    function GetDCDropdown()
    { 
          if($("#isReturnFabricInward").is(":checked"))
          {
+            $("#isOutsideVendor").attr('disabled', true);
             $("#invoice_no1").removeAttr('name').removeAttr('required').addClass("hide");
             $("#focd_code").attr('name', 'invoice_no').attr('required', true).removeClass("hide"); 
          }
          else
          {
+            $("#isOutsideVendor").attr('disabled', false);
             $("#invoice_no1").attr('name', 'invoice_no').attr('required', true).removeClass("hide");
             $("#focd_code").removeAttr('name').removeAttr('required').addClass("hide"); 
          }
    }
    
-   
+ 
+   function GetFabricOutwardData()
+   {
+         $("#isReturnFabricInward").attr('disabled', true);
+         $("#isOutsideVendor").attr('disabled', true);
+         var vpo_code = $("#vpo_code").val();
+         $.ajax({
+            type:"GET",
+            url:"{{ route('GetFabricInwardOutwardData') }}", 
+            data:{vpo_code:vpo_code},
+            success:function(response)
+            {
+               $("#OutwardTbody").html(response.html);            
+            }
+         });  
+   }
+
    function GetFabricCuttingDeptData()
    {
         var focd_code  = $("#focd_code").val();
@@ -692,12 +744,11 @@
           data:{'focd_code':focd_code},
           success: function(data)
           {
+              $('#detailTbl').html(data.html); 
               $('#vpo_code').val(data.vpo_code).trigger('change'); 
               GetVendorName(data.vpo_code);
           }
-        });
-
-
+        }); 
    }
 
    function GetPurchaseBillDetails()
@@ -814,46 +865,46 @@
    }
    
    
-   $(document).on("click", 'input[name^="print[]"]', function (event) {
+   // $(document).on("click", 'input[name^="print[]"]', function (event) {
       
-          CalculateRowPrint($(this).closest("tr"));
+   //        CalculateRowPrint($(this).closest("tr"));
           
-      });
+   //    });
     	
-   function CalculateRowPrint(btn)
-   { 
-         var row = $(btn).closest("tr");
-         var width=+row.find('input[name^="width[]"]').val();
-         var meter=+row.find('input[name^="meter[]"]').val();
-         var kg=+row.find('input[name^="kg[]"]').val();
-         var color_id=+row.find('select[name^="color_id[]"]').val();
-         var part_id=+row.find('select[name^="part_id[]"]').val();
-         var quality_code=+row.find('select[name^="quality_code[]"]').val();
-         var track_code=row.find('input[name^="track_code[]"]').val();
-         var style_no=$("#style_no").val();
-         var job_code=$("#job_code").val();
+   // function CalculateRowPrint(btn)
+   // { 
+   //       var row = $(btn).closest("tr");
+   //       var width=+row.find('input[name^="width[]"]').val();
+   //       var meter=+row.find('input[name^="meter[]"]').val();
+   //       var kg=+row.find('input[name^="kg[]"]').val();
+   //       var color_id=+row.find('select[name^="color_id[]"]').val();
+   //       var part_id=+row.find('select[name^="part_id[]"]').val();
+   //       var quality_code=+row.find('select[name^="quality_code[]"]').val();
+   //       var track_code=row.find('input[name^="track_code[]"]').val();
+   //       var style_no=$("#style_no").val();
+   //       var job_code=$("#job_code").val();
           
-        //  alert(track_code);
-          $.ajax({
-              type: "GET",
-              dataType:"json",
-              url: "{{ route('PrintBarcode') }}",
-              data:{'width':width,'meter':meter,'color_id':color_id,'quality_code':quality_code,'kg':kg,  'part_id':part_id,'track_code':track_code,'style_no':style_no,'job_code':job_code},
-              success: function(data){
+   //      //  alert(track_code);
+   //        $.ajax({
+   //            type: "GET",
+   //            dataType:"json",
+   //            url: "{{ route('PrintBarcode') }}",
+   //            data:{'width':width,'meter':meter,'color_id':color_id,'quality_code':quality_code,'kg':kg,  'part_id':part_id,'track_code':track_code,'style_no':style_no,'job_code':job_code},
+   //            success: function(data){
                    
-              if((data['result'])=='success')
-              {
-                alert('Print Barcode For Roll: '+track_code);
-              }
-              else
-              {
-                  $alert('Data Can Not Be Printed');
-              }
+   //            if((data['result'])=='success')
+   //            {
+   //              alert('Print Barcode For Roll: '+track_code);
+   //            }
+   //            else
+   //            {
+   //                $alert('Data Can Not Be Printed');
+   //            }
               
-          }
-          });
+   //        }
+   //        });
           
-   }
+   // }
    
    function EnableFields()
    {

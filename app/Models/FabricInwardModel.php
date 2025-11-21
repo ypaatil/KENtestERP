@@ -18,7 +18,7 @@ class FabricInwardModel extends Model
       
         
         'in_code', 'in_date', 'invoice_no', 'invoice_date', 'cp_id', 'Ac_code', 'po_code', 'po_type_id',   
-        'total_meter', 'total_kg', 'total_taga_qty','total_amount', 'in_narration', 'is_opening', 'fge_code','location_id',
+        'total_meter', 'total_kg', 'total_taga_qty','total_amount', 'in_narration', 'is_opening', 'fge_code','location_id','tab_button',
         'isReturnFabricInward','isOutsideVendor','vpo_code','vendorId','c_code', 'userId', 'delflag', 'CounterId', 'created_at', 'updated_at'
         
         
