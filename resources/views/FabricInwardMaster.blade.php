@@ -725,6 +725,8 @@
                $("#OutwardTbody").html(response.html);            
             }
          });  
+
+         GetVendorName(vpo_code);
    }
 
    function GetVendorName(vpo_code)
