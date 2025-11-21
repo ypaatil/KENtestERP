@@ -389,7 +389,7 @@
                      <input type="hidden" name="cp_id" class="form-control" id="cp_id" value="1">
                      <input type="hidden" name="Ac_code" class="form-control" id="Ac_code1" value="{{ $FabricInwardMasterList->Ac_code }}">
                      <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input"> 
-                     <div class="col-md-2">
+                     <div class="col-md-3">
                         <div class="mb-3">
                            <label for="formrow-invoice_date-input" class="form-label">DC Date</label>
                            <input type="date" name="invoice_date" id="invoice_date" class="form-control" id="formrow-invoice_date-input" value="{{ $FabricInwardMasterList->invoice_date }}">
@@ -397,8 +397,16 @@
                      </div> 
                      <div class="col-md-2">
                         <div class="mb-3">
-                           <label for="formrow-invoice_no-input" class="form-label">DC No</label>
-                           <input type="text" name="invoice_no" id="invoice_no" class="form-control" value="{{ $FabricInwardMasterList->invoice_no }}" id="invoice_no" required>
+                           <label for="invoice_no1" class="form-label">DC No</label> 
+                           
+                           <input type="text" name="invoice_no" id="invoice_no1" class="form-control @if($FabricInwardMasterList->isReturnFabricInward == 1) hide @endif" value="{{ $FabricInwardMasterList->invoice_no }}" id="invoice_no" required>
+                   
+                           <select name="invoice_no" class="form-select select2 @if($FabricInwardMasterList->isReturnFabricInward != 1) hide @endif" id="focd_code" onchange="GetFabricCuttingDeptData();">
+                              <option value="">--Select--</option>
+                              @foreach($FabricCuttingOutwardList as  $row)
+                              <option value="{{ $row->focd_code }}" {{ $row->focd_code == $FabricInwardMasterList->invoice_no ? 'selected="selected"' : '' }}>{{ $row->focd_code }}</option> 
+                              @endforeach
+                           </select> 
                         </div>
                      </div>
                      <div class="col-md-3">
@@ -410,7 +418,7 @@
                            @endforeach
                         </select>
                      </div>
-                     <div class="col-md-3">
+                     <div class="col-md-4">
                         <label for="formrow-inputState" class="form-label">Location/Warehouse</label>
                         <select name="location_id" class="form-select select2" id="location_id" required>
                            <option value="">--Select Buyer--</option>
@@ -423,20 +431,32 @@
                            @endforeach
                         </select>
                      </div>
-                     <div class="col-md-2 mt-4">
+                     <div class="col-md-3 mt-4 m-0">
                         <div class="mb-3">
                            <div class="form-check form-check-primary mb-5">
-                              <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);" name="isReturnFabricInward" value="{{ $FabricInwardMasterList->isReturnFabricInward}}" {{ $FabricInwardMasterList->isReturnFabricInward == 1 ? 'checked="checked"' : '' }} >
-                              <label class="form-check-label" for="isReturnFabricInward">
+                              <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);GetDCDropdown();" name="isReturnFabricInward" style="font-size: 30px;margin-left: 0px;margin-top: -3px;" @if($FabricInwardMasterList->isReturnFabricInward==1)checked @endif>
+
+                              <label class="form-check-label" for="isReturnFabricInward" style="position: absolute;margin-left: 20px;font-size: 14px;">
                               Is it retun fabric inward ? 
                               </label>
                            </div>
                         </div>
                      </div>
-                     <div class="col-md-2" id="workOrder"> 
+                     <div class="col-md-3 mt-4 m-0">
+                        <div class="mb-3">
+                           <div class="form-check form-check-primary mb-5">
+                              <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" style="font-size: 30px;margin-left: 0px;margin-top: -3px;"  @if($FabricInwardMasterList->isOutsideVendor==1)checked @endif >
+
+                              <label class="form-check-label" for="isOutsideVendor" style="position: absolute;margin-left: 20px;font-size: 14px;">
+                              Is it retun cutting inward ? 
+                              </label>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-md-3" id="workOrder"> 
                         <div class="mb-3">
                            <label for="" class="form-label">Vendor Process Order No.</label>   
-                           <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value);">
+                           <select name="vpo_code" class="form-select select2" id="vpo_code" onchange="GetVendorName(this.value);">
                               <option value="">--Select--</option>
                               @foreach($vendorProcessOrderList as  $vendors)
                               {
@@ -451,7 +471,11 @@
                      <div class="col-md-3" id="vendorData">
                         <div class="mb-3">
                            <label for="" class="form-label">Vendor Name</label>   
-                           <input type="text" name="vendorName" class="form-control" id="vendorName1"  value=""  readonly/>
+                           <select name="vendorId" class="form-select select2" id="vendorId" >
+                              <option value="">--Select--</option>
+                              @foreach($vendorData as  $rows)<option value="{{ $rows->ac_code }}"   {{ $rows->ac_code == $FabricInwardMasterList->vendorId ? 'selected="selected"' : '' }}  > {{ $rows->ac_short_name }}</option>
+                              @endforeach
+                           </select> 
                         </div>
                      </div>
                   </div>
@@ -642,6 +666,40 @@
     });
     
        
+   function GetDCDropdown()
+   { 
+         if($("#isReturnFabricInward").is(":checked"))
+         {
+            $("#invoice_no1").removeAttr('name').removeAttr('required').addClass("hide");
+            $("#focd_code").attr('name', 'invoice_no').attr('required', true).removeClass("hide"); 
+         }
+         else
+         {
+            $("#invoice_no1").attr('name', 'invoice_no').attr('required', true).removeClass("hide");
+            $("#focd_code").removeAttr('name').removeAttr('required').addClass("hide"); 
+         }
+   }
+   
+   
+   function GetFabricCuttingDeptData()
+   {
+        var focd_code  = $("#focd_code").val();
+        
+        $.ajax({
+          type: "GET",
+          dataType:"json",
+          url: "{{ route('GetFabricCuttingDeptData') }}",
+          data:{'focd_code':focd_code},
+          success: function(data)
+          {
+              $('#vpo_code').val(data.vpo_code).trigger('change'); 
+              GetVendorName(data.vpo_code);
+          }
+        });
+
+
+   }
+
    function GetPurchaseBillDetails()
    {
        var po_code = $("#po_code").val(); 
@@ -682,8 +740,7 @@
           success: function(data)
           {
               console.log(data);
-               $("#vendorName").val(data.html);
-               $("#vendorName1").val(data.html);
+               $("#vendorName").val(data.ac_code); 
                $("#Ac_code1").val(data.ac_code);
                $('#vendorData').removeClass('hide');               
           }

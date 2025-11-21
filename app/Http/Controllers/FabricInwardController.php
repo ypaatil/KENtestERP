@@ -163,12 +163,16 @@ class FabricInwardController extends Controller
         $RackMasterList = RackModel::where('rack_master.delflag','=', '0')->get(); 
         $LocationList = LocationModel::where('location_master.delflag','=', '0')->get(); 
         $FGECodeList =  DB::table('fabric_gate_entry_master')->where('delflag','=', '0')->get();
+        $FabricCuttingOutwardList =  DB::table('fabric_outward_cutting_department_master')->where('delflag','=', '0')->get();
         $CPList =  DB::table('cp_master')->get();
         
         $vendorProcessOrderList = DB::table('vendor_purchase_order_master')->select('vpo_code')->where('process_id','=',1)->get();
         $BillToList =  DB::table('ledger_details')->get();
         
-        return view('FabricInwardMaster',compact('Ledger','RackMasterList','LocationList', 'POList', 'PartList','FGList','CPList', 'counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','FGECodeList','BillToList'));
+        $vendorData = DB::select("select ac_short_name, ledger_master.ac_code from vendor_purchase_order_master 
+                            INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId GROUP BY vendor_purchase_order_master.vendorId");
+                            
+        return view('FabricInwardMaster',compact('vendorData','Ledger','FabricCuttingOutwardList','RackMasterList','LocationList', 'POList', 'PartList','FGList','CPList', 'counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','FGECodeList','BillToList'));
 
     }
 
@@ -198,6 +202,8 @@ class FabricInwardController extends Controller
    
     $sr_no = FabricInwardModel::max('sr_no');            
     $is_opening=isset($request->is_opening) ? 1 : 0;
+    $isReturnFabricInward=isset($request->isReturnFabricInward) ? 1 : 0;
+    $isOutsideVendor=isset($request->isOutsideVendor) ? 1 : 0;
                 
     if($is_opening==1){$po_code='OSF'.($sr_no+1);}else{ $po_code= $request->input('po_code');}             
     
@@ -211,9 +217,9 @@ class FabricInwardController extends Controller
         'po_type_id' =>$request->po_type_id, 'total_kg' => $request->total_kg, 'is_opening'=>$is_opening,'fge_code'=>$request->fge_code,
         'location_id'=>$request->location_id, 'bill_to'=>$request->bill_to,
         
-        'isReturnFabricInward'=>$request->isReturnFabricInward,'vpo_code'=>$request->vpo_code,
+        'isReturnFabricInward'=>$isReturnFabricInward,'vpo_code'=>$request->vpo_code,'isOutsideVendor'=>$isOutsideVendor,
         'total_meter'=>$request->total_meter,  'total_taga_qty'=>$request->total_taga_qty,'total_amount'=>$request->total_amount,
-        'in_narration'=>$request->in_narration,  'c_code' => $request->c_code,
+        'in_narration'=>$request->in_narration,  'c_code' => $request->c_code,'vendorId' => $request->vendorId,
         'userId'=>$request->userId, 'delflag'=>'0', 'CounterId'=>'1', 'buyer_id'=>$buyer_id
     );
     
@@ -558,8 +564,13 @@ class FabricInwardController extends Controller
             $BillToList = DB::SELECT("SELECT ledger_details.sr_no, ledger_details.trade_name, ledger_details.site_code FROM purchase_order 
             INNER JOIN ledger_details ON ledger_details.sr_no = purchase_order.bill_to WHERE purchase_order.Ac_code='".$FabricInwardMasterList->Ac_code."'");
         }
-        
-        return view('FabricInwardMasterEdit',compact('FabricInwardMasterList','FGECodeList','POList','LocationList',  'RackMasterList', 'PartList', 'Ledger','CPList','FGList', 'FabricInwardDetails','counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','BillToList'));
+
+        $FabricCuttingOutwardList =  DB::table('fabric_outward_cutting_department_master')->where('delflag','=', '0')->get();
+
+        $vendorData = DB::select("select ac_short_name, ledger_master.ac_code from vendor_purchase_order_master 
+                            INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId GROUP BY vendor_purchase_order_master.vendorId");
+    
+        return view('FabricInwardMasterEdit',compact('vendorData','FabricCuttingOutwardList','FabricInwardMasterList','FGECodeList','POList','LocationList',  'RackMasterList', 'PartList', 'Ledger','CPList','FGList', 'FabricInwardDetails','counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','BillToList'));
     }
 
     /**
@@ -586,6 +597,8 @@ class FabricInwardController extends Controller
 
 
          $is_opening=isset($request->is_opening) ? 1 : 0;
+         $isReturnFabricInward=isset($request->isReturnFabricInward) ? 1 : 0;
+         $isOutsideVendor=isset($request->isOutsideVendor) ? 1 : 0;
 
     
     
@@ -603,9 +616,9 @@ class FabricInwardController extends Controller
             'Ac_code'=>$request->Ac_code,'po_code'=>$po_code, 'invoice_no'=>$request->invoice_no,'invoice_date'=>$request->invoice_date,
             'po_type_id' =>$request->po_type_id, 'total_kg' => $request->total_kg, 'total_amount'=>$request->total_amount,
             'total_meter'=>$request->total_meter,  'total_taga_qty'=>$request->total_taga_qty, 'is_opening'=>$is_opening,'fge_code'=>$request->fge_code,
-            'location_id'=>$request->location_id, 'isReturnFabricInward'=>$request->isReturnFabricInward,
+            'location_id'=>$request->location_id, 'isReturnFabricInward'=>$isReturnFabricInward,'isOutsideVendor'=>$isOutsideVendor,
             'vpo_code'=>$request->vpo_code, 'bill_to'=>$request->bill_to,
-            'in_narration'=>$request->in_narration, 'c_code' => $request->c_code,
+            'in_narration'=>$request->in_narration, 'c_code' => $request->c_code, 'vendorId' => $request->vendorId,
             'userId'=>$request->userId, 'delflag'=>'0', 'CounterId'=>'1','updated_at'=>date('Y-m-d H:i:s'),'buyer_id'=>$buyer_id,
         );
         
@@ -3681,7 +3694,7 @@ P2
         return response()->json(['html' => $html]);
     }
 
-     public function GetFabricInwardOutwardData(Request $request)
+    public function GetFabricInwardOutwardData(Request $request)
     {
         $detailData = DB::SELECT("SELECT sum(meter) as total_meter,(select ifnull(sum(inward_details.meter),0) FROM inward_details 
                         WHERE inward_details.item_code = fabric_outward_details.item_code AND inward_details.vw_code = fabric_outward_details.vpo_code) as received,
@@ -3705,6 +3718,100 @@ P2
         }
         
         return response()->json(['html'=>$html]);
+    }
+ 
+    public function GetFabricCuttingDeptData(Request $request)
+    {
+        $Data = DB::SELECT("SELECT cutting_po_no  FROM fabric_outward_cutting_department_master  
+                        WHERE fabric_outward_cutting_department_master.focd_code='".$request->focd_code."'");
+
+        $detailData = DB::SELECT("SELECT *  FROM fabric_outward_cutting_department_details
+                        WHERE fabric_outward_cutting_department_details.focd_code='".$request->focd_code."'");
+
+                        
+        $itemList = DB::SELECT("SELECT item_master.item_code, item_master.item_name  FROM item_master 
+                        INNER JOIN fabric_outward_cutting_department_details ON fabric_outward_cutting_department_details.item_code = item_master.item_code
+                        WHERE fabric_outward_cutting_department_details.focd_code='".$request->focd_code."'");
+
+                                  
+        $vpo_code = isset($Data[0]->cutting_po_no) ? $Data[0]->cutting_po_no : '';
+        
+        $PartList = PartModel::where('part_master.delflag','=', '0')->get();
+
+        $html = '';
+        $srno = 1;
+        $user_type=Session::get('user_type');
+
+        foreach($detailData as $details)
+        {
+             $html .= '<tr>
+                            <td><input type="text" name="id[]" value="'.($srno++).'" id="id" style="width:50px;" readonly></td>
+
+                            <td><input type="text" name="item_codes[]" value="'.$details->item_code.'" id="item_codes" style="width:80px;" readonly></td>
+
+                            <td>
+                                <select name="item_code[]" id="item_code" class="select2" style="width:200px;height:30px;" onchange="getRateFromPO(this);" disabled>
+                                    <option value="">--Item--</option>';
+                                    foreach($itemList as  $row)
+                                    {
+                                        $selectedItem  = '';
+                                        if($row->item_code == $details->item_code)
+                                        {
+                                            $selectedItem = 'selected';
+                                        }
+
+                                        $html .= '<option value="'.$row->item_code.'" '.$selectedItem.'>'.$row->item_name.'</option>';
+                                    }
+                                 $html .= '</select>
+                            </td>
+
+                            <td>
+                                <select name="part_id[]" id="part_id" class="select2" style="width:200px;height:30px;" disabled>
+                                    <option value="">--Part--</option>';
+                                    foreach($PartList as  $row)
+                                    { 
+                                        
+                                        $selectedPart  = '';
+                                        if($row->part_id == 1)
+                                        {
+                                            $selectedPart = 'selected';
+                                        }
+
+                                        $html .= '<option value="'.$row->part_id.'" '.$selectedPart.'>'.$row->part_name.'</option>';
+                                    }
+                                 $html .= '</select>
+                            </td>
+
+                            <td>
+                                <input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="'.($srno++).'" id="taga_qty1" style="width:50px;height:30px;">
+                                <input type="number" step="any" class="METER" name="meter[]" onkeyup="mycalc();" value="'.$details->outward_meter.'" id="meter1" style="width:80px;height:30px;" readonly>
+                            </td>
+
+                            <td><input type="number" step="any" name="gram_per_meter[]" value="0" id="gram_per_meter" style="width:80px;height:30px;" readonly></td>
+
+                            <td><input type="number" step="any" @if($user_type!=1)  "readOnly" @endif class="KG" name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;height:30px;" readonly></td>
+
+                            <td>
+                                <input type="number" step="any" name="item_rates[]" value="0" id="item_rates" style="width:80px;height:30px;"  @if($user_type!=1) readOnly  @endif readonly>
+                            </td>
+
+                            <td><input type="number" step="any" class="AMT" readOnly name="amounts[]" value="0" id="amounts" style="width:80px;height:30px;" readonly></td>
+
+                            <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="'.$details->suplier_roll_no.'" id="suplier_roll_no" style="width:100px;height:30px;" readonly></td>
+
+                            <td><input type="text" name="track_code[]" id="track_code1" value="'.$details->roll_no.'" style="width:80px;height:30px;" readOnly></td>
+
+                            <td>
+                                <input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left AButton">
+                            </td>
+
+                            <td>
+                                <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X">
+                            </td>
+                        </tr>';
+        }
+        
+        return response()->json(['vpo_code'=>$vpo_code,'html'=>$html]);
     }
  
 

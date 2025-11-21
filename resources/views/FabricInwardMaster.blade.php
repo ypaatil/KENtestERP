@@ -72,6 +72,8 @@
                               @foreach($counter_number as  $row)
                               <input type="hidden" name="in_code" class="form-control" id="in_code" value="{{ 'GRN/25-26/FP'.''.$row->tr_no }}">
                               <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $row->c_code }}">
+                              <input type="hidden" name="cp_id" class="form-control" id="cp_id" value="1">
+                              <input type="hidden" name="tab_button" class="form-control" id="tab_button" value="1">
                               <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
                               <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
                               @endforeach
@@ -142,23 +144,7 @@
                                  @endforeach
                               </select>
                            </div>
-                        </div>
-
-                        <div class="col-md-2 hide">
-                           <div class="mb-3">
-                              <label for="cp_id" class="form-label">CP Type</label>
-                              <select name="cp_id" class="form-select" id="cp_id" required onchange="serBarocode();" disabled>
-                                 <option value="">--Select CP Type--</option>
-                                 @foreach($CPList as  $rowCP)
-                                 <option value="{{ $rowCP->cp_id }}" 
-                                    @if($rowCP->cp_id ==1){echo 'selected';} @endif>
-                                    {{ $rowCP->cp_name }}
-                                 </option>
-                                 @endforeach
-                              </select>
-                           </div>
-                        </div>
-
+                        </div> 
                         <div class="col-md-2">
                            <div class="form-check form-check-primary mb-5">
                               <input class="form-check-input" type="checkbox" id="is_opening" name="is_opening" 
@@ -233,7 +219,6 @@
                                     <th>Amount</th>
                                     <th nowrap>Suplier Roll No.</th>
                                     <th>Track Code</th>
-                                    <th>Print</th>
                                     <th>Add</th>
                                     <th>Remove</th>
                                  </tr>
@@ -286,8 +271,6 @@
 
                                     <td><input type="text" name="track_code[]" id="track_code" style="width:80px;height:30px;" readOnly></td>
 
-                                    <td><i style="font-size:25px;" onclick="CalculateRowPrint(this);" name="print" class="fa fa-print"></i></td>
-
                                     <td>
                                        <input type="button" style="width:40px;" onclick="insertcone();" name="print" value="+" class="btn btn-warning pull-left AButton">
                                     </td>
@@ -311,7 +294,6 @@
                                     <th>Amount</th>
                                     <th>Suplier Roll No.</th>
                                     <th>Track Code</th>
-                                    <th>Print</th>
                                     <th>Add</th>
                                     <th>Remove</th>
                                  </tr>
@@ -392,13 +374,14 @@
                      <input type="hidden" name="in_code" class="form-control" id="in_code" value="{{ 'GRN/25-26/FP'.''.$row->tr_no }}">
                      <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $row->c_code }}">
                      <input type="hidden" name="in_date" class="form-control" id="in_date" value="{{ date('Y-m-d') }}">
-                     <input type="hidden" name="cp_id" class="form-control" id="cp_id" value="1">
+                     <input type="hidden" name="cp_id" class="form-control" id="cp_id1" value="1">
                      <input type="hidden" name="Ac_code" class="form-control" id="Ac_code1" value="">
+                     <input type="hidden" name="tab_button" class="form-control" id="tab_button" value="1">
                      <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
                      <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
                      @endforeach
                      <div class="row">
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                            <div class="mb-3">
                               <label for="invoice_date" class="form-label">DC Date</label>
                               <input type="date" name="invoice_date" id="invoice_date" class="form-control" value="{{date('Y-m-d')}}">
@@ -408,9 +391,15 @@
                            <div class="mb-3">
                               <label for="invoice_no" class="form-label">DC No</label>
                               <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input">
-                              <input type="text" name="invoice_no" id="invoice_no" class="form-control" required>
+                              <input type="text" name="invoice_no" id="invoice_no1" class="form-control" required>
+                              <select name="invoice_no" class="form-select select2 hide" id="focd_code" onchange="GetFabricCuttingDeptData();">
+                                 <option value="">--Select--</option>
+                                 @foreach($FabricCuttingOutwardList as  $row)
+                                 <option value="{{ $row->focd_code }}">{{ $row->focd_code }}</option> 
+                                 @endforeach
+                              </select>
                            </div>
-                        </div>
+                        </div> 
                         <div class="col-md-3">
                            <label for="fge_code" class="form-label">Fabric Gate Code</label>
                            <select name="fge_code" class="form-select select2" id="fge_code" required>
@@ -421,7 +410,7 @@
                            </select>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-4">
                            <label for="location_id" class="form-label">Location/Warehouse</label>
                            <select name="location_id" class="form-select select2" id="location_id" required>
                               <option value="">--Location--</option>
@@ -432,15 +421,24 @@
                               @endforeach
                            </select>
                         </div>
-
-                        <div class="col-md-2 mt-4">
+                        <div class="col-md-3 mt-4 m-0">
                            <div class="mb-3">
                               <div class="form-check form-check-primary mb-5">
-                                 <input class="form-check-input" type="checkbox" id="isReturnFabricInward" 
-                                    onchange="GetOrderNo(this);" name="isReturnFabricInward">
+                                 <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this); GetDCDropdown();"  name="isReturnFabricInward" style="font-size: 30px;margin-left: 0px;margin-top: -3px;">
 
-                                 <label class="form-check-label" for="isReturnFabricInward">
-                                 Is it retun fabric inward ? 
+                                 <label class="form-check-label" for="isReturnFabricInward" style="position: absolute;margin-left: 20px;font-size: 14px;">
+                                       Fabric Return From Inhouse
+                                 </label>
+                              </div>
+                           </div>
+                        </div>
+                        <div class="col-md-3 mt-4 m-0">
+                           <div class="mb-3">
+                              <div class="form-check form-check-primary mb-5">
+                                 <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" style="font-size: 30px;margin-left: 0px;margin-top: -3px;"/>
+
+                                 <label class="form-check-label" for="isOutsideVendor" style="position: absolute;margin-left: 20px;font-size: 14px;">
+                                       From Outsource Vendor
                                  </label>
                               </div>
                            </div>
@@ -448,13 +446,10 @@
                         <div class="col-md-3" id="workOrder">
                            <div class="mb-3">
                               <label for="" class="form-label">Vendor Process Order No.</label>   
-                              <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value); GetFabricOutwardData(this);">
+                              <select name="vpo_code" class="form-select select2" id="vpo_code" onchange="GetVendorName(this.value);">
                                  <option value="">Vendor Process Order No.</option>
                                  @foreach($vendorProcessOrderList as  $vendors)
-                                 <option value="{{ $vendors->vpo_code }}" 
-                                    {{ $vendors->vpo_code == request()->vpo_code ? 'selected="selected"' : '' }}>
-                                    {{ $vendors->vpo_code }}
-                                 </option>
+                                 <option value="{{ $vendors->vpo_code }}"  > {{ $vendors->vpo_code }} </option>
                                  @endforeach
                               </select>
                            </div>
@@ -463,7 +458,11 @@
                         <div class="col-md-3" id="vendorData">
                            <div class="mb-3">
                               <label for="" class="form-label">Vendor Name</label>   
-                              <input type="text" name="vendorName" class="form-control" id="vendorName" readonly> 
+                              <select name="vendorId" class="form-select select2" id="vendorId" >
+                                 <option value="">--Select--</option>
+                                 @foreach($vendorData as  $rows)<option value="{{ $rows->ac_code }}"  > {{ $rows->ac_short_name }}</option>
+                                 @endforeach
+                              </select> 
                            </div>
                         </div>
                      </div>
@@ -505,13 +504,12 @@
                                     <th>Amount</th>
                                     <th nowrap>Suplier Roll No.</th>
                                     <th>Track Code</th>
-                                    <th>Print</th>
                                     <th>Add</th>
                                     <th>Remove</th>
                                  </tr>
                               </thead>
 
-                              <tbody>
+                              <tbody id="detailTbl">
                                  <tr>
                                     <td><input type="text" name="id[]" value="1" id="id" style="width:50px;"></td>
 
@@ -558,8 +556,6 @@
 
                                     <td><input type="text" name="track_code[]" id="track_code1" style="width:80px;height:30px;" readOnly></td>
 
-                                    <td><i style="font-size:25px;" onclick="CalculateRowPrint(this);" name="print" class="fa fa-print"></i></td>
-
                                     <td>
                                        <input type="button" style="width:40px;" onclick="insertcone1();" name="print" value="+" class="btn btn-warning pull-left AButton">
                                     </td>
@@ -583,7 +579,6 @@
                                     <th>Amount</th>
                                     <th>Suplier Roll No.</th>
                                     <th>Track Code</th>
-                                    <th>Print</th>
                                     <th>Add</th>
                                     <th>Remove</th>
                                  </tr>
@@ -671,7 +666,7 @@
          $("#po_code").attr("disabled", true);
          $("#po_type_id").val(2).attr("disabled", true);
          $("#Ac_code").val(50).trigger('change').attr("disabled", true);
-         $("#isReturnFabricInward").prop('checked', false).attr("disabled", true);
+         // $("#isReturnFabricInward").prop('checked', false).attr("disabled", true);
          setTimeout(function() {
                $("#bill_to").val(1083).trigger('change');
          }, 1000);
@@ -718,11 +713,11 @@
     
    function GetFabricOutwardData()
    {
-         var vw_code = $("#vw_code").val();
+         var vpo_code = $("#vpo_code").val();
          $.ajax({
             type:"GET",
             url:"{{ route('GetFabricInwardOutwardData') }}", 
-            data:{vpo_code:vw_code},
+            data:{vpo_code:vpo_code},
             success:function(response)
             {
                $("#OutwardTbody").html(response.html);            
@@ -739,24 +734,46 @@
           data:{'vpo_code':vpo_code},
           success: function(data)
           {
-               $("#vendorName").val(data.html);
+               $("#vendorId").val(data.ac_code).trigger('change');
                $("#Ac_code1").val(data.ac_code);
                $('#vendorData').removeClass('hide');
                
           }
          });
 
+         if(!$("#isReturnFabricInward").is(":checked"))
+         {
+            $.ajax({
+               type: "GET",
+               dataType:"json",
+               url: "{{ route('GetItemPucharseOrder') }}",
+               data:{'vpo_code':vpo_code},
+               success: function(data)
+               {
+                  $('select[name="item_code[]"]').html(data.html); 
+               }
+            });
+         }
+   }
+
+   function GetFabricCuttingDeptData()
+   {
+        var focd_code  = $("#focd_code").val();
         
         $.ajax({
           type: "GET",
           dataType:"json",
-          url: "{{ route('GetItemPucharseOrder') }}",
-          data:{'vpo_code':vpo_code},
+          url: "{{ route('GetFabricCuttingDeptData') }}",
+          data:{'focd_code':focd_code},
           success: function(data)
           {
-              $('select[name="item_code[]"]').html(data.html); 
+              $('#detailTbl').html(data.html); 
+              $('#vpo_code').val(data.vpo_code).trigger('change'); 
+              GetVendorName(data.vpo_code);
           }
         });
+
+
    }
 
    function GetOrderNo(ele)
@@ -783,6 +800,20 @@
       //  }
    }   
    
+   function GetDCDropdown()
+   { 
+         if($("#isReturnFabricInward").is(":checked"))
+         {
+            $("#invoice_no1").removeAttr('name').removeAttr('required').addClass("hide");
+            $("#focd_code").attr('name', 'invoice_no').attr('required', true).removeClass("hide"); 
+         }
+         else
+         {
+            $("#invoice_no1").attr('name', 'invoice_no').attr('required', true).removeClass("hide");
+            $("#focd_code").removeAttr('name').removeAttr('required').addClass("hide"); 
+         }
+   }
+
    function enable(opening)
    {  
    @php $user_type=Session::get('user_type'); if($user_type!=1){  @endphp
@@ -850,13 +881,13 @@
    
    function serBarocode1()
    { 
-      if($("#cp_id").val()==1)
+      if($("#cp_id1").val()==1)
       { 
          ++PBarcode;
          $("#track_code1").val('P'.concat(PBarcode.toString()));
          //alert($("#track_code").val());
       }
-      else if($("#cp_id").val()==2)
+      else if($("#cp_id1").val()==2)
       {      
          var CBar='';
          CBar='I' + parseInt(++CBarcode);
@@ -924,46 +955,46 @@
    }
    
    
-   $(document).on("click", 'input[name^="print[]"]', function (event) {
+   // $(document).on("click", 'input[name^="print[]"]', function (event) {
       
-          CalculateRowPrint($(this).closest("tr"));
+   //        CalculateRowPrint($(this).closest("tr"));
           
-   });
+   // });
     	
-   function CalculateRowPrint(btn)
-   { 
-          var row = $(btn).closest("tr");
-          var width=+row.find('input[name^="width[]"]').val();
-          var meter=+row.find('input[name^="meter[]"]').val();
-          var kg=+row.find('input[name^="kg[]"]').val();
-          var color_id=+row.find('select[name^="color_id[]"]').val();
-          var part_id=+row.find('select[name^="part_id[]"]').val();
-          var quality_code=+row.find('select[name^="quality_code[]"]').val();
-          var track_code=row.find('input[name^="track_code[]"]').val();
-          var style_no=$("#style_no").val();
-          var job_code=$("#job_code").val();
+   // function CalculateRowPrint(btn)
+   // { 
+   //        var row = $(btn).closest("tr");
+   //        var width=+row.find('input[name^="width[]"]').val();
+   //        var meter=+row.find('input[name^="meter[]"]').val();
+   //        var kg=+row.find('input[name^="kg[]"]').val();
+   //        var color_id=+row.find('select[name^="color_id[]"]').val();
+   //        var part_id=+row.find('select[name^="part_id[]"]').val();
+   //        var quality_code=+row.find('select[name^="quality_code[]"]').val();
+   //        var track_code=row.find('input[name^="track_code[]"]').val();
+   //        var style_no=$("#style_no").val();
+   //        var job_code=$("#job_code").val();
           
-          //alert(track_code);
-          $.ajax({
-              type: "GET",
-              dataType:"json",
-              url: "{{ route('PrintBarcode') }}",
-              data:{'width':width,'meter':meter,'color_id':color_id,'quality_code':quality_code,'kg':kg,  'part_id':part_id,'track_code':track_code,'style_no':style_no,'job_code':job_code},
-              success: function(data){
+   //        //alert(track_code);
+   //        $.ajax({
+   //            type: "GET",
+   //            dataType:"json",
+   //            url: "{{ route('PrintBarcode') }}",
+   //            data:{'width':width,'meter':meter,'color_id':color_id,'quality_code':quality_code,'kg':kg,  'part_id':part_id,'track_code':track_code,'style_no':style_no,'job_code':job_code},
+   //            success: function(data){
                    
-               if((data['result'])=='success')
-              {
-                alert('Print Barcode For Roll: '+track_code);
-              }
-              else
-              {
-                  $alert('Data Can Not Be Printed');
-              }
+   //             if((data['result'])=='success')
+   //            {
+   //              alert('Print Barcode For Roll: '+track_code);
+   //            }
+   //            else
+   //            {
+   //                $alert('Data Can Not Be Printed');
+   //            }
               
-          }
-          });
+   //        }
+   //        });
           
-   }
+   // }
    
    
    
@@ -1125,13 +1156,9 @@
    } 
    
    
-   cell7.appendChild(t7);
+   cell7.appendChild(t7);   
    
-   var cell7 = row.insertCell(11);
-   cell7.innerHTML='<i class="fa fa-print" name="print" style="font-size:25px;" onclick="CalculateRowPrint(this);"></i>';
-   
-   
-   var cell8=row.insertCell(12);
+   var cell8=row.insertCell(11);
    var btnAdd = document.createElement("INPUT");
    btnAdd.id = "Abutton";
    btnAdd.type = "button";
@@ -1141,7 +1168,7 @@
    btnAdd.setAttribute("onclick", "insertcone();CalculateRowPrint(this);");
    cell8.appendChild(btnAdd);
    
-   var cell9=row.insertCell(13);
+   var cell9=row.insertCell(12);
    var btnRemove = document.createElement("INPUT");
    btnRemove.id = "Dbutton";
    btnRemove.type = "button";
@@ -1325,13 +1352,9 @@
    } 
    
    
-   cell7.appendChild(t7);
+   cell7.appendChild(t7);   
    
-   var cell7 = row.insertCell(11);
-   cell7.innerHTML='<i class="fa fa-print" name="print" style="font-size:25px;" onclick="CalculateRowPrint(this);"></i>';
-   
-   
-   var cell8=row.insertCell(12);
+   var cell8=row.insertCell(11);
    var btnAdd = document.createElement("INPUT");
    btnAdd.id = "Abutton";
    btnAdd.type = "button";
@@ -1341,7 +1364,7 @@
    btnAdd.setAttribute("onclick", "insertcone();CalculateRowPrint(this);");
    cell8.appendChild(btnAdd);
    
-   var cell9=row.insertCell(13);
+   var cell9=row.insertCell(12);
    var btnRemove = document.createElement("INPUT");
    btnRemove.id = "Dbutton";
    btnRemove.type = "button";
