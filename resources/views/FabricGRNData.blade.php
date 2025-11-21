@@ -78,27 +78,27 @@ setlocale(LC_MONETARY, 'en_IN');
                         <th></th>
                      </tr>
                      <tr style="text-align:center; white-space:nowrap">
-                        <th>Supplier Name</th>
-                        <th>Bill To</th>
-                        <th>Buyer Name</th>
-                        <th>PO No</th>
-                        <th>GRN No.</th>
-                        <th>GRN Date.</th>
-                        <th>Return CPO no.</th>
-                        <th>Return Vendor Name</th> 
-                        <th>Invoice No.</th>
-                        <th>Invoice Date.</th>
-                        <th>Item Code</th>
-                        <th>Item Name</th>
+                        <th>Supplier Name<span class="filter-icon">🔽</span><div class="filter-menu supplier-name"></div></th>
+                        <th>Bill To<span class="filter-icon">🔽</span><div class="filter-menu bill-to"></div></th>
+                        <th>Buyer Name<span class="filter-icon">🔽</span><div class="filter-menu buyer-name"></div></th>
+                        <th>PO No<span class="filter-icon">🔽</span><div class="filter-menu po-no"></div></th>
+                        <th>GRN No.<span class="filter-icon">🔽</span><div class="filter-menu grn-no"></div></th>
+                        <th>GRN Date.<span class="filter-icon">🔽</span><div class="filter-menu grn-date"></div></th>
+                        <th>Return CPO no.<span class="filter-icon">🔽</span><div class="filter-menu return-cpo-no"></div></th>
+                        <th>Return Vendor Name<span class="filter-icon">🔽</span><div class="filter-menu return-vendor-name"></div></th> 
+                        <th>Invoice No.<span class="filter-icon">🔽</span><div class="filter-menu invoice-no"></div></th>
+                        <th>Invoice Date.<span class="filter-icon">🔽</span><div class="filter-menu invoice-date"></div></th>
+                        <th>Item Code<span class="filter-icon">🔽</span><div class="filter-menu item-code"></div></th>
+                        <th>Item Name<span class="filter-icon">🔽</span><div class="filter-menu item-name"></div></th>
                         <th>GRN Qty</th>
                         <th>Rate</th>
                         <th>Value</th>
                         <th>Width</th>
                         <th>Quality Name</th>
                         <th>Color</th>
-                        <th>Item Description</th>
-                        <th>Track Code</th>
-                        <th>Rack Name</th>
+                        <th>Item Description<span class="filter-icon">🔽</span><div class="filter-menu item-description"></div></th>
+                        <th>Track Code<span class="filter-icon">🔽</span><div class="filter-menu track-code"></div></th>
+                        <th>Rack Name<span class="filter-icon">🔽</span><div class="filter-menu rack-code"></div></th>
                      </tr>
                   </thead>
                   <tbody>
@@ -126,7 +126,7 @@ setlocale(LC_MONETARY, 'en_IN');
         }
         else
         { 
-            currentURL = window.location.href; 
+            currentURL = window.location.href+"?fromDate="+fromDate+"&toDate="+toDate; 
         }  
          
          
@@ -146,18 +146,26 @@ setlocale(LC_MONETARY, 'en_IN');
             },
             dom: 'lBfrtip',
             buttons: [
-                { extend: 'copyHtml5', footer: true, title: exportTitle },
-                { extend: 'excelHtml5', footer: true, title: exportTitle },
-                { extend: 'csvHtml5', footer: true, title: exportTitle },
-                { extend: 'pdfHtml5', footer: true, title: exportTitle }
+                { extend: 'copyHtml5', footer: true, title: exportTitle,exportOptions: commonExportOptions() },
+                { extend: 'excelHtml5', footer: true, title: exportTitle,exportOptions: commonExportOptions() },
+                { extend: 'csvHtml5', footer: true, title: exportTitle,exportOptions: commonExportOptions() },
+                { extend: 'pdfHtml5', footer: true, title: exportTitle,exportOptions: commonExportOptions() }
             ],
+            initComplete: function () {
+                  buildAllMenusFabricGRNDataReport();
+            },
             "footerCallback": function (row, data, start, end, display) {                
                  var total_meter = 0;             
                  var total_value = 0;
                     
                 for (var i = 0; i < data.length; i++) {
-                    total_meter += parseFloat(data[i].meter);
-                    total_value += parseFloat(data[i].item_value);
+                    /*total_meter += parseFloat(data[i].meter);
+                    total_value += parseFloat(data[i].item_value);*/
+
+                     const qty  = String(data[i].total_meter).replace(/,/g, "");
+                     const val  = String(data[i].total_value).replace(/,/g, "");
+                     total_meter  += parseFloat(qty) || 0;
+                     total_value += parseFloat(val) || 0; 
                 } 
                 
                 let formatted_qty = parseFloat(total_meter).toLocaleString('en-IN', {
@@ -201,16 +209,48 @@ setlocale(LC_MONETARY, 'en_IN');
             ]
         });
     }
+
+      // Start script for filter search and apply
+        
+         $(document).on('click', '.apply-btn', function() {
+         const menu = $(this).closest('.filter-menu');
+       
+         if (!validateFilterMenu(menu)) {
+               return;
+         }
+
+         if(menu.hasClass('supplier-name')) applySimpleFilter(0, menu);
+         else if(menu.hasClass('bill-to')) applySimpleFilter(1, menu); 
+         else if(menu.hasClass('buyer-name')) applySimpleFilter(2,menu);
+         else if(menu.hasClass('po-no')) applySimpleFilter(3, menu);     
+          else if(menu.hasClass('grn-no')) applySimpleFilter(4, menu);    
+         else if(menu.hasClass('grn-date')) applyDateFilter(5,menu);
+         else if(menu.hasClass('return-cpo-no')) applySimpleFilter(6,menu);       
+         else if(menu.hasClass('return-vendor-name')) applySimpleFilter(7,menu);
+         else if(menu.hasClass('invoice-no')) applySimpleFilter(8,menu);
+         else if(menu.hasClass('invoice-date')) applyDateFilter(9,menu);    
+         else if(menu.hasClass('item-code')) applySimpleFilter(10,menu);  
+         else if(menu.hasClass('item-name')) applySimpleFilter(11,menu);
+         else if(menu.hasClass('item-description')) applySimpleFilter(18,menu);
+         else if(menu.hasClass('track-code')) applySimpleFilter(19,menu);          
+         else if(menu.hasClass('rack-code')) applySimpleFilter(20,menu);                         
+         $('.filter-menu').hide();
+         
+         buildAllMenusFabricGRNDataReport(); 
+         updateFooterForFabricGRNDataReport();           
+         });
+        // End script for filter search and apply
     
     function ClearReport()
     {
+         removeFilterColor();
          tableData(0);
     }
     
     $( document ).ready(function() 
     { 
-        tableData(0);
-       
+        removeFilterColor();
+        tableData(0);       
     });
 </script>
 @endsection

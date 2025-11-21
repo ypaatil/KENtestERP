@@ -158,7 +158,7 @@ setlocale(LC_MONETARY, 'en_IN');
                  var total_item_value = 0;
                     
                 for (var i = 0; i < data.length; i++) {               
-                    const qty  = String(data[i].item_qty).replace(/,/g, "");
+                     const qty  = String(data[i].item_qty).replace(/,/g, "");
                      const val  = String(data[i].item_value).replace(/,/g, "");
                      total_size_qty  += parseFloat(qty) || 0;
                      total_item_value += parseFloat(val) || 0; 

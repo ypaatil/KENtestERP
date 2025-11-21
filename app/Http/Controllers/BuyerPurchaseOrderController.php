@@ -1070,10 +1070,10 @@ public function SalesOrderPrintView($tr_code)
     $ReportDate  
     ]);      
        
-        $total_valuec=0;
+       /* $total_valuec=0;
         $total_qtyc=0;
         $open_qtyc=0;
-        $shipped_qtyc=0;
+        $shipped_qtyc=0;*/
         //foreach($Buyer_Purchase_Order_List as $row){$total_valuec=$total_valuec + $row->order_value; $total_qtyc=$total_qtyc+$row->total_qty; $open_qtyc=$open_qtyc+$row->balance_qty; $shipped_qtyc=$shipped_qtyc+$row->shipped_qty;}
         $NoOfOrderc=count($Buyer_Purchase_Order_List);
        

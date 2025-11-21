@@ -135,7 +135,7 @@ try{
     }
     catch(error){
  
-
+ 
       valuesToShow = [...new Set(
           visibleData
               .map(v => (v === null || v === undefined ? '' : String(v)))  
@@ -181,7 +181,7 @@ try{
       <button class='clear-btn'>Clear</button>
     </div>
   `;
-
+ 
   menu.html(html);
 
   // Handle select-all state
@@ -668,6 +668,76 @@ function applyDateFilter(col, menu) {
       buildSimpleFilter('.color', 19);
       buildSimpleFilter('.item-description', 20);
   }
+
+    //Start For Fabric Inward Report
+    function buildAllMenusFabricGRNDataReport(){
+    buildSimpleFilter('.supplier-name', 0);
+    buildSimpleFilter('.bill-to', 1);
+    buildSimpleFilter('.buyer-name', 2);
+    buildSimpleFilter('.po-no', 3);
+    buildSimpleFilter('.grn-no', 4);
+    buildDateFilter('.grn-date', 5);
+    buildSimpleFilter('.return-cpo-no', 6);
+    buildSimpleFilter('.return-vendor-name', 7);
+    buildSimpleFilter('.invoice-no', 8);
+    buildDateFilter('.invoice-date', 9);
+    buildSimpleFilter('.item-code', 10);
+    buildSimpleFilter('.item-name', 11);
+    buildSimpleFilter('.item-description', 18);
+    buildSimpleFilter('.track-code', 19);
+    buildSimpleFilter('.rack-code', 20);
+  }
+
+    function updateFooterForFabricGRNDataReport() {
+    const data = $('#dt').DataTable().rows({ search: 'applied' }).data();
+    let head_total_qty = 0;
+    let head_total_value=0;
+
+    data.each(function (row) {        
+        head_total_qty         += parseFloat(row['meter']?.toString().replace(/,/g, '')) || 0;
+        head_total_value           += parseFloat(row['item_value']?.toString().replace(/,/g, '')) || 0;
+    });
+  
+    $('#head_total_grn_qty').text(formatNumberTableHead(head_total_qty));
+    $('#head_total_value').text(formatNumberTableHead(head_total_value));
+  }
+  //End For Fabric Inward Report
+
+      //Start For Fabric Inward Report
+    function buildAllMenusFabricOutwardDataReport(){
+    buildSimpleFilter('.vendor-name', 0);
+    buildSimpleFilter('.buyer-name', 1);
+    buildSimpleFilter('.process-order-no', 2);
+    buildSimpleFilter('.sales-order-no', 3);
+    buildSimpleFilter('.outward-no', 4);
+    buildSimpleFilter('.outward-type', 5);
+    buildDateFilter('.outward-date', 6); // date column
+    buildSimpleFilter('.supplier-po-no', 7);
+    buildSimpleFilter('.supplier-name', 8);
+    buildSimpleFilter('.bill-to', 9);
+    buildSimpleFilter('.item-code', 10);
+    buildSimpleFilter('.item-name', 11);
+    buildSimpleFilter('.quality-name', 12);
+    buildSimpleFilter('.track-code', 13);
+  }
+
+  function updateFooterForFabricOutwardDataReport() {
+    const data = $('#dt').DataTable().rows({ search: 'applied' }).data();
+    let head_total_qty = 0;
+    let head_total_value=0;
+
+    data.each(function (row) {                   
+        head_total_qty         += parseFloat(row['meter']?.toString().replace(/,/g, '')) || 0;
+        head_total_value           += parseFloat(row['item_value']?.toString().replace(/,/g, '')) || 0;
+    });
+  
+    console.log(head_total_qty);
+    $('#head_total_outward_qty').text(formatNumberTableHead(head_total_qty));
+    $('#head_total_value').text(formatNumberTableHead(head_total_value));
+  }
+  //End For Fabric Inward Report
+
+
 
   function formatNumberTableHead(n) {
         return n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
