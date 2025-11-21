@@ -1045,11 +1045,14 @@ class FabricOutwardController extends Controller
     // }
     
     public function FabricOutwardData(Request $request)
-    {  
-        
+    {   
+        $fromDate =  isset($request->fromDate) ? $request->fromDate : date("Y-m-01");
+        $toDate =  isset($request->toDate) ? $request->toDate : date("Y-m-d");
+
         if ($request->ajax()) 
         { 
-           //DB::enableQueryLog();
+          // DB::enableQueryLog();
+           // Old Query
             $FabricOutwardDetails = DB::table('fabric_outward_details')->
                 select('fabric_outward_details.*', 'part_master.part_name','ledger_master.ac_short_name','item_master.dimension', 
                 'item_master.item_name','item_master.color_name','item_master.item_description',
@@ -1068,21 +1071,35 @@ class FabricOutwardController extends Controller
                 ->leftJoin('purchase_order', 'purchase_order.pur_code', '=', 'fabric_outward_details.po_code')
                 ->join('fabric_outward_master', 'fabric_outward_master.fout_code', '=', 'fabric_outward_details.fout_code')
                 ->leftJoin('outward_type_master', 'outward_type_master.out_type_id', '=', 'fabric_outward_master.out_type_id')
+                ->whereBetween('fabric_outward_details.fout_date', [$fromDate, $toDate])
                 ->orderby('fout_date','DESC')
                 ->get();
-            //dd(DB::getQueryLog());
-            return Datatables::of($FabricOutwardDetails)
+
+           //dd(DB::getQueryLog());
+            return Datatables::of($FabricOutwardDetails) 
             ->addColumn('vendorName',function ($row) 
             { 
 
                 $vendorName = $row->buyer;
                
                 return $vendorName;
+            }) 
+            ->addColumn('meter',function ($row) 
+            {                 
+                $meter = number_format( round(  ($row->meter) , 2  ) , 2, '.', ',');
+               
+                return $meter;
             })
+            ->addColumn('item_rate',function ($row) 
+            {                 
+                $item_rate = number_format( round(  ($row->item_rate) , 2  ) , 2, '.', ',');
+               
+                return $item_rate;
+            })           
             ->addColumn('item_value',function ($row) 
             {
-                
-                $item_value = $row->meter * $row->item_rate;
+                $item_value = number_format( round(  ($row->item_rate*$row->meter) , 2  ) , 2, '.', ',');
+                //$item_value = $row->meter * $row->item_rate;
                
                 return $item_value;
             })
