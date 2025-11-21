@@ -522,7 +522,7 @@
                         <div class="green-part"></div>
                     </div>
 
-                    <h3 class=" fw-bold  text-center">Gate Pass/ Delivery Note</h3>
+                    <h3 class=" fw-bold  text-center">Gate Pass/ Delivery Challan-Trim</h3>
 
                     <!-- Sales Info -->
                     <div class="row g-0  border-top border-bottom ">
@@ -611,18 +611,18 @@
                             </div>
                         </div>
                         <div class="col-md-6 p-2">
-                            <div class="">
+                            <!-- <div class="">
                                 <p><b>Shipping To:</b></p>
                                 <p><b>{{$TrimsOutwardMaster[0]->ship_to}}</b></p>
 
 
-                            </div>
+                            </div> -->
 
                         </div>
                     </div>
 
                     <!-- Assortment Table -->
-                    <h4 class="text-start  fw-bold">Trims Details:</h4>
+                    <h4 class="text-center  fw-bold">Trims Details</h4>
                     <table class="table table-bordered table-sm second ">
                         <thead>
                             <tr>
@@ -692,27 +692,28 @@
                                 <!-- <td class="text-center"> {{ $rowDetail->item_code }}</td> -->
                                 <td class="text-start">{{ $rowDetail->item_name }} </td>
                                 <td class="text-end">{{ $rowDetail->hsn_code }} </td>
-                                <td class="text-end"> {{ round($rowDetail->item_qty,2) }}</td>
+                                <td class="text-end"> {{ number_format($rowDetail->item_qty,2) }}</td>
                                 <td class="text-end">{{ $rowDetail->unit_name }}</td>
-                                 <td class="text-end">{{ $rowDetail->item_rate }}</td>
+                                 <td class="text-end">{{ number_format($rowDetail->item_rate,4) }}</td>
                                    <td class="text-end">{{ number_format($rowDetail->item_rate*$rowDetail->item_qty) }}</td>
 
                                 @if($rowDetail->state_id==27)
                                 <td class="text-end">
-                                    {{ $rowDetail->cgst_per }}%
-                                    <br>₹{{ number_format(($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}
+                               {{ number_format(($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}    
+                                    <br> {{ $rowDetail->cgst_per }}%
                                 </td>
                                 <td class="text-end">
-                                    {{ $rowDetail->sgst_per }}%
-                                    <br>₹{{ number_format(($rowDetail->sgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}
+                                  {{ number_format(($rowDetail->sgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}
+                                    <br>  {{ $rowDetail->sgst_per }}%
+                                  
                                 </td>
                                 <td class="text-end">0%</td>
                                 @else
                                 <td class="text-end">0%</td>
                                 <td class="text-end">0%</td>
                                 <td class="text-end">
-                                    {{ $rowDetail->igst_per }}%
-                                    <br>₹{{ number_format(($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}
+                                 {{ number_format(($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}  
+                                    <br> {{ $rowDetail->igst_per }}%
                                 </td>
                                 @endif
 
@@ -744,6 +745,7 @@
                                 </td>
 
                             </tr>
+                            
 
                             @php $no=$no+1;
 
@@ -752,25 +754,27 @@
                             $tamt=$tamt+$total_amt;
                             @endphp
                             @endforeach
+
+                             <tr>
+
+                                <td colspan="4" style="text-align:right;" class="text-end"> <b>Total Qty: </b></td>
+                                <td class="text-end"><b> {{ number_format($totalqty)}} </b></td>
+
+                                <td colspan="2" style="font-weight:bold;" class="text-end">Total (Before Tax):</td>
+                                <td style="font-weight:bold;" class="text-end">{{ number_format($amt) }}</td>
+                                <td colspan="3" style="font-weight:bold;" class="text-end">Total (After Tax):</td>
+                                <td style="font-weight:bold;" class="text-end">{{number_format($tamt)}}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="12" class="text-center"><b>NOT FOR SALE, FOR JOB WORK ONLY</b></td>
+                            </tr>
                         </tbody>
 
                     </table>
 
                     <table class="table table-bordered  table-sm">
                         <tbody>
-                            <tr>
-
-                                <td colspan="2" style="text-align:right;" class="text-end"> <b>Total Qty: </b></td>
-                                <td class="text-end"><b> {{ number_format($totalqty)}} </b></td>
-
-                                <td colspan="2" style="font-weight:bold;" class="text-end">Total (Before Tax):</td>
-                                <td style="font-weight:bold;" class="text-end">{{ number_format($amt) }}</td>
-                                <td colspan="2" style="font-weight:bold;" class="text-end">Total (After Tax):</td>
-                                <td style="font-weight:bold;" class="text-end">{{number_format($tamt)}}</td>
-                            </tr>
-                            <tr>
-                                <td colspan="9" class="text-center"><b>NOT FOR SALE, FOR JOB WORK ONLY</b></td>
-                            </tr>
+                           
 
                         </tbody>
 
@@ -819,48 +823,40 @@
 
 
                             <table class="table table-bordered border border-dark ms-auto summary-table" style="width: 500px;">
-                            @if($TrimsOutwardMaster[0]->state_id==27)
+                
                             <tr>
-                                <th class="text-start">Total (Before Tax)</th>
-                                <td class="text-end">&#8377; {{ number_format($amt) }}</td>
+
+                                <th class="text-start">Amount  (Before Tax)</th>
+                                <td class="text-end"> {{ number_format($amt,2) }}</td>
                             </tr>
                             <tr>
                                 <th class="text-start">CGST AMT :</th>
-                                <td class="text-end">&#8377; {{ number_format($totalcgst) }}</td>
+                                <td class="text-end">{{ number_format($totalcgst,2) }}</td>
                             </tr>
                             <tr>
                                 <th class="text-start">SGST AMT :</th>
-                                <td class="text-end">&#8377; {{ number_format($totalsgst) }}</td>
+                                <td class="text-end"> {{ number_format($totalsgst,2) }}</td>
                             </tr>
-                            <tr>
-                                <th class="text-start">Total (After Tax)</th>
-                                <td class="text-end">&#8377; {{ number_format($tamt) }}</td>
-                            </tr>
-                            @else
-                            <tr>
-                                <th class="text-start">Total (Before Tax)</th>
-                                <td class="text-end">&#8377; {{ number_format($amt) }}</td>
-                            </tr>
-                            <tr>
+                             <tr>
                                 <th class="text-start">IGST AMT :</th>
-                                <td class="text-end">&#8377; {{ number_format($totaligst) }}</td>
+                                <td class="text-end"> {{ number_format($totaligst,2) }}</td>
                             </tr>
                             <tr>
-                                <th class="text-start">Total (After Tax)</th>
-                                <td class="text-end">&#8377; {{ number_format($tamt) }}</td>
+                                <th class="text-start">Amount  (After Tax)</th>
+                                <td class="text-end"> {{ number_format($tamt,2) }}</td>
                             </tr>
-                            @endif
-                            <tr>
+                          
+                             <tr>
                                 <th class="text-start">Round Off</th>
-                                <td class="text-end">&#8377; {{ number_format(round($tamt)) }}</td>
+                                <td class="text-end">{{ number_format($tamt,2) }}</td>
                             </tr>
                             <tr>
                                 <th class="text-start">Grand Total</th>
-                                <td class="text-end"><b>&#8377; {{ number_format(round($tamt), 2) }}</b></td>
+                                <td class="text-end"><b> {{ number_format(round($tamt,2) ) }}</b></td>
                             </tr>
                             </table>
 
-                            <table class="table">
+                            <table class="table" style="margin-top:100px;">
                                 <tr>
                                     <th>Prepared By:</th>
                                     <th>Checked By:</th>
