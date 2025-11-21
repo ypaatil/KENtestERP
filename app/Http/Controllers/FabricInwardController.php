@@ -1475,8 +1475,7 @@ P2
     
     
     public function FabricGRNData(Request $request)
-    {
-      
+    { 
         ini_set('memory_limit', '10G'); 
         if ($request->ajax()) 
         { 
