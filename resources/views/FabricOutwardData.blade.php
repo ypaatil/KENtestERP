@@ -54,7 +54,7 @@
       <div class="card">
          <div class="card-body">
             <div class="table-responsive">
-               <table id="dt" data-order='[[ 5, "desc" ]]' data-page-length='25'  class="table table-bordered  nowrap w-100">
+               <table id="dt" data-order='[[ 5, "desc" ]]' data-page-length='10'  class="table table-bordered  nowrap w-100">
                   <thead>
                      <tr style="text-align:center; white-space:nowrap;background: bisque;" id="total_head">
                         <th colspan="13"></th>
@@ -114,6 +114,12 @@
 
          
       	 $('#dt').DataTable().clear().destroy();
+          const today = new Date();
+         const day = String(today.getDate()).padStart(2, '0');
+         const month = String(today.getMonth() + 1).padStart(2, '0');
+         const year = today.getFullYear();
+         const formattedDate = `${day}-${month}-${year}`;
+         const exportTitle = 'Fabric Inward Report (' + formattedDate + ')';
         
           var table = $('#dt').DataTable({
             ajax: {
@@ -122,10 +128,10 @@
             },
             dom: 'lBfrtip',
             buttons: [
-                { extend: 'copyHtml5', footer: true ,exportOptions: commonExportOptions() },
-                { extend: 'excelHtml5', footer: true ,exportOptions: commonExportOptions() },
-                { extend: 'csvHtml5', footer: true ,exportOptions: commonExportOptions() },
-                { extend: 'pdfHtml5', footer: true ,exportOptions: commonExportOptions() }
+                { extend: 'copyHtml5', footer: true ,title: exportTitle, exportOptions: commonExportOptions() },
+                { extend: 'excelHtml5', footer: true ,title: exportTitle, exportOptions: commonExportOptions() },
+                { extend: 'csvHtml5', footer: true ,title: exportTitle, exportOptions: commonExportOptions() },
+                { extend: 'pdfHtml5', footer: true ,title: exportTitle, exportOptions: commonExportOptions() }
             ],
             initComplete: function () {
                   buildAllMenusFabricOutwardDataReport();
