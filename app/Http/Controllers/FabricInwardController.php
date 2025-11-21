@@ -1476,11 +1476,17 @@ P2
     
     public function FabricGRNData(Request $request)
     {
-      
+          
+        
         ini_set('memory_limit', '10G'); 
+       
+        $fromDate =  isset($request->fromDate) ? $request->fromDate : date("Y-m-01");
+        $toDate =  isset($request->toDate) ? $request->toDate : date("Y-m-d");
+
         if ($request->ajax()) 
         { 
            //DB::enableQueryLog();
+           /* // Old Query
            $FabricInwardDetails = FabricInwardDetailModel::
               leftJoin('ledger_master', 'ledger_master.ac_code', '=', 'inward_details.Ac_code')
               ->leftJoin('purchase_order', 'purchase_order.pur_code', '=', 'inward_details.po_code')
@@ -1494,17 +1500,74 @@ P2
               ->leftJoin('inward_master', 'inward_master.in_code', '=', 'inward_details.in_code')
               ->leftJoin('vendor_purchase_order_master', 'vendor_purchase_order_master.vpo_code', '=', 'inward_master.vpo_code')
               ->leftJoin('ledger_master as LM3', 'LM3.ac_code', '=', 'vendor_purchase_order_master.vendorId')
+              ->whereBetween('inward_details.in_date', [$fromDate, $toDate])
               ->get(['inward_details.*','inward_master.invoice_no','inward_master.invoice_date', 'cp_master.cp_name','part_master.part_name','ledger_master.ac_short_name','item_master.dimension', 'item_master.item_name',
                         'item_master.color_name','item_master.item_description','quality_master.quality_name','rack_master.rack_name', 'LM1.ac_short_name as buyer1', 'LM2.ac_short_name as buyer2',
                         'vendor_purchase_order_master.vpo_code', 'LM3.ac_short_name as vendorName', DB::raw('(SELECT trade_name FROM ledger_details WHERE sr_no = purchase_order.bill_to OR ac_code = inward_details.Ac_code LIMIT 1) as trade_name'),
-                        DB::raw('(SELECT site_code FROM ledger_details WHERE sr_no = purchase_order.bill_to OR ac_code = inward_details.Ac_code LIMIT 1) as suplier_id')]);
+                        DB::raw('(SELECT site_code FROM ledger_details WHERE sr_no = purchase_order.bill_to OR ac_code = inward_details.Ac_code LIMIT 1) as suplier_id')]);*/
             //dd(DB::getQueryLog());
+
+            // New Query
+            $FabricInwardDetails = FabricInwardDetailModel::
+    leftJoin('ledger_master', 'ledger_master.ac_code', '=', 'inward_details.Ac_code')
+    ->leftJoin('purchase_order', 'purchase_order.pur_code', '=', 'inward_details.po_code')
+    ->leftJoin('ledger_master as LM1', 'LM1.ac_code', '=', 'purchase_order.buyer_id')
+    ->leftJoin('ledger_master as LM2', 'LM2.ac_code', '=', 'inward_details.buyer_id')
+    ->leftJoin('item_master', 'item_master.item_code', '=', 'inward_details.item_code')
+    ->leftJoin('quality_master', 'quality_master.quality_code', '=', 'item_master.quality_code')
+    ->leftJoin('part_master', 'part_master.part_id', '=', 'inward_details.part_id')
+    ->leftJoin('cp_master', 'cp_master.cp_id', '=', 'inward_details.cp_id')
+    ->leftJoin('rack_master', 'rack_master.rack_id', '=', 'inward_details.rack_id')
+    ->leftJoin('inward_master', 'inward_master.in_code', '=', 'inward_details.in_code')
+    ->leftJoin('vendor_purchase_order_master', 'vendor_purchase_order_master.vpo_code', '=', 'inward_master.vpo_code')
+    ->leftJoin('ledger_master as LM3', 'LM3.ac_code', '=', 'vendor_purchase_order_master.vendorId')
+    
+    ->leftJoin('ledger_details as LD', function($join) {
+        $join->on('LD.sr_no', '=', 'purchase_order.bill_to');
+    })    
+    ->whereBetween('inward_details.in_date', [$fromDate, $toDate])    
+    ->get([
+        'inward_details.*',
+        'inward_master.invoice_no',
+        'inward_master.invoice_date',
+        'cp_master.cp_name',
+        'part_master.part_name',
+        'ledger_master.ac_short_name',
+        'item_master.dimension',
+        'item_master.item_name',
+        'item_master.color_name',
+        'item_master.item_description',
+        'quality_master.quality_name',
+        'rack_master.rack_name',
+        'LM1.ac_short_name as buyer1',
+        'LM2.ac_short_name as buyer2',
+        'vendor_purchase_order_master.vpo_code',
+        'LM3.ac_short_name as vendorName',
+        
+        'LD.trade_name as trade_name',
+        'LD.site_code as suplier_id',
+    ]);
+
+
+
             return Datatables::of($FabricInwardDetails)
             ->addColumn('item_value',function ($row) 
-            {
-                $item_value =  round($row->item_rate*$row->meter);
+            {                 
+                $item_value = number_format( round(  ($row->item_rate*$row->meter) , 2  ) , 2, '.', ',');
                
                 return $item_value;
+            })
+            ->addColumn('meter',function ($row) 
+            {                 
+                $meter = number_format( round(  ($row->meter) , 2  ) , 2, '.', ',');
+               
+                return $meter;
+            })
+            ->addColumn('item_rate',function ($row) 
+            {                 
+                $item_rate = number_format( round(  ($row->item_rate) , 2  ) , 2, '.', ',');
+               
+                return $item_rate;
             })
             ->addColumn('invoice_no',function ($row) 
             {
