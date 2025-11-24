@@ -111,7 +111,7 @@
                         </select>
                      </div>
                   </div>
-                  <div class="col-md-3">
+                  <div class="col-md-2">
                      <div class="mb-3">
                         <label for="formrow-inputState" class="form-label">Buyer</label>
                         <select name="Ac_code" class="form-control" id="Ac_code" disabled>
@@ -180,7 +180,7 @@
                         <input type="text" name="style_no" class="form-control" id="style_no" value="{{$VendorPurchaseOrderMasterList->style_no}}" readOnly>
                      </div>
                   </div>
-                  <div class="col-md-3">
+                  <div class="col-md-2">
                      <div class="mb-3">
                         <label for="style_description" class="form-label">Style Description</label>
                         <input type="text" name="style_description" class="form-control" id="style_description" value="{{$VendorPurchaseOrderMasterList->style_description}}" readOnly>
@@ -192,7 +192,7 @@
                         <input type="date" name="delivery_date" class="form-control" id="delivery_date" value="{{$VendorPurchaseOrderMasterList->delivery_date}}" required  >
                      </div>
                   </div>
-                  <div class="col-md-3">
+                  <div class="col-md-2">
                      <div class="mb-3">
                         <label for="vendorId" class="form-label">Vendor Name</label>
                         <select name="vendorId" class="form-control select2" id="vendorId" required onchange="GetLineList();" >
@@ -205,7 +205,7 @@
                      </div>
                   </div>
                   @if($VendorPurchaseOrderMasterList->process_id == 1)
-                  <div class="col-md-3" id="line_div">
+                  <div class="col-md-2" id="line_div">
                      <div class="mb-3">
                         <label for="line_id" class="form-label">Line</label>
                         <select name="line_id" class="form-control select2" id="line_id">

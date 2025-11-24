@@ -445,7 +445,9 @@ class VendorPurchaseOrderController extends Controller
         $MainStyleList = MainStyleModel::where('main_style_master.delflag','=', '0')->get();
         $SubStyleList = SubStyleModel::where('sub_style_master.delflag','=', '0')->get();
         $FGList = FinishedGoodModel::where('fg_master.delflag','=', '0')->get();
-        $SalesOrderList= SalesOrderCostingMasterModel::select('sales_order_costing_master.sales_order_no')->get();
+        $SalesOrderList= SalesOrderCostingMasterModel::select('sales_order_costing_master.sales_order_no')
+                        ->join('buyer_purchse_order_master', 'buyer_purchse_order_master.tr_code', '=', 'sales_order_costing_master.sales_order_no')
+                        ->where('buyer_purchse_order_master.job_status_id', '=', 1)->get();
          
         return view('VendorPurchaseOrder',compact('UnitList','ProcessList','ClassList','ClassList2','ClassList3','ItemList2','ItemList3','MainStyleList','SubStyleList','FGList','CostTypeList','SalesOrderList','Ledger','Ledger2','QualityList', 'CPList', 'CurrencyList', 'SeasonList', 'counter_number'));
     }
