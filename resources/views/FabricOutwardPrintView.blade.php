@@ -699,10 +699,10 @@
                                 <td class="text-center">{{ $rowDetail->hsn_code }}</td>
                                 <td class="text-start">{{ $rowDetail->item_description }}</td>
 
-                                <td class="text-end">{{ number_format($rowDetail->meter , 2, '.', ','  ) }}</td>
+                                <td class="text-end">{{ indian_number_format_for_value($rowDetail->meter , 2  ) }}</td>
                                 <td class="text-center">{{ $rowDetail->unit_name }}</td>
-                                <td class="text-end">{{ number_format($rowDetail->item_rate , 2, '.', ',' ) }}</td>
-                                <td class="text-end">{{ number_format($beforeTax , 2, '.', ','  ) }}</td>
+                                <td class="text-end">{{ indian_number_format_for_value($rowDetail->item_rate , 2 ) }}</td>
+                                <td class="text-end">{{ indian_number_format_for_value($beforeTax , 2  ) }}</td>
                                 @php
                                 if ($beforeTax > 0) {
                                 $cgst_percent = round(($cgst / $beforeTax) * 100, 2);
@@ -713,10 +713,10 @@
                                 }
                                 @endphp
 
-                                <td class="text-end">{{ number_format($cgst , 2, '.', ','  ) }} <br>({{ $cgst_percent }}%)</td>
-                                <td class="text-end">{{ number_format($sgst , 2, '.', ','  ) }} <br>({{ $sgst_percent }}%)</td>
-                                <td class="text-end">{{ number_format($igst , 2, '.', ','  ) }} <br> ({{ $igst_percent }}%)</td>
-                                <td class="text-end">{{ number_format($afterTax , 2, '.', ','  ) }}</td>
+                                <td class="text-end">{{ indian_number_format_for_value($cgst , 2  ) }} <br>({{ $cgst_percent }}%)</td>
+                                <td class="text-end">{{ indian_number_format_for_value($sgst , 2  ) }} <br>({{ $sgst_percent }}%)</td>
+                                <td class="text-end">{{ indian_number_format_for_value($igst , 2  ) }} <br> ({{ $igst_percent }}%)</td>
+                                <td class="text-end">{{ indian_number_format_for_value($afterTax , 2  ) }}</td>
                             </tr>
                             @endforeach
                         </tbody>
@@ -724,12 +724,12 @@
                         <tfoot>
                             <tr>
                                 <td colspan="5" class="text-end"><b>Total Meter:</b></td>
-                                <td class="text-end fw-bold">{{ number_format($FabricOutwardMaster[0]->total_meter, 2, '.', ',' ) }}</td>
+                                <td class="text-end fw-bold">{{ indian_number_format_for_value($FabricOutwardMaster[0]->total_meter, 2 ) }}</td>
                                 <td colspan="2" class="text-end fw-bold">Total Amount <br>(Before Tax):</td>
-                                <td class="text-end fw-bold">{{ number_format($amt, 2, '.', ',' ) }}</td>
+                                <td class="text-end fw-bold">{{ indian_number_format_for_value($amt, 2 ) }}</td>
                                 <td class="text-end fw-bold" colspan="3">Total Amount <br>(After Tax):</td>
 
-                                <td class="text-end fw-bold">{{ number_format($after_tax_total, 2, '.', ',') }}</td>
+                                <td class="text-end fw-bold">{{ indian_number_format_for_value($after_tax_total, 2) }}</td>
                                 
                             </tr>
                             <tr>
@@ -796,19 +796,19 @@
                             <table class="table table-bordered border border-dark ms-auto summary-table" style="width: 500px;">
                                 <tr>
                                     <th class="text-start">Amount (Before Tax)</th>
-                                    <td class="text-end">{{ number_format($amt , 2, '.', ','  ) }}</td>
+                                    <td class="text-end">{{ indian_number_format_for_value($amt , 2  ) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">SGST</th>
-                                    <td class="text-end">{{ number_format($SGSTTotal , 2, '.', ',' ) }}</td>
+                                    <td class="text-end">{{ indian_number_format_for_value($SGSTTotal , 2 ) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">CGST</th>
-                                    <td class="text-end">{{ number_format($CGSTTotal , 2, '.', ',' ) }}</td>
+                                    <td class="text-end">{{ indian_number_format_for_value($CGSTTotal , 2 ) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">IGST</th>
-                                    <td class="text-end">{{ number_format($IGSTTotal , 2, '.', ',' ) }}</td>
+                                    <td class="text-end">{{ indian_number_format_for_value($IGSTTotal , 2 ) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">Amount (After Tax)</th>
