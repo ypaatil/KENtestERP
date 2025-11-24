@@ -856,7 +856,7 @@
                             </tr>
                             </table>
 
-                            <table class="table" style="margin-top:100px;">
+                            <table class="table" style="margin-top: 100px;">
                                 <tr>
                                     <th>Prepared By:</th>
                                     <th>Checked By:</th>
