@@ -575,7 +575,7 @@
                             <div class="info-row">
                                 <div class="label">PAN NO</div>
                                 <div class="colon">:</div>
-                                <div class="value">7591Q1ZD </div>
+                                <div class="value">ABCCS7591Q </div>
                             </div>
                             <div class="info-row">
                                 <div class="label">GST NO</div>
