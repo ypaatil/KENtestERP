@@ -3758,7 +3758,9 @@ P2
     public function GetFabricInwardOutwardData(Request $request)
     {
         $detailData = DB::SELECT("SELECT sum(meter) as total_meter,(select ifnull(sum(inward_details.meter),0) FROM inward_details 
-                        WHERE inward_details.item_code = fabric_outward_details.item_code AND inward_details.vw_code = fabric_outward_details.vpo_code) as received,
+                        INNER JOIN inward_master ON inward_master.in_code = inward_details.in_code
+                        WHERE inward_details.item_code = fabric_outward_details.item_code 
+                        AND inward_master.vpo_code = fabric_outward_details.vpo_code) as received,
                         item_master.item_name, fabric_outward_details.item_code  FROM fabric_outward_details 
                         INNER JOIN item_master ON item_master.item_code = fabric_outward_details.item_code
                         WHERE fabric_outward_details.vpo_code='".$request->vpo_code."' GROUP BY fabric_outward_details.item_code");
