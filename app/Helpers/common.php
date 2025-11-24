@@ -209,6 +209,23 @@ function indian_number_format_wd($num){
     return ($is_negative ? '-' : '').$head.",".$tail;
 }
 
+     function indian_number_format_for_value($num, $decimals = 2) {                           
+            $num = number_format($num, $decimals, '.', ''); // normalize
+            
+            $parts = explode('.', $num);
+            $integer = $parts[0];
+            $decimal = isset($parts[1]) ? $parts[1] : '';
+
+            $last3 = substr($integer, -3);
+            $rest = substr($integer, 0, -3);
+
+            if ($rest != '') {
+                $rest = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", $rest);
+                return $rest . "," . $last3 . ($decimal ? "." . $decimal : "");
+            }
+            return $integer . ($decimal ? "." . $decimal : "");
+        }
+
 function setEnvironmentValue($key, $value)
 {
         $path = base_path('.env');

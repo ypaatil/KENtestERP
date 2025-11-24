@@ -812,15 +812,15 @@
                                 </tr>
                                 <tr>
                                     <th class="text-start">Amount (After Tax)</th>
-                                    <td class="text-end">{{ number_format($tamt , 2, '.', ','  ) }}</td>
+                                    <td class="text-end">{{ indian_number_format_for_value($tamt, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">Round Off</th>
-                                    <td class="text-end">{{ $roundOff >= 0 ? '+' : '' }}{{ number_format($roundOff , 2, '.', ','  ) }}</td>
+                                    <td class="text-end">{{ $roundOff >= 0 ? '+' : '' }}{{ indian_number_format_for_value($roundOff, 2) }}</td>
                                 </tr>
                                 <tr>
                                     <th class="text-start">Grand Total</th>
-                                    <td class="text-end fw-bold">{{ number_format($roundedTotal , 2, '.', ','  ) }}</td>
+                                    <td class="text-end fw-bold">{{ indian_number_format_for_value($roundedTotal, 2) }}</td>
                                 </tr>
                             </table>
 
@@ -838,7 +838,6 @@
             </main>
         </div>
     </div>
-
     <p class="text-center d-print-none"><a href="#">&laquo; Back to List</a></p>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
