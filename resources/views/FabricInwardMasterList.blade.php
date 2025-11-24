@@ -3,7 +3,12 @@
 <style>
    .text-right
    {
-   text-align:right;
+      text-align:right;
+   }
+   
+   .navbar-brand-box
+   {
+        width: 266px !important;
    }
 </style>
 <div class="row">

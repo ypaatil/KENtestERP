@@ -3845,29 +3845,28 @@ P2
 
                             <td>
                                 <input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="'.($srno++).'" id="taga_qty1" style="width:50px;height:30px;">
-                                <input type="number" step="any" class="METER" name="meter[]" onkeyup="mycalc();" value="'.$details->outward_meter.'" id="meter1" style="width:80px;height:30px;" readonly>
+                                <input type="number" step="any" class="METER" name="meter[]" max="'.$details->outward_meter.'" onkeyup="mycalc();" value="'.$details->outward_meter.'" id="meter1" style="width:80px;height:30px;" 
+                                    onkeyup="if(parseFloat(this.value) > parseFloat(this.max)) {   alert(`Value cannot exceed ` + this.max);   this.value = this.max;   } mycalc();"  oninput="if(parseFloat(this.value) > parseFloat(this.max)) {  alert(`Value cannot exceed ` + this.max);  this.value = this.max;  } mycalc();">
                             </td>
 
-                            <td><input type="number" step="any" name="gram_per_meter[]" value="0" id="gram_per_meter" style="width:80px;height:30px;" readonly></td>
+                            <td><input type="number" step="any" name="gram_per_meter[]" value="0" id="gram_per_meter" style="width:80px;height:30px;" ></td>
 
-                            <td><input type="number" step="any" @if($user_type!=1)  "readOnly" @endif class="KG" name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;height:30px;" readonly></td>
+                            <td><input type="number" step="any" @if($user_type!=1)  "readOnly" @endif class="KG" name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;height:30px;" ></td>
 
                             <td>
-                                <input type="number" step="any" name="item_rates[]" value="0" id="item_rates" style="width:80px;height:30px;"  @if($user_type!=1) readOnly  @endif readonly>
+                                <input type="number" step="any" name="item_rates[]" value="0" id="item_rates" style="width:80px;height:30px;" >
                             </td>
 
                             <td><input type="number" step="any" class="AMT" readOnly name="amounts[]" value="0" id="amounts" style="width:80px;height:30px;" readonly></td>
 
-                            <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="'.$details->suplier_roll_no.'" id="suplier_roll_no" style="width:100px;height:30px;" readonly></td>
+                            <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="'.$details->suplier_roll_no.'" id="suplier_roll_no" style="width:100px;height:30px;"></td>
 
-                            <td><input type="text" name="track_code[]" id="track_code1" value="'.$details->roll_no.'" style="width:80px;height:30px;" readOnly></td>
-
-                            <td>
-                                <input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left AButton">
-                            </td>
+                            <td><input type="text" name="track_code[]" id="track_code1" value="'.$details->roll_no.'" style="width:80px;height:30px;" readonly ></td>
 
                             <td>
-                                <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X">
+                                <input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left AButton" disabled>
+                            
+                                <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" disabled>
                             </td>
                         </tr>';
         }

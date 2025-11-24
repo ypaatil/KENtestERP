@@ -4,7 +4,13 @@
    .hide
    {
    display:none!important;
+   } 
+   
+   .navbar-brand-box
+   {
+        width: 266px !important;
    }
+
 </style>
 <div class="row">
    <div class="col-12">
@@ -211,8 +217,7 @@
                                  <th>Rate Per Meter</th>
                                  <th>Amount</th>
                                  <th nowrap>Suplier Roll No.</th>
-                                 <th>TrackCode</th>
-                                 <th>Print</th>
+                                 <th>Track Code</th>
                                  <th>Add/Remove</th>
                               </tr>
                            </thead>
@@ -262,8 +267,7 @@
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;" required/></td>
                                  <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
                                  <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code" style="width:80px; height:30px;" required readOnly/></td>
-                                 <td><i   style="font-size:25px;" onclick="CalculateRowPrint(this);" name="print"  class="fa fa-print" ></td>
-                                 <td><input type="button" style="width:40px;" onclick="insertcone();" name="print" value="+" class="btn btn-warning pull-left"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
+                                 <td><input type="button" style="width:40px;" onclick="insertcone();" name="Abutton" value="+" class="btn btn-warning pull-left"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
                               </tr>
                               @php $no=$no+1; @endphp
                               @endforeach
@@ -297,8 +301,7 @@
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" required  {{$dis}} />
                                  <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
                                  <td><input type="text" name="track_code[]"  value="" id="track_code" style="width:80px;" {{$dis}}  /></td>
-                                 <td><i   style="font-size:25px;" onclick="CalculateRowPrint(this);" name="print"  class="fa fa-print" ></td>
-                                 <td><input type="button" style="width:40px;" onclick="insertcone();" name="print" value="+" class="btn btn-warning pull-left"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
+                                 <td><input type="button" style="width:40px;" onclick="insertcone();" name="Abutton" value="+" class="btn btn-warning pull-left"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
                               </tr>
                               @endif
                            </tbody>
@@ -314,8 +317,7 @@
                                  <th>Rate Per Meter</th>
                                  <th>Amount</th>
                                  <th nowrap>Suplier Roll No.</th>
-                                 <th>TrackCode</th>
-                                 <th>Print</th>
+                                 <th>Track Code</th>
                                  <th>Add/Remove</th>
                               </tr>
                            </tfoot>
@@ -536,12 +538,18 @@
                               $total_count = isset($checkingData[0]->total_count) ? $checkingData[0]->total_count : 0;
                               if($total_count > 0)
                               {
-                              $dis = 'disabled';
+                                 $dis = 'disabled';
                               }
                               else
                               {
-                              $dis = '';
+                                 $dis = '';
                               }
+
+                              if($FabricInwardMasterList->isReturnFabricInward == 1)
+                              {
+                                 $dis = '';
+                              }
+
                               @endphp
                               <tr>
                                  <td><input type="text" name="id[]" value="{{ $no }}" id="id" style="width:50px;" {{$dis}} /></td>
@@ -568,8 +576,7 @@
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;" required/></td>
                                  <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
                                  <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code1" style="width:80px; height:30px;" required readOnly/></td>
-                                 <td><i   style="font-size:25px;" onclick="CalculateRowPrint(this);" name="print"  class="fa fa-print" ></td>
-                                 <td><input type="button" style="width:40px;" onclick="insertcone1();" name="print" value="+" class="btn btn-warning pull-left"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
+                                 <td><input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left" disabled> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X"  disabled></td>
                               </tr>
                               @php $no=$no+1; @endphp
                               @endforeach
@@ -603,7 +610,7 @@
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" required  {{$dis}} />
                                  <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
                                  <td><input type="text" name="track_code[]"  value="" id="track_code" style="width:80px;" {{$dis}}  /></td>
-                                 <td><input type="button" style="width:40px;" onclick="insertcone1();" name="print" value="+" class="btn btn-warning pull-left"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
+                                 <td><input type="button" style="width:40px;" onclick="insertcone1();" name="Abutton" value="+" class="btn btn-warning pull-left"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
                               </tr>
                               @endif
                            </tbody>
@@ -620,7 +627,6 @@
                                  <th>Amount</th>
                                  <th nowrap>Suplier Roll No.</th>
                                  <th>Track Code</th>
-                                 <th>Print</th>
                                  <th>Add/Remove</th>
                               </tr>
                            </tfoot>
@@ -680,10 +686,17 @@
 <script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
 <!-- end row -->
 <script>
-   $(document).ready(function() {
+   $(document).ready(function() 
+   {
         $('#frmData').submit(function() {
             $('#Submit').prop('disabled', true);
         }); 
+
+         @if($FabricInwardMasterList->tab_button==1) 
+            $("#delivery-tab").trigger('click'); 
+         @else  
+             $("#return-tab").trigger('click');
+         @endif
     });
     
        
@@ -1052,202 +1065,181 @@
    
    var indexcone = 2;
    
-   function insertcone1(){
    
-   $("#item_code").select2("destroy");
-   $("#part_id").select2("destroy");
-   var table=document.getElementById("footable_3").getElementsByTagName('tbody')[0];
-   var row=table.insertRow(table.rows.length);
-   
-   var cell1=row.insertCell(0);
-   var t1=document.createElement("input");
-   t1.style="display: table-cell; width:50px;";
-   //t1.className="form-control col-sm-1";
-   
-   t1.id = "id"+indexcone;
-   t1.name= "id[]";
-   t1.value=indexcone;
-   
-   cell1.appendChild(t1);
-    
-   
-   var cell1=row.insertCell(1);
-   var t1=document.createElement("input");
-   t1.style="display: table-cell; width:80px;";
-   //t1.className="form-control col-sm-1";
-   
-   t1.id = "item_codes"+indexcone;
-   t1.name= "item_codes[]";
-   
-   cell1.appendChild(t1);
-    
-   var cell5 = row.insertCell(2);
-   var t5=document.createElement("select");
-   var x = $("#item_code"),
-   y = x.clone();
-   y.attr("id","item_code");
-   y.attr("name","item_code[]");
-   y.width(200);
-   y.height(30);
-   y.appendTo(cell5);
-   
-   
-   
-   var cell3 = row.insertCell(3);
-   var t3=document.createElement("select");
-   var x = $("#part_id"),
-   y = x.clone();
-   y.attr("id","part_id");
-   y.attr("name","part_id[]");
-   y.width(200);
-   y.height(30);
-   y.appendTo(cell3);
-   
-   
-   var t7=document.createElement("input");
-   t7.style="display: table-cell; width:80px;height:30px;";
-   t7.type="hidden";
-   t7.className="TAGAQTY";
-   t7.required="true";
-   t7.id = "taga_qty"+indexcone;
-   t7.name="taga_qty[]";
-   t7.onkeyup=mycalc();
-   t7.value="1";
-   cell3.appendChild(t7);
-   
-   var cell7 = row.insertCell(4);
-   var t8=document.createElement("input");
-   t8.style="display: table-cell; width:80px;height:30px;";
-   t8.type="text";
-   t8.step="any";
-   t8.className="METER";
-   t8.id = "meter"+indexcone;
-   t8.name="meter[]";
-   t8.onkeyup=mycalc();
-   cell7.appendChild(t8);
-   
-   var cell7 = row.insertCell(5);
-   var t8=document.createElement("input");
-   t8.style="display: table-cell; width:80px;height:30px;";
-   t8.type="text";
-   t8.step="any";
-   t8.id = "gram_per_meter"+indexcone;
-   t8.name="gram_per_meter[]";
-   t8.value=$('#gram_per_meter').val();
-   t8.onkeyup=mycalc();
-   cell7.appendChild(t8);
-   
-   var cell7 = row.insertCell(6);
-   var t8=document.createElement("input");
-   t8.style="display: table-cell; width:80px;height:30px;";
-   t8.type="text";
-   t8.step="any";
-   t8.className="KG";
-   t8.id = "kg"+indexcone;
-   t8.name="kg[]";
-   t8.readOnly=true;
-   t8.value=$('#kg').val();
-   t8.onkeyup=mycalc();
-   cell7.appendChild(t8);
-   
-   var cell3 = row.insertCell(7);
-   var t3=document.createElement("input");
-   t3.style="display: table-cell; width:80px;height:30px;";
-   t3.type="number";
-   t3.step="any";
-   t3.required="true";
-   t3.id = "item_rates"+indexcone;
-   t3.name="item_rates[]";
-   t3.value="0";
-   if($('#is_opening').prop('checked')) 
-   {t3.readOnly=false;}else{t3.readOnly=false;}
-   cell3.appendChild(t3);
-   
-   var cell3 = row.insertCell(8);
-   var t3=document.createElement("input");
-   t3.style="display: table-cell; width:80px;height:30px;";
-   t3.type="number";
-   t3.readOnly="true";
-   t3.step="any";
-   t3.required="true";
-   t3.className="AMT";
-   t3.id = "amounts"+indexcone;
-   t3.name="amounts[]";
-   t3.value="0";
-   cell3.appendChild(t3);
-   
-   var cell4 = row.insertCell(9);
-   var t4=document.createElement("input");
-   t4.style="display: table-cell; width:100px;height:30px;";
-   t4.type="number";
-   t4.step="any";
-   t4.required="true";
-   t4.className="suplier_roll_no";
-   t4.id = "suplier_roll_no"+indexcone;
-   t4.name="suplier_roll_no[]";
-   t4.value="";
-   cell4.appendChild(t4);
-   
-   var cell7 = row.insertCell(10);
-   var t7=document.createElement("input");
-   t7.style="display: table-cell; width:80px;height:30px;";
-   t7.type="text";
-   t7.readOnly=true;
-   t7.id = "track_code"+indexcone;
-   t7.name="track_code[]";
-   if($("#cp_id").val()==1)
-   {
-      ++PBarcode;
-     t7.value='P'+PBarcode;
-   }
-   else
-   {
-      ++CBarcode;
-      t7.value='I'+CBarcode;
-   } 
-   
-   
-   cell7.appendChild(t7);
-   
-   var cell7 = row.insertCell(11);
-   cell7.innerHTML='<i class="fa fa-print" name="print" style="font-size:25px;" onclick="CalculateRowPrint(this);"></i>';
-   
-   
-   var cell8=row.insertCell(12);
-   var btnAdd = document.createElement("INPUT");
-   btnAdd.id = "Abutton";
-   btnAdd.type = "button";
-   btnAdd.name = "print";
-   btnAdd.className="btn btn-warning pull-left";
-   btnAdd.value = "+";
-   btnAdd.setAttribute("onclick", "insertcone();CalculateRowPrint(this);");
-   cell8.appendChild(btnAdd);
-   
-   var cell9=row.insertCell(13);
-   var btnRemove = document.createElement("INPUT");
-   btnRemove.id = "Dbutton";
-   btnRemove.type = "button";
-   btnRemove.className="btn btn-danger pull-left";
-   btnRemove.value = "X";
-   btnRemove.setAttribute("onclick", "deleteRowcone(this)");
-   cell9.appendChild(btnRemove);
-   
-   var w = $(window);
-   var row = $('#footable_3').find('tr').eq(indexcone);
-   
-   if (row.length){
-   $('html,body').animate({scrollTop: row.offset().top - (w.height()/2)}, 1000 );
-   }
-   
-   document.getElementById('cntrr1').value = parseInt(document.getElementById('cntrr1').value)+1;
-   
-   indexcone++;
-   mycalc();
-   recalcIdcone();
-   
-   selselect();
-      
-   }
+  function insertcone1() 
+  {
+    $("#item_code").select2("destroy");
+    $("#part_id").select2("destroy");
+
+    var table = document.getElementById("footable_3").getElementsByTagName('tbody')[0];
+    var row = table.insertRow(table.rows.length);
+
+    // ---------------- ID ----------------
+    var cell1 = row.insertCell(0);
+    var t1 = document.createElement("input");
+    t1.style = "display: table-cell; width:50px;";
+    t1.id = "id" + indexcone;
+    t1.name = "id[]";
+    t1.value = indexcone;
+    cell1.appendChild(t1);
+
+    // ---------------- Item Code Text ----------------
+    var cell2 = row.insertCell(1);
+    var t2 = document.createElement("input");
+    t2.style = "display: table-cell; width:80px;";
+    t2.id = "item_codes" + indexcone;
+    t2.name = "item_codes[]";
+    cell2.appendChild(t2);
+
+    // ---------------- Item Code Dropdown (Select2) ----------------
+    var cell3 = row.insertCell(2);
+    var ic = $("#item_code").clone();
+    ic.attr("id", "item_code" + indexcone);
+    ic.attr("name", "item_code[]");
+    ic.val("");
+    ic.appendTo(cell3);
+
+    // ---------------- Part ID Dropdown (Select2) ----------------
+    var cell4 = row.insertCell(3);
+    var pt = $("#part_id").clone();
+    pt.attr("id", "part_id" + indexcone);
+    pt.attr("name", "part_id[]");
+    pt.val("");
+    pt.appendTo(cell4);
+
+    // Hidden taga qty
+    var t7 = document.createElement("input");
+    t7.type = "hidden";
+    t7.className = "TAGAQTY";
+    t7.id = "taga_qty" + indexcone;
+    t7.name = "taga_qty[]";
+    t7.value = "1";
+    t7.onkeyup = mycalc;
+    cell4.appendChild(t7);
+
+    // ---------------- Meter ----------------
+    var cell5 = row.insertCell(4);
+    var meter = document.createElement("input");
+    meter.type = "text";
+    meter.className = "METER";
+    meter.id = "meter" + indexcone;
+    meter.name = "meter[]";
+    meter.style = "display: table-cell; width:80px;height:30px;";
+    meter.onkeyup = mycalc;
+    cell5.appendChild(meter);
+
+    // ---------------- Gram per meter ----------------
+    var cell6 = row.insertCell(5);
+    var gpm = document.createElement("input");
+    gpm.type = "text";
+    gpm.id = "gram_per_meter" + indexcone;
+    gpm.name = "gram_per_meter[]";
+    gpm.value = $('#gram_per_meter').val();
+    gpm.style = "display: table-cell; width:80px;height:30px;";
+    gpm.onkeyup = mycalc;
+    cell6.appendChild(gpm);
+
+    // ---------------- KG ----------------
+    var cell7 = row.insertCell(6);
+    var kg = document.createElement("input");
+    kg.type = "text";
+    kg.className = "KG";
+    kg.id = "kg" + indexcone;
+    kg.name = "kg[]";
+    kg.readOnly = true;
+    kg.value = $('#kg').val();
+    kg.style = "display: table-cell; width:80px;height:30px;";
+    cell7.appendChild(kg);
+
+    // ---------------- Rate ----------------
+    var cell8 = row.insertCell(7);
+    var rate = document.createElement("input");
+    rate.type = "number";
+    rate.step = "any";
+    rate.id = "item_rates" + indexcone;
+    rate.name = "item_rates[]";
+    rate.value = "0";
+    rate.style = "display: table-cell; width:80px;height:30px;";
+    cell8.appendChild(rate);
+
+    // ---------------- Amount ----------------
+    var cell9 = row.insertCell(8);
+    var amt = document.createElement("input");
+    amt.type = "number";
+    amt.readOnly = true;
+    amt.className = "AMT";
+    amt.id = "amounts" + indexcone;
+    amt.name = "amounts[]";
+    amt.value = "0";
+    amt.style = "display: table-cell; width:80px;height:30px;";
+    cell9.appendChild(amt);
+
+    // ---------------- Supplier Roll ----------------
+    var cell10 = row.insertCell(9);
+    var roll = document.createElement("input");
+    roll.type = "number";
+    roll.className = "suplier_roll_no";
+    roll.id = "suplier_roll_no" + indexcone;
+    roll.name = "suplier_roll_no[]";
+    roll.style = "display: table-cell; width:100px;height:30px;";
+    cell10.appendChild(roll);
+
+    // ---------------- Track Code ----------------
+    var cell11 = row.insertCell(10);
+    var tc = document.createElement("input");
+    tc.type = "text";
+    tc.readOnly = true;
+    tc.id = "track_code" + indexcone;
+    tc.name = "track_code[]";
+
+    if ($("#cp_id").val() == 1) {
+        ++PBarcode;
+        tc.value = 'P' + PBarcode;
+    } else {
+        ++CBarcode;
+        tc.value = 'I' + CBarcode;
+    }
+    tc.style = "display: table-cell; width:80px;height:30px;";
+    cell11.appendChild(tc);
+
+    // ---------------- ADD BUTTON ----------------
+    var cell12 = row.insertCell(11);
+    var add = document.createElement("input");
+    add.type = "button";
+    add.value = "+";
+    add.className = "btn btn-warning pull-left";
+    add.onclick = function () { insertcone1();}
+    cell12.appendChild(add);
+
+    // ---------------- DELETE BUTTON ----------------
+    var cell13 = row.insertCell(12);
+    var del = document.createElement("input");
+    del.type = "button";
+    del.value = "X";
+    del.className = "btn btn-danger pull-left";
+    del.onclick = function () { deleteRowcone(this); }
+    cell13.appendChild(del);
+
+    // Scroll to new row
+    var w = $(window);
+    var tr = $('#footable_3').find('tr').eq(indexcone);
+    if (tr.length) {
+        $('html,body').animate({ scrollTop: tr.offset().top - (w.height() / 2) }, 1000);
+    }
+
+    $("#cntrr1").val(parseInt($("#cntrr1").val()) + 1);
+
+    indexcone++;
+    mycalc();
+    recalcIdcone();
+
+    // ---------------- Reapply Select2 ----------------
+    $("#item_code" + (indexcone - 1)).select2();
+    $("#part_id" + (indexcone - 1)).select2();
+
+    selselect();
+}
+
 
    $("table.footable_2,table.footable_3").on("keyup", 'input[name^="gram_per_meter[]"],input[name^="meter[]"]', function (event) {
           CalculateRow($(this).closest("tr"));
@@ -1442,20 +1434,14 @@
    }
    cell7.appendChild(t7);
    
-   
-   
-   var cell7 = row.insertCell(11);
-   cell7.innerHTML='<i class="fa fa-print" name="print" style="font-size:25px;" onclick="CalculateRowPrint(this);"></i>';
-   
-   
-   var cell8=row.insertCell(12);
+   var cell8=row.insertCell(11);
    var btnAdd = document.createElement("INPUT");
    btnAdd.id = "Abutton";
    btnAdd.type = "button";
    btnAdd.name = "print";
    btnAdd.className="btn btn-warning pull-left";
    btnAdd.value = "+";
-   btnAdd.setAttribute("onclick", "insertcone();CalculateRowPrint(this);");
+   btnAdd.setAttribute("onclick", "insertcone();");
    cell8.appendChild(btnAdd);
    
    
@@ -1463,6 +1449,7 @@
    btnRemove.id = "Dbutton";
    btnRemove.type = "button";
    btnRemove.className="btn btn-danger pull-left";
+   btnRemove.style="margin-left:10px;";
    btnRemove.value = "X";
    btnRemove.setAttribute("onclick", "deleteRowcone(this)");
    cell8.appendChild(btnRemove);
