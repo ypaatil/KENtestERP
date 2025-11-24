@@ -5,6 +5,11 @@
     {
         text-align:right;
     }
+    
+   .navbar-brand-box
+   {
+        width: 266px !important;
+   }
 </style>
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <div class="row">

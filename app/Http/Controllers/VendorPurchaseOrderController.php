@@ -1335,8 +1335,7 @@ echo json_encode($data);
                       $html.='<th>'.$sz->size_name.'</th>';
                   }
                   $html.=' 
-                  <th>Total Qty</th>
-                   <th>Action   <input type="button" class="size_btn btn-primary" id="MBtn" is_click="0" value="Calculate All" onclick="MainBtn();this.disabled=true;"></th>
+                  <th>Total Qty</th> 
                   </tr>
               </thead>
               <tbody>';
@@ -1443,10 +1442,7 @@ $total_qty=0;
         <input type="hidden" name="size_array[]"  value="'.$BuyerPurchaseOrderDetailList->size_array.'" id="size_array" style="width:80px;  float:left;"  />
           
           </td>';
-            $html.='<td>  <input type="button" name="size_btn" class="size_btn btn-primary" id="size_btn" value="Calculate" disabled></td>';
-          
-          
-          $html.='</tr>';
+            $html.='</tr>';
 
           $no=$no+1;
         }

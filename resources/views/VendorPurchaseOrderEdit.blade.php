@@ -4,7 +4,49 @@
     .hide
     {
         display:none;
+    } 
+    .navbar-header {
+        float: none!important;
     }
+
+   #page-topbar {
+      position: fixed;
+      /* left: -17px; */
+   }
+
+   .btn
+   {
+      background-image: unset !important;
+   }
+
+   .panel-heading
+   {
+         display: flex;
+         justify-content: space-between;   /* left + right alignment */
+         align-items: center;               /* vertical center */
+         padding: 8px 10px;
+         background: #f5f5f5;
+         border-radius: 4px;
+   }
+ 
+    .navbar-brand-box
+    {
+        width: 251px !important;
+    }
+    
+    /* Hide arrows in Chrome, Safari, Edge, Opera */
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    /* Hide arrows in Firefox */
+    input[type=number] {
+      -moz-appearance: textfield;
+    }
+    
+
 </style>
 <div class="row">
    <div class="col-xl-12">
@@ -69,7 +111,7 @@
                         </select>
                      </div>
                   </div>
-                  <div class="col-md-4">
+                  <div class="col-md-3">
                      <div class="mb-3">
                         <label for="formrow-inputState" class="form-label">Buyer</label>
                         <select name="Ac_code" class="form-control" id="Ac_code" disabled>
@@ -78,7 +120,7 @@
                            {
                            <option value="{{ $row->ac_code }}"
                            {{ $row->ac_code == $VendorPurchaseOrderMasterList->Ac_code ? 'selected="selected"' : '' }} 
-                           >{{ $row->ac_name }}</option>
+                           >{{ $row->ac_short_name }}</option>
                            }
                            @endforeach
                         </select>
@@ -138,7 +180,7 @@
                         <input type="text" name="style_no" class="form-control" id="style_no" value="{{$VendorPurchaseOrderMasterList->style_no}}" readOnly>
                      </div>
                   </div>
-                  <div class="col-md-4">
+                  <div class="col-md-3">
                      <div class="mb-3">
                         <label for="style_description" class="form-label">Style Description</label>
                         <input type="text" name="style_description" class="form-control" id="style_description" value="{{$VendorPurchaseOrderMasterList->style_description}}" readOnly>
@@ -150,20 +192,20 @@
                         <input type="date" name="delivery_date" class="form-control" id="delivery_date" value="{{$VendorPurchaseOrderMasterList->delivery_date}}" required  >
                      </div>
                   </div>
-                  <div class="col-md-4">
+                  <div class="col-md-3">
                      <div class="mb-3">
                         <label for="vendorId" class="form-label">Vendor Name</label>
                         <select name="vendorId" class="form-control select2" id="vendorId" required onchange="GetLineList();" >
                            <option value="">--Select Vendor--</option>
                            @foreach($Ledger2 as  $rowvendor)
                            <option value="{{ $rowvendor->ac_code }}"
-                                {{  $rowvendor->ac_code == $VendorPurchaseOrderMasterList->vendorId ? 'selected="selected"' : '' }}>{{ $rowvendor->ac_name }}</option>
+                                {{  $rowvendor->ac_code == $VendorPurchaseOrderMasterList->vendorId ? 'selected="selected"' : '' }}>{{ $rowvendor->ac_short_name }}</option>
                            @endforeach
                         </select>
                      </div>
                   </div>
                   @if($VendorPurchaseOrderMasterList->process_id == 1)
-                  <div class="col-md-4" id="line_div">
+                  <div class="col-md-3" id="line_div">
                      <div class="mb-3">
                         <label for="line_id" class="form-label">Line</label>
                         <select name="line_id" class="form-control select2" id="line_id">
@@ -283,11 +325,14 @@
                               </div>
                            </div>
                         </div> 
-                        <div class="panel panel-default">
-                           <div class="panel-heading">
-                              <h4 class="panel-title">
-                                 <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Purchase Order Qty</a>
-                              </h4>
+                        <div class="panel panel-default"> 
+                           <div class="panel-heading" style="display: flex;">
+                                 <h4 class="panel-title">
+                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Order Qty</a>
+                                 </h4> 
+                                 <h4 class="panel-title">
+                                    <input type="button" class="size_btn btn-primary" id="MBtn" is_click="0" value="Calculate All" onclick="MainBtn();this.disabled=true;">
+                                 </h4> 
                            </div>
                            <div id="collapse1" class="panel-collapse collapse in" style="width:100%;">
                               <div class="panel-body">
@@ -303,8 +348,7 @@
                                                    @foreach ($SizeDetailList as $sz) 
                                                    <th>{{$sz->size_name}}</th>
                                                    @endforeach
-                                                   <th>Total Qty</th>
-                                                   <th>Action   <input type="button" class="size_btn btn-primary" id="MBtn" value="Calculate All" onclick="MainBtn();this.disabled=true;"></th>
+                                                   <th>Total Qty</th> 
                                                 </tr>
                                              </thead>
                                              <tbody>
@@ -345,7 +389,6 @@
                                                       <input type="hidden" name="size_qty_array[]"  value="{{$List->size_qty_array}}" id="size_qty_array" style="width:80px; float:left;"  />
                                                       <input type="hidden" name="size_array[]"  value="{{$List->size_array}}" id="size_array" style="width:80px;  float:left;"  />
                                                    </td>
-                                                   <td>  <input type="button" name="size_btn" class="size_btn btn-primary" id="size_btn" value="Calculate" disabled></td>
                                                 </tr>
                                                 @php    $n1=$n1+1; $no=$no+1;  @endphp
                                                 @endforeach
@@ -752,7 +795,7 @@
                         </select>
                      </div>
                   </div>
-                  <div class="col-sm-8">
+                  <div class="col-sm-4">
                      <label for="formrow-inputState" class="form-label">Narration</label>
                      <div class="mb-3">
                         <input type="text" name="narration" class="form-control" id="narration"  value="{{$VendorPurchaseOrderMasterList->narration}}" />
@@ -788,8 +831,31 @@
 <script>
 
     
+   $(document).on('keydown', 'input[type="number"]', function(e) {
+        const invalidKeys = ['e', 'E', '+', '-'];
+    
+        // Block invalid keys
+        if (invalidKeys.includes(e.key)) {
+            e.preventDefault();
+            return;
+        }
+    
+        // Allow one dot only
+        if (e.key === '.') {
+            // If already contains a dot, block it
+            if ($(this).val().includes('.')) {
+                e.preventDefault();
+            }
+            return;
+        }
+   });
+
+    
+
     function GetLineList()
     {
+        $('#line_id').select2('destroy').hide().show();
+
         var process_id = $("#process_id").val();
         if(process_id == 1)
         {
@@ -800,8 +866,10 @@
                data:{'Ac_code':vendorId},
                success: function(data)
                {
-                 $("#line_div").removeClass("hide"); 
-                 $("#line_id").html(data.html); 
+                  $('#line_id').select2('destroy')
+                  $("#line_div").removeClass("hide"); 
+                  $("#line_id").html(data.html);  
+                  $('#line_id').select2();
                }
             });
         }
@@ -809,7 +877,10 @@
         {
              $("#line_div").addClass("hide"); 
         }
+
+        $('#line_id').select2();
     }
+    
     
     function validateSize(row) 
     {
