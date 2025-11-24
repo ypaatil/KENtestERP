@@ -187,8 +187,10 @@
                 table.table td {
                     color: #000 !important;
                     white-space: normal !important;
-                    font-size: 11pt;
+                    font-size: 10pt;
                 }
+
+
 
                 /* th,
                 td {
@@ -209,7 +211,7 @@
             .table-bordered td,
             .table-bordered th {
 
-                font-size: 11pt;
+                font-size: 10pt;
                 padding: 10px !important;
                 text-align: center !important;
             }
@@ -408,7 +410,7 @@
 
             table.second th:nth-child(5),
             table.second td:nth-child(5) {
-                width: auto !important;
+                width: 100px !important;
             }
 
             table.second th:nth-child(6),
@@ -423,7 +425,7 @@
 
             table.second th:nth-child(8),
             table.second td:nth-child(8) {
-                width: auto !important;
+                width: 90px !important;
             }
 
             table.second th:nth-child(9),
@@ -443,7 +445,7 @@
 
             table.second th:nth-child(12),
             table.second td:nth-child(12) {
-                width: auto !important;
+                width: 90px !important;
             }
 
 
@@ -695,25 +697,25 @@
                                 <td class="text-end"> {{ number_format($rowDetail->item_qty,2) }}</td>
                                 <td class="text-end">{{ $rowDetail->unit_name }}</td>
                                  <td class="text-end">{{ number_format($rowDetail->item_rate,4) }}</td>
-                                   <td class="text-end">{{ number_format($rowDetail->item_rate*$rowDetail->item_qty) }}</td>
+                                   <td class="text-end">{{ indian_number_format_for_value($rowDetail->item_rate*$rowDetail->item_qty,2) }}</td>
 
                                 @if($rowDetail->state_id==27)
                                 <td class="text-end">
                                {{ number_format(($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}    
-                                    <br> {{ $rowDetail->cgst_per }}%
+                                    <br> ({{ $rowDetail->cgst_per }}%)
                                 </td>
                                 <td class="text-end">
                                   {{ number_format(($rowDetail->sgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}
-                                    <br>  {{ $rowDetail->sgst_per }}%
+                                    <br>  ({{ $rowDetail->sgst_per }}%)
                                   
                                 </td>
-                                <td class="text-end">0%</td>
+                                <td class="text-end">(0%)</td>
                                 @else
-                                <td class="text-end">0%</td>
-                                <td class="text-end">0%</td>
+                                <td class="text-end">(0%)</td>
+                                <td class="text-end">(0%)</td>
                                 <td class="text-end">
                                  {{ number_format(($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}  
-                                    <br> {{ $rowDetail->igst_per }}%
+                                    <br> ({{ $rowDetail->igst_per }}%)
                                 </td>
                                 @endif
 
@@ -722,7 +724,7 @@
                                 <td class="text-end">
 
                                     @if($rowDetail->state_id==27)
-                                    {{ number_format((($rowDetail->item_rate*$rowDetail->item_qty) + ($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100) + ($rowDetail->sgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)))}}
+                                    {{ indian_number_format_for_value((($rowDetail->item_rate*$rowDetail->item_qty) + ($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100) + ($rowDetail->sgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)),2)}}
                                     @php
 
                                     $cgst=($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100);
@@ -734,7 +736,7 @@
                                     @endphp
                                     @else
 
-                                    {{ number_format((($rowDetail->item_rate*$rowDetail->item_qty)+($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)))}}
+                                    {{ indian_number_format_for_value((($rowDetail->item_rate*$rowDetail->item_qty)+($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)),2)}}
                                     @php
                                     $igst=($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100);
                                     $total_amt=(($rowDetail->item_rate*$rowDetail->item_qty)+($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100));
@@ -758,12 +760,12 @@
                              <tr>
 
                                 <td colspan="4" style="text-align:right;" class="text-end"> <b>Total Qty: </b></td>
-                                <td class="text-end"><b> {{ number_format($totalqty)}} </b></td>
+                                <td class="text-end"><b> {{ indian_number_format_for_value($totalqty,2)}} </b></td>
 
                                 <td colspan="2" style="font-weight:bold;" class="text-end">Total (Before Tax):</td>
-                                <td style="font-weight:bold;" class="text-end">{{ number_format($amt) }}</td>
+                                <td style="font-weight:bold;" class="text-end">{{ indian_number_format_for_value($amt,2) }}</td>
                                 <td colspan="3" style="font-weight:bold;" class="text-end">Total (After Tax):</td>
-                                <td style="font-weight:bold;" class="text-end">{{number_format($tamt)}}</td>
+                                <td style="font-weight:bold;" class="text-end">{{indian_number_format_for_value($tamt,2)}}</td>
                             </tr>
                             <tr>
                                 <td colspan="12" class="text-center"><b>NOT FOR SALE, FOR JOB WORK ONLY</b></td>
@@ -821,6 +823,10 @@
 
                             @endphp
 
+                            @php
+                            $grand_total = round($tamt);
+                            $round_off = $grand_total - $tamt;
+                            @endphp
 
                             <table class="table table-bordered border border-dark ms-auto summary-table" style="width: 500px;">
                 
@@ -848,11 +854,11 @@
                           
                              <tr>
                                 <th class="text-start">Round Off</th>
-                                <td class="text-end">{{ number_format($tamt,2) }}</td>
+                                <td class="text-end">{{ number_format($round_off, 2) }}</td>
                             </tr>
                             <tr>
                                 <th class="text-start">Grand Total</th>
-                                <td class="text-end"><b> {{ number_format(round($tamt,2) ) }}</b></td>
+                                <td class="text-end"><b>{{ number_format($grand_total, 2) }}</b></td>
                             </tr>
                             </table>
 
