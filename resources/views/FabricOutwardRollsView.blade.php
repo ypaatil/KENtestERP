@@ -566,24 +566,27 @@
                             </div>
 
                         </div>
+                        @php
+                        $company=getCompanyInfo();
+                        @endphp
                         <div class="col-md-6 p-2">
                             <p><b>Company Name: </b></p>
-                            <p><b>Ken Global Designs Pvt Ltd</b> <br> Gat No.- 298/299, A/P Kondigre Kolhapur Maharashtra - 416101</p>
+                            <p> <b>{{ $company['name'] }}</b><br>{{ $company['address'] }}</p>
 
                             <div class="info-row">
                                 <div class="label">PAN NO</div>
                                 <div class="colon">:</div>
-                                <div class="value"> 7591Q1ZD</div>
+                                <div class="value"> {{ $company['pan'] }}</div>
                             </div>
                             <div class="info-row">
                                 <div class="label">GST NO</div>
                                 <div class="colon">:</div>
-                                <div class="value"> 27ABCCS7591Q1ZD</div>
+                                <div class="value"> {{ $company['gst'] }}</div>
                             </div>
                             <div class="info-row">
                                 <div class="label">STATE</div>
                                 <div class="colon">:</div>
-                                <div class="value"> MAHARASTRA</div>
+                                <div class="value">  {{ $company['state'] }}</div>
                             </div>
 
                         </div>
