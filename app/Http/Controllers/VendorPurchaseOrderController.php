@@ -1582,9 +1582,9 @@ public function VPO_GetClassList(Request $request)
         //   DB::enableQueryLog();
           
            
-        // DB::enableQueryLog();
            $color_ids = $color_id;
 
+        //   DB::enableQueryLog();
             $codefetch = DB::table('bom_trim_fabric_details')
             ->select("color_id", "item_code", "consumption", "description", "wastage", "class_id", "unit_id", "rate_per_unit")
             ->where(function($query) use ($color_ids) {
@@ -1595,7 +1595,7 @@ public function VPO_GetClassList(Request $request)
             })
             ->where('sales_order_no', '=', $sales_order_no)
             ->get();
-    //dd(DB::getQueryLog());
+                // dd(DB::getQueryLog());
            
               
             //  $total_consumption= ($codefetch->consumption)+(($codefetch->consumption)*($codefetch->wastage/100));
@@ -1732,10 +1732,12 @@ public function VPO_GetClassList(Request $request)
      if(Session::get('user_type') == 1)
      {
         $mx = 500;    
+        $wastageDisabled = '';
      }
      else
      {
-        $mx = 5;    
+        $mx = 5;  
+        $wastageDisabled = 'readOnly';  
      }
     
      $html = '';
@@ -1758,6 +1760,7 @@ foreach($ItemList as  $rowitem)
 }
 $html.='</select></td>
  
+ <td><input type="text"  readOnly  name="item_code[]" value="'.$codefetch->item_code.'" id="item_code" style="width:200px; height:30px;" /></td> 
  <td> <select name="class_id[]"  id="class_id'.$no.'" style="width:250px; height:30px;" required disabled>
 <option value="">--Classification--</option>';
 foreach($ClassList as  $rowclass)
@@ -1770,9 +1773,11 @@ $html.='</select></td>
  
  <td><input type="text"  readOnly  name="description[]" value="'.$codefetch->description.'" id="description" style="width:200px; height:30px;" required /></td> 
  
-<td><input type="number" step="any" readOnly   name="consumption[]" value="'.$codefetch->consumption.'" id="consumption" style="width:80px; height:30px;" required /></td> 
+<td><input type="number" step="any" name="consumption[]" value="'.$codefetch->consumption.'" id="consumption" style="width:80px; height:30px;" required />
+<input type="hidden" name="rate_per_unit[]" value="'.$codefetch->rate_per_unit.'" id="rate_per_unit" style="width:80px; height:30px;" />
+</td> 
   
-<td> <select name="unit_id[]"  id="unit_id'.$no.'" style="width:100px; height:30px;" required disabled>
+<td> <select name="unit_id[]"  id="unit_id'.$no.'" style="width:100px; height:30px;" disabled>
 <option value="">--Unit--</option>';
 foreach($UnitList as  $rowunit)
 {
@@ -1784,7 +1789,7 @@ foreach($UnitList as  $rowunit)
 }
 $html.='</select></td> 
 
-<td><input type="number" step="any" max="'.$mx.'" min="0" class="WASTAGE" onchange="calculateBomWithWastage1(this);" name="wastage[]" value="0" id="wastage'.$no.'" style="width:80px; height:30px;" required /></td> 
+<td><input type="number" step="any" max="'.$mx.'" min="0" class="WASTAGE" onchange="calculateBomWithWastage1(this);" name="wastage[]" value="0" id="wastage'.$no.'" style="width:80px; height:30px;" '.$wastageDisabled.' /></td> 
 <td><input type="text"  name="bom_qty[]" value="'.$bom_qty.'" id="bom_qty'.$no.'" style="width:80px; height:30px;" required readOnly />
 
 <input type="hidden"  name="bom_qty1[]" value="'.$bom_qty.'" id="bom_qty1'.$no.'" style="width:80px; height:30px;" required readOnly />
@@ -2277,364 +2282,277 @@ foreach($SizeList as $sz)
      
     // }     
     
-        
     public function GetPurchasePackingCreateConsumption(Request $request)
     {
-        
-        $size_qty_array= $request->input('size_qty_array');
-        $size_array= $request->input('size_array');
-        $allTotal1= $request->allTotal;
-        $allTotal= $request->size_qty_total;
-        $sumAllTotal= $request->sumAllTotal;
-        $SizeList=explode(',', $size_array);
-        $SizeQty=explode(',', $size_qty_array);
-        $All_Total = explode(',', $allTotal);
+        $size_qty_array = $request->input('size_qty_array');
+        $size_array     = $request->input('size_array');
+        $allTotal1      = $request->allTotal;
+        $allTotal       = $request->size_qty_total;
+        $sumAllTotal    = $request->sumAllTotal;
+
+        $SizeList   = explode(',', $size_array);
+        $SizeQty    = explode(',', $size_qty_array);
+        $All_Total  = explode(',', $allTotal);
         $All_Total1 = explode(',', $allTotal1);
+
         $color_ids = $request->color_ids;
-        $tbl_len = $request->tbl_len;
-        
-        //print_r($size_array);exit;
-        $no= 1;
-        $color_id= $request->input('color_id');
-        $size_qty_total= $request->size_qty_total;
-        $sales_order_no= $request->input('sales_order_no');
-       
-        $item_code= $request->item_code;
-        $sales_order_no= $request->sales_order_no;
-     
-        
-        $ColorList = DB::table('buyer_purchase_order_detail')->select('buyer_purchase_order_detail.color_id', 'color_name')
-        ->join('color_master', 'color_master.color_id', '=', 'buyer_purchase_order_detail.color_id', 'left outer')
-        ->where('tr_code','=',$sales_order_no)->DISTINCT()->get();
-         
+        $tbl_len   = $request->tbl_len;
+
+        $no                = 1;
+        $color_id          = $request->input('color_id');
+        $size_qty_total    = $request->size_qty_total;
+        $sales_order_no    = $request->input('sales_order_no');
+        $item_code         = $request->item_code;
+        $sales_order_no    = $request->sales_order_no;
+
+        $ColorList = DB::table('buyer_purchase_order_detail')
+            ->select('buyer_purchase_order_detail.color_id', 'color_name')
+            ->join('color_master', 'color_master.color_id', '=', 'buyer_purchase_order_detail.color_id', 'left outer')
+            ->where('tr_code', '=', $sales_order_no)
+            ->distinct()
+            ->get();
+
         $html = '';
-    
-        $x=0;$qty=0;
-        // print_R($sz_array);exit;
-        // foreach($SizeList as $sz)
-        //  { 
-            
-                // $sz_array = explode(',', $SizeList);
-               
-                $qty=$SizeQty[$x++];
-                // if($qty!=0)
-                // {
-                  
-                    //   $query = DB::table('bom_packing_trims_details')
-                    //     ->join("color_master", function ($join) {
-                    //         $join->on(DB::raw("FIND_IN_SET(color_master.color_id, bom_packing_trims_details.color_id)"), ">", DB::raw("0"));
-                    //     })
-                    //     ->select(
-                    //         'sales_order_no',
-                    //         'item_code',
-                    //         'bom_packing_trims_details.color_id',
-                    //         'consumption',
-                    //         'description',
-                    //         'wastage',
-                    //         'bom_packing_trims_details.class_id',
-                    //         'bom_packing_trims_details.unit_id',
-                    //         'size_array',
-                    //         DB::raw("GROUP_CONCAT(DISTINCT color_master.color_name ORDER BY color_master.color_name SEPARATOR ', ') as color_names")
-                    //     )
-                    //     ->where('sales_order_no', $sales_order_no)
-                    //     ->whereRaw("FIND_IN_SET(?, bom_packing_trims_details.color_id)", [$color_id]) // Ensure the given color_id exists in the column
-                    //     ->groupBy(
-                    //         'sales_order_no',
-                    //         'item_code',
-                    //         'bom_packing_trims_details.color_id',
-                    //         'consumption',
-                    //         'description',
-                    //         'wastage',
-                    //         'bom_packing_trims_details.class_id',
-                    //         'bom_packing_trims_details.unit_id',
-                    //         'size_array'
-                    //     );
-                    
-                    // // Fetch results
-                    // $results = $query->get();
+        $x = 0;
+        $qty = 0;
 
-                    $size_array1 = explode(',', $size_array);  // $size_string = 'S,M,L,XL'
-                    $size_qty_array1 = explode(',', $size_qty_array); // $size_qty_string = '10,20,30,40'
+        $qty = $SizeQty[$x++];
 
-                    $size_qty_map = array_combine($size_array1, $size_qty_array1);
-                    
-                    $query = DB::table('bom_packing_trims_details')
-                        ->select(
-                            'sales_order_no',
-                            'item_code',
-                            DB::raw("$color_id as color_id"),
-                            'consumption',
-                            'description',
-                            'wastage',
-                            'bom_packing_trims_details.class_id',
-                            'bom_packing_trims_details.unit_id',
-                            'size_array',
-                            'color_master.color_name as color_names'
-                        )
-                        ->join('color_master', function ($join) use ($color_id) {
-                            $join->on(DB::raw('FIND_IN_SET(color_master.color_id, bom_packing_trims_details.color_id)'), '>', DB::raw('0'))
-                                 ->where('color_master.color_id', $color_id);
-                        })
-                        ->where('sales_order_no', $sales_order_no)
-                        ->whereRaw('FIND_IN_SET(?, bom_packing_trims_details.color_id)', [$color_id])
-                        ->where(function ($query) use ($size_array1) {
-                            foreach ($size_array1 as $index => $size_id) {
-                                if ($index === 0) {
-                                    $query->whereRaw("FIND_IN_SET(?, size_array)", [$size_id]);
-                                } else {
-                                    $query->orWhereRaw("FIND_IN_SET(?, size_array)", [$size_id]);
-                                }
-                            }
-                        })
-                        ->groupBy('sales_order_no', 'item_code', 'consumption', 'size_array', 'color_master.color_name');
-                    
-                    $codefetch = $query->get();
+        $size_array1     = explode(',', $size_array);
+        $size_qty_array1 = explode(',', $size_qty_array);
+        $size_qty_map    = array_combine($size_array1, $size_qty_array1);
 
-                   
-                    $szc = 0;
-                    $temp_color = '';
-                    foreach($codefetch as $key=>$rowsew)
-                    {   
-                        
-                        $sizes =""; 
-                         
-                        $SizeListFromBOM=DB::select("select size_array from bom_packing_trims_details where sales_order_no='".$rowsew->sales_order_no."' and item_code='".$rowsew->item_code."' limit 0,1");
-                                         
-                               
-                        // $ColorListpacking= ColorModel::where('color_id', $color_id)->where('delflag','=', '0')->get('color_name');
-                        
-                        if(isset($SizeListFromBOM[0]->size_array))
-                        {
-                            $size_ids = explode(',', $SizeListFromBOM[0]->size_array); 
-                            $SizeDetailList = SizeDetailModel::whereIn('size_id',$size_ids)->get('size_name');
-                            foreach($SizeDetailList as $sz)
-                            {
-                                 $sizes=$sizes.$sz->size_name.', '; 
-                            }
-                        } 
-                        $array2 = explode(',', $rowsew->size_array);            
-                        $commonElements = array_intersect($SizeList, $array2);
-                         
-                        $matchedQuantities =  0;
-                  
-                    // foreach ($array2 as $element) 
-                    // { 
-                    //     $index = array_search($element, $SizeList); 
-                    //     if($color_id  == $rowsew->color_id)
-                    //     {
-                    //         $matchedQuantities += $SizeQty[$index];
-                    //     }
-                    //     else
-                    //     {
-                    //          $matchedQuantities = $SizeList[$index];
-                    //     }
-                    // } 
-                          
-                       
-                        // $total_consumption= ($rowsew->consumption)+(($rowsew->consumption)*($rowsew->wastage/100));
-                        // $bom_qty=round(($total_consumption*$qty),2);
-                               
-                        $ClassList = ClassificationModel::where('delflag','=', '0')->where('class_id','=', $rowsew->class_id)->get();
-                        $ItemList = ItemModel::where('delflag','=', '0')->where('item_code','=', $rowsew->item_code)->get(); 
-                        $UnitList = UnitModel::where('delflag','=', '0')->where('unit_id','=', $rowsew->unit_id)->get();
-                        
-                        $total_consumption= ($rowsew->consumption);
-                        $temp_s1 = rtrim($sizes, ', ');
-                        $sizesArray = explode(', ', $temp_s1);
-                        $count = count($sizesArray);
-                        $index = array_search($size_ids[0], $SizeList);
-                      //echo '<pre>';print_R($array2);exit;
-                    
-                      if($count == 1)
-                      { 
-                          $ind_qty = $SizeQty[$index]; 
-                      }
-                      else
-                      {
-                          if ($SizeList == $array2) 
-                          {
-                                $selected_color_ids = explode(',', $color_ids);
-                                $existing_color_ids = DB::table('bom_packing_trims_details')
-                                    ->where('item_code', $rowsew->item_code)
-                                    ->where('sales_order_no', $rowsew->sales_order_no)
-                                    ->pluck('color_id')
-                                    ->toArray();
-                                
-                    //             // Convert database color_id values into an array
-                                $existing_color_ids_array = [];
-                                foreach ($existing_color_ids as $ids) {
-                                    $existing_color_ids_array = array_merge($existing_color_ids_array, explode(',', $ids));
-                                }
-                                
-                                // Check if both 2001 and 2003 exist
-                                $allExist = empty(array_diff($selected_color_ids, $existing_color_ids_array));
-                                $allExist1 = $allExist ?? 0;
-                                if ($allExist == 1) 
-                                {
-                                  $ind_qty = $sumAllTotal;
-                                }
-                                else
-                                {
-                                 if (count($selected_color_ids) > 0)
-                                 {
-                                     $ind_qty =  $size_qty_total;
-                                 }
-                                 else
-                                 {
-                                     $ind_qty = $SizeQty[$index] ? $SizeQty[$index] : $sumAllTotal; 
-                                 }
-                               
-                                 
-                                 //$ind_qty = $sumAllTotal ? $sumAllTotal : $SizeQty[$index]; 
-                                   
-                                }
-                                
-                          }
-                          else
-                          {
-                              //echo $All_Total[$index];exit;
-                              $ind_qty =  $sumAllTotal; 
-                          } 
-                      }
-                      
-                        // $selected_color_ids = explode(',', $color_ids);
-                        // $existing_color_ids = DB::table('bom_sewing_trims_details')
-                        //     ->where('item_code', $rowsew->item_code)
-                        //     ->where('sales_order_no', $rowsew->sales_order_no)
-                        //     ->pluck('color_id')
-                        //     ->toArray();
-                        
-                        // // Convert database color_id values into an array
-                        
-                         
-                        // $existing_color_ids_array = [];
-                        // foreach ($existing_color_ids as $ids) {
-                        //     $existing_color_ids_array = array_merge($existing_color_ids_array, explode(',', $ids));
-                             
-                        // }
-                        // //print_r($existing_color_ids_array);exit;
-             
-                        // $allExist = array_diff($selected_color_ids, $existing_color_ids_array);
-                        // //print_R($allExist);exit;
-                        // $allExist1 = count($allExist);
-                         
-                        // if ($allExist1 == 1) 
-                        // {  
-                        //     $ind_qty = $sumAllTotal; 
-                        // }
-                        // else
-                        // {    
-                        //      $ind_qty = $SizeQty[$index] ? $SizeQty[$index] : $sumAllTotal; 
-                        // }
-                        
-                    
-                       
-                       // $ind_qty = $SizeQty[$index] ? $SizeQty[$index] : $sumAllTotal; 
-                       
-                     
-                        if(Session::get('user_type') == 1)
-                        {
-                            $mx = 500;    
+        $query = DB::table('bom_packing_trims_details')
+            ->select(
+                'sales_order_no',
+                'item_code',
+                DB::raw("$color_id as color_id"),
+                'consumption',
+                'description',
+                'wastage',
+                'bom_packing_trims_details.class_id',
+                'bom_packing_trims_details.unit_id',
+                'size_array',
+                'color_master.color_name as color_names'
+            )
+            ->join('color_master', function ($join) use ($color_id) {
+                $join->on(DB::raw('FIND_IN_SET(color_master.color_id, bom_packing_trims_details.color_id)'), '>', DB::raw('0'))
+                    ->where('color_master.color_id', $color_id);
+            })
+            ->where('sales_order_no', $sales_order_no)
+            ->whereRaw('FIND_IN_SET(?, bom_packing_trims_details.color_id)', [$color_id])
+            ->where(function ($query) use ($size_array1) {
+
+                foreach ($size_array1 as $index => $size_id) {
+                    if ($index === 0) {
+                        $query->whereRaw("FIND_IN_SET(?, size_array)", [$size_id]);
+                    } else {
+                        $query->orWhereRaw("FIND_IN_SET(?, size_array)", [$size_id]);
+                    }
+                }
+
+            })
+            ->groupBy('sales_order_no', 'item_code', 'consumption', 'size_array', 'color_master.color_name');
+
+        $codefetch = $query->get();
+
+        $szc = 0;
+        $temp_color = '';
+
+        foreach ($codefetch as $key => $rowsew) {
+
+            $sizes = "";
+
+            $SizeListFromBOM = DB::select("
+                SELECT size_array 
+                FROM bom_packing_trims_details 
+                WHERE sales_order_no = '" . $rowsew->sales_order_no . "' 
+                AND item_code = '" . $rowsew->item_code . "' 
+                LIMIT 0,1
+            ");
+
+            if (isset($SizeListFromBOM[0]->size_array)) {
+
+                $size_ids = explode(',', $SizeListFromBOM[0]->size_array);
+
+                $SizeDetailList = SizeDetailModel::whereIn('size_id', $size_ids)->get('size_name');
+
+                foreach ($SizeDetailList as $sz) {
+                    $sizes .= $sz->size_name . ', ';
+                }
+            }
+
+            $array2 = explode(',', $rowsew->size_array);
+
+            $commonElements = array_intersect($SizeList, $array2);
+
+            $matchedQuantities = 0;
+
+            $ClassList = ClassificationModel::where('delflag', '0')
+                ->where('class_id', '=', $rowsew->class_id)
+                ->get();
+
+            $ItemList = ItemModel::where('delflag', '0')
+                ->where('item_code', '=', $rowsew->item_code)
+                ->get();
+
+            $UnitList = UnitModel::where('delflag', '0')
+                ->where('unit_id', '=', $rowsew->unit_id)
+                ->get();
+
+            $total_consumption = $rowsew->consumption;
+
+            $temp_s1 = rtrim($sizes, ', ');
+            $sizesArray = explode(', ', $temp_s1);
+            $count = count($sizesArray);
+
+            $index = array_search($size_ids[0], $SizeList);
+
+            if ($count == 1) {
+
+                $ind_qty = $SizeQty[$index];
+
+            } else {
+
+                if ($SizeList == $array2) {
+
+                    $selected_color_ids = explode(',', $color_ids);
+
+                    $existing_color_ids = DB::table('bom_packing_trims_details')
+                        ->where('item_code', $rowsew->item_code)
+                        ->where('sales_order_no', $rowsew->sales_order_no)
+                        ->pluck('color_id')
+                        ->toArray();
+
+                    $existing_color_ids_array = [];
+                    foreach ($existing_color_ids as $ids) {
+                        $existing_color_ids_array = array_merge($existing_color_ids_array, explode(',', $ids));
+                    }
+
+                    $allExist = empty(array_diff($selected_color_ids, $existing_color_ids_array));
+
+                    if ($allExist == 1) {
+                        $ind_qty = $sumAllTotal;
+                    } else {
+
+                        if (count($selected_color_ids) > 0) {
+                            $ind_qty = $size_qty_total;
+                        } else {
+                            $ind_qty = $SizeQty[$index] ? $SizeQty[$index] : $sumAllTotal;
                         }
-                        else
-                        {
-                            $mx = 5;    
-                        }
-                        if($tbl_len == 1)
-                        {
-                            // if(strpos($rowsew->size_array, ',') === false) 
-                            // {
-                            //     $bom_qty = isset($SizeQty[$szc]) ? $SizeQty[$szc] : 0;
-                               
-                            //     $szc++;
-                               
-                            //     // if($temp_color != $rowsew->class_id)
-                            //     // {
-                            //     //     $szc = 0;
-                            //     // }
-                            // } 
-                            // else
-                            // {
-                            //   $szc = 0;
-                            //   $size_name =  rtrim($sizes, ', ');
-                            //   $bom_qty = $ind_qty * $rowsew->consumption; 
-                            // } 
-                            
-                        
-                            // $sizedata = DB::SELECT("SELECT size_name FROM `size_detail` WHERE size_id IN (".$rowsew->size_array.")");
-                            
-                            // $size_name = isset($sizedata[0]->size_name) ? $sizedata[0]->size_name : "";    
-                            $row_size_ids = explode(',', $rowsew->size_array);
-                            $total_size_qty = 0;
-                        
-                            foreach ($row_size_ids as $size_id) {
-                                if (isset($size_qty_map[$size_id])) {
-                                    $total_size_qty += $size_qty_map[$size_id];
-                                }
-                            }
-                        
-                            $bom_qty = $rowsew->consumption * $total_size_qty;
-                        }
-                        else
-                        {
-                            $bom_qty = $ind_qty * $rowsew->consumption; 
-                        }
-                        
-                        $size_name =  rtrim($sizes, ', ');
-    
-                        $html .='<tr class="thisRow">';
-                        $html .='<td><input type="text" name="idss[]" value="'.$no.'" id="id" style="width:50px;" readOnly/></td>';
-                        $html .='<td><input type="text"  value="'.$rowsew->item_code.'"  style="width:50px;" readOnly/></td>';
-                        $html.='<td> <select name="item_codess[]"  id="item_code'.$no.'" style="width:250px; height:30px;" required disabled>
-                        <option value="">--Item List--</option>';
-                        foreach($ItemList as  $rowitem)
-                        {
-                            $html.='<option value="'.$rowitem->item_code.'"';
-                            $rowitem->item_code == $rowsew->item_code ? $html.='selected="selected"' : ''; 
-                            $html.='>'.$rowitem->item_name.'</option>';
-                        }
-                        $html.='</select></td>
-                        <td><input type="text" name="color_ids[]" value="'.$rowsew->color_names.'"  style="width:200px;" disabled/></td>
-                        <td><input type="text"  name="sizes_ids[]" value="'.$size_name.'"  style="width:200px;" disabled/></td>
-                        <td> <select name="class_idss[]"  id="class_id'.$no.'" style="width:150px; height:30px;" required disabled>
-                        <option value="">--Classification--</option>';
-                        foreach($ClassList as  $rowclass)
-                        {
-                            $html.='<option value="'.$rowclass->class_id.'"';
-                            $rowclass->class_id == $rowsew->class_id ? $html.='selected="selected"' : ''; 
-                            $html.='>'.$rowclass->class_name.'</option>';
-                        }
-                        $html.='</select></td>  
-                        <td><input type="number" step="any"  readOnly  name="consumptionss[]" value="'.$rowsew->consumption.'" id="consumption" style="width:80px; height:30px;" required /></td> 
-                        <td> <select name="unit_idss[]"  id="unit_id'.$no.'" style="width:100px; height:30px;" required>
+                    }
+                } else {
+                    $ind_qty = $sumAllTotal;
+                }
+            }
+
+            if (Session::get('user_type') == 1) {
+                $mx = 500;
+            } else {
+                $mx = 5;
+            }
+
+            if ($tbl_len == 1) {
+
+                $row_size_ids = explode(',', $rowsew->size_array);
+
+                $total_size_qty = 0;
+
+                foreach ($row_size_ids as $size_id) {
+
+                    if (isset($size_qty_map[$size_id])) {
+                        $total_size_qty += $size_qty_map[$size_id];
+                    }
+                }
+
+                $bom_qty = $rowsew->consumption * $total_size_qty;
+
+            } else {
+                $bom_qty = $ind_qty * $rowsew->consumption;
+            }
+
+            $size_name = rtrim($sizes, ', ');
+
+            $html .= '<tr class="thisRow">';
+            $html .= '<td><input type="text" name="idss[]" value="'.$no.'" id="id" style="width:50px;" readOnly/></td>';
+
+            $html .= '<td><input type="text" value="'.$rowsew->item_code.'" style="width:50px;" readOnly/></td>';
+
+            $html .= '<td>
+                <select name="item_codess[]" id="item_code'.$no.'" style="width:250px; height:30px;" required disabled>
+                    <option value="">--Item List--</option>';
+
+            foreach ($ItemList as $rowitem) {
+                $html .= '<option value="'.$rowitem->item_code.'"';
+                $html .= ($rowitem->item_code == $rowsew->item_code) ? ' selected="selected"' : '';
+                $html .= '>'.$rowitem->item_name.'</option>';
+            }
+
+            $html .= '</select></td>';
+
+            $html .= '<td><input type="text" name="color_ids[]" value="'.$rowsew->color_names.'" style="width:200px;" disabled/></td>';
+            $html .= '<td><input type="text" name="sizes_ids[]" value="'.$size_name.'" style="width:200px;" disabled/></td>';
+
+            $html .= '<td>
+                <select name="class_idss[]" id="class_id'.$no.'" style="width:150px; height:30px;" required disabled>
+                    <option value="">--Classification--</option>';
+
+            foreach ($ClassList as $rowclass) {
+                $html .= '<option value="'.$rowclass->class_id.'"';
+                $html .= ($rowclass->class_id == $rowsew->class_id) ? ' selected="selected"' : '';
+                $html .= '>'.$rowclass->class_name.'</option>';
+            }
+
+            $html .= '</select></td>';
+
+            $html .= '
+                <td>
+                    <input type="number" step="any" readOnly name="consumptionss[]" value="'.$rowsew->consumption.'" id="consumption" style="width:80px; height:30px;" required />
+                </td>';
+
+            $html .= '
+                <td>
+                    <select name="unit_idss[]" id="unit_id'.$no.'" style="width:100px; height:30px;" required>
                         <option value="">--Unit--</option>';
-                        foreach($UnitList as  $rowunit)
-                        {
-                           $html.='<option value="'.$rowunit->unit_id.'"';
-                           $rowunit->unit_id == $rowsew->unit_id ? $html.='selected="selected"' : ''; 
-                           $html.='>'.$rowunit->unit_name.'</option>';
-                        }
-                        $html.='</select></td>
-                        <td><input type="number" step="any" max="'.$mx.'" min="0" class="WASTAGE2"  name="wastagess[]" value="0" id="wastage'.$no.'" onchange="calculateBomWithWastage(this);" style="width:80px; height:30px;" /></td> 
-                        <td><input type="text"  name="bom_qtyss[]" data-color="'.$rowsew->color_names.'" value="'.$bom_qty.'" id="bom_qty'.$no.'" style="width:80px; height:30px;"  readOnly />
-                        <input type="hidden"  name="bom_qtyss1[]" value="'.$bom_qty.'" id="bom_qty1'.$no.'" style="width:80px; height:30px;"  readOnly />
-                        <input type="hidden"  name="final_consss[]" value="'.$total_consumption.'" id="size_qt'.$no.'" style="width:80px; height:30px;"  readOnly />
-                        <input type="hidden"  name="size_qtyss[]" value="'.$size_qty_total.'" id="size_qty'.$no.'" style="width:80px; height:30px;"  readOnly />
-                        </td> 
-                        ';
-                        $html .='</tr>';
-                        $no++;
-                        
-                        $temp_color = $rowsew->class_id;
-                    } //main foreach
-            // }  // if loop for size qty 0
-             
-        //  }  // Size Array Foreach
-       return response()->json(['html' => $html]);
-     
-    }   
-    
-    
+
+            foreach ($UnitList as $rowunit) {
+                $html .= '<option value="'.$rowunit->unit_id.'"';
+                $html .= ($rowunit->unit_id == $rowsew->unit_id) ? ' selected="selected"' : '';
+                $html .= '>'.$rowunit->unit_name.'</option>';
+            }
+
+            $html .= '</select></td>';
+
+            $html .= '
+                <td>
+                    <input type="number" step="any" max="'.$mx.'" min="0" class="WASTAGE2" 
+                        name="wastagess[]" value="0" id="wastage'.$no.'" 
+                        onchange="calculateBomWithWastage(this);" 
+                        style="width:80px; height:30px;" />
+                </td>';
+
+            $html .= '
+                <td>
+                    <input type="text" name="bom_qtyss[]" data-color="'.$rowsew->color_names.'" 
+                        value="'.$bom_qty.'" id="bom_qty'.$no.'" style="width:80px; height:30px;" readOnly />
+
+                    <input type="hidden" name="bom_qtyss1[]" value="'.$bom_qty.'" id="bom_qty1'.$no.'" readOnly />
+
+                    <input type="hidden" name="final_consss[]" value="'.$total_consumption.'" id="size_qt'.$no.'" readOnly />
+
+                    <input type="hidden" name="size_qtyss[]" value="'.$size_qty_total.'" id="size_qty'.$no.'" readOnly />
+                </td>';
+
+            $html .= '</tr>';
+
+            $no++;
+            $temp_color = $rowsew->class_id;
+        }
+
+        return response()->json(['html' => $html]);
+    }
+
+
     public function getVendorPurchaseOrderDetails(Request $request)
     { 
         $vpo_code= $request->vpo_code;

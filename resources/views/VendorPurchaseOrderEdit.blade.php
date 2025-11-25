@@ -421,6 +421,7 @@
                                                 <tr>
                                                    <th>SrNo</th>
                                                    <th>Item Name</th>
+                                                   <th>Item Code</th>
                                                    <th>Classification</th>
                                                    <th>Description</th>
                                                    <th>Cons(Mtr/Nos)</th>
@@ -447,6 +448,7 @@
                                                       @endforeach
                                                       </select>
                                                    </td>
+                                                   <td><input type="text" name="item_code[]" value="{{$List->item_code}}" readOnly id="item_code" style="width:200px; height:30px;" /></td>
                                                    <td>
                                                       <select name="class_id[]"   id="class_id" style="width:200px; height:30px;" required @if($List->item_count>0){{'disabled'}} @endif>
                                                       <option value="">--Classification--</option>
@@ -484,10 +486,10 @@
                                                          }
                                                    @endphp
                                                    <td><input type="number" max="{{$mx}}" step="any" min="0" class="WASTAGE" name="wastage[]" value="{{$List->wastage}}" id="wastage" style="width:80px; height:30px;" required @php if($List->item_count>0){ echo 'readOnly'; } @endphp /></td>
-                                                   <td><input type="text"      name="bom_qty[]" value="{{$List->bom_qty}}" id="bom_qty" style="width:80px; height:30px;" required readOnly/></td>
-                                                   <input type="hidden"      name="bom_qty1[]" value="{{$List->actual_qty}}" id="bom_qty1" style="width:80px; height:30px;" required readOnly/>
-                                                   <input type="hidden"  name="final_cons[]" value="{{$List->final_cons}}" id="final_cons'.$no.'" style="width:80px; height:30px;" required readOnly />
-                                                   <input type="hidden"  name="size_qty[]" value="{{$List->size_qty}}" id="size_qty'.$no.'" style="width:80px; height:30px;" required readOnly />
+                                                   <td><input type="text" name="bom_qty[]" value="{{$List->bom_qty}}" id="bom_qty" style="width:80px; height:30px;" required readOnly/></td>
+                                                      <input type="hidden"  name="bom_qty1[]" value="{{$List->actual_qty}}" id="bom_qty1" style="width:80px; height:30px;" required readOnly/>
+                                                      <input type="hidden"  name="final_cons[]" value="{{$List->final_cons}}" id="final_cons'.$no.'" style="width:80px; height:30px;" required readOnly />
+                                                      <input type="hidden"  name="size_qty[]" value="{{$List->size_qty}}" id="size_qty'.$no.'" style="width:80px; height:30px;" required readOnly />
                                                 </tr>
                                                 @php $no=$no+1;  @endphp
                                                 @endforeach
@@ -1049,7 +1051,7 @@
         {
                $("#footable_2 tbody").find('tr').each(function(){
                     var row = $(this).find('td input[name="size_btn"]'); 
-                    GetSizeWiseQty(row);
+                    GetSizeWiseQty(this);
                }); 
         }
         else
@@ -1112,8 +1114,8 @@
         });
     }
     
-    function GetSizeWiseQty(row) 
-    {
+   function GetSizeWiseQty(row) 
+   {
       var no=1;
       
        var process_id = $('#process_id').val();
@@ -1169,8 +1171,8 @@
        else if(process_id == 3)
        {
                var size_qty_total=0; 
-               var size_array=$(row).closest("tr").find('input[name="size_array[]"]').val();
-               var color_id=$(row).closest("tr").find('select[name="color_id[]"]').val();
+               var size_array=$("#footable_2 > tbody > tr").find('input[name^="size_array[]"]').val(); 
+               var color_id= $(row).find('td select[name^="color_id[]"]').val();
                var allTotal=$("#allTotal").val();
                var sumAllTotal=$("#sumAllTotal").val();
                var values = [];
@@ -1183,91 +1185,104 @@
                 
                 $("#footable_2 tr td select[name='color_id[]']").each(function() {
                     var val = $(this).val();
-                    if (val) {  // Only consider selected values
+                    if (val) 
+                    {  
                         color_ids.push(val);
                     }
                });
                 
                color_ids = color_ids.join(",");
-               var size_qty_array=$(row).closest("tr").find('input[name="size_qty_array[]"]').val();
-               var tbl_len = $('#footable_2 tbody tr').length;
+
+               var size_qty_array = $(row).find('td input[name^="size_qty_array[]"]').val(); 
+
+               var tbl_len = $('#footable_2 tbody tr').filter(function() {
+                  var val = parseFloat($(this).find('input[name="size_qty_total[]"]').val()) || 0;
+                  return val > 0;
+               }).length;
+
                
-               $.ajax({
-               dataType: "json",
-               url: "{{ route('GetPurchasePackingCreateConsumption') }}",
-               data:{'tbl_len': tbl_len,'color_id': color_id, 'size_qty_total':size_qty_total,'sales_order_no':sales_order_no,'no':no,'size_qty_array':size_qty_array,'size_array':size_array,'allTotal':allTotal,'sumAllTotal':sumAllTotal, 'color_ids':color_ids},
-               success: function(data)
-               { 
-                    //$("#PackingData").empty(); 
-                    $("#PackingData").append(data.html); 
-                    if(tbl_len > 1)
-                    {
-                        var itemCodeMap = {};
-                        $('#footable_4 tbody tr').each(function() {
-                            var row = $(this);
-                            var itemCode = row.find('td input').eq(1).val(); 
-                            var bomQty = parseFloat(row.find('td input[name="bom_qtyss[]"]').val()) || 0;
-                            var colorName = row.find('td input[name="color_ids[]"]').val();
-                            var sizeIds = row.find('td input[name="sizes_ids[]"]').val(); // Get sizes
-                        
-                            if (itemCodeMap[itemCode]) {
-                                // Check if sizeIds contains a comma
-                                if (!sizeIds.includes(",")) {
-                                    // Accumulate BOM quantity only if sizes are not comma-separated
-                                    itemCodeMap[itemCode].bomTotal += bomQty;
-                                }
-                        
-                                // Append color name if it's unique
-                                if (!itemCodeMap[itemCode].colors.includes(colorName)) {
-                                    itemCodeMap[itemCode].colors.push(colorName);
-                                }
-                        
-                                // Remove duplicate row
-                                row.remove();
-                            } else {
-                                // Initialize the map entry for the itemCode
-                                itemCodeMap[itemCode] = {
-                                    row: row, 
-                                    bomTotal: bomQty,
-                                    colors: [colorName],
-                                    sizeIds: sizeIds // Store sizeIds to check later
-                                };
-                            }
-                        });
-                        
-                        $.each(itemCodeMap, function(itemCode, data) {
-                            //data.row.find('td input[name="bom_qtyss[]"]').val(data.bomTotal); // Set summed BOM
-                            
-                            const input = data.row.find('td input[name="bom_qtyss[]"]');
-                            input.val(data.bomTotal);
-                            input.attr('value', data.bomTotal); // Updates the actual HTML attribute
-                            input.trigger('change');
-        
-                            let input1 = data.row.find('td input[name="bom_qtyss1[]"]');
-                            input1.val(data.bomTotal);
-                            input1.attr('value', data.bomTotal); // Updates the actual HTML attribute
-                            input1.trigger('change');
-                    
-                            data.row.find('td input[name="color_ids[]"]').val(data.colors.join(", ")); // Set comma-separated colors
-                        }); 
-                    }
+              $.ajax({
+                  dataType: "json",
+                  url: "{{ route('GetPurchasePackingCreateConsumption') }}",
+                  data: {
+                     'tbl_len': tbl_len,
+                     'color_id': color_id,
+                     'size_qty_total': size_qty_total,
+                     'sales_order_no': sales_order_no,
+                     'no': no,
+                     'size_qty_array': size_qty_array,
+                     'size_array': size_array,
+                     'allTotal': allTotal,
+                     'sumAllTotal': sumAllTotal,
+                     'color_ids': color_ids
+                  },
+                  success: function (data) 
+                  {
+                     $("#PackingData").append(data.html);
 
+                     var itemCodeMap = {};
 
-                    $('#footable_4 tbody').find('td input[name="wastagess[]"]').each(function()
-                    { 
-                        $(this).removeAttr('disabled');
-                         
-                    });
-                    recalcIdcone4(); 
-               }
+                     $('#footable_4 tbody tr').each(function () {
+                           var row = $(this);
+                           var itemCode = row.find('td input').eq(1).val();
+                           var bomQty = row.find('td input[name="bom_qtyss[]"]').val() || 0;
+                           var colorName = row.find('td input[name="color_ids[]"]').val();
+                           var sizeIds = row.find('td input[name="sizes_ids[]"]').val();
+
+                           console.log("bomQty=>"+bomQty);
+                           // Skip rows with zero BOM quantity
+                           if (bomQty <= 0) {
+                              row.remove();
+                              return; // move to next iteration
+                           }
+
+                           if (itemCodeMap[itemCode]) {
+                              // If duplicate itemCode
+                              if (!sizeIds.includes(",")) {
+                                 itemCodeMap[itemCode].bomTotal += bomQty;
+                              }
+
+                              if (!itemCodeMap[itemCode].colors.includes(colorName)) {
+                                 itemCodeMap[itemCode].colors.push(colorName);
+                              }
+
+                              row.remove();
+                           } else {
+                              // New itemCode entry
+                              itemCodeMap[itemCode] = {
+                                 row: row,
+                                 bomTotal: bomQty,
+                                 colors: [colorName],
+                                 sizeIds: sizeIds
+                              };
+                           }
+                     });
+ 
+                     // Update merged rows with totals and colors
+                     $.each(itemCodeMap, function (itemCode, data) {
+                           const input = data.row.find('td input[name="bom_qtyss[]"]');
+                           input.val(data.bomTotal).attr('value', data.bomTotal).trigger('change');
+
+                           let input1 = data.row.find('td input[name="bom_qtyss1[]"]');
+                           input1.val(data.bomTotal).attr('value', data.bomTotal).trigger('change');
+
+                           data.row.find('td input[name="color_ids[]"]').val(data.colors.join(", "));
+                     });
+
+                     // Enable wastage inputs
+                     $('#footable_4 tbody').find('td input[name="wastagess[]"]').each(function () {
+                           $(this).removeAttr('disabled');
+                     });
+
+                     recalcIdcone4();
+                  }
                });
-               
-               
-                 mycalc();
+                mycalc();
        }
        
        $("#Submit").removeAttr('disabled');
-      }
+   }
+   
    
    function getSalesOrderDetails(sales_order_no)
    {

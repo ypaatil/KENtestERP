@@ -243,6 +243,7 @@
                                                 <tr>
                                                    <th>SrNo</th>
                                                    <th>Item Name</th>
+                                                   <th>Item Code</th>
                                                    <th>Classification</th>
                                                    <th>Description</th>
                                                    <th>Cons(Mtr/Nos)</th>
@@ -479,24 +480,32 @@
     
    function checkCostingStatus(sales_order_no)
    {    
-            $.ajax({
-               type: "GET",
-               dataType:"json",
-               url: "{{ route('checkCostingStatus') }}",
-               data:{'sales_order_no':sales_order_no},
-               success: function(data)
-               {
-                    console.log(data);
-                    if(data[0]['count']=='0')
-                    {
-                        alert('Costing not approved you cant create BOM Or Work Order and Process Order');
-                    }
-                    else
-                    {
-                        getSalesOrderDetails(sales_order_no);
-                    }
-               } 
-           }); 
+         var process_id = $("#process_id").val(); 
+         if(parseInt(process_id) == 1)
+         {
+            $('#sales_order_no').attr('disabled', true);
+         }
+         else
+         {
+            $('#sales_order_no').attr('disabled', false);
+         }
+         $.ajax({
+            type: "GET",
+            dataType:"json",
+            url: "{{ route('checkCostingStatus') }}",
+            data:{'sales_order_no':sales_order_no},
+            success: function(data)
+            {
+                  if(data[0]['count']=='0')
+                  {
+                     alert('Costing not approved you cant create BOM Or Work Order and Process Order');
+                  }
+                  else
+                  {
+                     getSalesOrderDetails(sales_order_no);
+                  }
+            } 
+         }); 
          
     } 
  
@@ -566,16 +575,16 @@
          $("#footable_2 tr td  input[class='size_id']").each(function() {
             var sizes= $(this).closest("tr").find('input[name="size_array[]"]').val();
             var size_array = sizes.split(',');
-         values.push($(this).val());
-         if(values.length==size_array.length)
-         {
-           $(this).closest("tr").find('input[name="size_qty_array[]"]').val(values);
-           // alert(values);
-               var sum = values.reduce(function( a,  b){
-                   return parseInt(a) + parseInt(b);
-               }, 0);
-           $(this).closest("tr").find('input[name="size_qty_total[]"]').val(sum);
-            
+            values.push($(this).val());
+            if(values.length==size_array.length)
+            {
+            $(this).closest("tr").find('input[name="size_qty_array[]"]').val(values);
+            // alert(values);
+                  var sum = values.reduce(function( a,  b){
+                     return parseInt(a) + parseInt(b);
+                  }, 0);
+            $(this).closest("tr").find('input[name="size_qty_total[]"]').val(sum);
+               
                values = [];
          }
           
@@ -583,8 +592,8 @@
         if(process_id == 3)
         {
                $("#footable_2 tbody").find('tr').each(function(){
-                    var row = $(this).find('td input[name="size_btn"]'); 
-                    GetSizeWiseQty(row);
+                    var row = $(this).find('td input[name="size_qty_total"]'); 
+                    GetSizeWiseQty(this);
                }); 
         }
         else
@@ -704,8 +713,8 @@
        else if(process_id == 3)
        {
                var size_qty_total=0; 
-               var size_array=$(row).closest("tr").find('input[name="size_array[]"]').val();
-               var color_id=$(row).closest("tr").find('select[name="color_id[]"]').val();
+               var size_array=$("#footable_2 > tbody > tr").find('input[name^="size_array[]"]').val(); 
+               var color_id= $(row).find('td select[name^="color_id[]"]').val();
                var allTotal=$("#allTotal").val();
                var sumAllTotal=$("#sumAllTotal").val();
                var values = [];
@@ -718,102 +727,103 @@
                 
                 $("#footable_2 tr td select[name='color_id[]']").each(function() {
                     var val = $(this).val();
-                    if (val) {  // Only consider selected values
+                    if (val) 
+                    {  
                         color_ids.push(val);
                     }
                });
                 
                color_ids = color_ids.join(",");
-               var size_qty_array=$(row).closest("tr").find('input[name="size_qty_array[]"]').val();
-               
-                var tbl_len = $('#footable_2 tbody tr').filter(function() {
+
+               var size_qty_array = $(row).find('td input[name^="size_qty_array[]"]').val(); 
+
+               var tbl_len = $('#footable_2 tbody tr').filter(function() {
                   var val = parseFloat($(this).find('input[name="size_qty_total[]"]').val()) || 0;
                   return val > 0;
                }).length;
 
                
               $.ajax({
-    dataType: "json",
-    url: "{{ route('GetPurchasePackingCreateConsumption') }}",
-    data: {
-        'tbl_len': tbl_len,
-        'color_id': color_id,
-        'size_qty_total': size_qty_total,
-        'sales_order_no': sales_order_no,
-        'no': no,
-        'size_qty_array': size_qty_array,
-        'size_array': size_array,
-        'allTotal': allTotal,
-        'sumAllTotal': sumAllTotal,
-        'color_ids': color_ids
-    },
-    success: function (data) {
-        $("#PackingData").append(data.html);
+                  dataType: "json",
+                  url: "{{ route('GetPurchasePackingCreateConsumption') }}",
+                  data: {
+                     'tbl_len': tbl_len,
+                     'color_id': color_id,
+                     'size_qty_total': size_qty_total,
+                     'sales_order_no': sales_order_no,
+                     'no': no,
+                     'size_qty_array': size_qty_array,
+                     'size_array': size_array,
+                     'allTotal': allTotal,
+                     'sumAllTotal': sumAllTotal,
+                     'color_ids': color_ids
+                  },
+                  success: function (data) 
+                  {
+                     $("#PackingData").append(data.html);
 
-        var itemCodeMap = {};
+                     var itemCodeMap = {};
 
-        $('#footable_4 tbody tr').each(function () {
-            var row = $(this);
-            var itemCode = row.find('td input').eq(1).val();
-            var bomQty = parseFloat(row.find('td input[name="bom_qtyss[]"]').val()) || 0;
-            var colorName = row.find('td input[name="color_ids[]"]').val();
-            var sizeIds = row.find('td input[name="sizes_ids[]"]').val();
+                     $('#footable_4 tbody tr').each(function () {
+                           var row = $(this);
+                           var itemCode = row.find('td input').eq(1).val();
+                           var bomQty = row.find('td input[name="bom_qtyss[]"]').val() || 0;
+                           var colorName = row.find('td input[name="color_ids[]"]').val();
+                           var sizeIds = row.find('td input[name="sizes_ids[]"]').val();
 
-            // Skip rows with zero BOM quantity
-            if (bomQty <= 0) {
-                row.remove();
-                return; // move to next iteration
-            }
+                           console.log("bomQty=>"+bomQty);
+                           // Skip rows with zero BOM quantity
+                           if (bomQty <= 0) {
+                              row.remove();
+                              return; // move to next iteration
+                           }
 
-            if (itemCodeMap[itemCode]) {
-                // If duplicate itemCode
-                if (!sizeIds.includes(",")) {
-                    itemCodeMap[itemCode].bomTotal += bomQty;
-                }
+                           if (itemCodeMap[itemCode]) {
+                              // If duplicate itemCode
+                              if (!sizeIds.includes(",")) {
+                                 itemCodeMap[itemCode].bomTotal += bomQty;
+                              }
 
-                if (!itemCodeMap[itemCode].colors.includes(colorName)) {
-                    itemCodeMap[itemCode].colors.push(colorName);
-                }
+                              if (!itemCodeMap[itemCode].colors.includes(colorName)) {
+                                 itemCodeMap[itemCode].colors.push(colorName);
+                              }
 
-                row.remove();
-            } else {
-                // New itemCode entry
-                itemCodeMap[itemCode] = {
-                    row: row,
-                    bomTotal: bomQty,
-                    colors: [colorName],
-                    sizeIds: sizeIds
-                };
-            }
-        });
+                              row.remove();
+                           } else {
+                              // New itemCode entry
+                              itemCodeMap[itemCode] = {
+                                 row: row,
+                                 bomTotal: bomQty,
+                                 colors: [colorName],
+                                 sizeIds: sizeIds
+                              };
+                           }
+                     });
+ 
+                     // Update merged rows with totals and colors
+                     $.each(itemCodeMap, function (itemCode, data) {
+                           const input = data.row.find('td input[name="bom_qtyss[]"]');
+                           input.val(data.bomTotal).attr('value', data.bomTotal).trigger('change');
 
-        // Update merged rows with totals and colors
-        $.each(itemCodeMap, function (itemCode, data) {
-            const input = data.row.find('td input[name="bom_qtyss[]"]');
-            input.val(data.bomTotal).attr('value', data.bomTotal).trigger('change');
+                           let input1 = data.row.find('td input[name="bom_qtyss1[]"]');
+                           input1.val(data.bomTotal).attr('value', data.bomTotal).trigger('change');
 
-            let input1 = data.row.find('td input[name="bom_qtyss1[]"]');
-            input1.val(data.bomTotal).attr('value', data.bomTotal).trigger('change');
+                           data.row.find('td input[name="color_ids[]"]').val(data.colors.join(", "));
+                     });
 
-            data.row.find('td input[name="color_ids[]"]').val(data.colors.join(", "));
-        });
+                     // Enable wastage inputs
+                     $('#footable_4 tbody').find('td input[name="wastagess[]"]').each(function () {
+                           $(this).removeAttr('disabled');
+                     });
 
-        // Enable wastage inputs
-        $('#footable_4 tbody').find('td input[name="wastagess[]"]').each(function () {
-            $(this).removeAttr('disabled');
-        });
-
-        recalcIdcone4();
-    }
-});
-
-               
-               
-                 mycalc();
+                     recalcIdcone4();
+                  }
+               });
+                mycalc();
        }
        
        $("#Submit").removeAttr('disabled');
-      }
+   }
    
    function calculateBomWithWastage(row)
    {
@@ -969,7 +979,6 @@
    //       data:{item_code:item_code},
    //         success: function(data){
    
-   //              console.log(data); 
                
    //                 row.find('select[name^="quality_code[]"]').val(data[0]['quality_code']);
    //                 +row.find('input[name^="unit_id[]"]').attr('value', data[0]['unit_id']); 
@@ -1046,17 +1055,18 @@
     });
    function CalculateQtyRowPro(row)
    {   
-    var consumption=+row.find('input[name^="consumption[]"]').val();
-    var wastage=+row.find('input[name^="wastage[]"]').val();
-    var rate_per_unit=+row.find('input[name^="rate_per_unit[]"]').val();
-    var qty=$("#final_bom_qty").val();
-    var final_cons=parseFloat(consumption) + parseFloat(consumption*(wastage/100));
-   var bom_qty=(parseFloat(final_cons) * parseInt(qty)).toFixed(2);
-    //var bom_qty1=(parseInt(bom_qty) + (parseInt(bom_qty)*(wastage/100))).toFixed(2);
-    
-   var total_price=(bom_qty*rate_per_unit).toFixed(2);
-   //row.find('input[name^="bom_qty[]"]').val(bom_qty);
-   row.find('input[name^="total_amount[]"]').val(total_price);
+      var consumption=+row.find('input[name^="consumption[]"]').val();
+      var wastage=+row.find('input[name^="wastage[]"]').val();
+      var rate_per_unit=+row.find('input[name^="rate_per_unit[]"]').val();
+      var qty=$("#final_bom_qty").val();
+      var final_cons=parseFloat(consumption) + parseFloat(consumption*(wastage/100));
+      
+      var bom_qty=(parseFloat(final_cons) * parseInt(qty)).toFixed(2);
+      var bom_qty1=(parseInt(bom_qty) + (parseInt(bom_qty)*(wastage/100))).toFixed(2);
+       
+      var total_price=(bom_qty*rate_per_unit).toFixed(2);
+      row.find('input[name^="bom_qty[]"]').val(bom_qty1);
+      row.find('input[name^="total_amount[]"]').val(total_price);
     
    }
       
@@ -1089,7 +1099,6 @@
    //       data:{item_code:item_code},
    //         success: function(data2){
    
-   //              console.log(data2); 
                 
    //                 +row2.find('input[name^="unit_ids[]"]').val(data2[0]['unit_id']);
    //                  +row2.find('input[name^="descriptions[]"]').val(data2[0]['item_description']);
@@ -1117,7 +1126,6 @@
                data:{'item_code':item_code,'sales_order_no':sales_order_no,'color_id':color_id,'size_id':size_id},
                success: function(data)
                {
-                       console.log(data);
                        row.find('input[name^="descriptions[]"]').val(data[0]['description']);
                        row.find('input[name^="consumptions[]"]').val(data[0]['consumption']);
                        row.find('input[name^="wastages[]"]').val(data[0]['wastage']);
@@ -1154,7 +1162,6 @@
                data:{'item_code':item_code,sales_order_no:sales_order_no},
                success: function(data)
                {
-                       console.log(data);
                        row.find('input[name^="description[]"]').val(data[0]['description']);
                        row.find('input[name^="consumption[]"]').val(data[0]['consumption']);
                        row.find('input[name^="wastage[]"]').val(data[0]['wastage']);
@@ -1191,7 +1198,6 @@
                data:{'item_code':item_code,sales_order_no:sales_order_no,'color_id':color_id,'size_id':size_id},
                success: function(data)
                {
-                       console.log(data);
                        row.find('input[name^="descriptionss[]"]').val(data[0]['description']);
                        row.find('input[name^="consumptionss[]"]').val(data[0]['consumption']);
                        row.find('input[name^="wastagess[]"]').val(data[0]['wastage']);
@@ -1224,7 +1230,6 @@
    //       data:{item_code:item_code},
    //         success: function(data1){
    
-   //              console.log(data1); 
                 
    //                 +row1.find('input[name^="unit_idss[]"]').val(data1[0]['unit_id']);
    //                  +row1.find('input[name^="descriptionss[]"]').val(data1[0]['item_description']);
