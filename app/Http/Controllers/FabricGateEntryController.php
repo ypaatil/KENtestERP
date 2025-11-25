@@ -302,7 +302,7 @@ class FabricGateEntryController extends Controller
          
         if ($request->ajax())
         {
-            $FabricGateData = DB::select("SELECT fabric_gate_entry_master.*,fabric_gate_entry_details.item_code,item_master.item_name,ifnull(item_master.item_description,'-') as item_description,
+            /*$FabricGateData = DB::select("SELECT fabric_gate_entry_master.*,fabric_gate_entry_details.item_code,item_master.item_name,ifnull(item_master.item_description,'-') as item_description,
             fabric_gate_entry_details.item_name as item_names,
             ledger_master.ac_short_name as supplier_name,location_master.location, IFNULL(sum(no_of_roll),0) as total_roll, IFNULL(sum(fabric_gate_entry_details.challan_qty),0) as challan_qty,
             fabric_gate_entry_details.rate, fabric_gate_entry_details.amount, fabric_gate_entry_details.remarks,ledger_details.trade_name, ledger_details.site_code FROM fabric_gate_entry_master  
@@ -311,8 +311,18 @@ class FabricGateEntryController extends Controller
             LEFT join item_master on item_master.item_code=fabric_gate_entry_details.item_code
             LEFT join ledger_master on ledger_master.ac_code=fabric_gate_entry_master.Ac_code
             LEFT join location_master on location_master.loc_id=fabric_gate_entry_master.location_id
-            WHERE fabric_gate_entry_master.fge_date BETWEEN '".$fromDate."' AND '".$toDate."' GROUP BY fabric_gate_entry_details.fge_code");
+            WHERE fabric_gate_entry_master.fge_date BETWEEN '".$fromDate."' AND '".$toDate."' GROUP BY fabric_gate_entry_details.fge_code");*/
             
+            $FabricGateData = DB::select("SELECT m.*, d.item_code, d.item_name AS item_names, d.rate, d.amount, d.remarks, im.item_name, IFNULL(im.item_description, '-') AS item_description, 
+            lm.ac_short_name AS supplier_name, loc.location, ld.trade_name, ld.site_code, IFNULL(SUM(d.no_of_roll), 0) AS total_roll, 
+            IFNULL(SUM(d.challan_qty), 0) AS challan_qty FROM fabric_gate_entry_master m 
+            INNER JOIN fabric_gate_entry_details d ON d.fge_code = m.fge_code 
+            LEFT JOIN item_master im ON im.item_code = d.item_code 
+            LEFT JOIN ledger_master lm ON lm.ac_code = m.ac_code 
+            LEFT JOIN ledger_details ld ON ld.sr_no = m.bill_to 
+            LEFT JOIN location_master loc ON loc.loc_id = m.location_id 
+            WHERE m.fge_date BETWEEN '".$fromDate."' AND '".$toDate."' GROUP BY m.fge_code, d.item_code");
+
             
             return Datatables::of($FabricGateData)
             ->addIndexColumn() 

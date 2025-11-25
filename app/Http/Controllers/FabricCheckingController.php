@@ -971,7 +971,9 @@ PRINT 1,1
     
     public function FabricCheckingDashboard(Request $request)
     {
-       
+       $fromDate =  isset($request->fromDate) ? $request->fromDate : date("Y-m-01");
+        $toDate =  isset($request->toDate) ? $request->toDate : date("Y-m-d");
+   
      if ($request->ajax()) {
                 
                // $cpki_codes=explode(",",$CPKIList->cpki_code);
@@ -995,7 +997,7 @@ PRINT 1,1
             inner join ledger_master on ledger_master.Ac_code=fabric_checking_details.Ac_code 
             inner join item_master on item_master.item_code=fabric_checking_details.item_code
             inner join inward_master on inward_master.in_code=fabric_checking_master.in_code  
-            WHERE fabric_checking_master.delflag=0
+            WHERE fabric_checking_master.delflag=0 and fabric_checking_details.chk_date BETWEEN '".$fromDate."' AND  '".$toDate."'    
             group by fabric_checking_details.track_code,  fabric_checking_details.item_code");
             //dd(DB::getQueryLog());
             //   $query = DB::getQueryLog();

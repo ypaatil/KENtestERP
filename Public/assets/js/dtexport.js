@@ -131,10 +131,17 @@ function buildSimpleFilter(selector, colIndex) {
     const visibleData = table.column(colIndex, { search: 'applied' }).data().toArray();
    
 try{
-      valuesToShow = [...new Set(visibleData.filter(v => v && v.trim() !== ''))].sort();
+      //valuesToShow = [...new Set(visibleData.filter(v => v && v.trim() !== ''))].sort();     
+      
+      valuesToShow = [...new Set(
+          visibleData
+              .map(v => (v === null || v === undefined ? '' : String(v)))  
+              .map(v => v.trim())  
+              .filter(v => v !== '')
+      )].sort();
+     
     }
     catch(error){
- 
  
       valuesToShow = [...new Set(
           visibleData
@@ -163,7 +170,7 @@ try{
     html += `<label><input type='checkbox' class='opt' value='${v}' ${checked}> ${v}</label>`;
   });*/
 
-  valuesToShow.forEach(v => {
+  valuesToShow.forEach(v => {  
     const safeValue = escapeHtml(v); // Escape quotes and HTML
     const checked = prevChecked.length === 0 || prevChecked.includes(v) ? 'checked' : '';
 
@@ -737,6 +744,53 @@ function applyDateFilter(col, menu) {
   }
   //End For Fabric Inward Report
 
+       //Start For Fabric Checking Report
+        function buildAllMenusFabricCheckingDashboardReport(){
+        buildDateFilter('.date_', 0);
+        buildSimpleFilter('.chk-code', 1);
+        buildSimpleFilter('.track-code', 2);
+        buildSimpleFilter('.supplier-name', 3);
+        buildSimpleFilter('.bill-to', 4);
+        buildSimpleFilter('.po-code', 5);
+        buildSimpleFilter('.grn-no', 6);
+        buildSimpleFilter('.item-code', 7);
+        buildSimpleFilter('.item-name', 8);
+        buildSimpleFilter('.color', 9);
+        buildSimpleFilter('.item-description', 10);
+        buildSimpleFilter('.status', 11);  
+        buildSimpleFilter('.shrinkage', 16);
+        buildSimpleFilter('.pass-percentage', 17);
+        buildSimpleFilter('.reject-percentage', 18);
+        }
+      //End For Fabric Checking Report
+
+      //Start For Fabric Gate Entry Report
+        function buildAllMenusFabricGateEntryReport(){
+        buildSimpleFilter('.fge-code', 0);
+        buildDateFilter('.date', 1);
+        buildSimpleFilter('.po-no', 2);
+        buildSimpleFilter('.manual-po-no', 3);
+        buildSimpleFilter('.dc-no', 4);
+        buildDateFilter('.dc-date', 5);
+        buildSimpleFilter('.invoice-no', 6);
+        buildDateFilter('.invoice-date', 7);
+        buildSimpleFilter('.supplier', 8);
+        buildSimpleFilter('.bill-to', 9);
+        buildSimpleFilter('.location-warehouse', 10);
+        buildSimpleFilter('.lr-no', 11);
+        buildSimpleFilter('.transport-name', 12);
+        buildSimpleFilter('.vehicle-no', 13);
+        buildSimpleFilter('.item-name', 14);
+        buildSimpleFilter('.item-code', 15);
+        buildSimpleFilter('.item-description', 16);
+        buildSimpleFilter('.no-of-roll', 17);
+        buildSimpleFilter('.challan-qty', 18);
+        buildSimpleFilter('.rate', 19);
+        buildSimpleFilter('.amount', 20);
+        buildSimpleFilter('.remark', 21);     
+        }
+      //End For Fabric Checking Report
+
 
 
   function formatNumberTableHead(n) {
@@ -771,6 +825,29 @@ function applyDateFilter(col, menu) {
     $('#head_total_qty').text(formatNumberTableHead(head_total_qty));
     $('#head_total_amount').text(formatNumberTableHead(head_total_amount));
   }
+
+  function formatIndianNumber(x) {
+    if (x === null || x === undefined || x === "" || isNaN(x)) {
+        return "0.00";
+    }
+
+    let num = parseFloat(x).toFixed(2); 
+    
+    let parts = num.split(".");
+    let integer = parts[0];
+    let decimal = parts[1];
+    
+    let lastThree = integer.slice(-3);
+    let otherNumbers = integer.slice(0, -3);
+
+    if (otherNumbers !== "") {
+        lastThree = "," + lastThree;
+    }
+
+    let indian = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+
+    return indian + "." + decimal;
+   }
 
 
   	function updateTotalsOpenSalesOrderDetailDashboard() {     

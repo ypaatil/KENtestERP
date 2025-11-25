@@ -119,13 +119,14 @@
          const month = String(today.getMonth() + 1).padStart(2, '0');
          const year = today.getFullYear();
          const formattedDate = `${day}-${month}-${year}`;
-         const exportTitle = 'Fabric Inward Report (' + formattedDate + ')';
+         const exportTitle = 'Fabric Outward Report (' + formattedDate + ')';
         
           var table = $('#dt').DataTable({
             ajax: {
                 url: currentURL,
                 type: "GET"
             },
+deferRender: true,
             dom: 'lBfrtip',
             buttons: [
                 { extend: 'copyHtml5', footer: true ,title: exportTitle, exportOptions: commonExportOptions() },
@@ -140,11 +141,7 @@
                  var total_meter = 0;             
                  var total_value = 0;
                
-                for (var i = 0; i < data.length; i++) {
-                  /*  total_meter += parseFloat(data[i].meter);
-                    total_value += parseFloat(data[i].item_value);*/
-                  
-
+                for (var i = 0; i < data.length; i++) {                 
                   const qty  = String(data[i].meter).replace(/,/g, "");
                      const val  = String(data[i].item_value).replace(/,/g, "");
                      total_meter  += parseFloat(qty) || 0;
@@ -186,7 +183,8 @@
             ]
         });
     }
-    
+  
+
          // Start script for filter search and apply        
          $(document).on('click', '.apply-btn', function() {
          const menu = $(this).closest('.filter-menu');
