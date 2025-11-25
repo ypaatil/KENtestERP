@@ -127,7 +127,7 @@ if (preg_match('/(iphone|ipod|android|blackberry|windows phone|webos)/i', $user_
 </div> 
 <div class="col-md-4 header-user-area">
     <div class="dropdown d-inline-block">
-      <button type="button" class="btn header-user-btn" id="page-header-user-dropdown"
+      <button type="button" class="header-user-btn" id="page-header-user-dropdown"
               data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           <i class="fa-solid fa-user-circle"></i>
           <span class="header-user-name">{{ ucfirst(strtolower(Session::get('username'))) }}</span>
