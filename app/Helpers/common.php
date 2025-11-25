@@ -1,4 +1,5 @@
 <?php
+
 use App\Models\UserManagement;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Session;
@@ -6,24 +7,24 @@ use Illuminate\Support\Facades\DB;
 
 function getSideBar1()
 {
-    
-     // <li>
+
+    // <li>
     // <a href="/MDDashboard1" class="waves-effect">
     // <i class="bx bx-stats"></i>
     // <span key="t-dashboards">ERP Dashboard</span>
     // </a>
     // </li>
-    
+
     //   <li>
     // <a href="/dashboard2nd">
     // <i class="bx bx-home-circle"></i>
     // <span key="t-dashboards">Dashboard</span>
     // </a>
-    
+
     // </li> 
-    
-    
-    $html ='';
+
+
+    $html = '';
 
     $html .= '<ul class="metismenu list-unstyled" id="side-menu">
     <li class="menu-title" key="t-menu">Menu</li>
@@ -119,7 +120,7 @@ function getSideBar1()
 
 function getSideBar()
 {
-    
+
     //  $Authicateuser = UserManagement::join('form_auth', 'form_auth.form_id', '=', 'form_master.form_code')
     //     ->where('form_auth.emp_id', '=', Session::get('userId'))
     //     ->where('form_master.delflag', 0)
@@ -182,71 +183,88 @@ function getSideBar()
 }
 
 
-function indian_number_format_wd($num){
+function indian_number_format_wd($num)
+{
     // Check if the number is negative
     $is_negative = false;
     if (strpos($num, '-') === 0) {
         $is_negative = true;
         $num = substr($num, 1); // Remove the minus sign temporarily
     }
-    
-    $num = explode('.',$num);
-    $dec = (count($num) == 2) ? '.'.$num[1] : ''; // Default decimal part to .00 if not provided
+
+    $num = explode('.', $num);
+    $dec = (count($num) == 2) ? '.' . $num[1] : ''; // Default decimal part to .00 if not provided
     $num = (string)$num[0];
-    
-    if(strlen($num) < 4) {
+
+    if (strlen($num) < 4) {
         // If less than 1000, pad the number with zeros to ensure two decimal places
-        if(strlen($num) === 1) {
-            $num = '0'.$num; // Add leading zero if only one digit
+        if (strlen($num) === 1) {
+            $num = '0' . $num; // Add leading zero if only one digit
         }
-        return ($is_negative ? '-' : '').$num.$dec;
+        return ($is_negative ? '-' : '') . $num . $dec;
     }
-    
-    $tail = substr($num,-3);
-    $head = substr($num,0,-3);
-    $head = preg_replace("/\B(?=(?:\d{2})+(?!\d))/",",",$head);
-    
-    return ($is_negative ? '-' : '').$head.",".$tail;
+
+    $tail = substr($num, -3);
+    $head = substr($num, 0, -3);
+    $head = preg_replace("/\B(?=(?:\d{2})+(?!\d))/", ",", $head);
+
+    return ($is_negative ? '-' : '') . $head . "," . $tail;
 }
 
-     function indian_number_format_for_value($num, $decimals = 2) {                           
-            $num = number_format($num, $decimals, '.', ''); // normalize
-            
-            $parts = explode('.', $num);
-            $integer = $parts[0];
-            $decimal = isset($parts[1]) ? $parts[1] : '';
+function indian_number_format_for_value($num, $decimals = 2)
+{
+    $num = number_format($num, $decimals, '.', ''); // normalize
 
-            $last3 = substr($integer, -3);
-            $rest = substr($integer, 0, -3);
+    $parts = explode('.', $num);
+    $integer = $parts[0];
+    $decimal = isset($parts[1]) ? $parts[1] : '';
 
-            if ($rest != '') {
-                $rest = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", $rest);
-                return $rest . "," . $last3 . ($decimal ? "." . $decimal : "");
-            }
-            return $integer . ($decimal ? "." . $decimal : "");
-        }
+    $last3 = substr($integer, -3);
+    $rest = substr($integer, 0, -3);
+
+    if ($rest != '') {
+        $rest = preg_replace("/\B(?=(\d{2})+(?!\d))/", ",", $rest);
+        return $rest . "," . $last3 . ($decimal ? "." . $decimal : "");
+    }
+    return $integer . ($decimal ? "." . $decimal : "");
+}
 
 function setEnvironmentValue($key, $value)
 {
-        $path = base_path('.env');
+    $path = base_path('.env');
 
-        if (file_exists($path)) {
-            // Read the content of the .env file
-            $env = file_get_contents($path);
-            
-            // Replace the existing value with the new one
-            $keyValue = $key . '="' . $value . '"';
-            if (strpos($env, $key . '=') !== false) {
-                $env = preg_replace('/^' . $key . '=.*/m', $keyValue, $env);
-            } else {
-                // Append the key if it doesn't exist
-                $env .= "\n" . $keyValue;
-            }
+    if (file_exists($path)) {
+        // Read the content of the .env file
+        $env = file_get_contents($path);
 
-            // Write the updated content back to the .env file
-            file_put_contents($path, $env);
+        // Replace the existing value with the new one
+        $keyValue = $key . '="' . $value . '"';
+        if (strpos($env, $key . '=') !== false) {
+            $env = preg_replace('/^' . $key . '=.*/m', $keyValue, $env);
+        } else {
+            // Append the key if it doesn't exist
+            $env .= "\n" . $keyValue;
         }
+
+        // Write the updated content back to the .env file
+        file_put_contents($path, $env);
+    }
 }
+
+function getCompanyInfo()
+{
+    return [
+        'name'    => 'Ken Global Designs Pvt Ltd',
+        'address' => 'Gat No.- 298/299, A/P Kondigre Kolhapur Maharashtra - 416101',
+        'pan'     => 'ABCCS7591Q',
+        'gst'     => '27ABCCS7591Q1ZD',
+        'state'   => 'MAHARASHTRA'
+    ];
+}
+
+
+
+
 
 // function convertInvoice($number) 
 // {
@@ -303,9 +321,8 @@ function setEnvironmentValue($key, $value)
 // }
 
 if (!function_exists('money_format')) {
-    function money_format($format, $number) {
+    function money_format($format, $number)
+    {
         return number_format($number, 2, '.', ',');
     }
 }
-
-?>

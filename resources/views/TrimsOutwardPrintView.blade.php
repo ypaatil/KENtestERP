@@ -568,24 +568,27 @@
                             </div>
 
                         </div>
+                        @php
+                        $company=getCompanyInfo();
+                        @endphp
                         <div class="col-md-6 p-2">
                             <p><b>Company Name: </b></p>
-                            <p><b>Ken Global Designs Pvt Ltd</b> <br> Gat No.- 298/299, A/P Kondigre Kolhapur Maharashtra - 416101</p>
+                            <p> <b>{{ $company['name'] }}</b><br>{{ $company['address'] }}</p>
 
                             <div class="info-row">
                                 <div class="label">PAN NO</div>
                                 <div class="colon">:</div>
-                                <div class="value">ABCCS7591Q </div>
+                                <div class="value">{{ $company['pan'] }} </div>
                             </div>
                             <div class="info-row">
                                 <div class="label">GST NO</div>
                                 <div class="colon">:</div>
-                                <div class="value">27ABCCS7591Q1ZD </div>
+                                <div class="value">{{ $company['gst'] }} </div>
                             </div>
                             <div class="info-row">
                                 <div class="label">STATE</div>
                                 <div class="colon">:</div>
-                                <div class="value"> MAHARASHTRA</div>
+                                <div class="value"> {{ $company['state'] }}</div>
                             </div>
 
                         </div>
@@ -709,13 +712,13 @@
                                     <br>  ({{ $rowDetail->sgst_per }}%)
                                   
                                 </td>
-                                <td class="text-end">(0%)</td>
+                                <td class="text-end">{{ number_format(0, 2) }}<br>({{ number_format(0, 2) }}%)</td>
                                 @else
-                                <td class="text-end">(0%)</td>
-                                <td class="text-end">(0%)</td>
+                                <td class="text-end">{{ number_format(0, 2) }}<br>({{ number_format(0, 2) }}%)</td>
+                                <td class="text-end">{{ number_format(0, 2) }}<br>({{ number_format(0, 2) }}%)</td>
                                 <td class="text-end">
-                                 {{ number_format(($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}  
-                                    <br> ({{ $rowDetail->igst_per }}%)
+                                 {{ number_format(($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100),2) }}  
+                                    <br> ({{ number_format($rowDetail->igst_per,2) }}%)
                                 </td>
                                 @endif
 
@@ -854,7 +857,7 @@
                           
                              <tr>
                                 <th class="text-start">Round Off</th>
-                                <td class="text-end">{{ number_format($round_off, 2) }}</td>
+                                <td class="text-end">{{ $round_off >= 0 ? '+' : '' }}{{ number_format($round_off, 2) }}</td>
                             </tr>
                             <tr>
                                 <th class="text-start">Grand Total</th>
