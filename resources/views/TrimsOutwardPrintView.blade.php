@@ -839,15 +839,15 @@
                                 <td class="text-end"> {{ number_format($amt,2) }}</td>
                             </tr>
                             <tr>
-                                <th class="text-start">CGST AMT :</th>
+                                <th class="text-start">CGST </th>
                                 <td class="text-end">{{ number_format($totalcgst,2) }}</td>
                             </tr>
                             <tr>
-                                <th class="text-start">SGST AMT :</th>
+                                <th class="text-start">SGST </th>
                                 <td class="text-end"> {{ number_format($totalsgst,2) }}</td>
                             </tr>
                              <tr>
-                                <th class="text-start">IGST AMT :</th>
+                                <th class="text-start">IGST </th>
                                 <td class="text-end"> {{ number_format($totaligst,2) }}</td>
                             </tr>
                             <tr>
