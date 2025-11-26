@@ -569,7 +569,7 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                                 <div class="info-row">
                                     <div class="label">Buyer Name</div>
                                     <div class="colon">:</div>
-                                    <div class="value">{{ $BOMList[0]->buyer_name }}</div>
+                                    <div class="value">{{ $BOMList[0]->buyer_short_name }}</div>
                                 </div>
                                 <div class="info-row">
                                     <div class="label">Buyer Brand</div>
@@ -665,8 +665,8 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                     <table class="table table-bordered table-sm first">
                         <thead>
                             <tr>
-                                <th>SrNo</th>
-                                <th>Color</th>
+                                <th>Sr.No.</th>
+                                <th>Garment Color</th>
                                 @foreach ($SizeDetailList as $sz)
                                 <th>{{ $sz->size_name }}</th>
                                 @endforeach
