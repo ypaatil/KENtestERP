@@ -230,35 +230,7 @@
             }
         }
 
-        @media print {
-
-            .table-bordered th {
-                vertical-align: middle;
-                text-align: center;
-                white-space: nowrap;
-            }
-
-            table.table th,
-            table.table td {
-                color: #000 !important;
-                white-space: normal !important;
-
-            }
-
-            /* th,
-                td {
-                    white-space: normal !important;
-                    font-size: 10pt !important;
-                   
-              
-
-                } */
-
-            #printInvoice {
-                width: 100% !important;
-                max-width: 100% !important;
-            }
-        }
+        
 
         .verticalLine {
             border-right: solid grey;
@@ -465,9 +437,7 @@
             table.second td:nth-child(12) {
                 width: auto !important;
             }
-
-
-        }
+         }   
 
         @media print {
 
@@ -488,6 +458,35 @@
                 text-align: right !important;
             }
 
+        }
+        @media print {
+
+            .table-bordered th {
+                vertical-align: middle;
+                text-align: center;
+                white-space: nowrap;
+            }
+
+            table.table th,
+            table.table td {
+                color: #000 !important;
+                white-space: normal !important;
+
+            }
+
+            /* th,
+                td {
+                    white-space: normal !important;
+                    font-size: 10pt !important;
+                   
+              
+
+                } */
+
+            #printInvoice {
+                width: 100% !important;
+                max-width: 100% !important;
+            }
         }
     </style>
 </head>
@@ -549,7 +548,7 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                                 <div class="info-row">
                                     <div class="label">VWO Date</div>
                                     <div class="colon">:</div>
-                                    <div class="value">{{ $BOMList[0]->vw_date }}</div>
+                                    <div class="value">{{ \Carbon\Carbon::parse($BOMList[0]->vw_date)->format('d-m-Y') }}</div>
 
                                 </div>
                                 <div class="info-row">
@@ -565,7 +564,12 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                                 <div class="info-row">
                                     <div class="label">SAM</div>
                                     <div class="colon">:</div>
-                                    <div class="value"> {{ $BOMList[0]->sam }} </div>
+                                    <div class="value"> {{indian_number_format_for_value( $BOMList[0]->sam,2) }} </div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="label">Buyer Name</div>
+                                    <div class="colon">:</div>
+                                    <div class="value">{{ $BOMList[0]->buyer_name }}</div>
                                 </div>
                                 <div class="info-row">
                                     <div class="label">Buyer Brand</div>
@@ -580,12 +584,12 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                         </div>
                         <div class="col-md-6 p-2">
                             <div class="info-row">
-                                <div class="label">Main Style Category</div>
+                                <div class="label"> Style </div>
                                 <div class="colon">:</div>
                                 <div class="value">{{ $BOMList[0]->mainstyle_name }} </div>
                             </div>
                             <div class="info-row">
-                                <div class="label">Sub Style Category</div>
+                                <div class="label">Sub Style </div>
                                 <div class="colon">:</div>
                                 <div class="value">{{ $BOMList[0]->substyle_name }} </div>
                             </div>
@@ -596,7 +600,7 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                                 <div class="value">{{ $BOMList[0]->fg_name }} </div>
                             </div>
                             <div class="info-row">
-                                <div class="label">Style No</div>
+                                <div class="label">Style No.</div>
                                 <div class="colon">:</div>
                                 <div class="value">{{ $BOMList[0]->style_no }}</div>
                             </div>
@@ -610,13 +614,12 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
 
                         <div class="col-md-6 p-2 border-end">
                             <div class="">
-                                <p><b>TO :</b></p>
-                                <!-- <p><b>Vendor:</b> <br>KEN GLOBAL DESIGNS - UNIT - 1 (KONDIGRE)</p>
-                                <p><b>Address:</b> <br>GAT NO 298/299,A/P Kondigre, Kolhapur, Maharashtra, 416101 </p> -->
+                                <p><b>TO :</b><br> <b>{{ $BOMList[0]->Ac_name }}</b></p>
+                               
                                 <div class="info-row">
                                     <div class="label">Address</div>
                                     <div class="colon">:</div>
-                                    <div class="value">{{ $BOMList[0]->Ac_name }} </div>
+                                   
                                     <div class="value">{{ $BOMList[0]->address }} </div>
                                 </div>
 
@@ -658,7 +661,7 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                     @endphp
 
                     <!-- Assortment Table -->
-                    <h4 class="text-start fw-bold">Assortment Details:</h4>
+                    <h4 class="text-center fw-bold">Assortment Details</h4>
                     <table class="table table-bordered table-sm first">
                         <thead>
                             <tr>
@@ -686,10 +689,10 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                                 $SizeQtyList = explode(',', $rowDataList->size_qty_array);
                                 @endphp
                                 @foreach($SizeQtyList as $index => $szQty)
-                                <td class="text-end">{{ $szQty }}</td>
+                                <td class="text-end">{{ number_format($szQty) }}</td>
                                 @php $grandTotals[$index] += (int)$szQty; @endphp
                                 @endforeach
-                                <td class="text-end">{{ $rowDataList->size_qty_total }}</td>
+                                <td class="text-end">{{ number_format($rowDataList->size_qty_total) }}</td>
                                 @php
                                 $overallTotal += (int)$rowDataList->size_qty_total;
                                 $no++;
@@ -701,30 +704,30 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                             <tr class="fw-bold ">
                                 <td colspan="2" class="text-end">Total :</td>
                                 @foreach($grandTotals as $gTotal)
-                                <td class="text-end">{{ $gTotal }}</td>
+                                <td class="text-end">{{ number_format($gTotal) }}</td>
                                 @endforeach
-                                <td class="text-end">{{ $overallTotal }}</td>
+                                <td class="text-end">{{ number_format($overallTotal) }}</td>
                             </tr>
                         </tbody>
                     </table>
 
 
 
-                    <h4 class="text-start  fw-bold" style="margin-top: -15px;">Sewing Trims:</h4>
+                    <h4 class="text-center  fw-bold" style="margin-top: -15px;">Sewing Trims</h4>
                     <table class="table table-bordered text-1 table-sm second">
                         <thead>
                             <tr style=" text-align:center;">
-                                <th>SrNo</th>
+                                <th>Sr.No.</th>
                                 <th>Item Code</th>
                                 <th>Item Name</th>
-                                <th>Color Name</th>
+                                <th> Garment Color </th>
                                 <th>Sizes</th>
                                 <th>Classification</th>
 
                                 <th>Cons(Mtr/Nos)</th>
-                                <th>Unit</th>
+                                <th>UOM</th>
                                 <th>Wastage %</th>
-                                <th>BOM Qty</th>
+                                <th> Qty</th>
                                 <th>Remark</th>
                             </tr>
                         </thead>
@@ -825,11 +828,11 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                                 <td class="text-start">{{rtrim($sizes, ',');}} </td>
                                 <td class="text-start">{{ $rowDetailtrims->class_name }}</td>
 
-                                <td class="text-end">{{ $rowDetailtrims->consumption  }}</td>
+                                <td class="text-end">{{ number_format($rowDetailtrims->consumption ,2) }}</td>
                                 <td class="text-center">{{ $rowDetailtrims->unit_name  }}</td>
-                                <td class="text-end">{{ $rowDetailtrims->wastage  }}</td>
-                                <td class="text-end">{{ $rowDetailtrims->totalbom_qty  }}</td>
-                                <td class="text-end">{{ isset($ColorListpacking[0]->remark) ? $ColorListpacking[0]->remark : ''}}</td>
+                                <td class="text-end">{{ number_format($rowDetailtrims->wastage,2)  }}</td>
+                                <td class="text-end">{{ indian_number_format_for_value($rowDetailtrims->totalbom_qty,2)  }}</td>
+                                <td class="text-start">{{ isset($ColorListpacking[0]->remark) ? $ColorListpacking[0]->remark : ''}}</td>
                             </tr>
                             @php
                             $no=$no+1;
