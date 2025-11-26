@@ -548,7 +548,7 @@
 
 
                         </div>
-                        <div class="col-md-6 p-2">
+                        <div class="col-md-6 p-2"> 
                             <div class="">
                                 <p><b>TO Address :</b></p>
                                 <!-- <p><b>Vendor:</b> <br>Anita - Finish Goods Warehouse </p>

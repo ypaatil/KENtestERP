@@ -1315,9 +1315,6 @@ echo json_encode($data);
  public function OutwardForPackingPrintView($ofp_code)
     {
         
-         
-        // DB::enableQueryLog();
-       
          $OutwardForPackingMaster = OutwardForPackingMasterModel::join('usermaster', 'usermaster.userId', '=', 'outward_for_packing_master.userId')
          ->leftJoin('ledger_master', 'ledger_master.ac_code', '=', 'outward_for_packing_master.vendorId')
          ->leftJoin('location_master as sent', 'sent.loc_id', '=', 'outward_for_packing_master.sent_to')
@@ -1340,7 +1337,7 @@ echo json_encode($data);
             $no=$no+1;
         }
         $sizes=rtrim($sizes,',');
-        //  DB::enableQueryLog();  
+
           $OutwardForPackingList = DB::select("SELECT 	outward_for_packing_size_detail.color_id, color_master.color_name, ".$sizes.", 
         sum(size_qty_total) as size_qty_total  from	outward_for_packing_size_detail  
         inner join color_master on color_master.color_id=outward_for_packing_size_detail.color_id 
