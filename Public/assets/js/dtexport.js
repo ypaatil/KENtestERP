@@ -791,6 +791,30 @@ function applyDateFilter(col, menu) {
         }
       //End For Fabric Checking Report
 
+     function buildAllMenusTrimsGateEntryReport(){
+      buildSimpleFilter('.tge-code', 0);
+      buildDateFilter('.date', 1);
+      buildSimpleFilter('.po-no', 2);
+      buildSimpleFilter('.manual-po-no', 3);
+      buildSimpleFilter('.dc-no', 4);
+      buildDateFilter('.dc-date', 5);
+      buildSimpleFilter('.invoice-no', 6);
+      buildDateFilter('.invoice-date', 7);
+      buildSimpleFilter('.supplier', 8);
+      buildSimpleFilter('.bill-to', 9);
+      buildSimpleFilter('.location', 10);
+      buildSimpleFilter('.lr-no', 11);
+      buildSimpleFilter('.transport-name', 12);
+      buildSimpleFilter('.vehicle-no', 13);
+      buildSimpleFilter('.item-name', 14);
+      buildSimpleFilter('.item-code', 15);
+      buildSimpleFilter('.item-description', 16);
+      buildSimpleFilter('.challan-qty', 17);
+      buildSimpleFilter('.rate', 18);
+      buildSimpleFilter('.amount', 19);
+      buildSimpleFilter('.remark', 20);
+     }
+
 
 
   function formatNumberTableHead(n) {
