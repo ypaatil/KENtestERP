@@ -815,6 +815,35 @@ function applyDateFilter(col, menu) {
       buildSimpleFilter('.remark', 20);
      }
 
+       function table_values_indian_format()  {
+          function formatIndianNumber(num) {
+            if (isNaN(num)) return num; // Ignore non-numbers
+            return Number(num).toLocaleString('en-IN', {
+               minimumFractionDigits: 2,
+               maximumFractionDigits: 2
+            });
+         }
+
+         function convertTableToIndianFormat() {
+            document.querySelectorAll("table tr td").forEach(td => {
+               let value = td.innerText.trim();
+
+               // Remove commas before converting
+               let num = value.replace(/,/g, "");
+
+               // Check if valid number
+               if (!isNaN(num) && num !== "") {
+                     td.innerText = formatIndianNumber(num);
+               }
+            });
+         }
+
+         // Run after page load
+         document.addEventListener("DOMContentLoaded", convertTableToIndianFormat);
+   }
+
+
+
 
 
   function formatNumberTableHead(n) {
@@ -956,3 +985,5 @@ function applyDateFilter(col, menu) {
     $('#head_total_bal_min_prod_actual').text(formatNum(head_total_bal_min_prod_actual));    
     $('#head_total_cmohp_value').text(formatNum(head_total_cmohp_value));
    }
+
+ 
