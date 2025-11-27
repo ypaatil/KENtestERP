@@ -16,7 +16,7 @@
 <div class="row">
    <div class="col-12">
       <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-         <h4 class="mb-sm-0 font-size-18">Trims Inward</h4>
+         <h4 class="mb-sm-0 font-size-18">Trims Inward : {{ $purchasefetch->trimCode }}</h4>
          <div class="page-title-right">
             <ol class="breadcrumb m-0">
                <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
@@ -31,11 +31,31 @@
    <div class="col-xl-12">
       <div class="card">
          <div class="card-body">
+            
+         <!-- TAB HEADER -->
+         <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+               <button class="nav-link active" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab">
+               Delivery
+               </button>
+            </li>
+            <li class="nav-item" role="presentation">
+               <button class="nav-link" id="return-tab" data-bs-toggle="tab" data-bs-target="#return" type="button" role="tab">
+               Return
+               </button>
+            </li>
+         </ul>
+         <!-- TAB CONTENT -->
+         <div class="tab-content mt-4" id="myTabContent">
+            <!-- ===================================================
+               DELIVERY TAB — FULL ORIGINAL FORM
+               ==================================================== -->
+            <div class="tab-pane fade show active" id="delivery" role="tabpanel">
+                
             <form action="{{route('TrimsInward.update',$purchasefetch)}}" method="POST" id="frmData">
                <input type="hidden" name="type" id="type" class="form-control" value="<?php echo  'PURCHASE' ?>" /> 
                @method('put')
                @csrf    
-               <h4 class="card-title mb-4">Trims Inward: {{ $purchasefetch->trimCode }}</h4>
                @if ($errors->any())
                <div class="col-md-6">
                   <div class="alert alert-danger">
@@ -96,7 +116,7 @@
                            }
                            @endforeach
                         </select>
-                        <input type="hidden" name="po_codenew" id="po_codenew" class="form-control"  value="{{ request()->po_code;  }}">
+                        <input type="hidden" name="po_codenew" id="po_codenew" class="form-control"  value="{{ request()->po_code  }}">
                      </div>
                   </div>
                   <div class="col-md-2">
@@ -141,8 +161,8 @@
                   </div> 
                   <div class="col-md-2">
                      <div class="form-check form-check-primary mb-5">
-                        <input class="form-check-input" type="checkbox" id="is_opening" style="font-size: 30px;margin-top: 30px;margin-left: 0px;" name="is_opening"  @php if($purchasefetch->is_opening==1){echo 'checked'; } @endphp>
-                        <label class="form-check-label" for="is_opening" style="margin-top: 30px;position: absolute;margin-left: 20px;font-size: 20px;">
+                        <input class="form-check-input" type="checkbox" id="is_opening" style="font-size: 25px;margin-top: 30px;margin-left: 0px;" name="is_opening"  @if($purchasefetch->is_opening==1) checked  @endif>
+                        <label class="form-check-label" for="is_opening" style="margin-top: 30px;position: absolute;margin-left: 20px;font-size: 16px;">
                         Opening Stock
                         </label>
                      </div>
@@ -190,10 +210,7 @@
                            </tr>
                         </thead>
                         <tbody id="bomdis" >
-                           @php    
-                           if($detailpurchase =="") 
-                           {   
-                           @endphp
+                           @if($detailpurchase =="") 
                            <tr>
                               <td><input type="text" name="id" value="1" id="id"  style="width:50px;"/></td>
                               <td>
@@ -239,9 +256,7 @@
                                   <button type="button" onclick="deleteRow();" class="btn btn-danger pull-left" disabled >X</button> 
                               </td>
                            </tr>
-                           @php 
-                               } 
-                           @endphp    
+                           @endif   
                         </tbody>
                         <tfoot>
                            <tr>
@@ -273,11 +288,8 @@
                               <th>Allocated Stock</th>
                            </tr>
                         </thead>
-                        <tbody id="stock_allocate">
-                            @php
-                                if(count($stockData) > 0)
-                                { 
-                            @endphp
+                        <tbody id="stock_allocate"> 
+                                @if(count($stockData) > 0) 
                             @foreach($stockData as $row)
                                 <tr>
                                     <td><input type="text" name="stock_bom_code[]" value="{{$row->bom_code}}" class="form-control" style="width:100px;" readonly=""></td>
@@ -291,9 +303,7 @@
                                     </td>
                                 </tr>
                             @endforeach
-                            @php
-                                }
-                            @endphp
+                            @endif
                         </tbody>
                      </table>
                   </div>
@@ -344,6 +354,288 @@
                <button type="submit" class="btn btn-success w-md" onclick="EnableFields();" id="Submit">Save</button>
                <a href="{{ Route('TrimsInward.index') }}" class="btn btn-warning w-md">Cancel</a>
             </form>
+            </div>
+            <div class="tab-pane fade" id="return" role="tabpanel">
+               <form action="{{route('TrimsInward.update',$purchasefetch)}}" method="POST" id="frmData">
+                  <input type="hidden" name="type" id="type" class="form-control" value="<?php echo  'PURCHASE' ?>" /> 
+                  @method('put')
+                  @csrf    
+                  @if ($errors->any())
+                  <div class="col-md-6">
+                     <div class="alert alert-danger">
+                        <ul>
+                           @foreach ($errors->all() as $error)
+                           <li>{{ $error }}</li>
+                           @endforeach
+                        </ul>
+                     </div>
+                  </div>
+                  @endif
+                  @php
+                     //DB::enableQueryLog();
+                     $stockData = DB::select("select stock_association.*,item_master.item_name from stock_association 
+                     INNER JOIN item_master ON item_master.item_code = stock_association.item_code
+                     where tr_code ='".$purchasefetch->trimCode."'"); 
+                     // dd(DB::getQueryLog());
+                     if(count($stockData) > 0)
+                     {
+                           $isclick = 1;
+                     }
+                     else
+                     {
+                           $isclick = 0;
+                     } 
+                  @endphp
+                  <div class="row">
+                     <div class="col-md-3">
+                        <div class="mb-3">
+                           <label for="formrow-email-input" class="form-label">DC Date</label>
+                           <input type="hidden" name="trimDate" class="form-control" id="formrow-email-input" value="{{ $purchasefetch->trimDate  }}" required>
+                           <input type="hidden" name="userId" value="{{ Session::get('userId')}}" class="form-control" id="formrow-email-input">
+                           <input type="hidden" name="trimCode" class="form-control" id="trimCode" value="{{ $purchasefetch->trimCode }}" readonly="readonly">
+                           <input type="date" name="invoice_date" id="invoice_date" class="form-control" id="formrow-invoice_date-input" value="{{ $purchasefetch->invoice_date }}">
+                        </div>
+                     </div>
+                     <div class="col-md-2">
+                        <div class="mb-3">
+                           <label for="formrow-email-input" class="form-label">DC No</label>
+                           <input type="text" name="invoice_no" id="invoice_no" class="form-control" id="formrow-email-input" value="{{ $purchasefetch->invoice_no }}"  >
+                        </div>
+                     </div> 
+                     <div class="col-md-3">
+                           <label for="tge_code" class="form-label">Trim Gate Code</label>
+                           <select name="tge_code" class="form-select select2" id="tge_code" disabled>
+                              <option value="">--Select--</option>
+                              @foreach($TGEList as  $row) 
+                              <option value="{{ $row->tge_code }}"
+                              {{ $row->tge_code == $purchasefetch->tge_code ? 'selected="selected"' : '' }}    
+                              >{{ $row->tge_code }}</option> 
+                              @endforeach
+                           </select>
+                        </div>
+                     <div class="col-md-4">
+                           <label for="formrow-inputState" class="form-label">Location/Warehouse</label>
+                           <select name="location_id" class="form-select select2  " id="location_id" disabled>
+                              <option value="">--Select Buyer--</option>
+                              @foreach($LocationList as  $row)
+                              {
+                              <option value="{{ $row->loc_id }}"
+                              {{ $row->loc_id == $purchasefetch->location_id ? 'selected="selected"' : '' }}    
+                              >{{ $row->location }}</option>
+                              }
+                              @endforeach
+                           </select>
+                     </div>
+                     <div class="col-md-3 mt-4 m-0">
+                        <div class="mb-3">
+                           <div class="form-check form-check-primary mb-5">
+                              <input class="form-check-input" type="checkbox" id="isReturnTrimsInward" onchange="GetDCDropdown();" name="isReturnTrimsInward"  style="font-size: 30px;margin-left: 0px;margin-top: -3px;">
+                              <label class="form-check-label" for="isReturnTrimsInward" style="position: absolute;margin-left: 20px;font-size: 14px;">
+                              Trims Return From Inhouse
+                              </label>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-md-3 mt-4 m-0">
+                        <div class="mb-3">
+                           <div class="form-check form-check-primary mb-5">
+                              <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" onchange="DisableDropdown();" style="font-size: 30px;margin-left: 0px;margin-top: -3px;"/>
+                              <label class="form-check-label" for="isOutsideVendor" style="position: absolute;margin-left: 20px;font-size: 14px;">
+                              From Outsource Vendor
+                              </label>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-md-2" id="workOrder">
+                        <div class="mb-3">
+                           <label for="" class="form-label">Vendor Work Order No.</label>   
+                           <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value);" >
+                              <option value="">--Select--</option>
+                              @foreach($vendorWorkOrderList as  $vendors)
+                              <option value="{{ $vendors->vw_code  }}">{{ $vendors->vw_code }}</option>
+                              @endforeach
+                           </select>
+                        </div>
+                     </div>
+                     <div class="col-md-3" id="vendorData">
+                        <div class="mb-3">
+                           <label for="" class="form-label">Vendor Name</label>   
+                           <select name="vendorId" class="form-select select2" id="vendorId" >
+                              <option value="">--Select--</option>
+                              @foreach($vendorData as  $rows)
+                              <option value="{{ $rows->ac_code }}"  > {{ $rows->ac_short_name }}</option>
+                              @endforeach
+                           </select>
+                        </div>
+                     </div>
+                     <div class="col-md-1 mt-4">
+                        <button type="button" name="allocate[]"  onclick="stockAllocate1();" id="mainAllocation1" isClick="0" class="btn btn-warning pull-center">Allocate</button> 
+                     </div>
+                  </div> 
+                  <div class="table-wrap">
+                     <div class="table-responsive">
+                        <table id="footable_2" class="table  table-bordered table-striped m-b-0 footable_2">
+                           <thead>
+                              <tr>
+                                 <th>SrNo</th>
+                                 <th>Item Code</th>
+                                 <th>Item Name</th>
+                                 <th>Classification</th>
+                                 <th>UOM</th>
+                                 <th>Quantity</th>
+                                 <th>Rate</th>
+                                 <th>Amount</th>
+                                 <th>Rack Location</th>
+                                 <th>Action</th>
+                              </tr>
+                           </thead>
+                           <tbody id="bomdis" >
+                              @if($detailpurchase =="") 
+                              <tr>
+                                 <td><input type="text" name="id" value="1" id="id"  style="width:50px;"/></td>
+                                 <td>
+                                    <select name="item_codes[]" class="item" id="item_code" class="select2" style="width:200px;height:30px;">
+                                       
+                                       <option value="">--- Select Item ---</option>
+                                       @foreach($itemlist as  $rowitem)
+                                       {
+                                       <option value="{{ $rowitem->item_code  }}">{{ $rowitem->item_name }}</option>
+                                       }
+                                       @endforeach
+                                    </select>
+                                 </td>
+                                 <td>
+                                    <select name="unit_id[]" class="unit_ids" id="unit_ids"    style="width:150px;height:30px;">
+                                       <option value="">--- Select Unit ---</option>
+                                       @foreach($unitlist as  $rowunit)
+                                       {
+                                       <option value="{{ $rowunit->unit_id  }}" >{{ $rowunit->unit_name }}</option>
+                                       }
+                                       @endforeach
+                                    </select>
+                                 </td>
+                                 <td><input type="number" step="any"  name="item_qtys[]" class="QTY"  value="0" id="item_qty" style="width:80px;height:30px;" required/>
+                                    <input type="hidden"   name="hsn_codes[]"   value="0" id="hsn_codes" style="width:80px;height:30px;"  required/>
+                                 </td>
+                                 <td><input type="number" step="any"  name="item_rates[]"    value="0" id="item_rates" style="width:80px;height:30px;" required/></td>
+                                 <td><input type="number" step="any" readOnly name="amounts[]" class="AMT"  value="0" id="amounts" style="width:80px;height:30px;" required/></td>
+                                 <td>
+                                    <select name="rack_id[]"  id="rack_id"  class="select2" style="width:100px;height:30px;" required>
+                                       <option value="">--Racks--</option>
+                                       @foreach($RackList as  $row)
+                                       {
+                                       <option value="{{ $row->rack_id }}"
+                                          >{{ $row->rack_name }}</option>
+                                       }
+                                       @endforeach
+                                    </select>
+                                 </td>
+                                 <td>
+                                    <button type="button" onclick="stockAllocate();" class="Abutton btn btn-secondary pull-left">Allocate</button>
+                                    <button type="button" onclick=" mycalc();" class="btn btn-warning pull-left" disabled >+</button>
+                                    <button type="button" onclick="deleteRow();" class="btn btn-danger pull-left" disabled >X</button> 
+                                 </td>
+                              </tr>
+                              @endif   
+                           </tbody>
+                           <tfoot>
+                              <tr>
+                                 <th>SrNo</th>
+                                 <th>Item Code</th>
+                                 <th>Item Name</th>
+                                 <th>Classification</th>
+                                 <th>Unit</th>
+                                 <th>Quantity</th>
+                                 <th>Rate</th>
+                                 <th>Amount</th>
+                                 <th>Rack Location</th>
+                                 <th>Add/Remove</th>
+                              </tr>
+                           </tfoot>
+                        </table>
+                     </div>
+                  </div>
+                  <br/>
+                  <div class="table-wrap">
+                     <div class="table-responsive">
+                        <table id="footable_2" class="table  table-bordered table-striped m-b-0 footable_2">
+                           <thead>
+                              <tr>
+                                 <th>BOM Code</th>
+                                 <th>Sales Order No</th>
+                                 <th>Item Code</th>
+                                 <th>Item Name</th>
+                                 <th>Allocated Stock</th>
+                              </tr>
+                           </thead>
+                           <tbody id="stock_allocate"> 
+                                 @if(count($stockData) > 0) 
+                              @foreach($stockData as $row)
+                                 <tr>
+                                       <td><input type="text" name="stock_bom_code[]" value="{{$row->bom_code}}" class="form-control" style="width:100px;" readonly=""></td>
+                                       <td><input type="text" name="sales_order_no[]" value="{{$row->sales_order_no}}" class="form-control" style="width:100px;" readonly=""></td>
+                                       <td><input type="text" name="item_code[]" value="{{$row->item_code}}" class="form-control" style="width:100px;" readonly=""></td>
+                                       <td><input type="text" name="item_name[]" value="{{$row->item_name}}" class="form-control" style="width:260px;" readonly=""></td>
+                                       <td>
+                                          <input type="text" name="allocate_qty[]" value="{{$row->qty}}" class="form-control allocate_qty" style="width:100px;" readonly="">
+                                          <input type="hidden" name="cat_id[]" value="{{$row->cat_id}}" class="form-control" style="width:100px;" >
+                                          <input type="hidden" name="class_id[]" value="{{$row->class_id}}"  class="form-control" style="width:100px;">
+                                       </td>
+                                 </tr>
+                              @endforeach
+                              @endif
+                           </tbody>
+                        </table>
+                     </div>
+                  </div>
+                  <input type="hidden"   name="cnt" id="cnt" value="{{ count($detailpurchase) }}">  
+                  <div class="row">
+                     <div class="col-md-2">
+                        <div class="mb-3">
+                           <label for="formrow-email-input" class="form-label">Total Quantity</label>
+                           <input type="text" name="totalqty" class="form-control" id="totalqty" value="{{ $purchasefetch->totalqty }}" required>
+                        </div>
+                     </div>
+                     <div class="col-md-2">
+                        <div class="mb-3">
+                           <label for="formrow-email-input" class="form-label">Total Amount</label>
+                           <input type="text" name="total_amount" class="form-control" id="total_amount" value="{{ $purchasefetch->total_amount }}" required>
+                        </div>
+                     </div>
+                     <div class="col-md-2">
+                        <div class="mb-3">
+                           <label for="total_allocate_qty" class="form-label">Total Allocated Qty</label>
+                           <input type="text" class="form-control" id="total_allocate_qty" value="">
+                        </div>
+                     </div>
+                  <div class="col-md-2 mt-4">
+                        <div class="mb-3">
+                           <div class="form-check form-check-primary mb-5">
+                           <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);" name="isReturnFabricInward" value="{{ $purchasefetch->isReturnFabricInward}}" {{ $purchasefetch->isReturnFabricInward == 1 ? 'checked="checked"' : '' }} >
+                           <label class="form-check-label" for="isReturnFabricInward">
+                           Is it retun trim inward ? 
+                           </label>
+                           </div>
+                        </div>
+                  </div> 
+                  <div class="col-md-2 hide" id="workOrder">
+                        <div class="mb-3">
+                        <label for="" class="form-label">Vendor Work Order No.</label>   
+                           <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value);">
+                           <option value="">--Select--</option>
+                           @foreach($vendorWorkOrderList as  $vendors)
+                              <option value="{{ $vendors->vw_code  }}" {{ $vendors->vw_code == $purchasefetch->vw_code ? 'selected="selected"' : '' }} >{{ $vendors->vw_code }}</option>
+                           @endforeach
+                           </select>
+                        </div>
+                  </div>
+                  </div>
+                  </br>  
+                  <button type="submit" class="btn btn-success w-md" onclick="EnableFields();" id="Submit">Save</button>
+                  <a href="{{ Route('TrimsInward.index') }}" class="btn btn-warning w-md">Cancel</a>
+               </form>
+               
+            </div>
          </div>
          <!-- end card body -->
       </div>

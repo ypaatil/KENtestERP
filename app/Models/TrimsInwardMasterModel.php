@@ -14,7 +14,8 @@ class TrimsInwardMasterModel extends Model
      
  
 	protected $fillable = ['trimCode','po_code', 'trimDate', 'is_opening','invoice_no','invoice_date','Ac_code','po_type_id','totalqty','bill_to',
-                    'total_amount','isReturnFabricInward','vw_code','is_opening','location_id','delflag','userId','created_at','updated_at','tge_code'];
+                    'total_amount','isReturnFabricInward','vw_code','is_opening','location_id','delflag','userId','created_at','updated_at',
+                    'tge_code','isOutsideVendor','vendorId','tab_button'];
     
     protected $attributes = [
         'delflag' => 0,

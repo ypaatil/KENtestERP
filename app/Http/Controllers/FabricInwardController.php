@@ -219,7 +219,7 @@ class FabricInwardController extends Controller
         
         'isReturnFabricInward'=>$isReturnFabricInward,'vpo_code'=>$request->vpo_code,'isOutsideVendor'=>$isOutsideVendor,
         'total_meter'=>$request->total_meter,  'total_taga_qty'=>$request->total_taga_qty,'total_amount'=>$request->total_amount,
-        'in_narration'=>$request->in_narration,  'c_code' => $request->c_code,'vendorId' => $request->vendorId,
+        'in_narration'=>$request->in_narration,  'c_code' => $request->c_code,'vendorId' => $request->vendorId,'tab_button' => $request->tab_button,
         'userId'=>$request->userId, 'delflag'=>'0', 'CounterId'=>'1', 'buyer_id'=>$buyer_id
     );
     

@@ -148,7 +148,11 @@ class TrimsInwardController extends Controller
             ->get();
 
         $TGEList = DB::table('trim_gate_entry_master')->where('delflag', '=', 0)->get();
-        return view('TrimsInward', compact('firmlist', 'RackList', 'ledgerlist', 'gstlist', 'itemlist', 'code', 'unitlist', 'POTypeList', 'JobStatusList', 'POList', 'LocationList', 'vendorWorkOrderList', 'TGEList', 'BillToList'));
+        
+        $vendorData = DB::select("select ac_short_name, ledger_master.ac_code from vendor_purchase_order_master 
+                            INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId GROUP BY vendor_purchase_order_master.vendorId");
+
+        return view('TrimsInward', compact('firmlist','vendorData', 'RackList', 'ledgerlist', 'gstlist', 'itemlist', 'code', 'unitlist', 'POTypeList', 'JobStatusList', 'POList', 'LocationList', 'vendorWorkOrderList', 'TGEList', 'BillToList'));
     }
 
     /**
@@ -161,7 +165,9 @@ class TrimsInwardController extends Controller
     {
         //echo '<pre>';print_r($_POST);exit;
         $firm_id = $request->input('firm_id');
-        $is_opening = isset($request->is_opening) ? 1 : 0;
+        $is_opening = isset($request->is_opening) ? 1 : 0; 
+        $isReturnFabricInward=isset($request->isReturnFabricInward) ? 1 : 0;
+        $isOutsideVendor=isset($request->isOutsideVendor) ? 1 : 0;
 
         $codefetch = DB::table('counter_number')->select(DB::raw("tr_no + 1 as 'tr_no',c_code,code"))
             ->where('c_name', '=', 'C1')
@@ -190,13 +196,16 @@ class TrimsInwardController extends Controller
             "po_type_id" => $request->input('po_type_id'),
             "totalqty" => $request->input('totalqty'),
             'total_amount' => $request->total_amount,
-            'isReturnFabricInward' => $request->isReturnFabricInward,
+            'isReturnFabricInward' =>$isReturnFabricInward,
             'vw_code' => $request->vw_code,
             "delflag" => 0,
             'is_opening' => $is_opening,
             'location_id' => $request->location_id,
             'tge_code' => $request->tge_code,
             'bill_to' => $request->bill_to,
+            'tab_button' => $request->tab_button,
+            'vendorId' => $request->vendorId,
+            'isOutsideVendor'=>$isOutsideVendor,
             "userId" => $request->input('userId')
         );
         $itemcodes = 0;
@@ -285,14 +294,47 @@ class TrimsInwardController extends Controller
                 }
 
 
+                $ac_code = $request->Ac_code ?? 0;  // or null
+                $suplier_id = $request->suplier_id ?? 0;
+
                 $item_name = isset($itemData->item_name) ? $itemData->item_name : "";
                 $item_description = isset($itemData->item_description) ? $itemData->item_description : "";
 
-                DB::SELECT('INSERT INTO dump_trim_stock_data(trimDate,buyer_name,suplier_name,po_no,item_code,item_name,rate,color,item_description,po_status,job_status_id,rack_id,ac_code,suplier_id,unit_id,trimCode,grn_qty,outward_qty,ind_outward_qty,amount)
-                                select "' . $request->trimDate . '","' . $buyerName . '","' . $suplierName . '","' . $po_code . '","' . $item_code . '","' . addslashes($item_name) . '","' . $item_rate . '", "-",
-                                        "' . addslashes($item_description) . '", "' . $po_status . '","' . $job_status_id . '", "' . $rack_id . '","' . $request->Ac_code . '","' . $request->Ac_code . '","' . $unit_id . '","' . $TrNo . '","' . $item_qty . '",0,"","' . $amount . '"');
-                //dd(DB::getQueryLog());
+                $ac_code     = (int)($request->Ac_code ?? 0);
+                $suplier_id  = (int)($request->suplier_id ?? 0);
+                $item_name_s = addslashes($item_name);
+                $item_desc_s = addslashes($item_description);
 
+                DB::statement(
+                    'INSERT INTO dump_trim_stock_data
+                    (
+                        trimDate, buyer_name, suplier_name, po_no, item_code, item_name, rate, color,
+                        item_description, po_status, job_status_id, rack_id, ac_code, suplier_id,
+                        unit_id, trimCode, grn_qty, outward_qty, ind_outward_qty, amount
+                    )
+                    SELECT ?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?',
+                    [
+                        $request->trimDate,
+                        $buyerName,
+                        $suplierName,
+                        $po_code,
+                        $item_code,
+                        $item_name_s,
+                        $item_rate,
+                        "-",
+                        $item_desc_s,
+                        $po_status,
+                        $job_status_id,
+                        $rack_id,
+                        $ac_code,        // integer value
+                        $suplier_id,     // correct supplier id
+                        $unit_id,
+                        $TrNo,
+                        $item_qty,
+                        0,
+                        "",
+                        $amount
+                    ]);
 
             }
             for ($y = 0; $y < $allocate_qtys; $y++) {
@@ -406,8 +448,11 @@ class TrimsInwardController extends Controller
             $BillToList = DB::SELECT("SELECT ledger_details.sr_no, ledger_details.trade_name, ledger_details.site_code FROM purchase_order INNER JOIN ledger_details ON ledger_details.sr_no = purchase_order.bill_to WHERE purchase_order.Ac_code='" . $purchasefetch->Ac_code . "'");
         }
 
+        $vendorData = DB::select("select ac_short_name, ledger_master.ac_code from vendor_purchase_order_master 
+                            INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId GROUP BY vendor_purchase_order_master.vendorId");
+
         //dd(DB::getQueryLog()); 
-        return view('TrimsInwardEdit', compact('POList', 'RackList', 'purchasefetch', 'po_sr_no', 'firmlist', 'TGEList', 'ledgerlist', 'gstlist', 'itemlist', 'detailpurchase', 'unitlist', 'POTypeList', 'JobStatusList', 'BOMLIST', 'LocationList', 'vendorWorkOrderList', 'BillToList'));
+        return view('TrimsInwardEdit', compact('POList', 'RackList','vendorData', 'purchasefetch', 'po_sr_no', 'firmlist', 'TGEList', 'ledgerlist', 'gstlist', 'itemlist', 'detailpurchase', 'unitlist', 'POTypeList', 'JobStatusList', 'BOMLIST', 'LocationList', 'vendorWorkOrderList', 'BillToList'));
     }
 
     /**
@@ -420,7 +465,9 @@ class TrimsInwardController extends Controller
     public function update(Request $request, $pur_code, TrimsInOutActivityLog $loggerDetail, TrimsInOutMasterActivityLog $loggerMaster)
     {
         //echo '<pre>';print_R($_POST);exit;
-        $is_opening = isset($request->is_opening) ? 1 : 0;
+        $is_opening = isset($request->is_opening) ? 1 : 0; 
+        $isReturnFabricInward=isset($request->isReturnFabricInward) ? 1 : 0;
+        $isOutsideVendor=isset($request->isOutsideVendor) ? 1 : 0;
         $po_code = '';
         $allocate_qtys = 0;
 
@@ -442,13 +489,16 @@ class TrimsInwardController extends Controller
             "po_type_id" => $request->input('po_type_id'),
             "totalqty" => $request->input('totalqty'),
             'total_amount' => $request->total_amount,
-            'isReturnFabricInward' => $request->isReturnFabricInward,
+            'isReturnFabricInward' => $isReturnFabricInward,
             'vw_code' => $request->vw_code,
             "delflag" => 0,
             'is_opening' => $is_opening,
             'location_id' => $request->location_id,
             'tge_code' => $request->tge_code,
             'bill_to' => $request->bill_to,
+            'tab_button' => $request->tab_button,
+            'vendorId' => $request->vendorId,
+            'isOutsideVendor'=>$isOutsideVendor,
             "userId" => $request->input('userId')
         );
 
@@ -915,7 +965,7 @@ from item_master where item_code='$value->item_code'"));
                        <table id="footable_2" class="table  table-bordered table-striped m-b-0  footable_2">
                 <thead>
                 <tr>
-                    <th>SrNo</th>
+                    <th>Sr No</th>
                     <th>Item Code</th>
                     <th>Item Name</th>
                     <th>Classification</th>
@@ -925,7 +975,7 @@ from item_master where item_code='$value->item_code'"));
                     <th>Item Rate</th>
                     <th>Amount</th>
                     <th>Rack</th>
-                    <th nowrap>Remove <button type="button" name="allocate[]"  onclick="stockAllocate(this);" id="mainAllocation"  isClick = "0" class="btn btn-success pull-left">Allocate</button></th>
+                    <th>Remove</th>
                 </tr>
                 </thead>
                 <tbody>';
@@ -3598,19 +3648,19 @@ from item_master where item_code='$value->item_code'"));
         $code = $request->code;
 
         $vendorData = DB::select("
-            SELECT lm.ac_name 
+            SELECT lm.ac_code 
             FROM vendor_purchase_order_master vpo
             INNER JOIN ledger_master lm ON lm.ac_code = vpo.vendorId
             WHERE vpo.vpo_code = ?
             
             UNION ALL
             
-            SELECT lm.ac_name 
+            SELECT lm.ac_code 
             FROM vendor_work_order_master vwo
             INNER JOIN ledger_master lm ON lm.ac_code = vwo.vendorId
             WHERE vwo.vw_code = ?
         ", [$code, $code]);
 
-        return response()->json(['html' => $vendorData[0]->ac_name]);
+        return response()->json(['ac_code' => $vendorData[0]->ac_code]);
     }
 }
