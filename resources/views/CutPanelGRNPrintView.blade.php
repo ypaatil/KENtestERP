@@ -467,13 +467,12 @@
                         <div class="col-md-4 verticalLine text-center p-2">
                             <img src="http://kenerp.com/logo/ken.jpeg" alt="Ken Enterprise Pvt. Ltd." height="130" width="230">
                         </div>
-
+                        @php
+                        $data= getCompanyAddress();
+                        @endphp
                         <div class="col-md-7" style="margin-top:10px;">
-                            <h4 class="mb-2 fw-bold">KEN GLOBAL DESIGNS PRIVATE LIMITED</h4>
-                            <p>Reg.Office:18/20 Back Side Of Hotel City In, Industrial Estate, Ichalkaranji-416115<br>
-                                Tal Hatkanangale Dist Kolhapur Maharashtra INDIA.<br>
-                                Works: Gat No 298&299,At Kondigare, Tal: Shirol, Dist: Kolhapur-416102 <br>
-                                Tel : +91230 2438538 Email:office@kenindia.in
+                            <h4 class="mb-2 fw-bold">{{$data['heading']}}</h4>
+                            <p>{!!$data['address']!!}
                             </p>
                         </div>
 
@@ -504,7 +503,7 @@
                                 <div class="info-row">
                                     <div class="label">Cut Panel GRN Date</div>
                                     <div class="colon">:</div>
-                                    <div class="value"> {{ $CutPanelGRNMaster[0]->cpg_date }}</div>
+                                    <div class="value"> {{ \Carbon\Carbon::parse( $CutPanelGRNMaster[0]->cpg_date)->format('d-m-Y') }}</div>
                                 </div>
                                 <div class="info-row">
                                     <div class="label">Sales Order no</div>
@@ -519,24 +518,27 @@
                             </div>
 
                         </div>
+                        @php
+                        $company=getCompanyInfo();
+                        @endphp
                         <div class="col-md-6 p-2">
                             <p><b>Company Name: </b></p>
-                            <p><b>Ken Global Designs Pvt Ltd</b> <br> Gat No.- 298/299, A/P Kondigre Kolhapur Mahrashtra - 416101</p>
+                            <p> <b>{{ $company['name'] }}</b><br>{{ $company['address'] }}</p>
 
                             <div class="info-row">
                                 <div class="label">PAN NO</div>
                                 <div class="colon">:</div>
-                                <div class="value"> 7591Q1ZD</div>
+                                <div class="value">{{ $company['pan'] }} </div>
                             </div>
                             <div class="info-row">
                                 <div class="label">GST NO</div>
                                 <div class="colon">:</div>
-                                <div class="value"> 27ABCCS7591Q1ZD</div>
+                                <div class="value">{{ $company['gst'] }} </div>
                             </div>
                             <div class="info-row">
                                 <div class="label">STATE</div>
                                 <div class="colon">:</div>
-                                <div class="value"> MAHARASTRA</div>
+                                <div class="value"> {{ $company['state'] }}</div>
                             </div>
 
                         </div>
@@ -560,8 +562,6 @@
                                     <div class="colon">:</div>
                                     <div class="value"> {{ $CutPanelGRNMaster[0]->pan_no }}</div>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>
@@ -591,37 +591,32 @@
                                 <td class="text-end">{{$no}}</td>
                                 <td class="text-start"> {{$row->item_name}}</td>
                                 <td class="text-start"> {{$row->color_name}}</td>
-                                @if(isset($row->s1)) <td class="text-end">{{$row->s1}}</td> @endif
-                                @if(isset($row->s2)) <td class="text-end">{{$row->s2}}</td>@endif
-                                @if(isset($row->s3)) <td class="text-end">{{$row->s3}}</td>@endif
-                                @if(isset($row->s4)) <td class="text-end">{{$row->s4}}</td>@endif
-                                @if(isset($row->s5)) <td class="text-end">{{$row->s5}}</td>@endif
-                                @if(isset($row->s6)) <td class="text-end">{{$row->s6}}</td>@endif
-                                @if(isset($row->s7)) <td class="text-end">{{$row->s7}}</td>@endif
-                                @if(isset($row->s8)) <td class="text-end">{{$row->s8}}</td>@endif
-                                @if(isset($row->s9)) <td class="text-end">{{$row->s9}}</td>@endif
-                                @if(isset($row->s10)) <td class="text-end">{{$row->s10}}</td>@endif
-                                @if(isset($row->s11)) <td class="text-end">{{$row->s11}}</td>@endif
-                                @if(isset($row->s12)) <td class="text-end">{{$row->s12}}</td>@endif
-                                @if(isset($row->s13)) <td class="text-end">{{$row->s13}}</td>@endif
-                                @if(isset($row->s14)) <td class="text-end">{{$row->s14}}</td>@endif
-                                @if(isset($row->s15)) <td class="text-end">{{$row->s15}}</td>@endif
-                                @if(isset($row->s16)) <td class="text-end">{{$row->s16}}</td>@endif
-                                @if(isset($row->s17)) <td class="text-end">{{$row->s17}}</td>@endif
-                                @if(isset($row->s18)) <td class="text-end">{{$row->s18}}</td>@endif
-                                @if(isset($row->s19)) <td class="text-end">{{$row->s19}}</td>@endif
-                                @if(isset($row->s20)) <td class="text-end">{{$row->s20}}</td> @endif
-                                <td class="text-end">{{$row->size_qty_total}}</td>
+                                @if(isset($row->s1)) <td class="text-end">{{number_format($row->s1)}}</td>@endif
+                                @if(isset($row->s2)) <td class="text-end">{{number_format($row->s2)}}</td>@endif
+                                @if(isset($row->s3)) <td class="text-end">{{number_format($row->s3)}}</td>@endif
+                                @if(isset($row->s4)) <td class="text-end">{{number_format($row->s4)}}</td>@endif
+                                @if(isset($row->s5)) <td class="text-end">{{number_format($row->s5)}}</td>@endif
+                                @if(isset($row->s6)) <td class="text-end">{{number_format($row->s6)}}</td>@endif
+                                @if(isset($row->s7)) <td class="text-end">{{number_format($row->s7)}}</td>@endif
+                                @if(isset($row->s8)) <td class="text-end">{{number_format($row->s8)}}</td>@endif
+                                @if(isset($row->s9)) <td class="text-end">{{number_format($row->s9)}}</td>@endif
+                                @if(isset($row->s10)) <td class="text-end">{{number_format($row->s10)}}</td>@endif
+                                @if(isset($row->s11)) <td class="text-end">{{number_format($row->s11)}}</td>@endif
+                                @if(isset($row->s12)) <td class="text-end">{{number_format($row->s12)}}</td>@endif
+                                @if(isset($row->s13)) <td class="text-end">{{number_format($row->s13)}}</td>@endif
+                                @if(isset($row->s14)) <td class="text-end">{{number_format($row->s14)}}</td>@endif
+                                @if(isset($row->s15)) <td class="text-end">{{number_format($row->s15)}}</td>@endif
+                                @if(isset($row->s16)) <td class="text-end">{{number_format($row->s16)}}</td>@endif
+                                @if(isset($row->s17)) <td class="text-end">{{number_format($row->s17)}}</td>@endif
+                                @if(isset($row->s18)) <td class="text-end">{{number_format($row->s18)}}</td>@endif
+                                @if(isset($row->s19)) <td class="text-end">{{number_format($row->s19)}}</td>@endif
+                                @if(isset($row->s20)) <td class="text-end">{{number_format($row->s20)}}</td> @endif
+                                <td class="text-end">{{number_format($row->size_qty_total)}}</td>
                             </tr>
                             @php $no=$no+1;
-
-
                             $totalQty = $totalQty + $row->size_qty_total;
                             @endphp
                             @endforeach
-
-                            <!-- added below code is for each size total -->
-
                             @php
                             // Initialize size totals
                             $sizeTotals = [];
@@ -640,26 +635,16 @@
                                 }
                                 @endphp
 
-                                <!-- 
-                        <tfoot>
-                            <tr>
-                                <td class="text-end" colspan="{{count($SizeDetailList) + 3}}">Total :</td>
-                                <td class="text-end">{{$totalQty}}</td>
-                            </tr>
-                        </tfoot> -->
-
                         <tfoot>
                             <tr>
                                 <td colspan="3" class="text-end fw-bold">Total :</td>
                                 @foreach ($SizeDetailList as $index => $sz)
                                 @php $key = 's'.($index+1); @endphp
-                                <td class="text-end fw-bold">{{ $sizeTotals[$key] ?? 0 }}</td>
+                                <td class="text-end fw-bold">{{ number_format($sizeTotals[$key] ?? 0)}}</td>
                                 @endforeach
-                                <td class="text-end fw-bold">{{$totalQty}}</td>
+                                <td class="text-end fw-bold">{{number_format($totalQty)}}</td>
                             </tr>
                         </tfoot>
-
-
                         </tbody>
 
                     </table>
