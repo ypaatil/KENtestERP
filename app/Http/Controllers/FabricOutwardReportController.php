@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use DateTime;
 use DatePeriod;
 use DateInterval;
-
+use Carbon\Carbon;
 class FabricOutwardReportController extends Controller
 {
     /**
@@ -170,14 +170,20 @@ class FabricOutwardReportController extends Controller
 
         $fdate = $request->fdate;
         $tdate = $request->tdate;
-
+/*
         if ($tdate > date('Y-m-d')) {
             $tdate = date('Y-m-d');
         }
+        $period = $this->getBetweenDates($fdate, $tdate);*/
 
+        $start = Carbon::parse($request->fdate);
+        $end   = Carbon::parse($request->tdate);
 
-        $period = $this->getBetweenDates($fdate, $tdate);
+        $period = [];
 
+        for ($date = $start; $date->lte($end); $date->addDay()) {
+            $period[] = $date->format('Y-m-d');
+        }     
         $FirmDetail =  DB::table('firm_master')->first();
 
         //   DB::enableQueryLog();
