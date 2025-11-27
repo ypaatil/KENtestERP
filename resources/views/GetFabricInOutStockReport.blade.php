@@ -52,7 +52,18 @@
 
 </form>
  
+<script>
+document.querySelector("form").addEventListener("submit", function(e) {
 
+    let fromDate = document.getElementById("fdate").value;
+    let toDate   = document.getElementById("tdate").value;
+
+    if (toDate < fromDate) {
+        e.preventDefault(); // stop form submit
+        alert("To Date cannot be less than From Date.");
+    }   
+});
+</script>
 
 </div>
 <!-- end card body -->
