@@ -1242,7 +1242,7 @@ from item_master where item_code='$value->item_code'"));
         if ($request->ajax()) {
             // Old Query
             //DB::enableQueryLog();
-           /* $TrimsInwardDetails = TrimsInwardDetailModel::leftJoin('ledger_master', 'ledger_master.ac_code', '=', 'trimsInwardDetail.Ac_code')
+          /*  $TrimsInwardDetails = TrimsInwardDetailModel::leftJoin('ledger_master', 'ledger_master.ac_code', '=', 'trimsInwardDetail.Ac_code')
                 ->leftJoin('trimsInwardMaster', 'trimsInwardMaster.trimCode', '=', 'trimsInwardDetail.trimCode')
                 ->leftJoin('item_master', 'item_master.item_code', '=', 'trimsInwardDetail.item_code')
                 ->leftJoin('purchase_order', 'purchase_order.pur_code', '=', 'trimsInwardDetail.po_code')
@@ -1273,47 +1273,67 @@ from item_master where item_code='$value->item_code'"));
                     'item_master.color_name',
                     'item_master.item_description',
                     'rack_master.rack_name'
-                ]); */ 
+                ]); */
 
                 // New Query
-          $TrimsInwardDetails = TrimsInwardDetailModel::query()
-    ->leftJoin('ledger_master', 'ledger_master.ac_code', '=', 'trimsInwardDetail.Ac_code')
-    ->leftJoin('trimsInwardMaster', 'trimsInwardMaster.trimCode', '=', 'trimsInwardDetail.trimCode')
-    ->leftJoin('item_master', 'item_master.item_code', '=', 'trimsInwardDetail.item_code')
-    ->leftJoin('purchase_order', 'purchase_order.pur_code', '=', 'trimsInwardDetail.po_code')    
-    ->leftJoin('ledger_master as LM1', 'LM1.ac_code', '=', 'purchase_order.buyer_id')
-    ->leftJoin('ledger_master as LM2', 'LM2.ac_code', '=', 'trimsInwardMaster.buyer_id')    
-    ->leftJoin('vendor_work_order_master', 'vendor_work_order_master.vw_code', '=', 'trimsInwardMaster.vw_code')
-    ->leftJoin('ledger_master as LM3', 'LM3.ac_code', '=', 'vendor_work_order_master.vendorId')
-    ->leftJoin('rack_master', 'rack_master.rack_id', '=', 'trimsInwardDetail.rack_id')
-    ->leftJoin('ledger_details as LD', function ($join) {
-        $join->on('LD.sr_no', '=', 'purchase_order.bill_to')
-             ->orOn('LD.ac_code', '=', 'trimsInwardMaster.Ac_code');
+                $TrimsInwardDetails = TrimsInwardDetailModel::query()
+
+    // JOIN trimsInwardMaster (main parent)
+    ->leftJoin('trimsInwardMaster as TIM', 'TIM.trimCode', '=', 'trimsInwardDetail.trimCode')
+
+    // JOIN item master with filter inside JOIN (MUCH FASTER)
+    ->leftJoin('item_master as IM', function($q){
+        $q->on('IM.item_code', '=', 'trimsInwardDetail.item_code')
+          ->where('IM.cat_id', '!=', 4);
     })
-    ->whereBetween('trimsInwardMaster.trimDate', [$fromDate, $toDate])
-    ->where('item_master.cat_id', '!=', 4)
+
+    // JOIN purchase order
+    ->leftJoin('purchase_order as PO', 'PO.pur_code', '=', 'trimsInwardDetail.po_code')
+
+    // Buyer name
+    ->leftJoin('ledger_master as LM1', 'LM1.ac_code', '=', 'PO.buyer_id')
+
+    // 2nd buyer name
+    ->leftJoin('ledger_master as LM2', 'LM2.ac_code', '=', 'TIM.buyer_id')
+
+    // Rack
+    ->leftJoin('rack_master as RM', 'RM.rack_id', '=', 'trimsInwardDetail.rack_id')
+
+    // Vendor work order
+    ->leftJoin('vendor_work_order_master as VW', 'VW.vw_code', '=', 'TIM.vw_code')
+
+    // Vendor name
+    ->leftJoin('ledger_master as LM3', 'LM3.ac_code', '=', 'VW.vendorId')
+
+    // FAST replacement for 2 slow subqueries
+    ->leftJoin('ledger_details as LD', function($q){
+        $q->on('LD.sr_no', '=', 'PO.bill_to')
+          ->orOn('LD.ac_code', '=', 'TIM.Ac_code');
+    })
+
+    // FAST because TIM.trimDate is indexed
+    ->whereBetween('TIM.trimDate', [$fromDate, $toDate])
 
     ->get([
         'trimsInwardDetail.*',
         'LM1.ac_short_name as buyer',
-        'trimsInwardMaster.is_opening',
-        'trimsInwardMaster.invoice_no',
-        'trimsInwardMaster.po_code',
+        'TIM.is_opening',
+        'TIM.invoice_no',
+        'TIM.po_code',
         'LM1.ac_short_name as BuyerName1',
         'LM2.ac_short_name as BuyerName2',
-        'trimsInwardMaster.invoice_date',
-        'ledger_master.ac_name',
-        'item_master.dimension',
-        'item_master.item_name',
-        'trimsInwardMaster.vw_code',
+        'TIM.invoice_date',
+        'LM1.ac_name',
+        'IM.dimension',
+        'IM.item_name',
+        'IM.color_name',
+        'IM.item_description',
+        'TIM.vw_code',
         'LM3.ac_short_name as vendorName',
         'LD.trade_name',
         'LD.site_code',
-        'item_master.color_name',
-        'item_master.item_description',
-        'rack_master.rack_name'
+        'RM.rack_name',
     ]);
-
 
 
             //return $sql = DB::getQueryLog();

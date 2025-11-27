@@ -205,6 +205,7 @@ ini_set('memory_limit', '10G');
          else if(menu.hasClass('rate')) applySimpleFilter(18, menu);
          else if(menu.hasClass('amount')) applySimpleFilter(19, menu);
          else if(menu.hasClass('remark')) applySimpleFilter(20, menu);
+
                                
          $('.filter-menu').hide();
          
