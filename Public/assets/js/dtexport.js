@@ -118,7 +118,14 @@ function escapeHtml(str) {
 
 function buildSimpleFilter(selector, colIndex) {
  
-  const table = $('#dt').DataTable();
+  let tableId = $('table.dataTable').attr('id'); 
+  let table = null;
+
+  if(tableId == 'dt')
+  table = $('#dt').DataTable();
+  else
+  table = $('#'+tableId).DataTable();  
+
   const menu = $(selector);
 
   let valuesToShow;
@@ -461,28 +468,18 @@ function escapeRegex(text) {
     return text.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 }
   
-/*
-function applySimpleFilter(col, menu) {
-    const table = $('#dt').DataTable();
-    
-    const vals = menu.find('.opt:checked').map((i, e) => escapeRegex(e.value)).get();
-    let valsD = menu.find('.opt:checked').map((i, e) => {
-        return e.value.replace(/\\/g, "");
-    }).get();
-    console.log(valsD);
-    savedFilterStates[col] = valsD;
-     
-    const visibleOptions = menu.find('.opt').map((i, e) => e.value).get();   
-    savedVisibleValues[col] = visibleOptions;
-    lastParentFilterCol = col;
- 
-    const pattern = vals.length ? vals.join('|') : '❌';
-    
-    table.column(col).search(pattern, true, false).draw();
-    }  */
+
 
     function applySimpleFilter(col, menu) {
-    const table = $('#dt').DataTable();
+    //const table = $('#dt').DataTable();
+
+      let tableId = $('table.dataTable').attr('id'); 
+      let table = null;
+
+      if(tableId == 'dt')
+      table = $('#dt').DataTable();
+      else
+      table = $('#'+tableId).DataTable();   
 
     const vals = menu.find('.opt:checked').map((i, e) => e.value).get();
     savedFilterStates[col] = vals;
@@ -695,6 +692,7 @@ function applyDateFilter(col, menu) {
     buildSimpleFilter('.rack-code', 20);
   }
 
+
     function updateFooterForFabricGRNDataReport() {
     const data = $('#dt').DataTable().rows({ search: 'applied' }).data();
     let head_total_qty = 0;
@@ -814,6 +812,22 @@ function applyDateFilter(col, menu) {
       buildSimpleFilter('.amount', 19);
       buildSimpleFilter('.remark', 20);
      }
+
+      function buildAllMenusFabricAssociationReport(){
+        buildSimpleFilter('.sr-no', 0);
+        buildSimpleFilter('.sales-order-no', 1);
+        buildSimpleFilter('.item-code', 2);
+        buildSimpleFilter('.po-code', 3);
+        buildSimpleFilter('.supplier-name', 4);
+        buildSimpleFilter('.bill-to', 5);
+        buildSimpleFilter('.item-name', 6);
+        buildSimpleFilter('.total-asso', 7);
+        buildSimpleFilter('.allocated-stock', 8);
+        buildSimpleFilter('.issue-stock', 9);
+        buildSimpleFilter('.available-stock', 10);
+      }
+
+
 
        function table_values_indian_format()  {
           function formatIndianNumber(num) {

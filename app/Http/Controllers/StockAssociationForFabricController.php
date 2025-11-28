@@ -871,7 +871,9 @@ class StockAssociationForFabricController extends Controller
         ini_set('memory_limit', '10G');
         if ($request->ajax()) 
         { 
-            
+             $fromDate =  isset($request->fromDate) ? $request->fromDate : date("Y-m-01");
+             $toDate =  isset($request->toDate) ? $request->toDate : date("Y-m-d");
+
             $srno = 1;
             //DB::enableQueryLog();
             $trimsAssocData = DB::select("SELECT dump_fabric_stock_association.*,item_category.cat_name,
@@ -879,7 +881,8 @@ class StockAssociationForFabricController extends Controller
                    (SELECT site_code FROM ledger_details WHERE ledger_details.sr_no = purchase_order.bill_to LIMIT 1) as site_code  FROM dump_fabric_stock_association
                    INNER JOIN item_master ON item_master.item_code = dump_fabric_stock_association.item_code 
                    INNER JOIN item_category ON item_category.cat_id = item_master.cat_id
-                   LEFT JOIN purchase_order ON purchase_order.pur_code = dump_fabric_stock_association.po_code");
+                   LEFT JOIN purchase_order ON purchase_order.pur_code = dump_fabric_stock_association.po_code  
+                   WHERE dump_fabric_stock_association.po_date BETWEEN '".$fromDate."' AND '".$toDate."'   "); // Just added datewise filter
          
       //dd(DB::getQueryLog());
             return Datatables::of($trimsAssocData) 

@@ -16,7 +16,38 @@
    <div class="col-12 text-center"> 
           <h3><b>Fabric Association Report</b></h3> 
    </div>
-</div>                         
+</div>
+
+<div class="row">
+   <div class="col-md-12">
+      <div class="card">
+         <div class="card-body"> 
+               <div class="row">
+                   <div class="col-md-2">
+                     <div class="mb-3">
+                        <label for="fromDate" class="form-label">From</label>
+                        <input type="date" class="form-control" name="fromDate" id="fromDate" value="{{ isset($fromDate) ? $fromDate : date('Y-m-01')}}">
+                     </div>
+                   </div>
+                   <div class="col-md-2">
+                     <div class="mb-3">
+                        <label for="toDate" class="form-label">To</label>
+                        <input type="date" class="form-control" name="toDate" id="toDate" value="{{ isset($toDate) ? $toDate : date('Y-m-d')}}">
+                     </div>
+                   </div> 
+                   <div class="col-sm-5">
+                      <label for="formrow-inputState" class="form-label"></label>
+                      <div class="form-group">
+                         <button type="button" onclick="tableData(1);" class="btn btn-primary w-md">Search</button>
+                         <a href="javascript:void(0);" onclick="ClearReport(0);" class="btn btn-danger w-md">Cancel</a>
+                      </div>
+                   </div> 
+               </div>
+         </div>
+      </div>
+   </div>
+</div>
+
 <div class="row">
    <div class="col-12">
       <div class="card">
@@ -26,17 +57,17 @@
                <table id="ocrTbl" class="DataTable table table-bordered nowrap w-100">
                   <thead>
                      <tr nowrap class="tr">
-                        <th nowrap>Sr No</th>
-                        <th nowrap>Sales Order No</th>
-                        <th nowrap>Item Code</th>
-                        <th nowrap>PO Code</th>
-                        <th nowrap>Supplier Name</th>
-                        <th nowrap>Bill To</th>
-                        <th nowrap>Item Name</th>
-                        <th nowrap>Total Asso.</th> 
-                        <th nowrap>Allocated Stock</th> 
-                        <th nowrap>Issue Stock</th>
-                        <th nowrap>Avaliable Stock</th>
+                       <th nowrap>Sr No<span class="filter-icon hide">🔽</span><div class="filter-menu sr-no"></div></th>
+                        <th nowrap>Sales Order No<span class="filter-icon">🔽</span><div class="filter-menu sales-order-no"></div></th>
+                        <th nowrap>Item Code<span class="filter-icon">🔽</span><div class="filter-menu item-code"></div></th>
+                        <th nowrap>PO Code<span class="filter-icon">🔽</span><div class="filter-menu po-code"></div></th>
+                        <th nowrap>Supplier Name<span class="filter-icon">🔽</span><div class="filter-menu supplier-name"></div></th>
+                        <th nowrap>Bill To<span class="filter-icon">🔽</span><div class="filter-menu bill-to"></div></th>
+                        <th nowrap>Item Name<span class="filter-icon">🔽</span><div class="filter-menu item-name"></div></th>
+                        <th nowrap>Total Asso.<span class="filter-icon">🔽</span><div class="filter-menu total-asso"></div></th>
+                        <th nowrap>Allocated Stock<span class="filter-icon">🔽</span><div class="filter-menu allocated-stock"></div></th>
+                        <th nowrap>Issue Stock<span class="filter-icon">🔽</span><div class="filter-menu issue-stock"></div></th>
+                        <th nowrap>Avaliable Stock<span class="filter-icon">🔽</span><div class="filter-menu available-stock"></div></th>                    
                      </tr>
                   </thead>
                   <tbody></tbody>
@@ -48,12 +79,10 @@
 </div>
 <!-- end row -->
 <script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
- <script>
-   
-      
+ <script>         
        $(document).ready( function () 
        {
-             tableData(); 
+            tableData();          
        }); 
     
     
@@ -70,9 +99,18 @@
             });
        }
     function tableData() 
-    {
-         var currentURL = window.location.href; 
+    {    removeFilterColor();
+         const today = new Date();
+         const day = String(today.getDate()).padStart(2, '0');
+         const month = String(today.getMonth() + 1).padStart(2, '0');
+         const year = today.getFullYear();
+         const formattedDate = `${day}-${month}-${year}`;
+         const exportTitle = 'Fabric Association Report (' + formattedDate + ')';
+         var fromDate = $("#fromDate").val();
+        var toDate = $("#toDate").val();
          
+        var currentURL = window.location.href+"?fromDate="+fromDate+"&toDate="+toDate; 
+
       	 $('#ocrTbl').DataTable().clear().destroy();
         
           var table = $('#ocrTbl').DataTable({
@@ -82,9 +120,10 @@
             serverSide: false,
             dom: 'lBfrtip',
             buttons: [
-                { extend: 'copyHtml5', footer: true },
-                {  
-                    extend: 'excel', 
+                { extend: 'copyHtml5', footer: true,title: exportTitle, exportOptions: commonExportOptions() },
+                { extend: 'excelHtml5', footer: true, title: exportTitle,exportOptions: commonExportOptions() },
+                /*{  
+                    extend: 'excelHtml5',footer: true,title: exportTitle, exportOptions: commonExportOptions(), 
                     exportOptions: {
                      modifier : {
                          order : 'index',  
@@ -93,10 +132,13 @@
                      },
                      columns: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
                  }
-                },
-                { extend: 'csvHtml5', footer: true },
-                { extend: 'pdfHtml5', footer: true }
+                },*/
+                { extend: 'csvHtml5', footer: true,title: exportTitle, exportOptions: commonExportOptions() },
+                { extend: 'pdfHtml5', footer: true,title: exportTitle, exportOptions: commonExportOptions() }
             ],
+            initComplete: function () {
+                  buildAllMenusFabricAssociationReport();
+            },
             columns: [
                   {data: 'srno', name: 'srno'}, 
                   {data: 'sales_order_no', name: 'sales_order_no'},
@@ -113,6 +155,37 @@
         });
          
     }
+
+             // Start script for filter search and apply        
+         $(document).on('click', '.apply-btn', function() {
+         const menu = $(this).closest('.filter-menu');
+       
+         if (!validateFilterMenu(menu)) {
+               return;
+         }
+
+         if (menu.hasClass('sr-no')) applySimpleFilter(0, menu); 
+         else if (menu.hasClass('sales-order-no')) applySimpleFilter(1, menu); 
+         else if (menu.hasClass('item-code')) applySimpleFilter(2, menu); 
+         else if (menu.hasClass('po-code')) applySimpleFilter(3, menu); 
+         else if (menu.hasClass('supplier-name')) applySimpleFilter(4, menu); 
+         else if (menu.hasClass('bill-to')) applySimpleFilter(5, menu); 
+         else if (menu.hasClass('item-name')) applySimpleFilter(6, menu); 
+         else if (menu.hasClass('total-asso')) applySimpleFilter(7, menu); 
+         else if (menu.hasClass('allocated-stock')) applySimpleFilter(8, menu); 
+         else if (menu.hasClass('issue-stock')) applySimpleFilter(9, menu); 
+         else if (menu.hasClass('available-stock')) applySimpleFilter(10, menu);
+
+         $('.filter-menu').hide();
+         
+         buildAllMenusFabricAssociationReport();                   
+         });
+        // End script for filter search and apply
     
+      function ClearReport()
+    {
+         removeFilterColor();
+         tableData();
+    }
  </script>
 @endsection
