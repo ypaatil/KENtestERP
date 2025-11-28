@@ -11,7 +11,7 @@ class FabricOutwardCuttingDepartmentMasterModel extends Model
 
     protected $table='fabric_outward_cutting_department_master';
 
-    protected $primaryKey = 'focd_code';
+    protected $primaryKey = 'focd_code'; 
 	
 	protected $fillable = [
         'focd_code', 'focd_date', 'dc_no', 'outward_date', 'vendorId', 'cutting_po_no', 'mainstyle_id', 'substyle_id',   

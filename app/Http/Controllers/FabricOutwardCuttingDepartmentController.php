@@ -35,7 +35,7 @@ class FabricOutwardCuttingDepartmentController extends Controller
     {
         $chekform = DB::table('form_auth')
         ->where('emp_id', Session::get('userId'))
-        ->where('form_id', '358')
+        ->where('form_id', '365')
         ->first();
         
         

@@ -9,7 +9,7 @@ class FabricOutwardCuttingDepartmentDetailModel extends Model
 {
     use HasFactory;
 
-    protected $table='fabric_outward_cutting_department_details'; 
+    protected $table='fabric_outward_cutting_department_details';  
 	
 	protected $fillable = [
         'focd_code', 'focd_date', 'roll_no', 'suplier_roll_no', 'item_code', 'item_name', 'color_name', 'quality_code', 'shade_id', 'width',   

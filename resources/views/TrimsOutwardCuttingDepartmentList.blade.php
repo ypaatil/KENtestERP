@@ -9,11 +9,11 @@
 <div class="row">
    <div class="col-12">
       <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-         <h4 class="mb-sm-0 font-size-18">Fabric Outward - Cutting Department List</h4>
+         <h4 class="mb-sm-0 font-size-18">Trims Outward - Cutting Department List</h4>
          <div class="page-title-right">
             <ol class="breadcrumb m-0">
                <li class="breadcrumb-item"><a href="javascript: void(0);">Transaction</a></li>
-               <li class="breadcrumb-item active">Fabric Outward - Cutting Department List</li>
+               <li class="breadcrumb-item active">Trims Outward - Cutting Department List</li>
             </ol>
          </div> 
       </div>
@@ -23,7 +23,7 @@
 @if($chekform->write_access==1)    
 <div class="row">
    <div class="col-md-4">
-      <a href="{{ Route('FabricOutwardCuttingDepartment.create') }}"><button type="buuton" class="btn btn-primary w-md">Add New Record</button></a>
+      <a href="{{ Route('TrimsOutwardCuttingDepartment.create') }}"><button type="buuton" class="btn btn-primary w-md">Add New Record</button></a>
    </div>
     <div class="col-lg-4 text-center">
        <h4><b>Note : </b> Showing last 3 month records. If you want to all click on <a href="javascript:void(0);"  onclick="showAll();">Show All Data</a> button</h4>
@@ -52,11 +52,11 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body">
-                <table data-order='[[ 0, "desc" ]]' data-page-length='25' id="fabric_outward_table" class="table table-bordered dt-responsive nowrap w-100">
+                <table data-order='[[ 0, "desc" ]]' data-page-length='25' id="trims_outward_table" class="table table-bordered dt-responsive nowrap w-100">
                     <thead>
                       <tr> 
-                        <th>FOCD Code</th>
-                        <th>FOCD Date</th>
+                        <th>TOCD Code</th>
+                        <th>TOCD Date</th>
                         <th>DC No</th>
                         <th>Outward Date</th>
                         <th>Vendor Name</th>
@@ -65,10 +65,8 @@
                         <th>Sub Style Category</th>
                         <th>Style Name</th>
                         <th>Style No</th>
-                        <th>Style Description</th>
-                        <th>Total Challan Meter</th>
-                        <th>Total Received Meter</th>
-                        <th>Total Roll</th>
+                        <th>Style Description</th> 
+                        <th>Total Received Meter</th> 
                         <th>Total Outward</th>
                         <th>User Name</th>
                         <th>Edit</th>
@@ -87,30 +85,30 @@
 <script type="text/javascript"> 
  $(function () 
     {
-        var url = 'FabricOutwardCuttingDepartment?page=0';
+        var url = 'TrimsOutwardCuttingDepartment?page=0';
         TableData(url);
     });
   
     function showAll()
     {
-        var url = 'FabricOutwardCuttingDepartment?page=1';
+        var url = 'TrimsOutwardCuttingDepartment?page=1';
         TableData(url);
     }
     
     function back()
     {
-        var url = 'FabricOutwardCuttingDepartment?page=0';
+        var url = 'TrimsOutwardCuttingDepartment?page=0';
         TableData(url);
     }
 
   
   function TableData(url)
   {
-        $('#fabric_outward_table').dataTable({
+        $('#trims_outward_table').dataTable({
             "bDestroy": true
         }).fnDestroy();
         
-       var table = $('#fabric_outward_table').DataTable({
+       var table = $('#trims_outward_table').DataTable({
         processing: true,
         serverSide: false,
         ajax: url,
@@ -124,8 +122,8 @@
         ],
         
         columns: [
-          {data: 'focd_code', name: 'focd_code'},
-          {data: 'focd_date', name: 'focd_date'},
+          {data: 'tocd_code', name: 'tocd_code'},
+          {data: 'tocd_date', name: 'tocd_date'},
           {data: 'dc_no', name: "dc_no"},
           {data: 'outward_date', name: 'outward_date'},
           {data: 'ac_short_name', name: 'ac_short_name'},
@@ -134,11 +132,9 @@
           {data: 'substyle_name', name: 'substyle_name'},
           {data: 'fg_name', name: 'fg_name'},
           {data: 'style_no', name: 'style_no'},
-          {data: 'style_description', name: 'style_description'},
-          {data: 'total_challan_meter', name: 'total_challan_meter'},
-          {data: 'total_received_meter', name: 'total_received_meter'},
-          {data: 'total_roll', name: 'total_roll'},
+          {data: 'style_description', name: 'style_description'}, 
           {data: 'total_outward_meter', name: 'total_outward_meter'},
+          {data: 'total_received_meter', name: 'total_received_meter'}, 
           {data: 'username', name: 'username'},
           {data: 'action1', name: 'action1'},
           {data: 'action2', name: 'action2'},
