@@ -19,36 +19,6 @@
 </div>
 
 <div class="row">
-   <div class="col-md-12">
-      <div class="card">
-         <div class="card-body"> 
-               <div class="row">
-                   <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="fromDate" class="form-label">From</label>
-                        <input type="date" class="form-control" name="fromDate" id="fromDate" value="{{ isset($fromDate) ? $fromDate : date('Y-m-01')}}">
-                     </div>
-                   </div>
-                   <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="toDate" class="form-label">To</label>
-                        <input type="date" class="form-control" name="toDate" id="toDate" value="{{ isset($toDate) ? $toDate : date('Y-m-d')}}">
-                     </div>
-                   </div> 
-                   <div class="col-sm-5">
-                      <label for="formrow-inputState" class="form-label"></label>
-                      <div class="form-group">
-                         <button type="button" onclick="tableData(1);" class="btn btn-primary w-md">Search</button>
-                         <a href="javascript:void(0);" onclick="ClearReport(0);" class="btn btn-danger w-md">Cancel</a>
-                      </div>
-                   </div> 
-               </div>
-         </div>
-      </div>
-   </div>
-</div>
-
-<div class="row">
    <div class="col-12">
       <div class="card">
          <div class="card-body">
@@ -106,10 +76,9 @@
          const year = today.getFullYear();
          const formattedDate = `${day}-${month}-${year}`;
          const exportTitle = 'Fabric Association Report (' + formattedDate + ')';
-         var fromDate = $("#fromDate").val();
-        var toDate = $("#toDate").val();
+       
          
-        var currentURL = window.location.href+"?fromDate="+fromDate+"&toDate="+toDate; 
+        var currentURL = window.location.href; 
 
       	 $('#ocrTbl').DataTable().clear().destroy();
         

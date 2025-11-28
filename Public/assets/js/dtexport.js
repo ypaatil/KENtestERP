@@ -827,7 +827,20 @@ function applyDateFilter(col, menu) {
         buildSimpleFilter('.available-stock', 10);
       }
 
-
+      function buildAllMenusTrimAssociationReport(){
+        buildSimpleFilter('.sr-no', 0);
+        buildSimpleFilter('.sales-order-no', 1);
+        buildSimpleFilter('.item-code', 2);
+        buildSimpleFilter('.item-category', 3);
+        buildSimpleFilter('.po-code', 4);
+        buildSimpleFilter('.supplier-name', 5);
+        buildSimpleFilter('.bill-to', 6);
+        buildSimpleFilter('.item-name', 7);
+        buildSimpleFilter('.total-asso', 8);
+        buildSimpleFilter('.allocated-stock', 9);
+        buildSimpleFilter('.issue-stock', 10);
+        buildSimpleFilter('.avaliable-stock', 11);
+      }
 
        function table_values_indian_format()  {
           function formatIndianNumber(num) {
