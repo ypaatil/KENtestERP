@@ -119,6 +119,21 @@ class FabricOutwardReportController extends Controller
         return view('GetFabricInOutStockReport');
     }
 
+    public function GetFabricInOutStockReportForm_Test(Request $request)
+    {    
+        $fdate = $request->fdate;
+        $tdate = $request->tdate;
+
+        if ($tdate > date('Y-m-d')) {
+            $tdate = date('Y-m-d');
+        }
+
+        $period = $this->getBetweenDates($fdate, $tdate);
+        $FirmDetail =  DB::table('firm_master')->first();
+
+        return view('FabricInOutStockPrint_Test', compact('period', 'fdate', 'tdate', 'FirmDetail'));
+    }
+
     public function GetFabricInOutStockSummaryReport()
     {
         return view('GetFabricInOutStockSummaryReport');
