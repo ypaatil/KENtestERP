@@ -638,8 +638,8 @@
                                 <th>HSN Code</th>
                                 <th>Qty</th>
                                 <th>UOM</th>
-                                 <th>Rate</th>
-                                    <th>Amt.(Before Tax)</th>
+                                <th>Rate</th>
+                                <th>Amt.(Before Tax)</th>
                                 <th>CGST</th>
                                 <th>SGST</th>
                                 <th>IGST</th>
@@ -661,6 +661,7 @@
                             $trimsOutwardDetailstables = App\Models\TrimsOutwardDetailModel::select(
                             'purchaseorder_detail.item_rate',
                             'item_master.color_name',
+                            'classification_master.class_id',
                             'classification_master.class_name',
                             'item_master.item_name',
                             'unit_master.unit_name',
@@ -691,67 +692,120 @@
                             //dd(DB::getQueryLog());
                             $no=1; $amt=0;$tamt=0; @endphp
                             @foreach($trimsOutwardDetailstables as $rowDetail)
-                            <tr>
-                                <td class="text-end">{{ $no }}</td>
-                                <td class="text-start">{{ $rowDetail->class_name }}</td>
-                                <!-- <td class="text-center"> {{ $rowDetail->item_code }}</td> -->
-                                <td class="text-start">{{ $rowDetail->item_name }} </td>
-                                <td class="text-end">{{ $rowDetail->hsn_code }} </td>
-                                <td class="text-end"> {{ number_format($rowDetail->item_qty,2) }}</td>
-                                <td class="text-end">{{ $rowDetail->unit_name }}</td>
-                                 <td class="text-end">{{ number_format($rowDetail->item_rate,4) }}</td>
-                                   <td class="text-end">{{ indian_number_format_for_value($rowDetail->item_rate*$rowDetail->item_qty,2) }}</td>
-
-                                @if($rowDetail->state_id==27)
-                                <td class="text-end">
-                               {{ number_format(($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}    
-                                    <br> ({{ $rowDetail->cgst_per }}%)
-                                </td>
-                                <td class="text-end">
-                                  {{ number_format(($rowDetail->sgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}
-                                    <br>  ({{ $rowDetail->sgst_per }}%)
-                                  
-                                </td>
-                                <td class="text-end">{{ number_format(0, 2) }}<br>({{ number_format(0, 2) }}%)</td>
-                                @else
-                                <td class="text-end">{{ number_format(0, 2) }}<br>({{ number_format(0, 2) }}%)</td>
-                                <td class="text-end">{{ number_format(0, 2) }}<br>({{ number_format(0, 2) }}%)</td>
-                                <td class="text-end">
-                                 {{ number_format(($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100),2) }}  
-                                    <br> ({{ number_format($rowDetail->igst_per,2) }}%)
-                                </td>
-                                @endif
-
-                               
-                              
-                                <td class="text-end">
-
+                            @if( $rowDetail->class_id == 12)
+                                <tr style="vertical-align: middle;">
+                                    <td class="text-end" rowspan="2">{{ $no }}</td>
+                                    <td class="text-start" rowspan="2">{{ $rowDetail->class_name }}</td>
+                                    <!-- <td class="text-center"> {{ $rowDetail->item_code }}</td> -->
+                                    <td class="text-start" rowspan="2">{{ $rowDetail->item_name }} </td>
+                                    <td class="text-end" rowspan="2">{{ $rowDetail->hsn_code }} </td>
+                                    <td class="text-end"> {{ number_format($rowDetail->item_qty,2) }}</td>
+                                    <td class="text-center">PCS</td>
+                                    <td class="text-end">{{ number_format(($rowDetail->item_rate/144),4) }}</td>
+                                    <td class="text-end" rowspan="2">{{ indian_number_format_for_value((($rowDetail->item_rate/144)*$rowDetail->item_qty),2) }}</td>
                                     @if($rowDetail->state_id==27)
-                                    {{ indian_number_format_for_value((($rowDetail->item_rate*$rowDetail->item_qty) + ($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100) + ($rowDetail->sgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)),2)}}
-                                    @php
-
-                                    $cgst=($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100);
-                                    $sgst=($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100);
-
-                                    $total_amt=(($rowDetail->item_rate*$rowDetail->item_qty) + ($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100) + ($rowDetail->sgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100));
-                                    $totalcgst=$totalcgst+$cgst;
-                                    $totalsgst=$totalsgst+$sgst;
-                                    @endphp
+                                    <td class="text-end"  rowspan="2">
+                                        {{ number_format(($rowDetail->cgst_per*(($rowDetail->item_rate/144)*$rowDetail->item_qty)/100)) }}    
+                                        <br> ({{ $rowDetail->cgst_per }}%)
+                                    </td>
+                                    <td class="text-end" rowspan="2">
+                                    {{ number_format(($rowDetail->sgst_per*(($rowDetail->item_rate/144)*$rowDetail->item_qty)/100)) }}
+                                        <br>  ({{ $rowDetail->sgst_per }}%)
+                                    
+                                    </td>
+                                    <td class="text-end" rowspan="2">{{ number_format(0, 2) }}<br>({{ number_format(0, 2) }}%)</td>
                                     @else
-
-                                    {{ indian_number_format_for_value((($rowDetail->item_rate*$rowDetail->item_qty)+($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)),2)}}
-                                    @php
-                                    $igst=($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100);
-                                    $total_amt=(($rowDetail->item_rate*$rowDetail->item_qty)+($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100));
-                                    $totaligst=$totaligst + $igst;
-                                    @endphp
+                                    <td class="text-end" rowspan="2">{{ number_format(0, 2) }}<br>({{ number_format(0, 2) }}%)</td>
+                                    <td class="text-end" rowspan="2">{{ number_format(0, 2) }}<br>({{ number_format(0, 2) }}%)</td>
+                                    <td class="text-end" rowspan="2">
+                                    {{ number_format(($rowDetail->igst_per*(($rowDetail->item_rate/144)*$rowDetail->item_qty)/100),2) }}  
+                                        <br> ({{ number_format($rowDetail->igst_per,2) }}%)
+                                    </td>
                                     @endif
+                                    <td class="text-end"  rowspan="2">
+                                        @if($rowDetail->state_id==27)
+                                        {{ indian_number_format_for_value(((($rowDetail->item_rate/144)*$rowDetail->item_qty) + ($rowDetail->cgst_per*(($rowDetail->item_rate/144)*$rowDetail->item_qty)/100) + ($rowDetail->sgst_per*(($rowDetail->item_rate/144)*$rowDetail->item_qty)/100)),2)}}
+                                        @php
 
-                                </td>
+                                        $cgst=($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100);
+                                        $sgst=($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100);
 
-                            </tr>
-                            
+                                        $total_amt=((($rowDetail->item_rate/144)*$rowDetail->item_qty) + ($rowDetail->cgst_per*(($rowDetail->item_rate/144)*$rowDetail->item_qty)/100) + ($rowDetail->sgst_per*(($rowDetail->item_rate/144)*$rowDetail->item_qty)/100));
+                                        $totalcgst=$totalcgst+$cgst;
+                                        $totalsgst=$totalsgst+$sgst;
+                                        @endphp
+                                        @else
 
+                                        {{ indian_number_format_for_value(((($rowDetail->item_rate/144)*$rowDetail->item_qty)+($rowDetail->igst_per*(($rowDetail->item_rate/144)*$rowDetail->item_qty)/100)),2)}}
+                                        @php
+                                        $igst=($rowDetail->igst_per*(($rowDetail->item_rate/144)*$rowDetail->item_qty)/100);
+                                        $total_amt=((($rowDetail->item_rate/144)*$rowDetail->item_qty)+($rowDetail->igst_per*(($rowDetail->item_rate/144)*$rowDetail->item_qty)/100));
+                                        $totaligst=$totaligst + $igst;
+                                        @endphp
+                                        @endif
+
+                                    </td> 
+                                </tr>  
+                                <tr> 
+                                    <td class="text-end"> {{ number_format(($rowDetail->item_qty/144),2) }}</td>
+                                    <td class="text-end">{{ $rowDetail->unit_name }}</td>
+                                    <td class="text-end">{{ number_format(($rowDetail->item_rate),4) }}</td>
+                                </tr> 
+                            @else
+                                <tr>
+                                    <td class="text-end">{{ $no }}</td>
+                                    <td class="text-start">{{ $rowDetail->class_name }}</td>
+                                    <!-- <td class="text-center"> {{ $rowDetail->item_code }}</td> -->
+                                    <td class="text-start">{{ $rowDetail->item_name }} </td>
+                                    <td class="text-end">{{ $rowDetail->hsn_code }} </td>
+                                    <td class="text-end"> {{ number_format($rowDetail->item_qty,2) }}</td>
+                                    <td class="text-end">{{ $rowDetail->unit_name }}</td>
+                                    <td class="text-end">{{ number_format($rowDetail->item_rate,4) }}</td>
+                                    <td class="text-end">{{ indian_number_format_for_value($rowDetail->item_rate*$rowDetail->item_qty,2) }}</td>
+                                    @if($rowDetail->state_id==27)
+                                    <td class="text-end">
+                                {{ number_format(($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}    
+                                        <br> ({{ $rowDetail->cgst_per }}%)
+                                    </td>
+                                    <td class="text-end">
+                                    {{ number_format(($rowDetail->sgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)) }}
+                                        <br>  ({{ $rowDetail->sgst_per }}%)
+                                    
+                                    </td>
+                                    <td class="text-end">{{ number_format(0, 2) }}<br>({{ number_format(0, 2) }}%)</td>
+                                    @else
+                                    <td class="text-end">{{ number_format(0, 2) }}<br>({{ number_format(0, 2) }}%)</td>
+                                    <td class="text-end">{{ number_format(0, 2) }}<br>({{ number_format(0, 2) }}%)</td>
+                                    <td class="text-end">
+                                    {{ number_format(($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100),2) }}  
+                                        <br> ({{ number_format($rowDetail->igst_per,2) }}%)
+                                    </td>
+                                    @endif
+                                    <td class="text-end">
+                                        @if($rowDetail->state_id==27)
+                                        {{ indian_number_format_for_value((($rowDetail->item_rate*$rowDetail->item_qty) + ($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100) + ($rowDetail->sgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)),2)}}
+                                        @php
+
+                                        $cgst=($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100);
+                                        $sgst=($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100);
+
+                                        $total_amt=(($rowDetail->item_rate*$rowDetail->item_qty) + ($rowDetail->cgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100) + ($rowDetail->sgst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100));
+                                        $totalcgst=$totalcgst+$cgst;
+                                        $totalsgst=$totalsgst+$sgst;
+                                        @endphp
+                                        @else
+
+                                        {{ indian_number_format_for_value((($rowDetail->item_rate*$rowDetail->item_qty)+($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100)),2)}}
+                                        @php
+                                        $igst=($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100);
+                                        $total_amt=(($rowDetail->item_rate*$rowDetail->item_qty)+($rowDetail->igst_per*($rowDetail->item_rate*$rowDetail->item_qty)/100));
+                                        $totaligst=$totaligst + $igst;
+                                        @endphp
+                                        @endif
+
+                                    </td> 
+                                </tr> 
+                            @endif
                             @php $no=$no+1;
 
                             $totalqty = $totalqty + $rowDetail->item_qty;
