@@ -617,7 +617,7 @@
                             @php
 
                             $trimsOutwardDetailstables = App\Models\TrimsOutwardDetailModel::
-                            select('trimsOutwardDetail.item_rate','item_master.color_name','unit_master.unit_name','classification_master.class_name','item_master.item_name','trimsOutwardDetail.item_code','item_master.item_description','item_master.cgst_per','item_master.sgst_per','item_master.igst_per',
+                            select('trimsOutwardDetail.item_rate','item_master.color_name','unit_master.unit_name','classification_master.class_id','classification_master.class_name','item_master.item_name','trimsOutwardDetail.item_code','item_master.item_description','item_master.cgst_per','item_master.sgst_per','item_master.igst_per',
                             'item_master.hsn_code','item_master.dimension', DB::raw('sum(trimsOutwardDetail.item_qty) as item_qty'))
                             ->join('item_master','item_master.item_code', '=', 'trimsOutwardDetail.item_code')
                             ->join('classification_master','classification_master.class_id', '=', 'item_master.class_id')
@@ -628,16 +628,31 @@
 
                             $no=1; $amt=0;$tamt=0; @endphp
                             @foreach($trimsOutwardDetailstables as $rowDetail)
-                            <tr>
-                                <td class="text-end">{{ $no }}</td>
-                                <td class="text-start">{{ $rowDetail->class_name }} </td>
-                                <td class="text-center">{{ $rowDetail->item_code }} </td>
-                                <td class="text-start">{{ $rowDetail->item_name }} </td>
-                                <td class="text-center">{{ $rowDetail->unit_name }} </td>
-                               <td class="text-end">{{ number_format($rowDetail->item_qty, 2, '.', ',') }}</td>
-
-
+                            @if( $rowDetail->class_id == 12)
+                            <tr style="vertical-align: middle;">
+                                <td class="text-end" rowspan="2" >{{ $no }}</td>
+                                <td class="text-start" rowspan="2">{{ $rowDetail->class_name }} </td>
+                                <td class="text-center" rowspan="2">{{ $rowDetail->item_code }} </td>
+                                <td class="text-start" rowspan="2">{{ $rowDetail->item_name }} </td>
+                                <td class="text-center">PCS</td>
+                                <td class="text-end">{{ number_format(($rowDetail->item_qty), 2, '.', ',') }}</td>
+              
                             </tr>
+                            <tr>
+                                <td class="text-center">{{ $rowDetail->unit_name }} </td>
+                                <td class="text-end">{{ number_format(($rowDetail->item_qty/144), 2, '.', ',') }}</td>
+                            </tr>
+                         
+                            @else
+                                <tr>
+                                    <td class="text-end">{{ $no }}</td>
+                                    <td class="text-start">{{ $rowDetail->class_id }} - {{ $rowDetail->class_name }} </td>
+                                    <td class="text-center">{{ $rowDetail->item_code }} </td>
+                                    <td class="text-start">{{ $rowDetail->item_name }} </td>
+                                    <td class="text-center">{{ $rowDetail->unit_name }} </td>
+                                    <td class="text-end">{{ number_format($rowDetail->item_qty, 2, '.', ',') }}</td>
+                                </tr>
+                            @endif
                             @php $no=$no+1;  
 
                             @endphp
