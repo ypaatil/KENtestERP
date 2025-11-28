@@ -30,21 +30,22 @@
 <div class="row">
    <div class="col-xl-12">
       <div class="card">
-         <div class="card-body">
-            
-         <!-- TAB HEADER -->
-         <ul class="nav nav-tabs" id="myTab" role="tablist">
-            <li class="nav-item" role="presentation">
-               <button class="nav-link active" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab">
-               Delivery
-               </button>
-            </li>
-            <li class="nav-item" role="presentation">
-               <button class="nav-link" id="return-tab" data-bs-toggle="tab" data-bs-target="#return" type="button" role="tab">
-               Return
-               </button>
-            </li>
-         </ul>
+         <div class="card-body"> 
+         <!-- TAB HEADER --> 
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+               <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab"
+                   @if($purchasefetch->tab_button==2) disabled @endif>
+                  Delivery
+                  </button>
+               </li>
+               <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="return-tab" data-bs-toggle="tab" data-bs-target="#return" type="button" role="tab"
+                   @if($purchasefetch->tab_button==1) disabled @endif>
+                  Return
+                  </button>
+               </li>
+            </ul>
          <!-- TAB CONTENT -->
          <div class="tab-content mt-4" id="myTabContent">
             <!-- ===================================================
@@ -206,7 +207,8 @@
                               <th>Rate</th>
                               <th>Amount</th>
                               <th>Rack Location</th>
-                              <th>Action</th>
+                              <th>Add</th>
+                              <th>Remove</th>
                            </tr>
                         </thead>
                         <tbody id="bomdis" >
@@ -250,9 +252,10 @@
                                     @endforeach
                                  </select>
                               </td>
-                              <td>
-                                  <button type="button" onclick="stockAllocate();" class="Abutton btn btn-secondary pull-left">Allocate</button>
-                                  <button type="button" onclick=" mycalc();" class="btn btn-warning pull-left" disabled >+</button>
+                              <td> 
+                                  <button type="button" onclick="deleteRow();" class="btn btn-danger pull-left" disabled >X</button> 
+                              </td>
+                              <td> 
                                   <button type="button" onclick="deleteRow();" class="btn btn-danger pull-left" disabled >X</button> 
                               </td>
                            </tr>
@@ -269,7 +272,8 @@
                               <th>Rate</th>
                               <th>Amount</th>
                               <th>Rack Location</th>
-                              <th>Add/Remove</th>
+                              <th>Add</th>
+                              <th>Remove</th>
                            </tr>
                         </tfoot>
                      </table>
@@ -328,27 +332,6 @@
                         <input type="text" class="form-control" id="total_allocate_qty" value="">
                      </div>
                   </div>
-                 <div class="col-md-2 mt-4">
-                     <div class="mb-3">
-                         <div class="form-check form-check-primary mb-5">
-                         <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);" name="isReturnFabricInward" value="{{ $purchasefetch->isReturnFabricInward}}" {{ $purchasefetch->isReturnFabricInward == 1 ? 'checked="checked"' : '' }} >
-                         <label class="form-check-label" for="isReturnFabricInward">
-                         Is it retun trim inward ? 
-                         </label>
-                         </div>
-                     </div>
-                 </div> 
-                 <div class="col-md-2 hide" id="workOrder">
-                     <div class="mb-3">
-                     <label for="" class="form-label">Vendor Work Order No.</label>   
-                         <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value);">
-                         <option value="">--Select--</option>
-                         @foreach($vendorWorkOrderList as  $vendors)
-                             <option value="{{ $vendors->vw_code  }}" {{ $vendors->vw_code == $purchasefetch->vw_code ? 'selected="selected"' : '' }} >{{ $vendors->vw_code }}</option>
-                         @endforeach
-                         </select>
-                     </div>
-                 </div>
                </div>
                </br>  
                <button type="submit" class="btn btn-success w-md" onclick="EnableFields();" id="Submit">Save</button>
@@ -399,7 +382,10 @@
                      <div class="col-md-2">
                         <div class="mb-3">
                            <label for="formrow-email-input" class="form-label">DC No</label>
-                           <input type="text" name="invoice_no" id="invoice_no" class="form-control" id="formrow-email-input" value="{{ $purchasefetch->invoice_no }}"  >
+                           <input type="text" name="invoice_no" id="invoice_no1" class="form-control" value="{{ $purchasefetch->invoice_no }}"  >
+                           <select name="invoice_no" class="form-select select2 hide" id="tocd_code">
+                              <option value="">--Select--</option> 
+                           </select>
                         </div>
                      </div> 
                      <div class="col-md-3">
@@ -429,7 +415,8 @@
                      <div class="col-md-3 mt-4 m-0">
                         <div class="mb-3">
                            <div class="form-check form-check-primary mb-5">
-                              <input class="form-check-input" type="checkbox" id="isReturnTrimsInward" onchange="GetDCDropdown();" name="isReturnTrimsInward"  style="font-size: 30px;margin-left: 0px;margin-top: -3px;">
+                              <input class="form-check-input" type="checkbox" id="isReturnTrimsInward" onchange="GetDCDropdown();" name="isReturnTrimsInward" 
+                                  style="font-size: 30px;margin-left: 0px;margin-top: -3px;" @if($purchasefetch->isReturnFabricInward==1)checked @else disabled @endif>
                               <label class="form-check-label" for="isReturnTrimsInward" style="position: absolute;margin-left: 20px;font-size: 14px;">
                               Trims Return From Inhouse
                               </label>
@@ -439,7 +426,8 @@
                      <div class="col-md-3 mt-4 m-0">
                         <div class="mb-3">
                            <div class="form-check form-check-primary mb-5">
-                              <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" onchange="DisableDropdown();" style="font-size: 30px;margin-left: 0px;margin-top: -3px;"/>
+                              <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" onchange="DisableDropdown();" 
+                                 style="font-size: 30px;margin-left: 0px;margin-top: -3px;"  @if($purchasefetch->isOutsideVendor==1)checked @else disabled @endif/>
                               <label class="form-check-label" for="isOutsideVendor" style="position: absolute;margin-left: 20px;font-size: 14px;">
                               From Outsource Vendor
                               </label>
@@ -452,7 +440,7 @@
                            <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value);" >
                               <option value="">--Select--</option>
                               @foreach($vendorWorkOrderList as  $vendors)
-                              <option value="{{ $vendors->vw_code  }}">{{ $vendors->vw_code }}</option>
+                              <option value="{{ $vendors->vw_code  }}" {{ $vendors->vw_code == $purchasefetch->vw_code ? 'selected="selected"' : '' }}>{{ $vendors->vw_code }}</option>
                               @endforeach
                            </select>
                         </div>
@@ -463,7 +451,7 @@
                            <select name="vendorId" class="form-select select2" id="vendorId" >
                               <option value="">--Select--</option>
                               @foreach($vendorData as  $rows)
-                              <option value="{{ $rows->ac_code }}"  > {{ $rows->ac_short_name }}</option>
+                              <option value="{{ $rows->ac_code }}" {{ $rows->ac_code == $purchasefetch->vendorId ? 'selected="selected"' : '' }}> {{ $rows->ac_short_name }}</option>
                               @endforeach
                            </select>
                         </div>
@@ -474,10 +462,10 @@
                   </div> 
                   <div class="table-wrap">
                      <div class="table-responsive">
-                        <table id="footable_2" class="table  table-bordered table-striped m-b-0 footable_2">
+                        <table id="footable_21" class="table  table-bordered table-striped m-b-0 footable_21">
                            <thead>
                               <tr>
-                                 <th>SrNo</th>
+                                 <th>Sr No</th>
                                  <th>Item Code</th>
                                  <th>Item Name</th>
                                  <th>Classification</th>
@@ -486,10 +474,11 @@
                                  <th>Rate</th>
                                  <th>Amount</th>
                                  <th>Rack Location</th>
-                                 <th>Action</th>
+                                 <th class="text-center">Add</th>
+                                 <th class="text-center">Delete</th>
                               </tr>
                            </thead>
-                           <tbody id="bomdis" >
+                           <tbody id="bomdis1" >
                               @if($detailpurchase =="") 
                               <tr>
                                  <td><input type="text" name="id" value="1" id="id"  style="width:50px;"/></td>
@@ -530,9 +519,10 @@
                                        @endforeach
                                     </select>
                                  </td>
-                                 <td>
-                                    <button type="button" onclick="stockAllocate();" class="Abutton btn btn-secondary pull-left">Allocate</button>
-                                    <button type="button" onclick=" mycalc();" class="btn btn-warning pull-left" disabled >+</button>
+                                 <td> 
+                                    <button type="button" onclick=" mycalc();" class="btn btn-warning pull-left" disabled >+</button> 
+                                 </td>
+                                 <td> 
                                     <button type="button" onclick="deleteRow();" class="btn btn-danger pull-left" disabled >X</button> 
                                  </td>
                               </tr>
@@ -549,7 +539,8 @@
                                  <th>Rate</th>
                                  <th>Amount</th>
                                  <th>Rack Location</th>
-                                 <th>Add/Remove</th>
+                                 <th class="text-center">Add</th>
+                                 <th class="text-center">Delete</th>
                               </tr>
                            </tfoot>
                         </table>
@@ -558,7 +549,7 @@
                   <br/>
                   <div class="table-wrap">
                      <div class="table-responsive">
-                        <table id="footable_2" class="table  table-bordered table-striped m-b-0 footable_2">
+                        <table id="footable_211" class="table  table-bordered table-striped m-b-0 footable_211">
                            <thead>
                               <tr>
                                  <th>BOM Code</th>
@@ -568,7 +559,7 @@
                                  <th>Allocated Stock</th>
                               </tr>
                            </thead>
-                           <tbody id="stock_allocate"> 
+                           <tbody id="stock_allocate1"> 
                                  @if(count($stockData) > 0) 
                               @foreach($stockData as $row)
                                  <tr>
@@ -593,48 +584,26 @@
                      <div class="col-md-2">
                         <div class="mb-3">
                            <label for="formrow-email-input" class="form-label">Total Quantity</label>
-                           <input type="text" name="totalqty" class="form-control" id="totalqty" value="{{ $purchasefetch->totalqty }}" required>
+                           <input type="text" name="totalqty" class="form-control" id="totalqty1" value="{{ $purchasefetch->totalqty }}" required>
                         </div>
                      </div>
                      <div class="col-md-2">
                         <div class="mb-3">
                            <label for="formrow-email-input" class="form-label">Total Amount</label>
-                           <input type="text" name="total_amount" class="form-control" id="total_amount" value="{{ $purchasefetch->total_amount }}" required>
+                           <input type="text" name="total_amount" class="form-control" id="total_amount1" value="{{ $purchasefetch->total_amount }}" required>
                         </div>
                      </div>
                      <div class="col-md-2">
                         <div class="mb-3">
                            <label for="total_allocate_qty" class="form-label">Total Allocated Qty</label>
-                           <input type="text" class="form-control" id="total_allocate_qty" value="">
+                           <input type="text" class="form-control" id="total_allocate_qty1" value="">
                         </div>
                      </div>
-                  <div class="col-md-2 mt-4">
-                        <div class="mb-3">
-                           <div class="form-check form-check-primary mb-5">
-                           <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);" name="isReturnFabricInward" value="{{ $purchasefetch->isReturnFabricInward}}" {{ $purchasefetch->isReturnFabricInward == 1 ? 'checked="checked"' : '' }} >
-                           <label class="form-check-label" for="isReturnFabricInward">
-                           Is it retun trim inward ? 
-                           </label>
-                           </div>
-                        </div>
-                  </div> 
-                  <div class="col-md-2 hide" id="workOrder">
-                        <div class="mb-3">
-                        <label for="" class="form-label">Vendor Work Order No.</label>   
-                           <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value);">
-                           <option value="">--Select--</option>
-                           @foreach($vendorWorkOrderList as  $vendors)
-                              <option value="{{ $vendors->vw_code  }}" {{ $vendors->vw_code == $purchasefetch->vw_code ? 'selected="selected"' : '' }} >{{ $vendors->vw_code }}</option>
-                           @endforeach
-                           </select>
-                        </div>
-                  </div>
                   </div>
                   </br>  
                   <button type="submit" class="btn btn-success w-md" onclick="EnableFields();" id="Submit">Save</button>
                   <a href="{{ Route('TrimsInward.index') }}" class="btn btn-warning w-md">Cancel</a>
-               </form>
-               
+               </form>               
             </div>
          </div>
          <!-- end card body -->
@@ -647,9 +616,6 @@
 <!-- end row -->
 <!-- end row -->
 <!-- end row -->
-
-
-
 <div class="modal fade" id="modalFormSize" role="dialog">
 <div class="modal-dialog" style="margin: 1.75rem 19rem;">
 <div class="modal-content" style="width: 900px;">
@@ -668,9 +634,6 @@
  
 </div>
 
- 
-
-
 <!-- Modal Footer -->
 <div class="modal-footer">
 <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="closemodal();">Close</button>
@@ -684,13 +647,54 @@
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
 <script>
 
-    $(document).ready(function() {
+   $(document).ready(function() 
+   {
         $('#frmData').submit(function() {
             $('#Submit').prop('disabled', true);
         }); 
+
+        
+      @if($purchasefetch->tab_button==1) 
+         $("#delivery-tab").trigger('click'); 
+      @else  
+            $("#return-tab").trigger('click');
+      @endif
+      
         calculateAllocatedQty();
-    });
+   });
     
+   
+   function DisableDropdown()
+   {
+        if($("#isOutsideVendor").is(":checked"))
+        {
+           $("#isReturnTrimsInward").attr('disabled', true); 
+         //   $("#vw_code").attr('onchange', 'GetFabricOutwardData()');
+        }
+        else
+        {
+           $("#isReturnTrimsInward").attr('disabled', false);  
+        }          
+   
+   } 
+   
+   function GetDCDropdown()
+   { 
+        if($("#isReturnTrimsInward").is(":checked"))
+        {
+           $("#isOutsideVendor").attr('disabled', true);
+           $("#invoice_no1").removeAttr('name').removeAttr('required').addClass("hide");
+           $("#tocd_code").attr('name', 'invoice_no').attr('required', true).removeClass("hide"); 
+        }
+        else
+        {
+           $("#isOutsideVendor").attr('disabled', false);
+           $("#invoice_no1").attr('name', 'invoice_no').attr('required', true).removeClass("hide");
+           $("#tocd_code").removeAttr('name').removeAttr('required').addClass("hide"); 
+        }
+   }
+   
+
     function GetPurchaseBillDetails()
     {
        var po_code = $("#po_code").val(); 
@@ -708,12 +712,10 @@
     } 
     
     var vw_code = $("#vw_code").val();
-    if(vw_code != "")
-    {
-          GetVendorName(vw_code);
-    }
-
-    GetOrderNo($("#isReturnFabricInward"));
+   //  if(vw_code != "")
+   //  {
+   //        GetVendorName(vw_code);
+   //  } 
    
     function GetVendorName(vpo_code)
     {
@@ -730,20 +732,7 @@
                
           }
         });
-    }
-    function GetOrderNo(ele)
-    {
-       if($(ele).is(":checked"))
-       {
-          $('#workOrder').removeClass('hide');
-          $(ele).val(1);
-       }
-       else
-       {
-           $('#workOrder').addClass('hide');
-           $(ele).val(0);
-       }
-    }
+    } 
     
     function calculateAllocatedQty()
     {
@@ -834,6 +823,7 @@
               success: function(data)
               {
                   $("#bomdis").html(data.html); 
+                  $("#bomdis1").html(data.html); 
                   $(".btn-danger").not("button[name='allocate[]']").attr("disabled", true);
               }
         }); 
@@ -884,12 +874,94 @@
       }
       
       calculateAllocatedQty();
-    }
+    } 
+
+   function stockAllocate1(obj)
+   {
+
+      // Disable submit first
+      $('#Submit').prop('disabled', false);
+
+      // Prevent function from running again
+      if ($("#mainAllocation1").data("running") === 1) {
+         alert("Already processing...!");
+         return;
+      }
+      $("#mainAllocation1").data("running", 1);
+
+      // Disable all controls except rack select
+      setTimeout(() => {
+         $('#footable_21').find('input, select, button')
+               .not('select[name="rack_id[]"]')
+               .prop('disabled', true);
+      }, 300);
+
+      let Click = $("#mainAllocation1").attr('isClick');
+
+      if (Click == 1) {
+         alert('Already stock allocated..!');
+         $("#mainAllocation1").data("running", 0);
+         return;
+      }
+
+      // Process each row only once
+      $("#footable_21 > tbody > tr").each(function () {
+
+         let row = $(this);
+
+         if (row.data("processed") === 1) {
+               return;  // skip already processed
+         }
+         row.data("processed", 1);
+
+         var row1 = row.attr('item_code');
+         var row2 = row.attr('qty');
+         var row3 = row.attr('bom_code');
+         var row4 = row.attr('cat_id');
+         var row5 = row.attr('class_id');
+         var po_type_id = 2;
+
+         $.ajax({
+               type: "GET",
+               dataType: "json",
+               url: "{{ route('stockAllocate') }}",
+               data: {
+                  bom_code: row3,
+                  item_code: row1,
+                  item_qty: row2,
+                  cat_id: row4,
+                  class_id: row5, 
+                  po_type_id: po_type_id
+               },
+               success: function (data) {
+                  $("#stock_allocate1").append(data.html);
+
+                  $("#mainAllocation1")
+                     .attr('isClick', '1')
+                     .removeClass('btn-success')
+                     .addClass('btn-danger');
+
+                  // Run only once per AJAX batch
+                  clearTimeout(window.calcTimer);
+                  window.calcTimer = setTimeout(() => {
+                     calculateAllocatedQty();
+                     $("#mainAllocation1").data("running", 0);
+                  }, 200);
+               }
+         });
+
+      });
+
+   }
+
     $(document).on("click", '.Abutton', function (event) {
          insertRow($(this).closest("tr"));
           
     });
-   
+
+    $(document).on("click", '.Abutton1', function (event) {
+         insertRow1($(this).closest("tr"));          
+    });  
    
    
    var index = 1;
@@ -994,10 +1066,6 @@
    y.attr("selected","selected"); 
    y.appendTo(cell2);
    
-   
-   
-   
-   
    var cell15=row.insertCell(7);
    var btnAdd = document.createElement("INPUT");
    btnAdd.id = "Abutton";
@@ -1015,12 +1083,12 @@
    btnRemove.setAttribute("onclick", "deleteRow(this)");
    cell15.appendChild(btnRemove);
    
-   var w = $(window);
-   var row = $('#footable_2').find('tr').eq( index );
+   // var w = $(window);
+   // var row = $('#footable_2').find('tr').eq( index );
    
-   if (row.length){
-   $('html,body').animate({scrollTop: row.offset().top - (w.height()/2)}, 1000 );
-   }
+   // if (row.length){
+   // $('html,body').animate({scrollTop: row.offset().top - (w.height()/2)}, 1000 );
+   // }
    
    document.getElementById('cnt').value = parseInt(document.getElementById('cnt').value)+1;
    
@@ -1031,6 +1099,142 @@
    
    }
    
+   
+   var index = 1;
+   function insertRow1(Abutton){
+       var rowsx=$(Abutton).closest("tr");
+   $("#item_codes").select2("destroy");
+   $("#rack_id").select2("destroy");
+   var table=document.getElementById("footable_21").getElementsByTagName('tbody')[0];
+   var row=table.insertRow(table.rows.length);
+   
+   var cell1=row.insertCell(0);
+   var t1=document.createElement("input");
+   t1.style="display: table-cell; width:50px; height:30px;";
+   //t1.className="form-control col-sm-1";
+   
+   t1.id = "id"+index;
+   t1.name= "id[]";
+   t1.value=index;
+   cell1.appendChild(t1);
+   
+   var cell5 = row.insertCell(1);
+   var t5=document.createElement("select");
+   var x = $("#item_codes"),
+   y = x.clone();
+   y.attr("id","item_codes");
+   y.attr("name","item_codes[]");
+   y.width(252);
+   y.height(30);
+   y.appendTo(cell5);
+     
+   var cell2 = row.insertCell(2);
+   var t2=document.createElement("select");
+   var x = $("#unit_ids"),
+   y = x.clone();
+   y.attr("id","unit_ids");
+   y.attr("name","unit_ids[]");
+   y.width(100);
+   y.height(30);
+   var unit_id=+rowsx.find('select[name^="unit_ids[]"]').val();
+   y.val(unit_id);
+   y.attr("selected","selected"); 
+   y.appendTo(cell2);
+   
+   
+   var cell3 = row.insertCell(3);
+   var t3=document.createElement("input");
+   t3.style="display: table-cell; width:80px;height:30px;";
+   t3.type="number";
+   t3.step="any";
+   t3.required="true";
+   t3.className="QTY";
+   t3.id = "item_qtys"+index;
+   t3.name="item_qtys[]";
+   t3.value="0";
+   cell3.appendChild(t3);
+   
+   
+   var t3=document.createElement("input");
+   t3.style="display: table-cell; width:80px;height:30px;";
+   t3.type="hidden";
+   t3.id = "hsn_codes"+index;
+   t3.name="hsn_codes[]";
+   t3.value="0";
+   cell3.appendChild(t3);
+   
+   
+   var cell3 = row.insertCell(4);
+   var t3=document.createElement("input");
+   t3.style="display: table-cell; width:80px;height:30px;";
+   t3.type="number";
+   t3.step="any";
+   t3.required="true";
+   t3.id = "item_rates"+index;
+   t3.name="item_rates[]";
+   t3.value="0";
+   cell3.appendChild(t3);
+   
+   var cell3 = row.insertCell(5);
+   var t3=document.createElement("input");
+   t3.style="display: table-cell; width:80px;height:30px;";
+   t3.type="number";
+   t3.readOnly="true";
+   t3.step="any";
+   t3.className="AMT";
+   t3.required="true";
+   t3.id = "amounts"+index;
+   t3.name="amounts[]";
+   t3.value="0";
+   cell3.appendChild(t3);
+   
+   
+   var cell2 = row.insertCell(6);
+   var t2=document.createElement("select");
+   var x = $("#rack_id"),
+   y = x.clone();
+   y.attr("id","rack_id");
+   y.attr("name","rack_id[]");
+   y.width(100);
+   y.height(30);
+   var unit_id=+rowsx.find('select[name^="rack_id[]"]').val();
+   y.val(unit_id);
+   y.attr("selected","selected"); 
+   y.appendTo(cell2);
+   
+   var cell15=row.insertCell(7);
+   var btnAdd = document.createElement("INPUT");
+   btnAdd.id = "Abutton";
+   btnAdd.type = "button";
+   btnAdd.className="btn btn-warning pull-left Abutton1";
+   btnAdd.value = "+";
+   btnAdd.setAttribute("onclick", "  mycalc();");
+   cell15.appendChild(btnAdd);
+   
+   var btnRemove = document.createElement("INPUT");
+   btnRemove.id = "Dbutton";
+   btnRemove.type = "button";
+   btnRemove.className="btn btn-danger pull-left";
+   btnRemove.value = "X";
+   btnRemove.setAttribute("onclick", "deleteRow(this)");
+   cell15.appendChild(btnRemove);
+   
+   // var w = $(window);
+   // var row = $('#footable_2').find('tr').eq( index );
+   
+   // if (row.length){
+   // $('html,body').animate({scrollTop: row.offset().top - (w.height()/2)}, 1000 );
+   // }
+   
+   document.getElementById('cnt').value = parseInt(document.getElementById('cnt').value)+1;
+   
+   index++;
+   recalcId();
+   mycalc();
+   selselect();
+   
+   }
+
    function GetUnit(row)
    { 
        var tax_type_ids=1;
@@ -1070,22 +1274,13 @@
    }
    
    
-   function deleteRow(btn) {
-   if(document.getElementById('cnt').value > 1){
-   var row = btn.parentNode.parentNode;
-   row.parentNode.removeChild(row);
-   
-   document.getElementById('cnt').value = document.getElementById('cnt').value-1;
-   recalcId();
-   mycalc();
-   if($("#cnt").val()<=0)
-   {       
-   document.getElementById('Submit').disabled=true;
-   }
-   
-   
-   
-   }
+   function deleteRow(btn) 
+   { 
+         var row = btn.parentNode.parentNode;
+         row.parentNode.removeChild(row);
+         
+         recalcId();
+         mycalc();  
    }
    
    function recalcId(){
@@ -1094,7 +1289,7 @@
    })
    }
    
-    function getPODetails()
+   function getPODetails()
    {
       
        var po_code=$("#po_code").val();
@@ -1104,79 +1299,79 @@
                dataType:"json",
                url: "{{ route('getTrimsPODetails') }}",
                data:{'po_code':po_code},
-               success: function(data){
+               success: function(data)
+               {
                    
-                //   $("#po_type_id").val(data[0]['po_type_id']);
-                   $("#Ac_code").val(data[0]['Ac_code']);
-                    
-                      
-                    
-                   var qhtml=data[0]["ac_name"];
-                   var q=data[0]['Ac_code'];
-                   $('#Ac_code').val(data[0]["Ac_code"]);
-                  // $('#select2-chosen-1').html(qhtml);
-                   
-                   
-                   
-                  
-           }
+               //   $("#po_type_id").val(data[0]['po_type_id']);
+                  $("#Ac_code").val(data[0]['Ac_code']);                    
+                  var qhtml=data[0]["ac_name"];
+                  var q=data[0]['Ac_code'];
+                  $('#Ac_code').val(data[0]["Ac_code"]);
+                  // $('#select2-chosen-1').html(qhtml);   
+               }
            });
    }
    
-   function mycalc()
-   {   
-    
-   sum1 = 0.0;
-   var amounts = document.getElementsByClassName('QTY');
-   //alert("value="+amounts[0].value);
-   for(var i=0; i<amounts .length; i++)
-   { 
-   var a = +amounts[i].value;
-   sum1 += parseFloat(a);
+
+  function mycalc() 
+  { 
+      function safeVal(selector) {
+         let el = $(selector);
+         if (el.length > 0) return el;      // element exists
+         return null;                       // does not exist
+      }
+
+      // SUM QTY
+      let sumQty = 0;
+      $(".QTY").each(function () {
+         let v = parseFloat($(this).val()) || 0;
+         sumQty += v;
+      });
+
+      let totalqty = safeVal("#totalqty");
+      if (totalqty) totalqty.val(sumQty.toFixed(2));
+
+      let totalqty2 = safeVal("#totalqty1");
+      if (totalqty2) totalqty2.val(sumQty.toFixed(2));
+
+      // SUM AMOUNT
+      let sumAmt = 0;
+      $(".AMT").each(function () {
+         let v = parseFloat($(this).val()) || 0;
+         sumAmt += v;
+      });
+
+      let totalAmt = safeVal("#total_amount");
+      if (totalAmt) totalAmt.val(sumAmt.toFixed(2));
+
+      let totalAmt2 = safeVal("#total_amount1");
+      if (totalAmt2) totalAmt2.val(sumAmt.toFixed(2));
    }
-   document.getElementById("totalqty").value = sum1.toFixed(2);
-   
-    
-   sum1 = 0.0;
-   var amounts = document.getElementsByClassName('AMT');
-   //alert("value="+amounts[0].value);
-   for(var i=0; i<amounts .length; i++)
-   { 
-   var a = +amounts[i].value;
-   sum1 += parseFloat(a);
-   }
-   document.getElementById("total_amount").value = sum1.toFixed(2);
-   
-   }
-   
-   
-   
    
    function frieght_payable()
    {
        var Net_amount=document.getElementById('Net_amount').value;
        var freight_amt=$('#freight_amt').val();
    
-   var payable_amount=(parseFloat(Net_amount) + (parseFloat(freight_amt)));
-   $('#payable_amt').val(parseFloat(payable_amount).toFixed(0));
+       var payable_amount=(parseFloat(Net_amount) + (parseFloat(freight_amt)));
+      $('#payable_amt').val(parseFloat(payable_amount).toFixed(0));
    
    }
    
    
    function disc_calculatess()
-   {
-   
-   var item_qty=document.getElementById('item_qty').value;
-   var item_rate=document.getElementById('item_rate').value;
-   var disc_per=document.getElementById('disc_per').value;
-   var amount= item_qty*item_rate
-   
-   var disc_amount= parseFloat(parseFloat(amount) * parseFloat(disc_per/100));
-   $('#disc_amount').val(disc_amount.toFixed(2));
-   
-   var amount= parseFloat(parseFloat(amount) - parseFloat(disc_amount)).toFixed(2);
-   $('#amount').val(amount);
-   calculateGstsss();
+   { 
+      var item_qty=document.getElementById('item_qty').value;
+      var item_rate=document.getElementById('item_rate').value;
+      var disc_per=document.getElementById('disc_per').value;
+      var amount= item_qty*item_rate
+      
+      var disc_amount= parseFloat(parseFloat(amount) * parseFloat(disc_per/100));
+      $('#disc_amount').val(disc_amount.toFixed(2));
+      
+      var amount= parseFloat(parseFloat(amount) - parseFloat(disc_amount)).toFixed(2);
+      $('#amount').val(amount);
+      calculateGstsss();
    
    }
    
@@ -1185,29 +1380,29 @@
    
    function calculateGstsss()
    {
-   var amount=document.getElementById('amount').value;
-   var pur_cgst=document.getElementById('pur_cgst').value;
-   var pur_sgst=document.getElementById('pur_sgst').value;
-   var pur_igst=document.getElementById('pur_igst').value;
-   
-   var tax_type_id1=document.getElementById('tax_type_id').value;
-   if(tax_type_id1==2)
-   {
-   var iamt=  parseFloat(( amount*(pur_igst/100))).toFixed(2);
-   $('#iamt').val(iamt);
-   
-   $('#total_amount').val(parseFloat(amount) + parseFloat(iamt));
-   
-   }
-   else{
-   var camt=  parseFloat(( amount*(pur_cgst/100))).toFixed(2);
-   $('#camt').val(camt);
-   var samt= parseFloat(( amount*(pur_sgst/100))).toFixed(2);
-   $('#samt').val(samt);
-   
-   $('#total_amount').val(parseFloat(amount) + parseFloat(camt) + parseFloat(samt));
-   
-   }
+      var amount=document.getElementById('amount').value;
+      var pur_cgst=document.getElementById('pur_cgst').value;
+      var pur_sgst=document.getElementById('pur_sgst').value;
+      var pur_igst=document.getElementById('pur_igst').value;
+      
+      var tax_type_id1=document.getElementById('tax_type_id').value;
+      if(tax_type_id1==2)
+      {
+      var iamt=  parseFloat(( amount*(pur_igst/100))).toFixed(2);
+      $('#iamt').val(iamt);
+      
+      $('#total_amount').val(parseFloat(amount) + parseFloat(iamt));
+      
+      }
+      else{
+      var camt=  parseFloat(( amount*(pur_cgst/100))).toFixed(2);
+      $('#camt').val(camt);
+      var samt= parseFloat(( amount*(pur_sgst/100))).toFixed(2);
+      $('#samt').val(samt);
+      
+      $('#total_amount').val(parseFloat(amount) + parseFloat(camt) + parseFloat(samt));
+      
+      }
    }
    
    
@@ -1342,6 +1537,7 @@
    success:function(response){
    console.log(response);  
        $("#bomdis").append(response.html);
+       $("#bomdis1").append(response.html);
     mycalc();
    }
    });

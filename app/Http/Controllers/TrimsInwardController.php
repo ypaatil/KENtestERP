@@ -248,7 +248,7 @@ class TrimsInwardController extends Controller
                     'item_qty' => isset($request->item_qtys[$x]) ? $request->item_qtys[$x] : 0,
                     'item_rate' => isset($request->item_rates[$x]) ? $request->item_rates[$x] : 0,
                     'amount' => isset($request->amounts[$x]) ? $request->amounts[$x] : 0,
-                    'rack_id' => isset($request->rack_ids[$x]) ? $request->rack_ids[$x] : 0,
+                    'rack_id' => isset($request->rack_id[$x]) ? $request->rack_id[$x] : 0,
                     'is_opening' => $is_opening,
                     'buyer_id' => $buyer_id,
                     'tge_code' => $request->tge_code,
@@ -649,10 +649,36 @@ class TrimsInwardController extends Controller
 
 
                 DB::table('dump_trim_stock_data')->where('trimCode', $request->input('trimCode'))->where('item_code', $item_code)->where('po_no', $po_code)->delete();
+                $ac_code    = (int)($request->Ac_code ?? 0);
+                $suplier_id = (int)($request->suplier_id ?? 0);
 
-                DB::SELECT('INSERT INTO dump_trim_stock_data(trimDate,buyer_name,suplier_name,po_no,item_code,item_name,rate,color,item_description,po_status,job_status_id,rack_id,ac_code,suplier_id,unit_id,trimCode,grn_qty,outward_qty,ind_outward_qty,amount)
-                                select "' . $request->trimDate . '","' . $buyerName . '","' . $suplierName . '","' . $po_code . '","' . $item_code . '","' . addslashes($item_name) . '","' . $item_rate . '", "-",
-                                        "' . addslashes($item_description) . '", "' . $po_status . '","' . $job_status_id . '", "' . $rack_id . '","' . $request->Ac_code . '","' . $request->Ac_code . '","' . $unit_id . '","' . $request->trimCode . '","' . $item_qty . '",0,"","' . $amount . '"');
+                DB::select('INSERT INTO dump_trim_stock_data(
+                                trimDate, buyer_name, suplier_name, po_no, item_code, item_name, rate, color,
+                                item_description, po_status, job_status_id, rack_id, ac_code, suplier_id,
+                                unit_id, trimCode, grn_qty, outward_qty, ind_outward_qty, amount
+                            )
+                            SELECT
+                                "'.$request->trimDate.'",
+                                "'.$buyerName.'",
+                                "'.$suplierName.'",
+                                "'.$po_code.'",
+                                "'.$item_code.'",
+                                "'.addslashes($item_name).'",
+                                "'.$item_rate.'",
+                                "-",
+                                "'.addslashes($item_description).'",
+                                "'.$po_status.'",
+                                "'.$job_status_id.'",
+                                "'.$rack_id.'",
+                                "'.$ac_code.'",
+                                "'.$suplier_id.'",
+                                "'.$unit_id.'",
+                                "'.$request->trimCode.'",
+                                "'.$item_qty.'",
+                                0,
+                                "",
+                                "'.$amount.'"
+                            ');
 
 
                 $existingData = DB::table('trimsOutwardDetail')->select('tout_date', 'item_qty')->where('po_code', '=', $po_code)->where('item_code', '=', $item_code)->get();
@@ -1052,7 +1078,7 @@ from item_master where item_code='$value->item_code'"));
 
 
 
-                $html .= '<td> <select name="rack_ids[]"  id="rack_ids" style="width:100px; height:30px;">
+                $html .= '<td> <select name="rack_id[]"  id="rack_ids" style="width:100px; height:30px;">
                         <option value="">--Select Rack--</option>';
 
                 foreach ($RackList as  $rowrack) {
@@ -1229,9 +1255,10 @@ from item_master where item_code='$value->item_code'"));
                                 <td><input type="text" name="sales_order_no[]" value="' . $sales_order_no . '" class="form-control" style="width:100px;" readonly/></td>
                                 <td><input type="text" name="item_code[]" value="' . $item_code . '" class="form-control" style="width:100px;" readonly/></td>
                                 <td nowrap><input type="text" name="item_name[]" value="' . $itemlist[0]->item_name . '" class="form-control" style="width:300px;" readonly/></td>
-                                <td nowrap><input type="text" name="allocate_qty[]" value="' . round($allocate_qty, 2) . '" class="form-control" style="width:100px;" readonly />
-                                            <input type="hidden" name="cat_id[]" value="' . $cat_id . '" class="form-control" style="width:100px;" />
-                                            <input type="hidden" name="class_id[]" value="' . $class_id . '" class="form-control" style="width:100px;" />
+                                <td nowrap>
+                                    <input type="text" name="allocate_qty[]" value="' . round($allocate_qty, 2) . '" class="form-control" style="width:100px;" readonly />
+                                    <input type="hidden" name="cat_id[]" value="' . $cat_id . '" class="form-control" style="width:100px;" />
+                                    <input type="hidden" name="class_id[]" value="' . $class_id . '" class="form-control" style="width:100px;" />
                                 </td>
                             </tr>';
                 }
@@ -2816,10 +2843,11 @@ from item_master where item_code='$value->item_code'"));
             }
             $html .= '</select>
               </td>
-              <td style="display: flex;">
-                 <button type="button" onclick=" mycalc();" class="Abutton btn btn-warning  btn-sm  pull-left" disabled>+</button>  
-                 <button type="button" name="allocate[]"  onclick="stockAllocate(this);" item_code="' . $row->item_code . '" isClick="' . $isclick . '" qty="' . $row->item_qty . '" bom_code="' . $row->bom_code . '" cat_id="' . $row->cat_id . '" class_id="' . $row->class_id . '"  class="btn ' . $allocateBtn . ' pull-left ml-2" style="margin-left: 10px;">Allocate</button> 
-                 <input type="button" class="btn btn-danger pull-left ml-2" onclick="deleteRow(this);" value="X" style="margin-left: 10px;" >  
+              <td>
+                 <button type="button" onclick=" mycalc();" class="Abutton btn btn-warning pull-left" disabled>+</button>   
+              </td>
+              <td> 
+                    <input type="button" class="btn btn-danger pull-left ml-2" onclick="deleteRow(this);" value="X" >  
               </td>
            </tr>';
             $no = $no + 1;
