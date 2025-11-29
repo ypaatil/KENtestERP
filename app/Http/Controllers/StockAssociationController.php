@@ -887,10 +887,63 @@ class StockAssociationController extends Controller
         }
         return 1;
     }  
-        
+
+
     public function rptTrimsAssocation(Request $request)
+{       ini_set('memory_limit', '10G'); 
+
+        if ($request->ajax()) {
+
+    $trimsAssocData = DB::table('dump_trims_stock_association as dts')
+        ->select(
+            'dts.*',
+            'item_category.cat_name',
+            'ledger_master.ac_short_name as supplier_name',
+            'ledger_details.trade_name',
+            'ledger_details.site_code'
+        )
+        ->join('item_master', 'item_master.item_code', '=', 'dts.item_code')
+        ->join('item_category', 'item_category.cat_id', '=', 'item_master.cat_id')
+        ->leftJoin('purchase_order', 'purchase_order.pur_code', '=', 'dts.po_code')
+        ->leftJoin('ledger_master', 'ledger_master.ac_code', '=', 'purchase_order.Ac_code')
+        ->leftJoin('ledger_details', 'ledger_details.sr_no', '=', 'purchase_order.bill_to')
+        ->get();
+
+    return Datatables::of($trimsAssocData)
+        ->addColumn('srno', function ($row) {
+            static $i = 1;
+            return $i++;
+        })
+        ->addColumn('avilable_stock', function ($row) {
+            $remainStock = ($row->totalAssoc <= 0 && $row->bom_code != "")
+                ? $row->allocated_qty - $row->eachAvaliableQty
+                : $row->allocated_qty - $row->otherAvaliableStock;
+
+            return number_format(round($remainStock - $row->trimOutwardStock, 2), 2, '.', ',');
+        })
+        ->addColumn('remainStock', function ($row) {
+            $remainStock = ($row->totalAssoc <= 0 && $row->bom_code != "")
+                ? $row->allocated_qty - $row->eachAvaliableQty
+                : $row->allocated_qty - $row->otherAvaliableStock;
+
+            return number_format(round($remainStock, 2), 2, '.', ',');
+        })
+        ->addColumn('totalAssoc', fn($row) => number_format(round($row->totalAssoc, 2), 2, '.', ','))
+        ->addColumn('bill_to', fn($row) => $row->site_code ? "{$row->trade_name}({$row->site_code})" : $row->trade_name)
+        ->addColumn('trimOutwardStock', fn($row) => number_format(round($row->trimOutwardStock, 2), 2, '.', ','))
+        ->rawColumns(['srno','avilable_stock','remainStock','totalAssoc','trimOutwardStock','bill_to'])
+        ->make(true);
+}
+
+
+    return view('rptTrimsAssocation');
+}
+
+        
+    /*public function rptTrimsAssocation(Request $request)
     {  
         ini_set('memory_limit', '10G'); 
+
         if ($request->ajax()) 
         { 
             
@@ -898,7 +951,7 @@ class StockAssociationController extends Controller
         $trimsAssocData = DB::select("SELECT dump_trims_stock_association.*,item_category.cat_name,(SELECT ac_short_name FROM ledger_master WHERE ledger_master.ac_code = purchase_order.Ac_code LIMIT 1) as supplier_name,(SELECT trade_name FROM ledger_details WHERE ledger_details.sr_no = purchase_order.bill_to LIMIT 1) as trade_name,
                    (SELECT site_code FROM ledger_details WHERE ledger_details.sr_no = purchase_order.bill_to LIMIT 1) as site_code  FROM dump_trims_stock_association INNER JOIN item_master ON item_master.item_code = dump_trims_stock_association.item_code 
                  INNER JOIN item_category ON item_category.cat_id = item_master.cat_id 
-                 LEFT JOIN purchase_order ON purchase_order.pur_code = dump_trims_stock_association.po_code");
+                 LEFT JOIN purchase_order ON purchase_order.pur_code = dump_trims_stock_association.po_code ");
       //dd(DB::getQueryLog());
             return Datatables::of($trimsAssocData) 
             ->addColumn('srno', function ($row) {
@@ -963,5 +1016,5 @@ class StockAssociationController extends Controller
     
             }    
           return view('rptTrimsAssocation'); 
-    } 
+    }  */
 }
