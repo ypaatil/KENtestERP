@@ -1122,7 +1122,7 @@
    var cell7 = row.insertCell(4);
    var t8=document.createElement("input");
    t8.style="display: table-cell; width:80px;height:30px;";
-   t8.type="text";
+   t8.type="number";
    t8.step="any";
    t8.className="METER";
    t8.id = "meter"+indexcone;
@@ -1133,7 +1133,7 @@
    var cell7 = row.insertCell(5);
    var t8=document.createElement("input");
    t8.style="display: table-cell; width:80px;height:30px;";
-   t8.type="text";
+   t8.type="number";
    t8.step="any";
    t8.id = "gram_per_meter"+indexcone;
    t8.name="gram_per_meter[]";
@@ -1144,7 +1144,7 @@
    var cell7 = row.insertCell(6);
    var t8=document.createElement("input");
    t8.style="display: table-cell; width:80px;height:30px;";
-   t8.type="text";
+   t8.type="number";
    t8.step="any";
    t8.className="KG";
    t8.id = "kg"+indexcone;
@@ -1159,12 +1159,10 @@
    t3.style="display: table-cell; width:80px;height:30px;";
    t3.type="number";
    t3.step="any";
-   t3.required="true";
+   t3.readOnly="true";
    t3.id = "item_rates"+indexcone;
    t3.name="item_rates[]";
    t3.value="0";
-   if($('#is_opening').prop('checked')) 
-   {t3.readOnly=false;}else{t3.readOnly=false;}
    cell3.appendChild(t3);
    
    var cell3 = row.insertCell(8);
@@ -1172,8 +1170,7 @@
    t3.style="display: table-cell; width:80px;height:30px;";
    t3.type="number";
    t3.readOnly="true";
-   t3.step="any";
-   t3.required="true";
+   t3.step="any"; 
    t3.className="AMT";
    t3.id = "amounts"+indexcone;
    t3.name="amounts[]";
@@ -1184,8 +1181,7 @@
    var t4=document.createElement("input");
    t4.style="display: table-cell; width:100px;height:30px;";
    t4.type="number";
-   t4.step="any";
-   t4.required="true";
+   t4.step="any"; 
    t4.className="suplier_roll_no";
    t4.id = "suplier_roll_no"+indexcone;
    t4.name="suplier_roll_no[]";
@@ -1308,7 +1304,8 @@
     // ---------------- Meter ----------------
     var cell5 = row.insertCell(4);
     var meter = document.createElement("input");
-    meter.type = "text";
+    meter.type = "number";
+    meter.step = "any";
     meter.className = "METER";
     meter.id = "meter" + indexcone;
     meter.name = "meter[]";
@@ -1319,7 +1316,8 @@
     // ---------------- Gram per meter ----------------
     var cell6 = row.insertCell(5);
     var gpm = document.createElement("input");
-    gpm.type = "text";
+    gpm.type = "number";
+    gpm.step = "any";
     gpm.id = "gram_per_meter" + indexcone;
     gpm.name = "gram_per_meter[]";
     gpm.value = $('#gram_per_meter').val();
@@ -1330,7 +1328,8 @@
     // ---------------- KG ----------------
     var cell7 = row.insertCell(6);
     var kg = document.createElement("input");
-    kg.type = "text";
+    kg.type = "number";
+    kg.step = "any";
     kg.className = "KG";
     kg.id = "kg" + indexcone;
     kg.name = "kg[]";
@@ -1354,6 +1353,7 @@
     var cell9 = row.insertCell(8);
     var amt = document.createElement("input");
     amt.type = "number";
+    amt.step = "any";
     amt.readOnly = true;
     amt.className = "AMT";
     amt.id = "amounts" + indexcone;
@@ -1366,6 +1366,7 @@
     var cell10 = row.insertCell(9);
     var roll = document.createElement("input");
     roll.type = "number";
+    roll.step = "any";
     roll.className = "suplier_roll_no";
     roll.id = "suplier_roll_no" + indexcone;
     roll.name = "suplier_roll_no[]";

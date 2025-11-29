@@ -229,7 +229,8 @@
                                  <th>Amount</th>
                                  <th nowrap>Suplier Roll No.</th>
                                  <th>Track Code</th>
-                                 <th>Add/Remove</th>
+                                 <th>Add</th>
+                                 <th>Remove</th>
                               </tr>
                            </thead>
                            <tbody>
@@ -278,7 +279,8 @@
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;" readonly/></td>
                                  <td><input type="number" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
                                  <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code" style="width:80px; height:30px;" required readOnly/></td>
-                                 <td><input type="button" style="width:40px;" onclick="insertcone();" name="Abutton" value="+" class="btn btn-warning pull-left"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
+                                 <td><input type="button" style="width:40px;" onclick="insertcone();" name="Abutton" value="+" class="btn btn-warning pull-left"></td>
+                                 <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
                               </tr>
                               @php $no=$no+1; @endphp
                               @endforeach
@@ -312,7 +314,8 @@
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" readonly  {{$dis}} />
                                  <td><input type="number" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
                                  <td><input type="text" name="track_code[]"  value="" id="track_code" style="width:80px;" {{$dis}}  /></td>
-                                 <td><input type="button" style="width:40px;" onclick="insertcone();" name="Abutton" value="+" class="btn btn-warning pull-left"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
+                                 <td><input type="button" style="width:40px;" onclick="insertcone();" name="Abutton" value="+" class="btn btn-warning pull-left"></td>
+                                 <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
                               </tr>
                               @endif
                            </tbody>
@@ -329,7 +332,8 @@
                                  <th>Amount</th>
                                  <th nowrap>Suplier Roll No.</th>
                                  <th>Track Code</th>
-                                 <th>Add/Remove</th>
+                                 <th>Add</th>
+                                 <th>Remove</th>
                               </tr>
                            </tfoot>
                         </table>
@@ -532,7 +536,8 @@
                                  <th>Amount</th>
                                  <th nowrap>Suplier Roll No.</th>
                                  <th>Track Code</th>
-                                 <th>Add/Remove</th>
+                                 <th>Add</th>
+                                 <th>Remove</th>
                               </tr>
                            </thead>
                            <tbody id="detailTbl">
@@ -587,7 +592,8 @@
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;" required/></td>
                                  <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
                                  <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code1" style="width:80px; height:30px;" required readOnly/></td>
-                                 <td><input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left" disabled> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X"  disabled></td>
+                                 <td><input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left" disabled></td>
+                                 <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X"  disabled></td>
                               </tr>
                               @php $no=$no+1; @endphp
                               @endforeach
@@ -621,7 +627,8 @@
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" required  {{$dis}} />
                                  <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
                                  <td><input type="text" name="track_code[]"  value="" id="track_code" style="width:80px;" {{$dis}}  /></td>
-                                 <td><input type="button" style="width:40px;" onclick="insertcone1();" name="Abutton" value="+" class="btn btn-warning pull-left"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
+                                 <td><input type="button" style="width:40px;" onclick="insertcone1();" name="Abutton" value="+" class="btn btn-warning pull-left"></td>
+                                 <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
                               </tr>
                               @endif
                            </tbody>
@@ -638,7 +645,8 @@
                                  <th>Amount</th>
                                  <th nowrap>Suplier Roll No.</th>
                                  <th>Track Code</th>
-                                 <th>Add/Remove</th>
+                                 <th>Add</th>
+                                 <th>Remove</th>
                               </tr>
                            </tfoot>
                         </table>
@@ -1153,7 +1161,8 @@
     // ---------------- Meter ----------------
     var cell5 = row.insertCell(4);
     var meter = document.createElement("input");
-    meter.type = "text";
+    meter.type = "number";
+    meter.step = "any";
     meter.className = "METER";
     meter.id = "meter" + indexcone;
     meter.name = "meter[]";
@@ -1164,7 +1173,8 @@
     // ---------------- Gram per meter ----------------
     var cell6 = row.insertCell(5);
     var gpm = document.createElement("input");
-    gpm.type = "text";
+    gpm.type = "number";
+    gpm.step = "any";
     gpm.id = "gram_per_meter" + indexcone;
     gpm.name = "gram_per_meter[]";
     gpm.value = $('#gram_per_meter').val();
@@ -1175,7 +1185,8 @@
     // ---------------- KG ----------------
     var cell7 = row.insertCell(6);
     var kg = document.createElement("input");
-    kg.type = "text";
+    kg.type = "number";
+    kg.step = "any";
     kg.className = "KG";
     kg.id = "kg" + indexcone;
     kg.name = "kg[]";
@@ -1199,6 +1210,7 @@
     var cell9 = row.insertCell(8);
     var amt = document.createElement("input");
     amt.type = "number";
+    amt.step = "any";
     amt.readOnly = true;
     amt.className = "AMT";
     amt.id = "amounts" + indexcone;
@@ -1211,6 +1223,7 @@
     var cell10 = row.insertCell(9);
     var roll = document.createElement("input");
     roll.type = "number";
+    roll.step = "any";
     roll.className = "suplier_roll_no";
     roll.id = "suplier_roll_no" + indexcone;
     roll.name = "suplier_roll_no[]";
@@ -1383,7 +1396,8 @@
    var cell7 = row.insertCell(4);
    var t8=document.createElement("input");
    t8.style="display: table-cell; width:80px;height:30px;";
-   t8.type="text";
+   t8.type="number";
+   t8.step="any";
    t8.className="METER";
    t8.id = "meter"+indexcone;
    t8.name="meter[]";
@@ -1393,7 +1407,7 @@
    var cell7 = row.insertCell(5);
    var t8=document.createElement("input");
    t8.style="display: table-cell; width:80px;height:30px;";
-   t8.type="text";
+   t8.type="number";
    t8.step="any";
    t8.id = "gram_per_meter"+indexcone;
    t8.name="gram_per_meter[]";
@@ -1403,8 +1417,9 @@
    var cell7 = row.insertCell(6);
    var t8=document.createElement("input");
    t8.style="display: table-cell; width:80px;height:30px;";
-   t8.type="text";
+   t8.type="number";
    t8.step="any";
+   t8.readOnly="true";
    t8.className="KG";
    t8.id = "kg"+indexcone;
    t8.name="kg[]";
@@ -1422,6 +1437,7 @@
    t3.id = "item_rates"+indexcone;
    t3.name="item_rates[]";
    t3.value="0";
+   t3.readOnly=true;
    if($('#is_opening').prop('checked')) 
    {t3.readOnly=false;}else{t3.readOnly=true;}
    cell3.appendChild(t3);
@@ -1432,7 +1448,6 @@
    t3.type="number";
    t3.readOnly="true";
    t3.step="any";
-   t3.required="true";
    t3.className="AMT";
    t3.id = "amounts"+indexcone;
    t3.name="amounts[]";
@@ -1478,6 +1493,7 @@
    cell8.appendChild(btnAdd);
    
    
+   var cell9=row.insertCell(12);
    var btnRemove = document.createElement("INPUT");
    btnRemove.id = "Dbutton";
    btnRemove.type = "button";
@@ -1485,7 +1501,7 @@
    btnRemove.style="margin-left:10px;";
    btnRemove.value = "X";
    btnRemove.setAttribute("onclick", "deleteRowcone(this)");
-   cell8.appendChild(btnRemove);
+   cell9.appendChild(btnRemove);
    
    var w = $(window);
    var row = $('#footable_3').find('tr').eq(indexcone);
