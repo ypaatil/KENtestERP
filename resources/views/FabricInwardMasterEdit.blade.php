@@ -1031,6 +1031,7 @@
    {
       if($(el).is(":checked"))
       {
+         $("#is_opening").attr("disabled", true);
          $("#po_code").attr("disabled", true);
          $("#po_type_id").val(2).attr("disabled", true);
          $("#Ac_code").val(50).trigger('change').attr("disabled", true);
@@ -1040,6 +1041,9 @@
          }, 1000);
    
          $("#fge_code").attr("disabled", true).removeAttr("required");
+
+         $("#footable_2 tbody tr").find("td input[name='item_rates[]']").prop('readonly', false);   // most reliable
+
       }
       else
       {
@@ -1332,189 +1336,190 @@
    
    var indexcone = {{ count($FabricInwardDetails) }};
    //var indexcone = 2;
-   function insertcone(){
-   
-   var table=document.getElementById("footable_2").getElementsByTagName('tbody')[0];
-   var row=table.insertRow(table.rows.length);
-   
-   var cell1=row.insertCell(0);
-   var t1=document.createElement("input");
-   t1.style="display: table-cell; width:50px;";
-   //t1.className="form-control col-sm-1";
-   
-   t1.id = "id"+indexcone;
-   t1.name= "id[]";
-   t1.value=indexcone;
-   
-   cell1.appendChild(t1);
-    
-   
-   var cell1=row.insertCell(1);
-   var t1=document.createElement("input");
-   t1.style="display: table-cell; width:50px;";
-   //t1.className="form-control col-sm-1";
-   
-   t1.id = "item_codes"+indexcone;
-   t1.name= "item_codes[]";
-   
-   cell1.appendChild(t1);
-   
-   var cell5 = row.insertCell(2);
-   var t5=document.createElement("select");
-   var x = $("#item_code"),
-   y = x.clone();
-   y.attr("id","item_code");
-   y.attr("name","item_code[]");
-   y.width(200);
-   y.height(30);
-   y.appendTo(cell5);
-   
-   
-   
-   var cell3 = row.insertCell(3);
-   var t3=document.createElement("select");
-   var x = $("#part_id"),
-   y = x.clone();
-   y.attr("id","part_id");
-   y.attr("name","part_id[]");
-   y.width(200);
-   y.height(30);
-   y.appendTo(cell3);
-   
-   
-   var t7=document.createElement("input");
-   t7.style="display: table-cell; width:80px;height:30px;";
-   t7.type="hidden";
-   t7.className="TAGAQTY";
-   t7.required="true";
-   t7.id = "taga_qty"+indexcone;
-   t7.name="taga_qty[]";
-   t7.onkeyup=mycalc();
-   t7.value="1";
-   cell3.appendChild(t7);
-   
-   var cell7 = row.insertCell(4);
-   var t8=document.createElement("input");
-   t8.style="display: table-cell; width:80px;height:30px;";
-   t8.type="number";
-   t8.step="any";
-   t8.className="METER";
-   t8.id = "meter"+indexcone;
-   t8.name="meter[]";
-   t8.onkeyup=mycalc();
-   cell7.appendChild(t8);
-   
-   var cell7 = row.insertCell(5);
-   var t8=document.createElement("input");
-   t8.style="display: table-cell; width:80px;height:30px;";
-   t8.type="number";
-   t8.step="any";
-   t8.id = "gram_per_meter"+indexcone;
-   t8.name="gram_per_meter[]";
-   t8.onkeyup=mycalc();
-   cell7.appendChild(t8);
-   
-   var cell7 = row.insertCell(6);
-   var t8=document.createElement("input");
-   t8.style="display: table-cell; width:80px;height:30px;";
-   t8.type="number";
-   t8.step="any";
-   t8.readOnly="true";
-   t8.className="KG";
-   t8.id = "kg"+indexcone;
-   t8.name="kg[]";
-   t8.readOnly=true;
-   t8.onkeyup=mycalc();
-   cell7.appendChild(t8);
-   
-   
-   var cell3 = row.insertCell(7);
-   var t3=document.createElement("input");
-   t3.style="display: table-cell; width:80px;height:30px;";
-   t3.type="number";
-   t3.step="any";
-   t3.required="true";
-   t3.id = "item_rates"+indexcone;
-   t3.name="item_rates[]";
-   t3.value="0";
-   t3.readOnly=true;
-   if($('#is_opening').prop('checked')) 
-   {t3.readOnly=false;}else{t3.readOnly=true;}
-   cell3.appendChild(t3);
-   
-   var cell3 = row.insertCell(8);
-   var t3=document.createElement("input");
-   t3.style="display: table-cell; width:80px;height:30px;";
-   t3.type="number";
-   t3.readOnly="true";
-   t3.step="any";
-   t3.className="AMT";
-   t3.id = "amounts"+indexcone;
-   t3.name="amounts[]";
-   t3.value="0";
-   cell3.appendChild(t3);
+   function insertcone()
+   {      
+      var table=document.getElementById("footable_2").getElementsByTagName('tbody')[0];
+      var row=table.insertRow(table.rows.length);
       
-   var cell4 = row.insertCell(9);
-   var t4=document.createElement("input");
-   t4.style="display: table-cell; width:80px;height:30px;";
-   t4.type="number";
-   t4.step="any";
-   t4.required="true";
-   t4.className="suplier_roll_no";
-   t4.id = "suplier_roll_no"+indexcone;
-   t4.name="suplier_roll_no[]";
-   t4.value="";
-   cell4.appendChild(t4);
-   
-   var cell7 = row.insertCell(10);
-   var t7=document.createElement("input");
-   t7.style="display: table-cell; width:80px;height:30px;";
-   t7.type="text";
-   t7.id = "track_code"+indexcone;
-   t7.name="track_code[]";
-   if($("#cp_id").val()==1)
-   {
-     t7.value='P'+(++PBarcode);
-   }
-   else
-   {
-      t7.value='I'+(++CBarcode);
-   }
-   cell7.appendChild(t7);
-   
-   var cell8=row.insertCell(11);
-   var btnAdd = document.createElement("INPUT");
-   btnAdd.id = "Abutton";
-   btnAdd.type = "button";
-   btnAdd.name = "print";
-   btnAdd.className="btn btn-warning pull-left";
-   btnAdd.value = "+";
-   btnAdd.setAttribute("onclick", "insertcone();");
-   cell8.appendChild(btnAdd);
-   
-   
-   var cell9=row.insertCell(12);
-   var btnRemove = document.createElement("INPUT");
-   btnRemove.id = "Dbutton";
-   btnRemove.type = "button";
-   btnRemove.className="btn btn-danger pull-left";
-   btnRemove.style="margin-left:10px;";
-   btnRemove.value = "X";
-   btnRemove.setAttribute("onclick", "deleteRowcone(this)");
-   cell9.appendChild(btnRemove);
-   
-   var w = $(window);
-   var row = $('#footable_3').find('tr').eq(indexcone);
-   
-   if (row.length){
-   $('html,body').animate({scrollTop: row.offset().top - (w.height()/2)}, 1000 );
-   }
-   
-   document.getElementById('cntrr').value = parseInt(document.getElementById('cntrr').value)+1;
-   
-   indexcone++;
-   mycalc();
-   recalcIdcone();
+      var cell1=row.insertCell(0);
+      var t1=document.createElement("input");
+      t1.style="display: table-cell; width:50px;";
+      //t1.className="form-control col-sm-1";
+      
+      t1.id = "id"+indexcone;
+      t1.name= "id[]";
+      t1.value=indexcone;
+      
+      cell1.appendChild(t1);
+      
+      
+      var cell1=row.insertCell(1);
+      var t1=document.createElement("input");
+      t1.style="display: table-cell; width:50px;";
+      //t1.className="form-control col-sm-1";
+      
+      t1.id = "item_codes"+indexcone;
+      t1.name= "item_codes[]";
+      
+      cell1.appendChild(t1);
+      
+      var cell5 = row.insertCell(2);
+      var t5=document.createElement("select");
+      var x = $("#item_code"),
+      y = x.clone();
+      y.attr("id","item_code");
+      y.attr("name","item_code[]");
+      y.width(200);
+      y.height(30);
+      y.appendTo(cell5);
+      
+      
+      
+      var cell3 = row.insertCell(3);
+      var t3=document.createElement("select");
+      var x = $("#part_id"),
+      y = x.clone();
+      y.attr("id","part_id");
+      y.attr("name","part_id[]");
+      y.width(200);
+      y.height(30);
+      y.appendTo(cell3);
+      
+      
+      var t7=document.createElement("input");
+      t7.style="display: table-cell; width:80px;height:30px;";
+      t7.type="hidden";
+      t7.className="TAGAQTY";
+      t7.required="true";
+      t7.id = "taga_qty"+indexcone;
+      t7.name="taga_qty[]";
+      t7.onkeyup=mycalc();
+      t7.value="1";
+      cell3.appendChild(t7);
+      
+      var cell7 = row.insertCell(4);
+      var t8=document.createElement("input");
+      t8.style="display: table-cell; width:80px;height:30px;";
+      t8.type="number";
+      t8.step="any";
+      t8.className="METER";
+      t8.id = "meter"+indexcone;
+      t8.name="meter[]";
+      t8.onkeyup=mycalc();
+      cell7.appendChild(t8);
+      
+      var cell7 = row.insertCell(5);
+      var t8=document.createElement("input");
+      t8.style="display: table-cell; width:80px;height:30px;";
+      t8.type="number";
+      t8.step="any";
+      t8.id = "gram_per_meter"+indexcone;
+      t8.name="gram_per_meter[]";
+      t8.onkeyup=mycalc();
+      cell7.appendChild(t8);
+      
+      var cell7 = row.insertCell(6);
+      var t8=document.createElement("input");
+      t8.style="display: table-cell; width:80px;height:30px;";
+      t8.type="number";
+      t8.step="any";
+      t8.readOnly="true";
+      t8.className="KG";
+      t8.id = "kg"+indexcone;
+      t8.name="kg[]";
+      t8.readOnly=true;
+      t8.onkeyup=mycalc();
+      cell7.appendChild(t8);
+      
+      
+      var cell3 = row.insertCell(7);
+      var t3=document.createElement("input");
+      t3.style="display: table-cell; width:80px;height:30px;";
+      t3.type="number";
+      t3.step="any";
+      t3.required="true";
+      t3.id = "item_rates"+indexcone;
+      t3.name="item_rates[]";
+      t3.value="0";
+      t3.readOnly=true;
+      if($('#is_opening').prop('checked')) 
+      {t3.readOnly=false;}else{t3.readOnly=true;}
+      cell3.appendChild(t3);
+      
+      var cell3 = row.insertCell(8);
+      var t3=document.createElement("input");
+      t3.style="display: table-cell; width:80px;height:30px;";
+      t3.type="number";
+      t3.readOnly="true";
+      t3.step="any";
+      t3.className="AMT";
+      t3.id = "amounts"+indexcone;
+      t3.name="amounts[]";
+      t3.value="0";
+      cell3.appendChild(t3);
+         
+      var cell4 = row.insertCell(9);
+      var t4=document.createElement("input");
+      t4.style="display: table-cell; width:80px;height:30px;";
+      t4.type="number";
+      t4.step="any";
+      t4.required="true";
+      t4.className="suplier_roll_no";
+      t4.id = "suplier_roll_no"+indexcone;
+      t4.name="suplier_roll_no[]";
+      t4.value="";
+      cell4.appendChild(t4);
+      
+      var cell7 = row.insertCell(10);
+      var t7=document.createElement("input");
+      t7.style="display: table-cell; width:80px;height:30px;";
+      t7.type="text";
+      t7.id = "track_code"+indexcone;
+      t7.name="track_code[]";
+      if($("#cp_id").val()==1)
+      {
+      t7.value='P'+(++PBarcode);
+      }
+      else
+      {
+         t7.value='I'+(++CBarcode);
+      }
+      cell7.appendChild(t7);
+      
+      var cell8=row.insertCell(11);
+      var btnAdd = document.createElement("INPUT");
+      btnAdd.id = "Abutton";
+      btnAdd.type = "button";
+      btnAdd.name = "print";
+      btnAdd.className="btn btn-warning pull-left";
+      btnAdd.value = "+";
+      btnAdd.setAttribute("onclick", "insertcone();");
+      cell8.appendChild(btnAdd);
+      
+      
+      var cell9=row.insertCell(12);
+      var btnRemove = document.createElement("INPUT");
+      btnRemove.id = "Dbutton";
+      btnRemove.type = "button";
+      btnRemove.className="btn btn-danger pull-left";
+      btnRemove.style="margin-left:10px;";
+      btnRemove.value = "X";
+      btnRemove.setAttribute("onclick", "deleteRowcone(this)");
+      cell9.appendChild(btnRemove);
+      
+      var w = $(window);
+      var row = $('#footable_3').find('tr').eq(indexcone);
+      
+      if (row.length){
+      $('html,body').animate({scrollTop: row.offset().top - (w.height()/2)}, 1000 );
+      }
+      
+      document.getElementById('cntrr').value = parseInt(document.getElementById('cntrr').value)+1;
+      
+      indexcone++;
+      mycalc();
+      recalcIdcone();
+      $("#footable_2 tbody tr").find("td input[name='item_rates[]']").prop('readonly', false);   // most reliable
    }
    
    
