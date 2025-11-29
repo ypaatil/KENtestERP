@@ -62,6 +62,23 @@ public function FabricCheckPrint($chk_code)
       
     }
 
+    public function FabricCheckPrintView($chk_code)
+    {
+        
+         
+         $fabricChekingMaster = FabricCheckingModel::join('usermaster', 'usermaster.userId', '=', 'fabric_checking_master.userId')
+        ->join('ledger_master', 'ledger_master.Ac_code', '=', 'fabric_checking_master.Ac_code')
+            ->join('cp_master', 'cp_master.cp_id', '=', 'fabric_checking_master.cp_id')
+        ->where('fabric_checking_master.chk_code',$chk_code)
+        ->get(['fabric_checking_master.*','usermaster.username','ledger_master.Ac_name','cp_master.cp_name']);
+        
+          $GetPO=FabricInwardModel::select('po_code')->where('in_code',$fabricChekingMaster[0]->in_code)->get();
+          //$po_code= $GetPO[0]->po_code ? $GetPO[0]->po_code : "-";
+      
+         return view('FabricCheckingPrintView', compact('fabricChekingMaster'));
+      
+    }
+
 
 
 }

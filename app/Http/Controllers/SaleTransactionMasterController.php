@@ -1190,6 +1190,31 @@ public function CartonPackingList(Request $request)
 
       return view('PrintSaleTransaction', compact('BuyerPurchaseOrderMasterList','BuyerDetail'));
     }
+
+
+    public function PrintSaleTransactionView($id)
+    {
+        
+      $BuyerPurchaseOrderMasterList = DB::table('sale_transaction_master')
+        ->select('sale_transaction_master.sr_no','sale_transaction_master.tax_type_id','sale_transaction_master.sale_code','sale_transaction_detail.samt','sale_transaction_detail.iamt',
+            'sale_transaction_detail.sale_cgst','sale_transaction_detail.sale_sgst','sale_transaction_detail.sale_igst','sale_transaction_detail.camt',
+            'sale_transaction_detail.sales_order_no','unit_master.unit_name','sale_transaction_detail.order_qty','sale_transaction_detail.order_rate',
+            'sale_transaction_detail.hsn_code','buyer_purchse_order_master.style_description','main_style_master.mainstyle_name')
+        ->join('sale_transaction_detail', 'sale_transaction_detail.sale_code', '=', 'sale_transaction_master.sale_code') 
+        ->join('buyer_purchse_order_master','buyer_purchse_order_master.tr_code','=','sale_transaction_detail.sales_order_no')
+        ->join('main_style_master', 'main_style_master.mainstyle_id', '=', 'buyer_purchse_order_master.mainstyle_id')
+        ->join('unit_master', 'unit_master.unit_id', '=', 'sale_transaction_detail.unit_id')
+        ->where('buyer_purchse_order_master.delflag','=', '0')
+        ->where('sale_transaction_master.sr_no','=', $id)
+        ->groupby('sale_transaction_detail.sales_order_no')
+        ->get(); 
+        
+         $BuyerDetail = DB::table('sale_transaction_master')->select('*','ledger_master.*') ->join('ledger_master', 'ledger_master.ac_code', '=', 'sale_transaction_master.Ac_code')->where('sale_transaction_master.sr_no','=', $id)->first(); 
+
+      return view('PrintSaleTransactionView', compact('BuyerPurchaseOrderMasterList','BuyerDetail'));
+    }
+
+    
      
     public function DCPrintSaleTransaction($id)
     {
@@ -1213,6 +1238,30 @@ public function CartonPackingList(Request $request)
          $BuyerDetail = DB::table('sale_transaction_master')->select('*','ledger_master.*','sale_transaction_master.address as sent_address') ->join('ledger_master', 'ledger_master.ac_code', '=', 'sale_transaction_master.Ac_code')->where('sale_transaction_master.sr_no','=', $id)->first(); 
 
       return view('DCPrintSaleTransaction', compact('BuyerPurchaseOrderMasterList','BuyerDetail', 'FirmDetail'));
+    }
+
+     public function DCPrintSaleTransactionView($id)
+    {
+        
+        //DB::enableQueryLog();
+      $BuyerPurchaseOrderMasterList = DB::table('sale_transaction_master')
+        ->select('sale_transaction_master.tax_type_id','sale_transaction_master.sale_code','sale_transaction_detail.samt','sale_transaction_detail.iamt',
+            'sale_transaction_detail.sale_cgst','sale_transaction_detail.sale_sgst','sale_transaction_detail.sale_igst','sale_transaction_detail.camt',
+            'sale_transaction_detail.sales_order_no','unit_master.unit_name','sale_transaction_detail.order_qty','sale_transaction_detail.order_rate',
+            'sale_transaction_detail.hsn_code','buyer_purchse_order_master.style_description','main_style_master.mainstyle_name')
+        ->join('sale_transaction_detail', 'sale_transaction_detail.sale_code', '=', 'sale_transaction_master.sale_code') 
+        ->join('buyer_purchse_order_master','buyer_purchse_order_master.tr_code','=','sale_transaction_detail.sales_order_no')
+        ->join('main_style_master', 'main_style_master.mainstyle_id', '=', 'buyer_purchse_order_master.mainstyle_id')
+        ->join('unit_master', 'unit_master.unit_id', '=', 'sale_transaction_detail.unit_id')
+        ->where('buyer_purchse_order_master.delflag','=', '0')
+        ->where('sale_transaction_master.sr_no','=', $id)
+        ->groupby('sale_transaction_detail.sales_order_no')
+        ->get(); 
+        
+         $FirmDetail = DB::table('firm_master')->where('delflag','=', '0')->first();
+         $BuyerDetail = DB::table('sale_transaction_master')->select('*','ledger_master.*','sale_transaction_master.address as sent_address') ->join('ledger_master', 'ledger_master.ac_code', '=', 'sale_transaction_master.Ac_code')->where('sale_transaction_master.sr_no','=', $id)->first(); 
+
+      return view('DCPrintSaleTransactionView', compact('BuyerPurchaseOrderMasterList','BuyerDetail', 'FirmDetail'));
     }
       
     public function MonthlyShipmentTargetMaster(Request $request)

@@ -1052,12 +1052,7 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                             <h4 class="mt-2" style="font-size:15px;">Comments : {{isset($BOMList[0]->narration) ? $BOMList[0]->narration : "" }}</h4>
 
                         </div>
-                    </div><br>
-
-
-
-                    <br>
-
+                    </div>
                     <table class="table">
                         <tr>
                             <th>Prepared By:</th>

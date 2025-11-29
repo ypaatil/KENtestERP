@@ -268,7 +268,7 @@ $no=1; $amt=0; @endphp
 <tfoot>
 <tr>
     <td colspan="4"><b>    </b></td>
-<td  <b>Total Taga:   </b></td>
+<td>  <b>Total Taga:   </b></td>
 <td  ><b> {{ $FabricOutwardMaster[0]->total_taga_qty }}  </b></td>
 <td style="font-weight:bold;">Total  Meter</td>
 <td style="font-weight:bold;">{{ number_format($FabricOutwardMaster[0]->total_meter) }}</td>

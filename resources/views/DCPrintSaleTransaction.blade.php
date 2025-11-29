@@ -158,7 +158,7 @@
                            <td class="text-right">{{money_format("%!.0n",round(($buyerData->order_qty * $buyerData->order_rate),2))}}</td>
                            <td class="text-right">{{money_format("%!.0n",round($taxAmt,2))}}</td>
                            <td class="text-right">{{money_format("%!.0n",round(round(($buyerData->order_qty * $buyerData->order_rate) + $taxAmt),2))}}</td>
-                        </tr
+                        </tr>
                         @php 
                             $totalQty = $totalQty + $buyerData->order_qty;
                             $total_material_value = $total_material_value + ($buyerData->order_qty * $buyerData->order_rate);

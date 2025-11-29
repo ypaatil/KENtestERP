@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>QC Stitching | Ken Global Designs Pvt. Ltd. </title>
+    <title>Packing | Ken Global Designs Pvt. Ltd. </title>
     <!-- Web Fonts -->
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' type='text/css'>
     <!-- Stylesheets -->
@@ -481,55 +481,61 @@
                         <div class="green-part"></div>
                     </div>
 
-                    <h4 class=" fw-bold mt-6 text-center">QC Stitching</h4>
+                    <h4 class=" fw-bold mt-6 text-center">Packing</h4>
 
                     <!-- Sales Info -->
                     <div class="row  border-top border-bottom  g-0">
                         <div class="col-md-6 p-2 border-end">
                             <div class="info-row">
-                                <div class="label">QC No</div>
+                                <div class="label">GRN No</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{ $QCStitchingInhouseMaster[0]->qcsti_code }}</div>
+                                <div class="value">{{ $PackingInhouseMaster[0]->pki_code }} </div>
                             </div>
                             <div class="info-row">
-                                <div class="label">QC Date</div>
+                                <div class="label">GRN Date</div>
                                 <div class="colon">: </div>
-                                <div class="value"> {{ $QCStitchingInhouseMaster[0]->qcsti_date }} </div>
+                                <div class="value">{{ $PackingInhouseMaster[0]->pki_date }}</div>
                             </div>
                             <div class="info-row">
                                 <div class="label">Sales Order no</div>
                                 <div class="colon">:</div>
-                                <div class="value"> {{ $QCStitchingInhouseMaster[0]->sales_order_no }} </div>
+                                <div class="value"> {{ $PackingInhouseMaster[0]->sales_order_no }} </div>
                             </div>
-
-
+                            @if($PackingInhouseMaster[0]->is_opening==1)
                             <div class="info-row">
-                                <div class="label">Work Order No</div>
+                                <div class="label">Opening Stock: </div>
                                 <div class="colon">:</div>
-                                <div class="value">{{ $QCStitchingInhouseMaster[0]->vw_code }}  </div>
+                                <div class="value"> Yes </div>
                             </div>
-
+                            @endif
+                            @if($PackingInhouseMaster[0]->is_opening!=1)
+                            <div class="info-row">
+                                <div class="label">Process Order No</div>
+                                <div class="colon">:</div>
+                                <div class="value"> {{ $PackingInhouseMaster[0]->vpo_code }} </div>
+                            </div>
+                            @endif
                         </div>
-                        <div class="col-md-6 p-2 ">
+                        <div class="col-md-6 p-2 border-end">
                             <div class="info-row">
                                 <div class="label">Vendor</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{  $QCStitchingInhouseMaster[0]->Ac_name }} </div>
+                                <div class="value">{{ $PackingInhouseMaster[0]->Ac_name }} </div>
                             </div>
                             <div class="info-row">
                                 <div class="label">Address</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{  $QCStitchingInhouseMaster[0]->address }}</div>
+                                <div class="value">{{ $PackingInhouseMaster[0]->address }}</div>
                             </div>
                             <div class="info-row">
                                 <div class="label">GST NO</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{  $QCStitchingInhouseMaster[0]->gst_no }}</div>
+                                <div class="value">{{ $PackingInhouseMaster[0]->gst_no }}</div>
                             </div>
                             <div class="info-row">
                                 <div class="label">PAN NO</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{  $QCStitchingInhouseMaster[0]->pan_no }}</div>
+                                <div class="value">{{ $PackingInhouseMaster[0]->pan_no }}</div>
                             </div>
 
                         </div>
@@ -537,68 +543,75 @@
                     </div>
 
 
-                    <h4 class="text-center mt-6 fw-bold">QC Stitching Details</h4>
+                    <h4 class="text-center mt-6 fw-bold">Packing Details</h4>
                     <table class="table table-bordered table-sm">
                         <thead>
                             <tr>
-                                <th>SrNo</th>
+                                <th>Sr No</th>
                                 <th>Item Name</th>
                                 <th>Garment Color</th>
-                                @foreach ($SizeDetailList as $sz) 
-                   
-                      <th>{{$sz->size_name}}</th>
-                       
-                   @endforeach
+                                @foreach ($SizeDetailList as $sz)
+                                <th>{{$sz->size_name}}</th>
+                                @endforeach
 
                                 <th>Total Qty</th>
+                                <th>Rate</th>
+                                <th>Amount</th>
+
                             </tr>
                         </thead>
                         <tbody>
-                             @php   $no=1; $totalAmt=0; $totalQty=0;@endphp
-          @foreach ($QCStitchingGRNList as $row) 
+                           @php   $no=1; $totalAmt=0; $totalQty=0;@endphp
+          @foreach ($PackingGRNList as $row) 
                             <tr>
                                 <td class="text-end">{{$no}}</td>
-                                <td class="text-start">{{$row->item_name}}</td>
+                                   <td class="text-start">{{$row->item_name}}</td>  
                                 <td class="text-start">{{$row->color_name}}</td>
-                                @if(isset($row->s1)) <td>{{$row->s1}}</td> @endif
-                                @if(isset($row->s2)) <td>{{$row->s2}}</td>@endif
-                                @if(isset($row->s3)) <td>{{$row->s3}}</td>@endif
-                                @if(isset($row->s4)) <td>{{$row->s4}}</td>@endif
-                                @if(isset($row->s5)) <td>{{$row->s5}}</td>@endif
-                                @if(isset($row->s6)) <td>{{$row->s6}}</td>@endif
-                                @if(isset($row->s7)) <td>{{$row->s7}}</td>@endif
-                                @if(isset($row->s8)) <td>{{$row->s8}}</td>@endif
-                                @if(isset($row->s9)) <td>{{$row->s9}}</td>@endif
-                                @if(isset($row->s10)) <td>{{$row->s10}}</td>@endif
-                                @if(isset($row->s11)) <td>{{$row->s11}}</td>@endif
-                                @if(isset($row->s12)) <td>{{$row->s12}}</td>@endif
-                                @if(isset($row->s13)) <td>{{$row->s13}}</td>@endif
-                                @if(isset($row->s14)) <td>{{$row->s14}}</td>@endif
-                                @if(isset($row->s15)) <td>{{$row->s15}}</td>@endif
-                                @if(isset($row->s16)) <td>{{$row->s16}}</td>@endif
-                                @if(isset($row->s17)) <td>{{$row->s17}}</td>@endif
-                                @if(isset($row->s18)) <td>{{$row->s18}}</td>@endif
-                                @if(isset($row->s19)) <td>{{$row->s19}}</td>@endif
-                                @if(isset($row->s20)) <td>{{$row->s20}}</td> @endif
-                                <td>{{$row->size_qty_total}}</td>
-
-
+                                @if(isset($row->s1))  <td class="text-end">{{$row->s1}}</td> @endif
+          @if(isset($row->s2)) <td class="text-end">{{$row->s2}}</td>@endif
+          @if(isset($row->s3)) <td class="text-end">{{$row->s3}}</td>@endif
+          @if(isset($row->s4)) <td class="text-end">{{$row->s4}}</td>@endif
+          @if(isset($row->s5)) <td class="text-end">{{$row->s5}}</td>@endif
+          @if(isset($row->s6)) <td class="text-end">{{$row->s6}}</td>@endif
+          @if(isset($row->s7)) <td class="text-end">{{$row->s7}}</td>@endif
+          @if(isset($row->s8)) <td class="text-end">{{$row->s8}}</td>@endif
+          @if(isset($row->s9)) <td class="text-end">{{$row->s9}}</td>@endif
+          @if(isset($row->s10)) <td class="text-end">{{$row->s10}}</td>@endif
+          @if(isset($row->s11)) <td class="text-end">{{$row->s11}}</td>@endif
+          @if(isset($row->s12)) <td class="text-end">{{$row->s12}}</td>@endif
+          @if(isset($row->s13)) <td class="text-end">{{$row->s13}}</td>@endif
+          @if(isset($row->s14)) <td class="text-end">{{$row->s14}}</td>@endif
+          @if(isset($row->s15)) <td class="text-end">{{$row->s15}}</td>@endif
+          @if(isset($row->s16)) <td class="text-end">{{$row->s16}}</td>@endif
+          @if(isset($row->s17)) <td class="text-end">{{$row->s17}}</td>@endif
+          @if(isset($row->s18)) <td class="text-end">{{$row->s18}}</td>@endif
+          @if(isset($row->s19)) <td class="text-end">{{$row->s19}}</td>@endif
+         @if(isset($row->s20))  <td class="text-end">{{$row->s20}}</td> @endif
+                                <td class="text-end">{{$row->size_qty_total}}</td>
+                                 <td class="text-end">@if($PackingInhouseMaster[0]->is_opening!=1) {{$PackingInhouseMaster[0]->rate }} @else {{$PackingInhouseMaster[0]->vendor_rate }} @endif</td>
+          <td class="text-end">@if($PackingInhouseMaster[0]->is_opening!=1) {{$row->size_qty_total * $PackingInhouseMaster[0]->rate }} @else {{$row->size_qty_total * $PackingInhouseMaster[0]->vendor_rate }} @endif</td>
                             </tr>
-                             @php $no=$no+1; 
+                          @php $no=$no+1; 
           
-            
+          if($PackingInhouseMaster[0]->is_opening!=1){ $totalAmt = $totalAmt + $row->size_qty_total * $PackingInhouseMaster[0]->rate; }
+          else { $totalAmt = $totalAmt + $row->size_qty_total * $PackingInhouseMaster[0]->vendor_rate; } 
+          
           $totalQty = $totalQty + $row->size_qty_total;
-               @endphp
+          
+          
+          
+          @endphp
        @endforeach
                         </tbody>
                         <tfoot>
                             <tr>
                                 <th class="text-end" colspan="{{count($SizeDetailList) + 3}}">Total :</th>
-                                <th class="text-end">{{$totalQty}}</th>
-                               
-
-
-                                </th>
+                    <th class="text-end">{{$totalQty}}</th>
+                    <th></th>
+                    <th class="text-end">
+                        
+                        {{$totalAmt}}
+                    </th>
                             </tr>
                         </tfoot>
                     </table>
@@ -612,7 +625,7 @@
                         </tr>
 
                     </table>
-
+                   
                 </div>
             </main>
         </div>

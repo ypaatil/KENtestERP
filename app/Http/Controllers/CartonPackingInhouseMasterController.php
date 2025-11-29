@@ -2646,6 +2646,42 @@ foreach($SizeList as $sz)
              return view('CartonPackingPrint', compact('CartonPackingInhouseMaster','CartonPackingList','SizeDetailList','FirmDetail'));
       
     }
+
+     public function CartonPackingPrintView($cpki_code)
+    {
+       
+         $CartonPackingInhouseMaster = CartonPackingInhouseMasterModel::join('usermaster', 'usermaster.userId', '=', 'carton_packing_inhouse_master.userId')
+         ->join('ledger_master', 'ledger_master.Ac_code', '=', 'carton_packing_inhouse_master.Ac_code')
+        ->where('carton_packing_inhouse_master.cpki_code', $cpki_code)
+         ->get(['carton_packing_inhouse_master.*','usermaster.username','ledger_master.Ac_name','carton_packing_inhouse_master.sales_order_no',
+         'ledger_master.gst_no','ledger_master.pan_no','ledger_master.state_id','ledger_master.address' ]);
+       
+       $SalesOrderList=explode(",", $CartonPackingInhouseMaster[0]->sales_order_no);
+        
+        $BuyerPurchaseOrderMasterList = BuyerPurchaseOrderMasterModel::whereIn('tr_code',$SalesOrderList)->get();
+                   
+        
+        $SizeDetailList = SizeDetailModel::where('size_detail.sz_code','=', $BuyerPurchaseOrderMasterList[0]->sz_code)->get();
+        $sizes='';
+        $no=1;
+        foreach ($SizeDetailList as $sz) 
+        {
+            $sizes=$sizes.'sum(s'.$no.') as s'.$no.',';
+            $no=$no+1;
+        }
+        $sizes=rtrim($sizes,',');
+ 
+         $CartonPackingList = DB::select("SELECT from_carton_no,to_carton_no,  carton_packing_inhouse_size_detail.sales_order_no, carton_packing_inhouse_size_detail.color_id, color_master.color_name, ".$sizes.", 
+            sum(size_qty_total) as size_qty_total,style_no_master.style_no  from  carton_packing_inhouse_size_detail 
+            inner join color_master on color_master.color_id =	carton_packing_inhouse_size_detail.color_id 
+            left join style_no_master on style_no_master.style_no_id =	carton_packing_inhouse_size_detail.style_no_id 
+            where cpki_code='".$CartonPackingInhouseMaster[0]->cpki_code."' group by carton_packing_inhouse_size_detail.sales_order_no,	carton_packing_inhouse_size_detail.color_id, carton_packing_inhouse_size_detail.from_carton_no");
+    
+        $FirmDetail = DB::table('firm_master')->where('delflag','=', '0')->first();
+      
+             return view('CartonPackingPrintView', compact('CartonPackingInhouseMaster','CartonPackingList','SizeDetailList','FirmDetail'));
+      
+    }
      
       
     public function FGStockReport(Request $request)

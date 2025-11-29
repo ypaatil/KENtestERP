@@ -6,7 +6,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>QC Stitching | Ken Global Designs Pvt. Ltd. </title>
+    <title>Sale Transaction | Ken Global Designs Pvt. Ltd. </title>
     <!-- Web Fonts -->
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' type='text/css'>
     <!-- Stylesheets -->
@@ -461,13 +461,13 @@
                         <div class="col-md-4 verticalLine text-center p-2">
                             <img src="http://kenerp.com/logo/ken.jpeg" alt="Ken Enterprise Pvt. Ltd." height="130" width="230">
                         </div>
-
+                        
+	                    @php
+                        $data= getCompanyAddress();
+                        @endphp
                         <div class="col-md-7" style="margin-top:10px;">
-                            <h4 class="mb-2 fw-bold">KEN GLOBAL DESIGNS PRIVATE LIMITED</h4>
-                            <p>Reg.Office:18/20 Back Side Of Hotel City In, Industrial Estate, Ichalkaranji-416115<br>
-                                Tal Hatkanangale Dist Kolhapur Maharashtra INDIA.<br>
-                                Works: Gat No 298&299,At Kondigare, Tal: Shirol, Dist: Kolhapur-416102 <br>
-                                Tel : +91230 2438538 Email:office@kenindia.in
+                            <h4 class="mb-2 fw-bold">{{$data['heading']}}</h4>
+                            <p>{!!$data['address']!!}
                             </p>
                         </div>
 
@@ -481,55 +481,53 @@
                         <div class="green-part"></div>
                     </div>
 
-                    <h4 class=" fw-bold mt-6 text-center">QC Stitching</h4>
+                    <h4 class=" fw-bold mt-6 text-center">Stitching</h4>
 
                     <!-- Sales Info -->
                     <div class="row  border-top border-bottom  g-0">
                         <div class="col-md-6 p-2 border-end">
                             <div class="info-row">
-                                <div class="label">QC No</div>
+                                <div class="label">GRN No</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{ $QCStitchingInhouseMaster[0]->qcsti_code }}</div>
+                                <div class="value"> </div>
                             </div>
                             <div class="info-row">
-                                <div class="label">QC Date</div>
+                                <div class="label">GRN Date</div>
                                 <div class="colon">: </div>
-                                <div class="value"> {{ $QCStitchingInhouseMaster[0]->qcsti_date }} </div>
+                                <div class="value"></div>
                             </div>
                             <div class="info-row">
                                 <div class="label">Sales Order no</div>
                                 <div class="colon">:</div>
-                                <div class="value"> {{ $QCStitchingInhouseMaster[0]->sales_order_no }} </div>
+                                <div class="value"> </div>
                             </div>
-
-
                             <div class="info-row">
                                 <div class="label">Work Order No</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{ $QCStitchingInhouseMaster[0]->vw_code }}  </div>
+                                <div class="value"> </div>
                             </div>
 
                         </div>
-                        <div class="col-md-6 p-2 ">
+                        <div class="col-md-6 p-2 border-end">
                             <div class="info-row">
                                 <div class="label">Vendor</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{  $QCStitchingInhouseMaster[0]->Ac_name }} </div>
+                                <div class="value"> </div>
                             </div>
                             <div class="info-row">
                                 <div class="label">Address</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{  $QCStitchingInhouseMaster[0]->address }}</div>
+                                <div class="value"></div>
                             </div>
                             <div class="info-row">
                                 <div class="label">GST NO</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{  $QCStitchingInhouseMaster[0]->gst_no }}</div>
+                                <div class="value"></div>
                             </div>
                             <div class="info-row">
                                 <div class="label">PAN NO</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{  $QCStitchingInhouseMaster[0]->pan_no }}</div>
+                                <div class="value"></div>
                             </div>
 
                         </div>
@@ -537,68 +535,31 @@
                     </div>
 
 
-                    <h4 class="text-center mt-6 fw-bold">QC Stitching Details</h4>
+                    <h4 class="text-center mt-6 fw-bold">Stitching GRN Details</h4>
                     <table class="table table-bordered table-sm">
                         <thead>
                             <tr>
-                                <th>SrNo</th>
-                                <th>Item Name</th>
+                                <th>Sr No</th>
                                 <th>Garment Color</th>
-                                @foreach ($SizeDetailList as $sz) 
-                   
-                      <th>{{$sz->size_name}}</th>
-                       
-                   @endforeach
-
+                                
                                 <th>Total Qty</th>
+
                             </tr>
                         </thead>
                         <tbody>
-                             @php   $no=1; $totalAmt=0; $totalQty=0;@endphp
-          @foreach ($QCStitchingGRNList as $row) 
+                           
                             <tr>
-                                <td class="text-end">{{$no}}</td>
-                                <td class="text-start">{{$row->item_name}}</td>
-                                <td class="text-start">{{$row->color_name}}</td>
-                                @if(isset($row->s1)) <td>{{$row->s1}}</td> @endif
-                                @if(isset($row->s2)) <td>{{$row->s2}}</td>@endif
-                                @if(isset($row->s3)) <td>{{$row->s3}}</td>@endif
-                                @if(isset($row->s4)) <td>{{$row->s4}}</td>@endif
-                                @if(isset($row->s5)) <td>{{$row->s5}}</td>@endif
-                                @if(isset($row->s6)) <td>{{$row->s6}}</td>@endif
-                                @if(isset($row->s7)) <td>{{$row->s7}}</td>@endif
-                                @if(isset($row->s8)) <td>{{$row->s8}}</td>@endif
-                                @if(isset($row->s9)) <td>{{$row->s9}}</td>@endif
-                                @if(isset($row->s10)) <td>{{$row->s10}}</td>@endif
-                                @if(isset($row->s11)) <td>{{$row->s11}}</td>@endif
-                                @if(isset($row->s12)) <td>{{$row->s12}}</td>@endif
-                                @if(isset($row->s13)) <td>{{$row->s13}}</td>@endif
-                                @if(isset($row->s14)) <td>{{$row->s14}}</td>@endif
-                                @if(isset($row->s15)) <td>{{$row->s15}}</td>@endif
-                                @if(isset($row->s16)) <td>{{$row->s16}}</td>@endif
-                                @if(isset($row->s17)) <td>{{$row->s17}}</td>@endif
-                                @if(isset($row->s18)) <td>{{$row->s18}}</td>@endif
-                                @if(isset($row->s19)) <td>{{$row->s19}}</td>@endif
-                                @if(isset($row->s20)) <td>{{$row->s20}}</td> @endif
-                                <td>{{$row->size_qty_total}}</td>
-
-
+                                <td class="text-end"></td>
+                                <td class="text-start"></td>
+                              
+                                <td class="text-end"></td>
                             </tr>
-                             @php $no=$no+1; 
-          
-            
-          $totalQty = $totalQty + $row->size_qty_total;
-               @endphp
-       @endforeach
+                           
                         </tbody>
                         <tfoot>
                             <tr>
-                                <th class="text-end" colspan="{{count($SizeDetailList) + 3}}">Total :</th>
-                                <th class="text-end">{{$totalQty}}</th>
-                               
-
-
-                                </th>
+                                <td class="text-end fw-bold" colspan="">Total :</td>
+                                <td class="text-end fw-bold"></td>
                             </tr>
                         </tfoot>
                     </table>
@@ -612,13 +573,19 @@
                         </tr>
 
                     </table>
+                    <!-- Footer -->
+                    <footer>
+                        <div class="row">
+                            <div class="col-md-6"><b>Order Remark:</b> </div>
+                        </div>
+                    </footer>
 
                 </div>
             </main>
         </div>
     </div>
 
-    <p class="text-center d-print-none"><a href="/SalesOrderCosting">&laquo; Back to List</a></p>
+     <p class="text-center d-print-none"><a href="/SaleTransaction">&laquo; Back to List</a></p>
 
 
     <script type="text/javascript" src="{{URL::asset('assets/js/exporttoexcel.js')}}"></script>

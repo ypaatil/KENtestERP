@@ -863,9 +863,10 @@
 
 
                     @php
-                    $roundoff=0;
-                    $roundoff=$poMaster[0]->Net_amount-($poMaster[0]->Gross_amount+$poMaster[0]->Gst_amount);
+                    $calculatedTotal = $poMaster[0]->Gross_amount + $poMaster[0]->Gst_amount;
+                    $roundoff = $poMaster[0]->Net_amount - $calculatedTotal;
                     @endphp
+
                     <table class="table table-bordered border  border-dark  ms-auto  summary-table" style="width: 500px;">
                         <tr>
                             <th class="text-start">Total (Before Tax)</th>
@@ -890,7 +891,6 @@
                             <td class="text-end">{{ number_format($poMaster[0]->Gross_amount + $poMaster[0]->Gst_amount, 2) }}</td>
 
                         </tr>
-
 
                         <tr>
                             <th class="text-start">Round</th>

@@ -1122,6 +1122,46 @@ class PackingInhouseMasterController extends Controller
       
     }
 
+     public function PackingGRNPrintView($pki_code)
+    {
+        
+       
+         $PackingInhouseMaster = PackingInhouseMasterModel::join('usermaster', 'usermaster.userId', '=', 'packing_inhouse_master.userId')
+         ->join('ledger_master', 'ledger_master.Ac_code', '=', 'packing_inhouse_master.vendorId')
+         ->leftJoin('vendor_purchase_order_master', 'vendor_purchase_order_master.vpo_code', '=','packing_inhouse_master.vpo_code')
+        ->where('packing_inhouse_master.pki_code', $pki_code)
+         ->get(['packing_inhouse_master.*','usermaster.username','ledger_master.Ac_name','packing_inhouse_master.sales_order_no',
+         'ledger_master.gst_no','ledger_master.pan_no','ledger_master.state_id','ledger_master.address' ]);
+       
+     
+        
+        $BuyerPurchaseOrderMasterList = BuyerPurchaseOrderMasterModel::where('tr_code',$PackingInhouseMaster[0]->sales_order_no)->get();
+                   
+        
+        $SizeDetailList = SizeDetailModel::where('size_detail.sz_code','=', $BuyerPurchaseOrderMasterList[0]->sz_code)->get();
+        $sizes='';
+        $no=1;
+        foreach ($SizeDetailList as $sz) 
+        {
+            $sizes=$sizes.'sum(s'.$no.') as s'.$no.',';
+            $no=$no+1;
+        }
+        $sizes=rtrim($sizes,',');
+         
+          $PackingGRNList = DB::select("SELECT   item_master.item_name,	packing_inhouse_size_detail.color_id, color_master.color_name, ".$sizes.", 
+        sum(size_qty_total) as size_qty_total  from 	packing_inhouse_size_detail 
+        inner join item_master on item_master.item_code=	packing_inhouse_size_detail.item_code 
+        inner join color_master on color_master.color_id=	packing_inhouse_size_detail.color_id 
+        where pki_code='".$PackingInhouseMaster[0]->pki_code."' group by 	packing_inhouse_size_detail.color_id");
+       
+        $FirmDetail = DB::table('firm_master')->where('delflag','=', '0')->first();
+      
+             return view('PackingGRNPrintView', compact('PackingInhouseMaster','PackingGRNList','SizeDetailList','FirmDetail'));
+      
+    }
+
+
+
 
 
    

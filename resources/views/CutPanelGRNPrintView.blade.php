@@ -612,9 +612,10 @@
                                 @if(isset($row->s19)) <td class="text-end">{{number_format($row->s19)}}</td>@endif
                                 @if(isset($row->s20)) <td class="text-end">{{number_format($row->s20)}}</td> @endif
                                 <td class="text-end">{{number_format($row->size_qty_total)}}</td>
+                                
                             </tr>
                             @php $no=$no+1;
-                            $totalQty = $totalQty + $row->size_qty_total;
+                            $totalQty = $totalQty + $row->size_qty_total;  
                             @endphp
                             @endforeach
                             @php

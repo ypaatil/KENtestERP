@@ -38,7 +38,7 @@
                      <p><img src="http://kenerp.com/logo/ken.jpeg"  alt="Ken Enterprise Pvt. Ltd." height="130" width="230"> </p>
                   </div>
                   <div class="col-md-6">
-                     <h4 class="mb-0" style="font-weight:bold;">KEN GLOBAL DESIGNS PRIVATE LIMITED</h4>
+                     <h4 class="mb-0" style="font-weight:bold;">KEN GLOBAL DESIGNS PRIVATE LIMITED </h4>
                   </div>
                   <div class="col-md-2">
                      <h6  style="font-weight:bold;">Date:{{ date('d-m-Y',strtotime($fabricChekingMaster[0]->chk_date)) }}</h6>
