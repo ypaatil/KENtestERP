@@ -3790,8 +3790,8 @@ P2
 
         $detailData = DB::SELECT("SELECT fabric_outward_cutting_department_details.*,inward_details.gram_per_meter,
                         inward_details.kg,inward_details.item_rate,inward_details.amount  FROM fabric_outward_cutting_department_details 
-                        LEFT JOIN inward_details ON inward_details.item_code = fabric_outward_cutting_department_details.item_code
-                        WHERE fabric_outward_cutting_department_details.focd_code='".$request->focd_code."'");
+                        INNER JOIN inward_details ON inward_details.track_code = fabric_outward_cutting_department_details.roll_no
+                        WHERE fabric_outward_cutting_department_details.focd_code='".$request->focd_code."' GROUP BY fabric_outward_cutting_department_details.item_code");
 
                         
         $itemList = DB::SELECT("SELECT item_master.item_code, item_master.item_name  FROM item_master 
