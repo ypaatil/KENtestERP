@@ -767,6 +767,7 @@
          });  
 
          GetVendorName(vpo_code);
+         $("#vpo_code").prop('disabled', true);
    }
 
    function GetVendorName(vpo_code)
@@ -848,10 +849,12 @@
          if($("#isOutsideVendor").is(":checked"))
          {
             $("#isReturnFabricInward").attr('disabled', true); 
+            $("#vpo_code").prop('disabled', false); 
             $("#vpo_code").attr('onchange', 'GetFabricOutwardData()');
          }
          else
          {
+            $("#vpo_code").prop('disabled', true); 
             $("#isReturnFabricInward").attr('disabled', false);  
          }          
 
@@ -1295,7 +1298,6 @@
     var pt = $("#part_id").clone();
     pt.attr("id", "part_id" + indexcone);
     pt.attr("name", "part_id[]");
-    pt.val("");
     pt.appendTo(cell4);
 
     // Hidden taga qty
@@ -1320,41 +1322,61 @@
     meter.onkeyup = mycalc;
     cell5.appendChild(meter);
 
-    // ---------------- Gram per meter ----------------
-    var cell6 = row.insertCell(5);
-    var gpm = document.createElement("input");
-    gpm.type = "number";
-    gpm.step = "any";
-    gpm.id = "gram_per_meter" + indexcone;
-    gpm.name = "gram_per_meter[]";
-    gpm.value = $('#gram_per_meter').val();
-    gpm.style = "display: table-cell; width:80px;height:30px;";
-    gpm.onkeyup = mycalc;
-    cell6.appendChild(gpm);
+   // ---------------- Gram per meter ----------------
+   var cell6 = row.insertCell(5);
+   var gpm = document.createElement("input");
+   gpm.type = "number";
+   gpm.step = "any";
+   gpm.id = "gram_per_meter" + indexcone;
+   gpm.name = "gram_per_meter[]";
+   gpm.style = "display: table-cell; width:80px;height:30px;";
+   gpm.onkeyup = mycalc;
 
-    // ---------------- KG ----------------
-    var cell7 = row.insertCell(6);
-    var kg = document.createElement("input");
-    kg.type = "number";
-    kg.step = "any";
-    kg.className = "KG";
-    kg.id = "kg" + indexcone;
-    kg.name = "kg[]";
-    kg.readOnly = true;
-    kg.value = $('#kg').val();
-    kg.style = "display: table-cell; width:80px;height:30px;";
-    cell7.appendChild(kg);
+   // Auto-copy previous GPM correctly
+   var gpmFields = document.querySelectorAll("input[name='gram_per_meter[]']");
+   if (gpmFields.length > 0) {
+      gpm.value = gpmFields[gpmFields.length - 1].value;
+   }
 
-    // ---------------- Rate ----------------
-    var cell8 = row.insertCell(7);
-    var rate = document.createElement("input");
-    rate.type = "number";
-    rate.step = "any";
-    rate.id = "item_rates" + indexcone;
-    rate.name = "item_rates[]";
-    rate.value = "0";
-    rate.style = "display: table-cell; width:80px;height:30px;";
-    cell8.appendChild(rate);
+   cell6.appendChild(gpm);
+
+
+   // ---------------- KG ----------------
+   var cell7 = row.insertCell(6);
+   var kg = document.createElement("input");
+   kg.type = "number";
+   kg.step = "any";
+   kg.className = "KG";
+   kg.id = "kg" + indexcone;
+   kg.name = "kg[]";
+   kg.readOnly = true;
+   kg.style = "display: table-cell; width:80px;height:30px;";
+
+   // Auto-copy previous KG correctly
+   var kgFields = document.querySelectorAll("input[name='kg[]']");
+   if (kgFields.length > 0) {
+      kg.value = kgFields[kgFields.length - 1].value;
+   }
+
+   cell7.appendChild(kg);
+
+
+   // ---------------- Rate ----------------
+   var cell8 = row.insertCell(7);
+   var rate = document.createElement("input");
+   rate.type = "number";
+   rate.step = "any";
+   rate.id = "item_rates" + indexcone;
+   rate.name = "item_rates[]";
+   rate.style = "display: table-cell; width:80px;height:30px;";
+
+   // Auto-copy previous Rate correctly
+   var rateFields = document.querySelectorAll("input[name='item_rates[]']");
+   if (rateFields.length > 0) {
+      rate.value = rateFields[rateFields.length - 1].value;
+   }
+
+   cell8.appendChild(rate);
 
     // ---------------- Amount ----------------
     var cell9 = row.insertCell(8);
