@@ -1042,6 +1042,7 @@
    
          $("#fge_code").attr("disabled", true).removeAttr("required");
 
+         $("#fge_code").prop("required", false);
          $("#footable_2 tbody tr").find("td input[name='item_rates[]']").prop('readonly', false);   // most reliable
 
       }
@@ -1058,6 +1059,7 @@
          $("#fge_code").attr("disabled", false).removeAttr("required");
       }
       $("#bill_to").attr("disabled", true);
+      $("#fge_code").prop("required", false);
    }
    
    var PBarcode=$("#PBarcode").val();
