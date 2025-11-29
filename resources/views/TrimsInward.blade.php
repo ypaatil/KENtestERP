@@ -323,9 +323,12 @@ ini_set('memory_limit', '1G');
                      <div class="col-md-2">
                         <div class="mb-3">
                            <label for="formrow-email-input" class="form-label">DC No</label>
-                           <input type="text" name="invoice_no" id="invoice_no1" class="form-control" id="formrow-email-input" value=""  >
-                           <select name="invoice_no" class="form-select select2 hide" id="tocd_code">
-                              <option value="">--Select--</option> 
+                           <input type="text" name="invoice_no" id="invoice_no1" class="form-control" value=""  > 
+                           <select name="invoice_no" class="form-select select2 hide" id="tocd_code" onchange="GetTrimsCuttingDeptData();">
+                              <option value="">--Select--</option>
+                              @foreach($TrimsCuttingOutwardList as  $row)
+                              <option value="{{ $row->tocd_code }}">{{ $row->tocd_code }}</option> 
+                              @endforeach
                            </select>
                         </div>
                      </div>
@@ -409,7 +412,7 @@ ini_set('memory_limit', '1G');
                                  <th class="text-center">Delete</th>
                               </tr>
                            </thead>
-                           <tbody>
+                           <tbody id="detailTbl">
                               <tr item_code="" isClick = "0" qty="" bom_code="" cat_id="" class_id="">
                                  <td><input type="text" name="id" value="1" id="id"  style="width:50px;" readonly/></td>
                                  <td>
@@ -562,6 +565,24 @@ ini_set('memory_limit', '1G');
        }
    });
    
+   function GetTrimsCuttingDeptData()
+   {
+        var tocd_code  = $("#tocd_code").val();
+        
+        $.ajax({
+          type: "GET",
+          dataType:"json",
+          url: "{{ route('GetTrimsOutwardCuttingDeptData') }}",
+          data:{'tocd_code':tocd_code},
+          success: function(data)
+          {
+              $('#detailTbl').html(data.html); 
+              $('#vpo_code').val(data.vpo_code).trigger('change'); 
+          }
+        }); 
+
+   }
+
    function DisableDropdown()
    {
         if($("#isOutsideVendor").is(":checked"))

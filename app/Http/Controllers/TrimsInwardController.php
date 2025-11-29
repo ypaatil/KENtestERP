@@ -117,9 +117,7 @@ class TrimsInwardController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create()
-    {
-
-
+    { 
         $code = DB::select(DB::raw("select ifnull(tr_no,0)+1 as tr_no,c_code from counter_number where type='TrimMaster' and c_name='C1'"));
         $LocationList = LocationModel::where('location_master.delflag', '=', '0')->get();
         $JobStatusList = JobStatusModel::where('job_status_master.delflag', '=', '0')->get();
@@ -132,6 +130,8 @@ class TrimsInwardController extends Controller
         $itemlist = DB::table('item_master')->where('item_master.delflag', '0')->where('item_master.cat_id', '!=', '1')->get();
         $unitlist = DB::table('unit_master')->get();
         $BillToList =  DB::table('ledger_details')->get();
+
+        $TrimsCuttingOutwardList =  DB::table('trims_outward_cutting_department_master')->where('delflag','=', '0')->get();
 
         $POList = PurchaseOrderModel::where('purchase_order.po_status', '=', '1')->where('purchase_order.bom_type', '!=', '1')->get();
 
@@ -152,7 +152,7 @@ class TrimsInwardController extends Controller
         $vendorData = DB::select("select ac_short_name, ledger_master.ac_code from vendor_purchase_order_master 
                             INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId GROUP BY vendor_purchase_order_master.vendorId");
 
-        return view('TrimsInward', compact('firmlist','vendorData', 'RackList', 'ledgerlist', 'gstlist', 'itemlist', 'code', 'unitlist', 'POTypeList', 'JobStatusList', 'POList', 'LocationList', 'vendorWorkOrderList', 'TGEList', 'BillToList'));
+        return view('TrimsInward', compact('TrimsCuttingOutwardList','firmlist','vendorData', 'RackList', 'ledgerlist', 'gstlist', 'itemlist', 'code', 'unitlist', 'POTypeList', 'JobStatusList', 'POList', 'LocationList', 'vendorWorkOrderList', 'TGEList', 'BillToList'));
     }
 
     /**
@@ -451,8 +451,10 @@ class TrimsInwardController extends Controller
         $vendorData = DB::select("select ac_short_name, ledger_master.ac_code from vendor_purchase_order_master 
                             INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId GROUP BY vendor_purchase_order_master.vendorId");
 
+        $TrimsCuttingOutwardList =  DB::table('trims_outward_cutting_department_master')->where('delflag','=', '0')->get();
+        
         //dd(DB::getQueryLog()); 
-        return view('TrimsInwardEdit', compact('POList', 'RackList','vendorData', 'purchasefetch', 'po_sr_no', 'firmlist', 'TGEList', 'ledgerlist', 'gstlist', 'itemlist', 'detailpurchase', 'unitlist', 'POTypeList', 'JobStatusList', 'BOMLIST', 'LocationList', 'vendorWorkOrderList', 'BillToList'));
+        return view('TrimsInwardEdit', compact('TrimsCuttingOutwardList', 'POList', 'RackList','vendorData', 'purchasefetch', 'po_sr_no', 'firmlist', 'TGEList', 'ledgerlist', 'gstlist', 'itemlist', 'detailpurchase', 'unitlist', 'POTypeList', 'JobStatusList', 'BOMLIST', 'LocationList', 'vendorWorkOrderList', 'BillToList'));
     }
 
     /**

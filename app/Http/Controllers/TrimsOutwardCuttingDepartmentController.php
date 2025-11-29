@@ -18,6 +18,7 @@ use App\Models\FabricInwardCuttingDepartmentMasterModel;
 use App\Models\FabricInwardCuttingDepartmentDetailModel;
 use App\Models\TrimsOutwardCuttingDepartmentMasterModel;
 use App\Models\TrimsOutwardCuttingDepartmentDetailModel;
+use App\Models\RackModel;
 use Session;
 use DataTables;
 date_default_timezone_set("Asia/Kolkata");
@@ -338,5 +339,98 @@ class TrimsOutwardCuttingDepartmentController extends Controller
     }
  
 
+    public function GetTrimsOutwardCuttingDeptData(Request $request)
+    {
+        $detailData = DB::SELECT("
+            SELECT trims_outward_cutting_department_details.*, 
+                item_master.item_name,
+                item_master.color_name,
+                item_master.unit_id 
+            FROM trims_outward_cutting_department_details 
+            INNER JOIN item_master 
+                ON item_master.item_code = trims_outward_cutting_department_details.item_code
+            WHERE trims_outward_cutting_department_details.tocd_code = ?
+        ", [$request->tocd_code]);
+
+        $html = '';
+        $sr_no = 1;
+
+        $itemlist = DB::table('item_master')
+                        ->where('delflag', '0')
+                        ->where('cat_id', '!=', '1')
+                        ->get();
+
+        $unitlist = DB::table('unit_master')
+                        ->where('delflag', '0')
+                        ->get(); 
+
+        $RackList = RackModel::where('delflag', '0')->get();
+
+        foreach($detailData as $row)
+        {
+            $html .= '<tr>
+                <td><input type="text" style="width:60px;" value="'.($sr_no++).'" readonly></td>
+                <td>
+                    <select name="item_codes[]" style="width:150px;height:30px;">
+                        <option value="">--- Select ---</option>';
+
+                        foreach($itemlist as $item){
+                            $selected = ($item->item_code == $row->item_code) ? 'selected' : '';
+                            $html .= '<option value="'.$item->item_code.'" '.$selected.'>'.$item->item_name.'</option>';
+                        }
+
+            $html .= '</select>
+                </td>
+
+                <td>
+                    <select name="unit_ids[]" style="width:150px;height:30px;">
+                        <option value="">--- Select ---</option>';
+
+                        foreach($unitlist as $unit){
+                            $selected = ($unit->unit_id == $row->unit_id) ? 'selected' : '';
+                            $html .= '<option value="'.$unit->unit_id.'" '.$selected.'>'.$unit->unit_name.'</option>';
+                        }
+
+            $html .= '</select>
+                </td>
+
+                <td><input type="number" step="any" class="QTY"
+                        name="item_qtys[]" onchange="SetQtyToBtn(this);" 
+                        value="'.$row->item_qty.'" style="width:80px;height:30px;" required></td>
+
+                <td><input type="number" step="any" name="item_rates[]" value="0"
+                        style="width:80px;height:30px;" required></td>
+
+                <td><input type="number" step="any" class="AMT" readonly
+                        name="amounts[]" value="0"
+                        style="width:80px;height:30px;" required>
+                    <input type="hidden" name="hsn_codes[]" value="0">
+                </td>
+
+                <td>
+                    <select name="rack_id[]" class="select2" style="width:100px;height:30px;" required>
+                        <option value="">--Racks--</option>';
+
+                        foreach($RackList as $rack){
+                            $html .= '<option value="'.$rack->rack_id.'">'.$rack->rack_name.'</option>';
+                        }
+
+            $html .= '</select>
+                </td>
+
+                <td class="text-center">
+                    <button type="button" onclick="mycalc();" class="btn btn-warning">+</button>
+                </td>
+
+                <td class="text-center">
+                    <input type="button" class="btn btn-danger" onclick="deleteRow(this);" value="X">
+                </td>
+            </tr>';
+        }
+
+        return response()->json([
+            'html' => $html
+        ], 200, [], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
+    }
 
 }
