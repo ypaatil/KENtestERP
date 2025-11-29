@@ -283,7 +283,7 @@
 
                                     <td><input type="number" step="any" min="0" class="AMT" readOnly name="amounts[]" value="0" id="amounts" style="width:80px;height:30px;"  readOnly></td>
 
-                                    <td><input type="number" step="any" min="0" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;"></td>
+                                    <td><input type="number" step="any" min="0" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;" required></td>
 
                                     <td><input type="text" name="track_code[]" id="track_code" style="width:80px;height:30px;" readOnly></td>
 
@@ -566,9 +566,9 @@
                                           @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; } @endphp required>
                                     </td>
 
-                                    <td><input type="number" step="any" min="0" class="AMT" readOnly name="amounts[]" value="0" id="amounts" style="width:80px;height:30px;" required></td>
+                                    <td><input type="number" step="any" min="0" class="AMT" readOnly name="amounts[]" value="0" id="amounts" style="width:80px;height:30px;"></td>
 
-                                    <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;"></td>
+                                    <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;" required></td>
 
                                     <td><input type="text" name="track_code[]" id="track_code1" style="width:80px;height:30px;" readOnly></td>
 
@@ -1188,6 +1188,7 @@
       t4.id = "suplier_roll_no"+indexcone;
       t4.name="suplier_roll_no[]";
       t4.value="";
+      t4.required="true";
       cell4.appendChild(t4);
       
       var cell7 = row.insertCell(10);
@@ -1373,6 +1374,7 @@
     roll.className = "suplier_roll_no";
     roll.id = "suplier_roll_no" + indexcone;
     roll.name = "suplier_roll_no[]";
+    roll.required="true";
     roll.style = "display: table-cell; width:100px;height:30px;";
     cell10.appendChild(roll);
 

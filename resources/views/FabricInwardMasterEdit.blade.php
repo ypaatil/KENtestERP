@@ -277,7 +277,7 @@
                                  <td><input type="number" step="any" class="KG" name="kg[]" onkeyup="mycalc();" value="{{ $List->kg }}" id="kg" style="width:80px; height:30px;" readonly  {{$dis}}  /></td>
                                  <td><input type="number" step="any"    name="item_rates[]"   value="{{ $List->item_rate }}" id="item_rates" style="width:80px;height:30px;" readonly    />
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;" readonly/></td>
-                                 <td><input type="number" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
+                                 <td><input type="number" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}} required /></td>
                                  <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code" style="width:80px; height:30px;" required readOnly/></td>
                                  <td><input type="button" style="width:40px;" onclick="insertcone();" name="Abutton" value="+" class="btn btn-warning pull-left"></td>
                                  <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
@@ -312,7 +312,7 @@
                                  <td><input type="number" step="any" class="KG" name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;" readonly  {{$dis}}  /></td>
                                  <td><input type="number" step="any"    name="item_rates[]"   value="0" id="item_rates" style="width:80px;height:30px;" readonly  {{$dis}}  />
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" readonly  {{$dis}} />
-                                 <td><input type="number" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
+                                 <td><input type="number" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  required /></td>
                                  <td><input type="text" name="track_code[]"  value="" id="track_code" style="width:80px;" {{$dis}}  /></td>
                                  <td><input type="button" style="width:40px;" onclick="insertcone();" name="Abutton" value="+" class="btn btn-warning pull-left"></td>
                                  <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
@@ -590,7 +590,7 @@
                                  <td><input type="number" step="any" class="KG" name="kg[]" onkeyup="mycalc();" value="{{ $List->kg }}" id="kg" style="width:80px; height:30px;" required  {{$dis}}  /></td>
                                  <td><input type="number" step="any"    name="item_rates[]"   value="{{ $List->item_rate }}" id="item_rates" style="width:80px;height:30px;" required    />
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;" required/></td>
-                                 <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
+                                 <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}} required /></td>
                                  <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code1" style="width:80px; height:30px;" required readOnly/></td>
                                  <td><input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left" disabled></td>
                                  <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X"  disabled></td>
@@ -625,7 +625,7 @@
                                  <td><input type="number" step="any" class="KG" name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;" required  {{$dis}}  /></td>
                                  <td><input type="number" step="any"    name="item_rates[]"   value="0" id="item_rates" style="width:80px;height:30px;" required  {{$dis}}  />
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" required  {{$dis}} />
-                                 <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
+                                 <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}} required /></td>
                                  <td><input type="text" name="track_code[]"  value="" id="track_code" style="width:80px;" {{$dis}}  /></td>
                                  <td><input type="button" style="width:40px;" onclick="insertcone1();" name="Abutton" value="+" class="btn btn-warning pull-left"></td>
                                  <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
@@ -1231,6 +1231,7 @@
     roll.className = "suplier_roll_no";
     roll.id = "suplier_roll_no" + indexcone;
     roll.name = "suplier_roll_no[]";
+    roll.required = true;
     roll.style = "display: table-cell; width:100px;height:30px;";
     cell10.appendChild(roll);
 
@@ -1460,7 +1461,7 @@
          
       var cell4 = row.insertCell(9);
       var t4=document.createElement("input");
-      t4.style="display: table-cell; width:80px;height:30px;";
+      t4.style="display: table-cell; width:100px;height:30px;";
       t4.type="number";
       t4.step="any";
       t4.required="true";
@@ -1468,6 +1469,7 @@
       t4.id = "suplier_roll_no"+indexcone;
       t4.name="suplier_roll_no[]";
       t4.value="";
+      t4.required = true;
       cell4.appendChild(t4);
       
       var cell7 = row.insertCell(10);
