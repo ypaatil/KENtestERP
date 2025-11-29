@@ -106,13 +106,13 @@ ini_set('memory_limit', '1G');
                               }
                               @endforeach
                            </select>
-                           <input type="hidden" name="po_codenew" id="po_codenew" class="form-control"  value="{{ request()->po_code;  }}">
+                           <input type="hidden" name="po_codenew" id="po_codenew" class="form-control"  value="{{ request()->po_code  }}">
                         </div>
                      </div>
                      <div class="col-md-3">
                         <div class="mb-3">
                            <label for="formrow-inputState" class="form-label">PO Type</label>
-                           <select name="po_type_id" class="form-select" id="po_type_id">
+                           <select name="po_type_id" class="form-select" id="po_type_id" disabled>
                               <option value="">Type</option>
                               @foreach($POTypeList as  $rowpo)
                               {
@@ -125,7 +125,7 @@ ini_set('memory_limit', '1G');
                      <div class="col-md-2">
                         <div class="mb-3">
                            <label for="formrow-inputState" class="form-label">Supplier</label>
-                           <select name="Ac_code" class="form-select select2" id="Ac_code" onchange="GetPartyDetailsSale();"  required>
+                           <select name="Ac_code" class="form-select select2" id="Ac_code" onchange="GetPartyDetailsSale();"  disabled>
                               <option value="">--- Select Supplier ---</option>
                               @foreach($ledgerlist as  $rowledger)
                               {
@@ -1265,6 +1265,7 @@ ini_set('memory_limit', '1G');
    
    function getPODetails()
    {
+
       $("#is_opening").attr("disabled", true);
       document.getElementById('Ac_code').disabled =true;
       document.getElementById('po_type_id').disabled=true;
@@ -1283,6 +1284,7 @@ ini_set('memory_limit', '1G');
             //  $('#select2-chosen-1').html(qhtml);   
       }
       });
+       $("#po_code").attr('disabled', true);
    }
    
   function mycalc() 

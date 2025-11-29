@@ -14,6 +14,17 @@
     {
         width: 266px !important;
     }
+
+   /* Hide arrows in Chrome, Safari, Edge, Opera */
+   input[type=number]::-webkit-inner-spin-button,
+   input[type=number]::-webkit-outer-spin-button {
+   -webkit-appearance: none;
+   margin: 0;
+   }
+   /* Hide arrows in Firefox */
+   input[type=number] {
+   -moz-appearance: textfield;
+   }
 </style>
 <div class="row">
    <div class="col-12">
@@ -118,7 +129,7 @@
                         <div class="col-md-3">
                            <div class="mb-3">
                               <label for="po_type_id" class="form-label">PO Type</label>
-                              <select name="po_type_id" class="form-select" id="po_type_id" required >
+                              <select name="po_type_id" class="form-select" id="po_type_id" disabled >
                                  <option value="">Type</option>
                                  @foreach($POTypeList as  $rowpo)
                                  <option value="{{ $rowpo->po_type_id }}">{{ $rowpo->po_type_name }}</option>
@@ -130,7 +141,7 @@
                         <div class="col-md-2">
                            <div class="mb-3">
                               <label for="Ac_code" class="form-label">Supplier</label>
-                              <select name="Ac_code" class="form-select" id="Ac_code" required>
+                              <select name="Ac_code" class="form-select" id="Ac_code"  disabled>
                                  <option value="">--Select Supplier--</option>
                                  @foreach($Ledger as  $row)
                                  <option value="{{ $row->ac_code }}">{{ $row->ac_name }}</option>
@@ -257,22 +268,22 @@
 
                                     <td>
                                        <input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="1" id="taga_qty1" style="width:50px;height:30px;">
-                                       <input type="number" step="any" class="METER" name="meter[]" onkeyup="mycalc();" value="0" id="meter1" style="width:80px;height:30px;" required>
+                                       <input type="number" step="any" min="0" class="METER" name="meter[]" onkeyup="mycalc();" value="0" id="meter1" style="width:80px;height:30px;" required>
                                     </td>
 
-                                    <td><input type="number" step="any" name="gram_per_meter[]" value="0" id="gram_per_meter" style="width:80px;height:30px;" required></td>
+                                    <td><input type="number" step="any" min="0" name="gram_per_meter[]" value="0" id="gram_per_meter" style="width:80px;height:30px;"></td>
 
-                                    <td><input type="number" step="any" @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; } @endphp class="KG" 
-                                       name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;height:30px;" required></td>
+                                    <td><input type="number" step="any" min="0" @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; } @endphp class="KG" 
+                                       name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;height:30px;"  readOnly></td>
 
                                     <td>
-                                       <input type="number" step="any" name="item_rates[]" value="0" id="item_rates" style="width:80px;height:30px;" 
-                                          @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; } @endphp required>
+                                       <input type="number" step="any" min="0" name="item_rates[]" value="0" id="item_rates" style="width:80px;height:30px;" 
+                                          @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; } @endphp  readOnly>
                                     </td>
 
-                                    <td><input type="number" step="any" class="AMT" readOnly name="amounts[]" value="0" id="amounts" style="width:80px;height:30px;" required></td>
+                                    <td><input type="number" step="any" min="0" class="AMT" readOnly name="amounts[]" value="0" id="amounts" style="width:80px;height:30px;"  readOnly></td>
 
-                                    <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;"></td>
+                                    <td><input type="number" step="any" min="0" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;"></td>
 
                                     <td><input type="text" name="track_code[]" id="track_code" style="width:80px;height:30px;" readOnly></td>
 
@@ -326,7 +337,7 @@
 
                         <div class="col-md-2">
                            <div class="mb-3">
-                              <label for="total_taga_qty" class="form-label">Total Taga</label>
+                              <label for="total_taga_qty" class="form-label">Total No of Roll</label>
                               <input type="number" readOnly name="total_taga_qty" class="form-control" id="total_taga_qty" value="1">
                            </div>
                         </div>
@@ -542,20 +553,20 @@
 
                                     <td>
                                        <input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="1" id="taga_qty1" style="width:50px;height:30px;">
-                                       <input type="number" step="any" class="METER" name="meter[]" onkeyup="mycalc();" value="0" id="meter1" style="width:80px;height:30px;" required>
+                                       <input type="number" step="any" min="0" class="METER" name="meter[]" onkeyup="mycalc();" value="0" id="meter1" style="width:80px;height:30px;" required>
                                     </td>
 
-                                    <td><input type="number" step="any" name="gram_per_meter[]" value="0" id="gram_per_meter" style="width:80px;height:30px;" required></td>
+                                    <td><input type="number" step="any" min="0" name="gram_per_meter[]" value="0" id="gram_per_meter" style="width:80px;height:30px;" required></td>
 
-                                    <td><input type="number" step="any" @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; } @endphp class="KG" 
+                                    <td><input type="number" step="any" min="0" @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; } @endphp class="KG" 
                                        name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;height:30px;" required></td>
 
                                     <td>
-                                       <input type="number" step="any" name="item_rates[]" value="0" id="item_rates" style="width:80px;height:30px;" 
+                                       <input type="number" step="any" min="0" name="item_rates[]" value="0" id="item_rates" style="width:80px;height:30px;" 
                                           @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; } @endphp required>
                                     </td>
 
-                                    <td><input type="number" step="any" class="AMT" readOnly name="amounts[]" value="0" id="amounts" style="width:80px;height:30px;" required></td>
+                                    <td><input type="number" step="any" min="0" class="AMT" readOnly name="amounts[]" value="0" id="amounts" style="width:80px;height:30px;" required></td>
 
                                     <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;"></td>
 
@@ -611,7 +622,7 @@
 
                         <div class="col-md-2">
                            <div class="mb-3">
-                              <label for="total_taga_qty" class="form-label">Total Taga</label>
+                              <label for="total_taga_qty" class="form-label">Total No of Roll</label>
                               <input type="number" readOnly name="total_taga_qty" class="form-control" id="total_taga_qty1" value="1">
                            </div>
                         </div>
@@ -654,6 +665,26 @@
 <script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
 <!-- end row -->
 <script>
+    
+   $(document).on('keydown', 'input[type="number"]', function(e) {
+       const invalidKeys = ['e', 'E', '+', '-'];
+   
+       // Block invalid keys
+       if (invalidKeys.includes(e.key)) {
+           e.preventDefault();
+           return;
+       }
+   
+       // Allow one dot only
+       if (e.key === '.') {
+           // If already contains a dot, block it
+           if ($(this).val().includes('.')) {
+               e.preventDefault();
+           }
+           return;
+       }
+   });
+
    $(document).ready(function() {
         $('#frmData').submit(function() {
             $('#Submit').prop('disabled', true);
@@ -1667,6 +1698,7 @@
    
    function getDetails(po_code)
    {
+       
          $.ajax({
             type:"GET",
             url:"{{ route('getPoMasterDetail') }}",
@@ -1689,8 +1721,7 @@
             }
             
          });
-
-            
+         $("#po_code").attr('disabled', true);
          $.ajax({
             type:"GET",
             url:"{{ route('GetPurchaseDetailItemCodeWise') }}", 

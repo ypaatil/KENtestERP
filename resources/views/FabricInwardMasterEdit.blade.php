@@ -10,6 +10,17 @@
    {
         width: 266px !important;
    }
+ 
+   /* Hide arrows in Chrome, Safari, Edge, Opera */
+   input[type=number]::-webkit-inner-spin-button,
+   input[type=number]::-webkit-outer-spin-button {
+   -webkit-appearance: none;
+   margin: 0;
+   }
+   /* Hide arrows in Firefox */
+   input[type=number] {
+   -moz-appearance: textfield;
+   }
 
 </style>
 <div class="row">
@@ -262,10 +273,10 @@
                                  </td>
                                  <td><input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="{{ $List->taga_qty }}" id="taga_qty1" style="width:50px;"/><input type="number" step="0.01"class="METER" name="meter[]" onkeyup="mycalc();" value="{{ $List->meter }}" id="meter1" style="width:80px; height:30px;" required  {{$dis}}  /></td>
                                  <td><input type="number" step="any"  name="gram_per_meter[]" onkeyup="mycalc();" value="{{ $List->gram_per_meter }}" id="gram_per_meter" style="width:80px; height:30px;" required  {{$dis}}  /></td>
-                                 <td><input type="number" step="any" class="KG" name="kg[]" onkeyup="mycalc();" value="{{ $List->kg }}" id="kg" style="width:80px; height:30px;" required  {{$dis}}  /></td>
-                                 <td><input type="number" step="any"    name="item_rates[]"   value="{{ $List->item_rate }}" id="item_rates" style="width:80px;height:30px;" required    />
-                                 <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;" required/></td>
-                                 <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
+                                 <td><input type="number" step="any" class="KG" name="kg[]" onkeyup="mycalc();" value="{{ $List->kg }}" id="kg" style="width:80px; height:30px;" readonly  {{$dis}}  /></td>
+                                 <td><input type="number" step="any"    name="item_rates[]"   value="{{ $List->item_rate }}" id="item_rates" style="width:80px;height:30px;" readonly    />
+                                 <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;" readonly/></td>
+                                 <td><input type="number" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
                                  <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code" style="width:80px; height:30px;" required readOnly/></td>
                                  <td><input type="button" style="width:40px;" onclick="insertcone();" name="Abutton" value="+" class="btn btn-warning pull-left"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
                               </tr>
@@ -296,10 +307,10 @@
                                  </td>
                                  <td><input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="1" id="taga_qty1" style="width:50px;"/><input type="number" step="0.01" class="METER" name="meter[]" onkeyup="mycalc();" value="0" id="meter1" style="width:80px;" required  {{$dis}}  /></td>
                                  <td><input type="number" step="any"  name="gram_per_meter[]"  value="0" id="gram_per_meter" style="width:80px;" required  {{$dis}}  /></td>
-                                 <td><input type="number" step="any" class="KG" name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;" required  {{$dis}}  /></td>
-                                 <td><input type="number" step="any"    name="item_rates[]"   value="0" id="item_rates" style="width:80px;height:30px;" required  {{$dis}}  />
-                                 <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" required  {{$dis}} />
-                                 <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
+                                 <td><input type="number" step="any" class="KG" name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;" readonly  {{$dis}}  /></td>
+                                 <td><input type="number" step="any"    name="item_rates[]"   value="0" id="item_rates" style="width:80px;height:30px;" readonly  {{$dis}}  />
+                                 <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" readonly  {{$dis}} />
+                                 <td><input type="number" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  /></td>
                                  <td><input type="text" name="track_code[]"  value="" id="track_code" style="width:80px;" {{$dis}}  /></td>
                                  <td><input type="button" style="width:40px;" onclick="insertcone();" name="Abutton" value="+" class="btn btn-warning pull-left"> <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
                               </tr>
@@ -339,7 +350,7 @@
                      </div>
                      <div class="col-md-2">
                         <div class="mb-3">
-                           <label for="total_qty" class="form-label">Total Taga</label>
+                           <label for="total_qty" class="form-label">Total No of Roll</label>
                            <input type="number" readOnly  name="total_taga_qty" class="form-control" id="total_taga_qty" value="{{ $FabricInwardMasterList->total_taga_qty }}" required>
                         </div>
                      </div>
@@ -648,7 +659,7 @@
                      </div>
                      <div class="col-md-2">
                         <div class="mb-3">
-                           <label for="total_qty" class="form-label">Total Taga</label>
+                           <label for="total_qty" class="form-label">Total No of Roll</label>
                            <input type="number" readOnly  name="total_taga_qty" class="form-control" id="total_taga_qty1" value="{{ $FabricInwardMasterList->total_taga_qty }}" required>
                         </div>
                      </div>
@@ -686,6 +697,28 @@
 <script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
 <!-- end row -->
 <script>
+
+   
+   $(document).on('keydown', 'input[type="number"]', function(e) {
+       const invalidKeys = ['e', 'E', '+', '-'];
+   
+       // Block invalid keys
+       if (invalidKeys.includes(e.key)) {
+           e.preventDefault();
+           return;
+       }
+   
+       // Allow one dot only
+       if (e.key === '.') {
+           // If already contains a dot, block it
+           if ($(this).val().includes('.')) {
+               e.preventDefault();
+           }
+           return;
+       }
+   });
+
+
    $(document).ready(function() 
    {
         $('#frmData').submit(function() {

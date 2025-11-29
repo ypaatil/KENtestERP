@@ -1071,12 +1071,12 @@ from item_master where item_code='$value->item_code'"));
                 $html .= '</select></td>';
                 $html .= '<td><input type="number" step="any" class="toBeReceived"  name="toBeReceived[]" value="' . round($toBeReceived, 2) . '" id="toBeReceived" style="width:80px;height:30px;" readOnly/>
                                 </td>';
-                $html .= '<td><input type="number" step="any" class="QTY"  name="item_qtys[]" onchange="SetQtyToBtn(this);" allow="' . $allow_qty . '" purchase_qty = "' . $purchase_qty . '" current="' . round($item_qty, 2) . '" value="' . round($item_qty, 2) . '" id="item_qty" style="width:80px;height:30px;" required/>
-                        <input type="hidden"  name="hsn_code[]" value="' . $value->hsn_code  . '" id="hsn_code" style="width:80px; height:30px;" readOnly required/>
+                $html .= '<td><input type="number" step="any" class="QTY"  name="item_qtys[]" onchange="SetQtyToBtn(this);" allow="' . $allow_qty . '" purchase_qty = "' . $purchase_qty . '" current="' . round($item_qty, 2) . '" value="' . round($item_qty, 2) . '" id="item_qty" style="width:80px;height:30px;" readOnly/>
+                        <input type="hidden"  name="hsn_code[]" value="' . $value->hsn_code  . '" id="hsn_code" style="width:80px; height:30px;" readOnly/>
                         </td>';
-                $html .= '<td><input type="number" step="any" name="item_rates[]" readOnly  value="' . round($value->item_rate, 5) . '" id="item_rates" style="width:80px;height:30px;" required/></td>';
+                $html .= '<td><input type="number" step="any" name="item_rates[]" readOnly  value="' . round($value->item_rate, 5) . '" id="item_rates" style="width:80px;height:30px;"  readOnly/></td>';
 
-                $html .= '<td><input type="number" step="any" class="AMT"  name="amounts[]" readOnly value="' . (round($purchase_qty, 2) * round($value->item_rate, 2)) . '" id="amounts" style="width:80px;height:30px;" required/></td>';
+                $html .= '<td><input type="number" step="any" class="AMT"  name="amounts[]" readOnly value="' . (round($purchase_qty, 2) * round($value->item_rate, 2)) . '" id="amounts" style="width:80px;height:30px;"  readOnly/></td>';
 
 
 
