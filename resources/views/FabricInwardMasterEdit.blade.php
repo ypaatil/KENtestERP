@@ -410,7 +410,29 @@
                      <input type="hidden" name="tab_button" class="form-control" id="tab_button" value="1">
                      <input type="hidden" name="Ac_code" class="form-control" id="Ac_code1" value="{{ $FabricInwardMasterList->Ac_code }}">
                      <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input"> 
-                     <div class="col-md-3">
+                     <div class="col-md-3 mt-4 m-0">
+                        <div class="mb-3">
+                           <div class="form-check form-check-primary mb-5">
+                              <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);GetDCDropdown();" name="isReturnFabricInward" style="font-size: 30px;margin-left: 0px;margin-top: -3px;" @if($FabricInwardMasterList->isReturnFabricInward==1)checked @else disabled @endif>
+
+                              <label class="form-check-label" for="isReturnFabricInward" style="position: absolute;margin-left: 20px;font-size: 14px;">
+                                    Fabric Return From Inhouse
+                              </label>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-md-3 mt-4 m-0">
+                        <div class="mb-3">
+                           <div class="form-check form-check-primary mb-5">
+                              <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" onchange="DisableDropdown();" style="font-size: 30px;margin-left: 0px;margin-top: -3px;"  @if($FabricInwardMasterList->isOutsideVendor==1)checked @else disabled @endif >
+
+                              <label class="form-check-label" for="isOutsideVendor" style="position: absolute;margin-left: 20px;font-size: 14px;">
+                                    From Outsource Vendor
+                              </label>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-md-2">
                         <div class="mb-3">
                            <label for="formrow-invoice_date-input" class="form-label">DC Date</label>
                            <input type="date" name="invoice_date" id="invoice_date" class="form-control" id="formrow-invoice_date-input" value="{{ $FabricInwardMasterList->invoice_date }}">
@@ -430,7 +452,7 @@
                            </select> 
                         </div>
                      </div>
-                     <div class="col-md-3">
+                     <div class="col-md-2">
                         <label for="fge_code" class="form-label">Fabric Gate Code</label>
                         <select name="fge_code" class="form-select select2" id="fge_code" disabled>
                            <option value="">--Select--</option>
@@ -439,7 +461,7 @@
                            @endforeach
                         </select>
                      </div>
-                     <div class="col-md-4">
+                     <div class="col-md-3">
                         <label for="formrow-inputState" class="form-label">Location/Warehouse</label>
                         <select name="location_id" class="form-select select2" id="location_id" required>
                            <option value="">--Select Buyer--</option>
@@ -452,29 +474,7 @@
                            @endforeach
                         </select>
                      </div>
-                     <div class="col-md-3 mt-4 m-0">
-                        <div class="mb-3">
-                           <div class="form-check form-check-primary mb-5">
-                              <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);GetDCDropdown();" name="isReturnFabricInward" style="font-size: 30px;margin-left: 0px;margin-top: -3px;" @if($FabricInwardMasterList->isReturnFabricInward==1)checked @else disabled @endif>
-
-                              <label class="form-check-label" for="isReturnFabricInward" style="position: absolute;margin-left: 20px;font-size: 14px;">
-                                    Is it retun fabric inward ? 
-                              </label>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-md-3 mt-4 m-0">
-                        <div class="mb-3">
-                           <div class="form-check form-check-primary mb-5">
-                              <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" onchange="DisableDropdown();" style="font-size: 30px;margin-left: 0px;margin-top: -3px;"  @if($FabricInwardMasterList->isOutsideVendor==1)checked @else disabled @endif >
-
-                              <label class="form-check-label" for="isOutsideVendor" style="position: absolute;margin-left: 20px;font-size: 14px;">
-                              Is it retun cutting inward ? 
-                              </label>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-md-3" id="workOrder"> 
+                     <div class="col-md-2" id="workOrder"> 
                         <div class="mb-3">
                            <label for="" class="form-label">Vendor Process Order No.</label>   
                            <select name="vpo_code" class="form-select select2" id="vpo_code" onchange="GetVendorName(this.value);">
@@ -489,7 +489,7 @@
                            </select>
                         </div>
                      </div>
-                     <div class="col-md-3" id="vendorData">
+                     <div class="col-md-2" id="vendorData">
                         <div class="mb-3">
                            <label for="" class="form-label">Vendor Name</label>   
                            <select name="vendorId" class="form-select select2" id="vendorId" >

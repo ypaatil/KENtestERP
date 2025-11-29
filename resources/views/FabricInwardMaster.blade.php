@@ -397,46 +397,6 @@
                      <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
                      @endforeach
                      <div class="row">
-                        <div class="col-md-3">
-                           <div class="mb-3">
-                              <label for="invoice_date" class="form-label">DC Date</label>
-                              <input type="date" name="invoice_date" id="invoice_date" class="form-control" value="{{date('Y-m-d')}}">
-                           </div>
-                        </div>
-                        <div class="col-md-2">
-                           <div class="mb-3">
-                              <label for="invoice_no" class="form-label">DC No</label>
-                              <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input">
-                              <input type="text" name="invoice_no" id="invoice_no1" class="form-control" required>
-                              <select name="invoice_no" class="form-select select2 hide" id="focd_code" onchange="GetFabricCuttingDeptData();">
-                                 <option value="">--Select--</option>
-                                 @foreach($FabricCuttingOutwardList as  $row)
-                                 <option value="{{ $row->focd_code }}">{{ $row->focd_code }}</option> 
-                                 @endforeach
-                              </select>
-                           </div>
-                        </div> 
-                        <div class="col-md-3">
-                           <label for="fge_code" class="form-label">Fabric Gate Code</label>
-                           <select name="fge_code" class="form-select select2" id="fge_code" required>
-                              <option value="">--Select--</option>
-                              @foreach($FGECodeList as  $row)
-                              <option value="{{ $row->fge_code }}">{{ $row->fge_code }}</option> 
-                              @endforeach
-                           </select>
-                        </div>
-
-                        <div class="col-md-4">
-                           <label for="location_id" class="form-label">Location/Warehouse</label>
-                           <select name="location_id" class="form-select select2" id="location_id" required>
-                              <option value="">--Location--</option>
-                              @foreach($LocationList as  $row)
-                              <option value="{{ $row->loc_id }}" {{ $row->loc_id == 1 ? 'selected="selected"' : '' }}>
-                                 {{ $row->location }}
-                              </option> 
-                              @endforeach
-                           </select>
-                        </div>
                         <div class="col-md-3 mt-4 m-0">
                            <div class="mb-3">
                               <div class="form-check form-check-primary mb-5">
@@ -459,10 +419,50 @@
                               </div>
                            </div>
                         </div>
-                        <div class="col-md-3" id="workOrder">
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="invoice_date" class="form-label">DC Date</label>
+                              <input type="date" name="invoice_date" id="invoice_date" class="form-control" value="{{date('Y-m-d')}}">
+                           </div>
+                        </div>
+                        <div class="col-md-2">
+                           <div class="mb-3">
+                              <label for="invoice_no" class="form-label">DC No</label>
+                              <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input">
+                              <input type="text" name="invoice_no" id="invoice_no1" class="form-control" required>
+                              <select name="invoice_no" class="form-select select2 hide" id="focd_code" onchange="GetFabricCuttingDeptData();">
+                                 <option value="">--Select--</option>
+                                 @foreach($FabricCuttingOutwardList as  $row)
+                                 <option value="{{ $row->focd_code }}">{{ $row->focd_code }}</option> 
+                                 @endforeach
+                              </select>
+                           </div>
+                        </div> 
+                        <div class="col-md-2">
+                           <label for="fge_code" class="form-label">Fabric Gate Code</label>
+                           <select name="fge_code" class="form-select select2" id="fge_code" required>
+                              <option value="">--Select--</option>
+                              @foreach($FGECodeList as  $row)
+                              <option value="{{ $row->fge_code }}">{{ $row->fge_code }}</option> 
+                              @endforeach
+                           </select>
+                        </div>
+
+                        <div class="col-md-3">
+                           <label for="location_id" class="form-label">Location/Warehouse</label>
+                           <select name="location_id" class="form-select select2" id="location_id" required>
+                              <option value="">--Location--</option>
+                              @foreach($LocationList as  $row)
+                              <option value="{{ $row->loc_id }}" {{ $row->loc_id == 1 ? 'selected="selected"' : '' }}>
+                                 {{ $row->location }}
+                              </option> 
+                              @endforeach
+                           </select>
+                        </div>
+                        <div class="col-md-2" id="workOrder">
                            <div class="mb-3">
                               <label for="" class="form-label">Vendor Process Order No.</label>   
-                              <select name="vpo_code" class="form-select select2" id="vpo_code" onchange="GetVendorName(this.value);">
+                              <select name="vpo_code" class="form-select select2" id="vpo_code" onchange="GetVendorName(this.value);" disabled>
                                  <option value="">Vendor Process Order No.</option>
                                  @foreach($vendorProcessOrderList as  $vendors)
                                  <option value="{{ $vendors->vpo_code }}"  > {{ $vendors->vpo_code }} </option>
@@ -471,10 +471,10 @@
                            </div>
                         </div>
 
-                        <div class="col-md-3" id="vendorData">
+                        <div class="col-md-2" id="vendorData">
                            <div class="mb-3">
                               <label for="" class="form-label">Vendor Name</label>   
-                              <select name="vendorId" class="form-select select2" id="vendorId" >
+                              <select name="vendorId" class="form-select select2" id="vendorId" disabled>
                                  <option value="">--Select--</option>
                                  @foreach($vendorData as  $rows)<option value="{{ $rows->ac_code }}"  > {{ $rows->ac_short_name }}</option>
                                  @endforeach
@@ -802,9 +802,9 @@
 
    function GetFabricCuttingDeptData()
    {
-        var focd_code  = $("#focd_code").val();
+      var focd_code  = $("#focd_code").val();
         
-        $.ajax({
+      $.ajax({
           type: "GET",
           dataType:"json",
           url: "{{ route('GetFabricCuttingDeptData') }}",
@@ -815,8 +815,8 @@
               $('#vpo_code').val(data.vpo_code).trigger('change'); 
               GetVendorName(data.vpo_code);
           }
-        }); 
-
+      }); 
+      $("#focd_code").prop('disabled', true);
    }
 
    function GetOrderNo(ele)
