@@ -413,7 +413,7 @@
                      <div class="col-md-3 mt-4 m-0">
                         <div class="mb-3">
                            <div class="form-check form-check-primary mb-5">
-                              <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);GetDCDropdown();" name="isReturnFabricInward" style="font-size: 30px;margin-left: 0px;margin-top: -3px;" @if($FabricInwardMasterList->isReturnFabricInward==1)checked @else disabled @endif>
+                              <input class="form-check-input" type="checkbox" id="isReturnFabricInward" onchange="GetOrderNo(this);GetDCDropdown();" name="isReturnFabricInward" style="font-size: 30px;margin-left: 0px;margin-top: -3px;" @if($FabricInwardMasterList->isReturnFabricInward==1)checked @endif disabled>
 
                               <label class="form-check-label" for="isReturnFabricInward" style="position: absolute;margin-left: 20px;font-size: 14px;">
                                     Fabric Return From Inhouse
@@ -424,7 +424,7 @@
                      <div class="col-md-3 mt-4 m-0">
                         <div class="mb-3">
                            <div class="form-check form-check-primary mb-5">
-                              <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" onchange="DisableDropdown();" style="font-size: 30px;margin-left: 0px;margin-top: -3px;"  @if($FabricInwardMasterList->isOutsideVendor==1)checked @else disabled @endif >
+                              <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" onchange="DisableDropdown();" style="font-size: 30px;margin-left: 0px;margin-top: -3px;"  @if($FabricInwardMasterList->isOutsideVendor==1)checked  @endif disabled>
 
                               <label class="form-check-label" for="isOutsideVendor" style="position: absolute;margin-left: 20px;font-size: 14px;">
                                     From Outsource Vendor
@@ -442,9 +442,9 @@
                         <div class="mb-3">
                            <label for="invoice_no1" class="form-label">DC No</label> 
                            
-                           <input type="text" name="invoice_no" id="invoice_no1" class="form-control @if($FabricInwardMasterList->isReturnFabricInward == 1) hide @endif" value="{{ $FabricInwardMasterList->invoice_no }}" id="invoice_no" required>
+                           <input type="text" name="invoice_no" id="invoice_no1" class="form-control @if($FabricInwardMasterList->isReturnFabricInward == 1) hide @endif" value="{{ $FabricInwardMasterList->invoice_no }}" id="invoice_no" disabled>
                    
-                           <select name="invoice_no" class="form-select select2 @if($FabricInwardMasterList->isReturnFabricInward != 1) hide @endif" id="focd_code" onchange="GetFabricCuttingDeptData();">
+                           <select name="invoice_no" class="form-select select2 @if($FabricInwardMasterList->isReturnFabricInward != 1) hide @endif" id="focd_code" onchange="GetFabricCuttingDeptData();" disabled>
                               <option value="">--Select--</option>
                               @foreach($FabricCuttingOutwardList as  $row)
                               <option value="{{ $row->focd_code }}" {{ $row->focd_code == $FabricInwardMasterList->invoice_no ? 'selected="selected"' : '' }}>{{ $row->focd_code }}</option> 
@@ -463,7 +463,7 @@
                      </div>
                      <div class="col-md-3">
                         <label for="formrow-inputState" class="form-label">Location/Warehouse</label>
-                        <select name="location_id" class="form-select select2" id="location_id" required>
+                        <select name="location_id" class="form-select select2" id="location_id" disabled>
                            <option value="">--Select Buyer--</option>
                            @foreach($LocationList as  $row)
                            {
@@ -477,7 +477,7 @@
                      <div class="col-md-2" id="workOrder"> 
                         <div class="mb-3">
                            <label for="" class="form-label">Vendor Process Order No.</label>   
-                           <select name="vpo_code" class="form-select select2" id="vpo_code" onchange="GetVendorName(this.value);">
+                           <select name="vpo_code" class="form-select select2" id="vpo_code" onchange="GetVendorName(this.value);" disabled>
                               <option value="">--Select--</option>
                               @foreach($vendorProcessOrderList as  $vendors)
                               {
@@ -492,7 +492,7 @@
                      <div class="col-md-2" id="vendorData">
                         <div class="mb-3">
                            <label for="" class="form-label">Vendor Name</label>   
-                           <select name="vendorId" class="form-select select2" id="vendorId" >
+                           <select name="vendorId" class="form-select select2" id="vendorId" disabled>
                               <option value="">--Select--</option>
                               @foreach($vendorData as  $rows)<option value="{{ $rows->ac_code }}"   {{ $rows->ac_code == $FabricInwardMasterList->vendorId ? 'selected="selected"' : '' }}  > {{ $rows->ac_short_name }}</option>
                               @endforeach
@@ -563,20 +563,20 @@
 
                               if($FabricInwardMasterList->isReturnFabricInward == 1)
                               {
-                                 $dis = '';
+                                 $dis = 'readonly';
                               }
 
                               @endphp
                               <tr>
-                                 <td><input type="text" name="id[]" value="{{ $no }}" id="id" style="width:50px;" {{$dis}} /></td>
-                                 <td><input type="text" name="item_codes[]" value="{{ $List->item_code }}" id="item_codes" style="width:80px;" {{$dis}} /></td>
+                                 <td><input type="text" name="id[]" value="{{ $no }}" id="id" style="width:50px;"  readOnly /></td>
+                                 <td><input type="text" name="item_codes[]" value="{{ $List->item_code }}" id="item_codes" style="width:80px;"   readOnly /></td>
                                  <td>
-                                    <select name="item_code[]"  id="item_code" style="width:200px; height:30px;" required onchange="getRateFromPO(this);" {{$dis}} > 
+                                    <select name="item_code[]"  id="item_code" style="width:200px; height:30px;" required onchange="getRateFromPO(this);"  disabled> 
                                     <option value="{{ $List->item_code }}">{{ $List->item_name }}</option>
                                     </select>
                                  </td>
                                  <td>
-                                    <select name="part_id[]"  id="part_id" style="width:200px; height:30px;" required  {{$dis}} >
+                                    <select name="part_id[]"  id="part_id" style="width:200px; height:30px;" disabled>
                                     <option value="">--Part--</option>
                                     @foreach($PartList as  $row)
                                     <option value="{{ $row->part_id }}"
@@ -585,13 +585,14 @@
                                     @endforeach
                                     </select>
                                  </td>
-                                 <td><input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="{{ $List->taga_qty }}" id="taga_qty1" style="width:50px;"/><input type="number" step="0.01"class="METER" name="meter[]" onkeyup="mycalc();" value="{{ $List->meter }}" id="meter1" style="width:80px; height:30px;" required  {{$dis}}  /></td>
-                                 <td><input type="number" step="any"  name="gram_per_meter[]" onkeyup="mycalc();" value="{{ $List->gram_per_meter }}" id="gram_per_meter" style="width:80px; height:30px;" required  {{$dis}}  /></td>
-                                 <td><input type="number" step="any" class="KG" name="kg[]" onkeyup="mycalc();" value="{{ $List->kg }}" id="kg" style="width:80px; height:30px;" required  {{$dis}}  /></td>
-                                 <td><input type="number" step="any"    name="item_rates[]"   value="{{ $List->item_rate }}" id="item_rates" style="width:80px;height:30px;" required    />
-                                 <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;" required/></td>
-                                 <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}} required /></td>
-                                 <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code1" style="width:80px; height:30px;" required readOnly/></td>
+                                 <td><input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="{{ $List->taga_qty }}" id="taga_qty1" style="width:50px;"/>
+                                    <input type="number" step="any" class="METER" name="meter[]" onkeyup="mycalc();" value="{{ $List->meter }}" max="{{ $List->meter }}" oninput="if (this.value > this.max) { alert('Quantity cannot exceed ' + this.max); this.value = this.max; }" id="meter1" style="width:80px; height:30px;" required /></td>
+                                 <td><input type="number" step="any"  name="gram_per_meter[]" onkeyup="mycalc();" value="{{ $List->gram_per_meter }}" id="gram_per_meter" style="width:80px; height:30px;" required  {{$dis}} /></td>
+                                 <td><input type="number" step="any" class="KG" name="kg[]" onkeyup="mycalc();" value="{{ $List->kg }}" id="kg" style="width:80px; height:30px;"    readOnly /></td>
+                                 <td><input type="number" step="any"    name="item_rates[]"   value="{{ $List->item_rate }}" id="item_rates" style="width:80px;height:30px;"  {{$dis}} />
+                                 <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;"  readOnly/></td>
+                                 <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;" required /></td>
+                                 <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code1" style="width:80px; height:30px;" readOnly/></td>
                                  <td><input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left" disabled></td>
                                  <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X"  disabled></td>
                               </tr>
@@ -1294,13 +1295,18 @@
 }
 
 
-   $("table.footable_2,table.footable_3").on("keyup", 'input[name^="gram_per_meter[]"],input[name^="meter[]"]', function (event) {
+   $("table.footable_2").on("keyup", 'input[name^="gram_per_meter[]"],input[name^="meter[]"]', function (event) {
           CalculateRow($(this).closest("tr"));
           
    });
-    	
+    
+   $("table.footable_3").on("input", 'input[name="gram_per_meter[]"], input[name="meter[]"]', function () {
+      CalculateRow($(this).closest("tr"));
+   });
+
    function CalculateRow(row)
    { 
+      console.log("hi");
    	var gram_per_meter=+row.find('input[name^="gram_per_meter[]"]').val();
           var meter=+row.find('input[name^="meter[]"]').val();
     	var kg=parseFloat(meter * gram_per_meter).toFixed(2);

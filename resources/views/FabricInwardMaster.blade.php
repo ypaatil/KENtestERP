@@ -519,7 +519,8 @@
                                     <th>Rate Per Meter</th>
                                     <th>Amount</th>
                                     <th nowrap>Suplier Roll No.</th>
-                                    <th>Track Code</th>
+                                    <th>Old Track Code</th>
+                                    <th>New Track Code</th>
                                     <th>Add</th>
                                     <th>Remove</th>
                                  </tr>
@@ -570,7 +571,9 @@
 
                                     <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;" required></td>
 
-                                    <td><input type="text" name="track_code[]" id="track_code1" style="width:80px;height:30px;" readOnly></td>
+                                    <td><input type="text" id="track_code1" style="width:80px;height:30px;" readOnly></td>
+
+                                    <td><input type="text" name="track_code[]" id="newTrackCode" style="width:80px;height:30px;" readOnly></td>
 
                                     <td>
                                        <input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left AButton">
@@ -594,7 +597,8 @@
                                     <th>Rate Per Meter</th>
                                     <th>Amount</th>
                                     <th>Suplier Roll No.</th>
-                                    <th>Track Code</th>
+                                    <th>Old Track Code</th>
+                                    <th>New Track Code</th>
                                     <th>Add</th>
                                     <th>Remove</th>
                                  </tr>
@@ -815,6 +819,7 @@
               $('#detailTbl').html(data.html); 
               $('#vpo_code').val(data.vpo_code).trigger('change'); 
               GetVendorName(data.vpo_code);
+              mycalc();
           }
       }); 
       $("#focd_code").prop('disabled', true);
@@ -864,16 +869,18 @@
    { 
          if($("#isReturnFabricInward").is(":checked"))
          {
+            $("#footable_4").addClass("hide");
             $("#isOutsideVendor").attr('disabled', true);
             $("#invoice_no1").removeAttr('name').removeAttr('required').addClass("hide");
             $("#focd_code").attr('name', 'invoice_no').attr('required', true).removeClass("hide"); 
          }
          else
          {
-            $("#isOutsideVendor").attr('disabled', false);
             $("#invoice_no1").attr('name', 'invoice_no').attr('required', true).removeClass("hide");
             $("#focd_code").removeAttr('name').removeAttr('required').addClass("hide"); 
          }
+         $("#isReturnFabricInward").attr('disabled', true);
+         $("#isOutsideVendor").attr('disabled', true);
    }
 
    function enable(opening)

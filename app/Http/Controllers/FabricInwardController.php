@@ -163,7 +163,15 @@ class FabricInwardController extends Controller
         $RackMasterList = RackModel::where('rack_master.delflag','=', '0')->get(); 
         $LocationList = LocationModel::where('location_master.delflag','=', '0')->get(); 
         $FGECodeList =  DB::table('fabric_gate_entry_master')->where('delflag','=', '0')->get();
-        $FabricCuttingOutwardList =  DB::table('fabric_outward_cutting_department_master')->where('delflag','=', '0')->get();
+        $FabricCuttingOutwardList = DB::table('fabric_outward_cutting_department_master AS foc')
+                ->where('foc.delflag', '0')
+                ->whereNotExists(function ($query) {
+                    $query->select(DB::raw(1))
+                        ->from('inward_master AS im')
+                        ->whereColumn('im.invoice_no', 'foc.focd_code');
+                })
+                ->get();
+
         $CPList =  DB::table('cp_master')->get();
         
         $vendorProcessOrderList = DB::table('vendor_purchase_order_master')->select('vpo_code')->where('process_id','=',1)->get();
@@ -3791,7 +3799,8 @@ P2
         $detailData = DB::SELECT("SELECT fabric_outward_cutting_department_details.*,inward_details.gram_per_meter,
                         inward_details.kg,inward_details.item_rate,inward_details.amount  FROM fabric_outward_cutting_department_details 
                         INNER JOIN inward_details ON inward_details.track_code = fabric_outward_cutting_department_details.roll_no
-                        WHERE fabric_outward_cutting_department_details.focd_code='".$request->focd_code."' GROUP BY fabric_outward_cutting_department_details.item_code");
+                        WHERE fabric_outward_cutting_department_details.focd_code='".$request->focd_code."' GROUP BY 
+                        fabric_outward_cutting_department_details.item_code,fabric_outward_cutting_department_details.roll_no");
 
                         
         $itemList = DB::SELECT("SELECT item_master.item_code, item_master.item_name  FROM item_master 
@@ -3805,11 +3814,21 @@ P2
 
         $html = '';
         $srno = 1;
+        $srno1 = 1;
         $user_type=Session::get('user_type');
+        $last = DB::table('inward_details')
+            ->join('inward_master', 'inward_master.in_code', '=', 'inward_details.in_code')
+            ->where('inward_details.track_code', 'like', 'P%')
+            ->orderBy('inward_master.sr_no', 'DESC')
+            ->value('inward_details.track_code');
 
         foreach($detailData as $details)
         {
-             $html .= '<tr>
+
+            $number = (int) substr($last, 1) + $srno1; // remove 'P'
+            $newTrackCode = 'P' . ($number);
+           
+            $html .= '<tr>
                             <td><input type="text" name="id[]" value="'.($srno++).'" id="id" style="width:50px;" readonly></td>
 
                             <td><input type="text" name="item_codes[]" value="'.$details->item_code.'" id="item_codes" style="width:80px;" readonly></td>
@@ -3865,7 +3884,9 @@ P2
 
                             <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="'.$details->suplier_roll_no.'" id="suplier_roll_no" style="width:100px;height:30px;"></td>
 
-                            <td><input type="text" name="track_code[]" id="track_code1" value="'.$details->roll_no.'" style="width:80px;height:30px;" readonly ></td>
+                            <td><input type="text"  id="track_code1" value="'.$details->roll_no.'" style="width:80px;height:30px;" readonly ></td>
+
+                            <td><input type="text" name="track_code[]" id="newTrackCode" value="'.$newTrackCode.'" style="width:80px;height:30px;" readonly ></td>
 
                             <td>
                                 <input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left AButton" disabled> 
@@ -3874,6 +3895,8 @@ P2
                                 <input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" disabled>
                             </td>
                         </tr>';
+
+                        $srno1++;
         }
         
         return response()->json(['vpo_code'=>$vpo_code,'html'=>$html]);
