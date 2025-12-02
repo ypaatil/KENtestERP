@@ -131,12 +131,13 @@
                   {data: 'supplier_name', name: 'supplier_name',class: 'no-wrap'},
                   {data: 'bill_to', name: 'bill_to',class: 'no-wrap'},
                   {data: 'item_name', name: 'item_name'},
-                  {data: 'totalAssoc', name: 'totalAssoc', className: 'text-right'},
-                  {data: 'remainStock', name: 'remainStock', className: 'text-right'},
-                  {data: 'trimOutwardStock', name: 'trimOutwardStock', className: 'text-right'},
-                  {data: 'avilable_stock', name: 'avilable_stock', className: 'text-right'},
+                  {data: 'totalAssoc', name: 'totalAssoc', className: 'text-right'   },
+                  {data: 'remainStock', name: 'remainStock', className: 'text-right'  },
+                  {data: 'trimOutwardStock', name: 'trimOutwardStock', className: 'text-right'   },
+                  {data: 'avilable_stock', name: 'avilable_stock', className: 'text-right' , render: function (data) {  return indianFormat(data);  } },
             ]
-        });        
+        });  
+            
     }
 
          // Start script for filter search and apply        
@@ -166,10 +167,39 @@
         // End script for filter search and apply
 
       function ClearReport()
-    {
-         removeFilterColor();
-         tableData();
-    }
+      {
+            removeFilterColor();
+            tableData();
+      }
+      
+            function indianFormat(x) {
+               if (x === null || x === "" || isNaN(x)) return x;
+
+               let num = Number(x);
+
+               // Check negative
+               let isNegative = num < 0;
+               num = Math.abs(num);
+
+               let parts = num.toString().split(".");
+               let intPart = parts[0];
+               let decPart = parts.length > 1 ? "." + parts[1] : "";
+
+               // Indian format logic
+               let lastThree = intPart.substring(intPart.length - 3);
+               let otherNumbers = intPart.substring(0, intPart.length - 3);
+
+               if (otherNumbers !== "")
+                  lastThree = "," + lastThree;
+
+               let formatted =
+                  otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree;
+
+               // Add negative back
+               if (isNegative) formatted = "-" + formatted;
+
+               return formatted + decPart;
+         }
     
  </script>
 @endsection

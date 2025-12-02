@@ -907,7 +907,7 @@ class StockAssociationController extends Controller
         ->leftJoin('purchase_order', 'purchase_order.pur_code', '=', 'dts.po_code')
         ->leftJoin('ledger_master', 'ledger_master.ac_code', '=', 'purchase_order.Ac_code')
         ->leftJoin('ledger_details', 'ledger_details.sr_no', '=', 'purchase_order.bill_to')
-        ->get();
+         ;
 
     return Datatables::of($trimsAssocData)
         ->addColumn('srno', function ($row) {
@@ -919,18 +919,19 @@ class StockAssociationController extends Controller
                 ? $row->allocated_qty - $row->eachAvaliableQty
                 : $row->allocated_qty - $row->otherAvaliableStock;
 
-            return number_format(round($remainStock - $row->trimOutwardStock, 2), 2, '.', ',');
+            return indian_number_format_for_value( round($remainStock - $row->trimOutwardStock, 2),2);
+            //return number_format(round($remainStock - $row->trimOutwardStock, 2), 2, '.', ',');
         })
         ->addColumn('remainStock', function ($row) {
             $remainStock = ($row->totalAssoc <= 0 && $row->bom_code != "")
                 ? $row->allocated_qty - $row->eachAvaliableQty
                 : $row->allocated_qty - $row->otherAvaliableStock;
 
-            return number_format(round($remainStock, 2), 2, '.', ',');
+            return indian_number_format_for_value( round($remainStock, 2) , 2);
         })
-        ->addColumn('totalAssoc', fn($row) => number_format(round($row->totalAssoc, 2), 2, '.', ','))
+        ->addColumn('totalAssoc', fn($row) => indian_number_format_for_value( round($row->totalAssoc, 2) ,2)    )
         ->addColumn('bill_to', fn($row) => $row->site_code ? "{$row->trade_name}({$row->site_code})" : $row->trade_name)
-        ->addColumn('trimOutwardStock', fn($row) => number_format(round($row->trimOutwardStock, 2), 2, '.', ','))
+        ->addColumn('trimOutwardStock', fn($row) =>  indian_number_format_for_value( round($row->trimOutwardStock, 2)  ,2) )
         ->rawColumns(['srno','avilable_stock','remainStock','totalAssoc','trimOutwardStock','bill_to'])
         ->make(true);
 }
