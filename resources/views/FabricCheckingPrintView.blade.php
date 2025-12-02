@@ -535,7 +535,7 @@
                     <table class="table table-bordered table-sm">
                         <thead>
                             <tr>
-                                <th>SrNo</th>
+                                <th>Sr.No.</th>
                                 <th>Item Code</th>
                                 <th>Roll No</th>
                                 <th>Fabric Color Code</th>
@@ -617,7 +617,7 @@
                     <table class="table table-bordered table-sm">
                         <thead>
                             <tr>
-                                <th>SrNo</th>
+                                <th>Sr.No.</th>
                                 <th>Item Code</th>
                                 <th>Roll No</th>
                                 <th>Fabric Color Code</th>
@@ -694,7 +694,7 @@
                             <table class="table table-bordered border-end border-start table-sm">
                                 <thead>
                                     <tr>
-                                        <th>SrNo</th>
+                                        <th>Sr.No.</th>
                                         <th>Shade</th>
                                         <th>Meter</th>
                                         <th>Roll No</th>
@@ -753,7 +753,7 @@
                             <table class="table table-bordered border-start border-end table-sm">
                                 <thead>
                                     <tr>
-                                        <th>SrNo</th>
+                                        <th>Sr.No.</th>
                                         <th nowrap>Actual Width</th>
                                         <th>Meter</th>
                                         <th>No. Of Rolls</th>
