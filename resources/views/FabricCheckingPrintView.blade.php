@@ -496,7 +496,7 @@
                             <div class="info-row">
                                 <div class="label">Chk Date</div>
                                 <div class="colon">: </div>
-                                <div class="value"> {{ $rowMaster->chk_date }}</div>
+                                <div class="value"> {{ \Carbon\Carbon::parse($rowMaster->chk_date)->format('d-m-Y') }}</div>
                             </div>
                             <div class="info-row">
                                 <div class="label">GRN No</div>
@@ -517,7 +517,7 @@
                             <div class="info-row">
                                 <div class="label">Invoice Date</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{ $rowMaster->invoice_date }}</div>
+                                <div class="value">{{ \Carbon\Carbon::parse($rowMaster->invoice_date)->format('d-m-Y') }}</div>
                             </div>
                             <div class="info-row">
                                 <div class="label">Supplier</div>
