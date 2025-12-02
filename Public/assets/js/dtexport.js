@@ -842,6 +842,28 @@ function applyDateFilter(col, menu) {
         buildSimpleFilter('.avaliable-stock', 11);
       }
 
+      function buildAllMenusWIPReport(){
+        buildSimpleFilter('.sr-no', 0);
+        buildSimpleFilter('.order-no', 1);
+        buildSimpleFilter('.po-status', 2);
+        buildSimpleFilter('.order-type', 3);
+        buildSimpleFilter('.buyer-brand', 4);
+        buildSimpleFilter('.category', 5);
+        buildSimpleFilter('.order-qty', 6);
+        buildSimpleFilter('.work-order-qty', 7);
+        buildSimpleFilter('.cutting-qty', 8);
+        buildSimpleFilter('.cutting-wip', 9);
+        buildSimpleFilter('.sewing-qty', 10);
+        buildSimpleFilter('.sewing-wip', 11);
+        buildSimpleFilter('.packing-qty', 12);
+        buildSimpleFilter('.packing-wip', 13);
+        buildSimpleFilter('.rejection-qty', 14);
+        buildSimpleFilter('.wip-adjust-qty', 15);
+        buildSimpleFilter('.total-wip', 16);
+        buildSimpleFilter('.order-rate', 17);
+        buildSimpleFilter('.total-wip-value', 18);
+      }
+
        function table_values_indian_format()  {
           function formatIndianNumber(num) {
             if (isNaN(num)) return num; // Ignore non-numbers
