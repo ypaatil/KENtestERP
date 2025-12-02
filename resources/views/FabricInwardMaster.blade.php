@@ -93,7 +93,8 @@
                               <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
                               <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
                               @endforeach
-                              <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input">
+                              <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="userId">
+                              <input type="hidden" name="username" value="{{ Session::get('username') }}" class="form-control" id="username">
                            </div>
                         </div>
 
@@ -560,7 +561,7 @@
                                     <td><input type="number" step="any" min="0" name="gram_per_meter[]" value="0" id="gram_per_meter" style="width:80px;height:30px;" required></td>
 
                                     <td><input type="number" step="any" min="0" @php $user_type=Session::get('user_type'); if($user_type!=1){ echo 'readOnly'; } @endphp class="KG" 
-                                       name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;height:30px;" required></td>
+                                       name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;height:30px;" readOnly></td>
 
                                     <td>
                                        <input type="number" step="any" min="0" name="item_rates[]" value="0" id="item_rates" style="width:80px;height:30px;" 
@@ -571,12 +572,12 @@
 
                                     <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;" required></td>
 
-                                    <td><input type="text" id="track_code1" style="width:80px;height:30px;" readOnly></td>
+                                    <td><input type="text" id="track_code1" style="width:80px;height:30px;" value="-" readOnly></td>
 
                                     <td><input type="text" name="track_code[]" id="newTrackCode" style="width:80px;height:30px;" readOnly></td>
 
                                     <td>
-                                       <input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left AButton">
+                                       <input type="button" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left addbtn AButton">
                                     </td>
 
                                     <td>
@@ -663,6 +664,7 @@
          </div>
       </div>
    </div>
+   <input type="hidden" id="isLockFlag" value="{{ $isLockFlag }}">
 </div>
 
 <!-- end row -->
@@ -670,6 +672,129 @@
 <!-- end row -->
 <script>
     
+      // ------- PAGE KEY (unique for every page) ----------
+   var pageKey = "fabric_inward";     // change this as per page
+   var userId  = $("#userId").val();               // your logged-in userId
+
+   // ---------- On Page Load: Mark Active ---------------
+   $(document).ready(function () 
+   {
+      var isLockFlag = $("#isLockFlag").val();
+      var username = $("#username").val();
+      if(parseInt(isLockFlag) == 1)
+      {
+            ShowBlockMessage(username);
+      }
+
+      $.ajax({
+         url: "/pageLock",
+         type: "POST",
+         data: {
+               page_key: pageKey,
+               userId:   userId,
+               isFlag:   1
+         },
+         success: function(res)
+         {
+            console.log('Page is locked');
+         }
+      });
+
+   });
+
+
+   // ---------- On Page Close: Mark Inactive ------------
+   window.addEventListener("beforeunload", function () {
+      let data = new FormData();
+      data.append("page_key", pageKey);
+      data.append("userId", userId);
+      data.append("isFlag", 0);       // page inactive
+
+      // sendBeacon works even when closing browser
+      navigator.sendBeacon("/pageLock", data);
+   });
+ 
+   function ShowBlockMessage(lockedUserName) 
+   {
+      $("body").append(`
+         <div id="waOverlay"
+               style="
+                  position: fixed;
+                  inset: 0;
+                  background: rgba(0,0,0,0.55);
+                  backdrop-filter: blur(6px);
+                  z-index: 999999;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+               ">
+               
+               <div id="waPopup"
+                  style="
+                     background: #ffffff;
+                     width: 320px;
+                     padding: 25px 30px;
+                     border-radius: 18px;
+                     text-align: center;
+                     font-family: 'Segoe UI', sans-serif;
+                     box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+                     animation: fadeIn 0.3s ease-out;
+                  ">
+                  
+                  <div style="
+                     font-size: 20px;
+                     font-weight: 600;
+                     color: #333;
+                     margin-bottom: 12px;
+                  ">
+                     This form is currently in use
+                  </div>
+
+                  <div style="
+                     font-size: 16px;
+                     color: #555;
+                     line-height: 1.4;
+                     margin-bottom: 25px;
+                  ">
+                     <b>${lockedUserName}</b> is using this form right now.  
+                     Please try again later.
+                  </div>
+
+                  <button style="
+                     background: #25D366;
+                     color: white;
+                     border: none;
+                     padding: 10px 25px;
+                     border-radius: 50px;
+                     font-size: 15px;
+                     cursor: pointer;
+                     font-weight: 600;
+                     box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+                  "
+                  onclick="CloseWhatsAppOverlay()">
+                     OK
+                  </button>
+               </div>
+         </div>
+
+         <style>
+               @keyframes fadeIn {
+                  from {opacity: 0; transform: translateY(20px);}
+                  to   {opacity: 1; transform: translateY(0);}
+               }
+         </style>
+      `);
+
+      // Disable all form inputs/buttons
+      $("input, select, textarea, button").prop("disabled", true);
+   }
+
+   // Close overlay if needed
+   function CloseWhatsAppOverlay() {
+      $("#waOverlay").remove();
+   }
+
+
    $(document).on('keydown', 'input[type="number"]', function(e) {
        const invalidKeys = ['e', 'E', '+', '-'];
    
@@ -954,14 +1079,14 @@
       if($("#cp_id1").val()==1)
       { 
          ++PBarcode;
-         $("#track_code1").val('P'.concat(PBarcode.toString()));
+         $("#newTrackCode").val('P'.concat(PBarcode.toString()));
          //alert($("#track_code").val());
       }
       else if($("#cp_id1").val()==2)
       {      
          var CBar='';
          CBar='I' + parseInt(++CBarcode);
-         $("#track_code1").val(CBar);
+         $("#newTrackCode").val(CBar);
       }
    }
    
@@ -1266,221 +1391,231 @@
    }
    
    var indexcone = 2;
-   
-  function insertcone1() 
-  {
-    $("#item_code").select2("destroy");
-    $("#part_id").select2("destroy");
 
-    var table = document.getElementById("footable_3").getElementsByTagName('tbody')[0];
-    var row = table.insertRow(table.rows.length);
+   function insertcone1() 
+   {
+      // Destroy Select2 before clone
+      $("#item_code").select2("destroy");
+      $("#part_id").select2("destroy");
 
-    // ---------------- ID ----------------
-    var cell1 = row.insertCell(0);
-    var t1 = document.createElement("input");
-    t1.style = "display: table-cell; width:50px;";
-    t1.id = "id" + indexcone;
-    t1.name = "id[]";
-    t1.value = indexcone;
-    cell1.appendChild(t1);
+      var table = document.getElementById("footable_3").getElementsByTagName('tbody')[0];
+      var row = table.insertRow(-1);
 
-    // ---------------- Item Code Text ----------------
-    var cell2 = row.insertCell(1);
-    var t2 = document.createElement("input");
-    t2.style = "display: table-cell; width:80px;";
-    t2.id = "item_codes" + indexcone;
-    t2.name = "item_codes[]";
-    cell2.appendChild(t2);
+      // ---------------- ID ----------------
+      var cell1 = row.insertCell(-1);
+      var t1 = document.createElement("input");
+      t1.style = "display: table-cell; width:50px;";
+      t1.id = "id" + indexcone;
+      t1.name = "id[]";
+      t1.value = indexcone;
+      cell1.appendChild(t1);
 
-    // ---------------- Item Code Dropdown (Select2) ----------------
-    var cell3 = row.insertCell(2);
-    var ic = $("#item_code").clone();
-    ic.attr("id", "item_code" + indexcone);
-    ic.attr("name", "item_code[]");
-    ic.val("");
-    ic.appendTo(cell3);
+      // ---------------- Item Code Text ----------------
+      var cell2 = row.insertCell(-1);
+      var t2 = document.createElement("input");
+      t2.style = "display: table-cell; width:80px;";
+      t2.id = "item_codes" + indexcone;
+      t2.name = "item_codes[]";
+      cell2.appendChild(t2);
 
-    // ---------------- Part ID Dropdown (Select2) ----------------
-    var cell4 = row.insertCell(3);
-    var pt = $("#part_id").clone();
-    pt.attr("id", "part_id" + indexcone);
-    pt.attr("name", "part_id[]");
-    pt.appendTo(cell4);
+      // ---------------- Item Code Dropdown ----------------
+      var cell3 = row.insertCell(-1);
+      var ic = $("#item_code").clone(false); // clone without events
+      ic.attr("id", "item_code" + indexcone);
+      ic.attr("name", "item_code[]");
+      ic.val("");
+      ic.appendTo(cell3);
 
-    // Hidden taga qty
-    var t7 = document.createElement("input");
-    t7.type = "hidden";
-    t7.className = "TAGAQTY";
-    t7.id = "taga_qty" + indexcone;
-    t7.name = "taga_qty[]";
-    t7.value = "1";
-    t7.onkeyup = mycalc;
-    cell4.appendChild(t7);
+      // ---------------- Part ID Dropdown ----------------
+      var cell4 = row.insertCell(-1);
+      var pt = $("#part_id").clone(false);
+      pt.attr("id", "part_id" + indexcone);
+      pt.attr("name", "part_id[]");
+      pt.val("");
+      pt.appendTo(cell4);
 
-    // ---------------- Meter ----------------
-    var cell5 = row.insertCell(4);
-    var meter = document.createElement("input");
-    meter.type = "number";
-    meter.step = "any";
-    meter.className = "METER";
-    meter.id = "meter" + indexcone;
-    meter.name = "meter[]";
-    meter.style = "display: table-cell; width:80px;height:30px;";
-    meter.onkeyup = mycalc;
-    cell5.appendChild(meter);
+      // Hidden taga qty
+      var t7 = document.createElement("input");
+      t7.type = "hidden";
+      t7.className = "TAGAQTY";
+      t7.id = "taga_qty" + indexcone;
+      t7.name = "taga_qty[]";
+      t7.value = "1";
+      t7.onkeyup = mycalc;
+      cell4.appendChild(t7);
 
-   // ---------------- Gram per meter ----------------
-   var cell6 = row.insertCell(5);
-   var gpm = document.createElement("input");
-   gpm.type = "number";
-   gpm.step = "any";
-   gpm.id = "gram_per_meter" + indexcone;
-   gpm.name = "gram_per_meter[]";
-   gpm.style = "display: table-cell; width:80px;height:30px;";
-   gpm.onkeyup = mycalc;
+      // ---------------- Meter ----------------
+      var cell5 = row.insertCell(-1);
+      var meter = document.createElement("input");
+      meter.type = "number";
+      meter.step = "any";
+      meter.className = "METER";
+      meter.id = "meter" + indexcone;
+      meter.name = "meter[]";
+      meter.style = "display: table-cell; width:80px;height:30px;";
+      meter.onkeyup = mycalc;
+      cell5.appendChild(meter);
 
-   // Auto-copy previous GPM correctly
-   var gpmFields = document.querySelectorAll("input[name='gram_per_meter[]']");
-   if (gpmFields.length > 0) {
-      gpm.value = gpmFields[gpmFields.length - 1].value;
+      // ---------------- Gram per meter ----------------
+      var cell6 = row.insertCell(-1);
+      var gpm = document.createElement("input");
+      gpm.type = "number";
+      gpm.step = "any";
+      gpm.id = "gram_per_meter" + indexcone;
+      gpm.name = "gram_per_meter[]";
+      gpm.style = "display: table-cell; width:80px;height:30px;";
+      gpm.onkeyup = mycalc;
+
+      var gpmFields = document.querySelectorAll("input[name='gram_per_meter[]']");
+      if (gpmFields.length > 0) {
+         gpm.value = gpmFields[gpmFields.length - 1].value;
+      }
+      cell6.appendChild(gpm);
+
+      // ---------------- KG ----------------
+      var cell7 = row.insertCell(-1);
+      var kg = document.createElement("input");
+      kg.type = "number";
+      kg.step = "any";
+      kg.className = "KG";
+      kg.id = "kg" + indexcone;
+      kg.name = "kg[]";
+      kg.readOnly = true;
+      kg.style = "display: table-cell; width:80px;height:30px;";
+      var kgFields = document.querySelectorAll("input[name='kg[]']");
+      if (kgFields.length > 0) {
+         kg.value = kgFields[kgFields.length - 1].value;
+      }
+      cell7.appendChild(kg);
+
+      // ---------------- Rate ----------------
+      var cell8 = row.insertCell(-1);
+      var rate = document.createElement("input");
+      rate.type = "number";
+      rate.step = "any";
+      rate.id = "item_rates" + indexcone;
+      rate.name = "item_rates[]";
+      rate.style = "display: table-cell; width:80px;height:30px;";
+      var rateFields = document.querySelectorAll("input[name='item_rates[]']");
+      if (rateFields.length > 0) {
+         rate.value = rateFields[rateFields.length - 1].value;
+      }
+      cell8.appendChild(rate);
+
+      // ---------------- Amount ----------------
+      var cell9 = row.insertCell(-1);
+      var amt = document.createElement("input");
+      amt.type = "number";
+      amt.step = "any";
+      amt.readOnly = true;
+      amt.className = "AMT";
+      amt.id = "amounts" + indexcone;
+      amt.name = "amounts[]";
+      amt.value = "0";
+      amt.style = "display: table-cell; width:80px;height:30px;";
+      cell9.appendChild(amt);
+
+      // ---------------- Supplier Roll ----------------
+      var cell10 = row.insertCell(-1);
+      var roll = document.createElement("input");
+      roll.type = "number";
+      roll.step = "any";
+      roll.className = "suplier_roll_no";
+      roll.id = "suplier_roll_no" + indexcone;
+      roll.name = "suplier_roll_no[]";
+      roll.required = true;
+      roll.style = "display: table-cell; width:100px;height:30px;";
+      cell10.appendChild(roll);
+
+      // ---------------- Track Code (readonly) ----------------
+      var cell11 = row.insertCell(-1);
+      var tc1 = document.createElement("input");
+      tc1.type = "text";
+      tc1.readOnly = true;
+      tc1.id = "track_code1" + indexcone;
+      tc1.value = '-';
+      tc1.style = "display: table-cell; width:80px;height:30px;";
+      cell11.appendChild(tc1);
+
+      // ---------------- Track Code ----------------
+      var cell12 = row.insertCell(-1);
+      var tc = document.createElement("input");
+      tc.type = "text";
+      tc.readOnly = true;
+      tc.id = "track_code" + indexcone;
+      tc.name = "track_code[]";
+      if ($("#cp_id1").val() == 1) {
+         ++PBarcode;
+         tc.value = 'P' + PBarcode;
+      } else {
+         ++CBarcode;
+         tc.value = 'I' + CBarcode;
+      }
+      tc.style = "display: table-cell; width:80px;height:30px;";
+      cell12.appendChild(tc);
+
+      // ---------------- ADD BUTTON ----------------
+      var cell13 = row.insertCell(-1);
+      var add = document.createElement("input");
+      add.type = "button";
+      add.value = "+";
+      add.className = "btn btn-warning addbtn pull-left";
+      add.onclick = function () { insertcone1(); }
+      cell13.appendChild(add);
+
+      // ---------------- DELETE BUTTON ----------------
+      var cell14 = row.insertCell(-1);
+      var del = document.createElement("input");
+      del.type = "button";
+      del.value = "X";
+      del.className = "btn btn-danger pull-left";
+      del.onclick = function () { deleteRowcone(this); }
+      cell14.appendChild(del);
+
+      // Scroll to new row
+      var w = $(window);
+      var tr = $('#footable_3').find('tr').eq(indexcone);
+      if (tr.length) {
+         $('html,body').animate({ scrollTop: tr.offset().top - (w.height() / 2) }, 500);
+      }
+
+      $("#cntrr1").val(parseInt($("#cntrr1").val()) + 1);
+
+      indexcone++;
+      mycalc();
+      recalcIdcone();
+
+      // Reapply Select2
+      $("#item_code" + (indexcone - 1)).select2();
+      $("#part_id" + (indexcone - 1)).select2();
+
+      selselect();
+      PrevAddBtnDisabled();
    }
 
-   cell6.appendChild(gpm);
+   function PrevAddBtnDisabled() 
+   {
+      var $rows = $("#footable_3 > tbody > tr");
 
+      // Disable all add buttons
+      $rows.find("input.addbtn[type='button']").prop("disabled", true);
 
-   // ---------------- KG ----------------
-   var cell7 = row.insertCell(6);
-   var kg = document.createElement("input");
-   kg.type = "number";
-   kg.step = "any";
-   kg.className = "KG";
-   kg.id = "kg" + indexcone;
-   kg.name = "kg[]";
-   kg.readOnly = true;
-   kg.style = "display: table-cell; width:80px;height:30px;";
-
-   // Auto-copy previous KG correctly
-   var kgFields = document.querySelectorAll("input[name='kg[]']");
-   if (kgFields.length > 0) {
-      kg.value = kgFields[kgFields.length - 1].value;
+      // Enable only last row add button
+      $rows.last().find("input.addbtn[type='button']").prop("disabled", false);
    }
-
-   cell7.appendChild(kg);
-
-
-   // ---------------- Rate ----------------
-   var cell8 = row.insertCell(7);
-   var rate = document.createElement("input");
-   rate.type = "number";
-   rate.step = "any";
-   rate.id = "item_rates" + indexcone;
-   rate.name = "item_rates[]";
-   rate.style = "display: table-cell; width:80px;height:30px;";
-
-   // Auto-copy previous Rate correctly
-   var rateFields = document.querySelectorAll("input[name='item_rates[]']");
-   if (rateFields.length > 0) {
-      rate.value = rateFields[rateFields.length - 1].value;
-   }
-
-   cell8.appendChild(rate);
-
-    // ---------------- Amount ----------------
-    var cell9 = row.insertCell(8);
-    var amt = document.createElement("input");
-    amt.type = "number";
-    amt.step = "any";
-    amt.readOnly = true;
-    amt.className = "AMT";
-    amt.id = "amounts" + indexcone;
-    amt.name = "amounts[]";
-    amt.value = "0";
-    amt.style = "display: table-cell; width:80px;height:30px;";
-    cell9.appendChild(amt);
-
-    // ---------------- Supplier Roll ----------------
-    var cell10 = row.insertCell(9);
-    var roll = document.createElement("input");
-    roll.type = "number";
-    roll.step = "any";
-    roll.className = "suplier_roll_no";
-    roll.id = "suplier_roll_no" + indexcone;
-    roll.name = "suplier_roll_no[]";
-    roll.required="true";
-    roll.style = "display: table-cell; width:100px;height:30px;";
-    cell10.appendChild(roll);
-
-    // ---------------- Track Code ----------------
-    var cell11 = row.insertCell(10);
-    var tc = document.createElement("input");
-    tc.type = "text";
-    tc.readOnly = true;
-    tc.id = "track_code" + indexcone;
-    tc.name = "track_code[]";
-
-    if ($("#cp_id").val() == 1) {
-        ++PBarcode;
-        tc.value = 'P' + PBarcode;
-    } else {
-        ++CBarcode;
-        tc.value = 'I' + CBarcode;
-    }
-    tc.style = "display: table-cell; width:80px;height:30px;";
-    cell11.appendChild(tc);
-
-    // ---------------- ADD BUTTON ----------------
-    var cell12 = row.insertCell(11);
-    var add = document.createElement("input");
-    add.type = "button";
-    add.value = "+";
-    add.className = "btn btn-warning pull-left";
-    add.onclick = function () { insertcone1(); }
-    cell12.appendChild(add);
-
-    // ---------------- DELETE BUTTON ----------------
-    var cell13 = row.insertCell(12);
-    var del = document.createElement("input");
-    del.type = "button";
-    del.value = "X";
-    del.setAttribute("onclick", "deleteRowcone(this)");
-    del.className = "btn btn-danger pull-left";
-    del.onclick = function () { deleteRowcone(this); }
-    cell13.appendChild(del);
-
-    // Scroll to new row
-    var w = $(window);
-    var tr = $('#footable_3').find('tr').eq(indexcone);
-    if (tr.length) {
-        $('html,body').animate({ scrollTop: tr.offset().top - (w.height() / 2) }, 1000);
-    }
-
-    $("#cntrr1").val(parseInt($("#cntrr1").val()) + 1);
-
-    indexcone++;
-    mycalc();
-    recalcIdcone();
-
-    // ---------------- Reapply Select2 ----------------
-    $("#item_code" + (indexcone - 1)).select2();
-    $("#part_id" + (indexcone - 1)).select2();
-
-    selselect();
-}
 
    
    function selselect()
    {
-       setTimeout(
-    function() 
-    {
-   
-    $("#footable_2 tr td  select[name='item_code[]']").each(function() {
-   
-       $(this).closest("tr").find('select[name="item_code[]"]').select2();
-     $(this).closest("tr").find('select[name="part_id[]"]').select2();
-   
-      });
-   }, 2000);
+      setTimeout(function() 
+      { 
+         $("#footable_2 tr td  select[name='item_code[]']").each(function()
+         {      
+            $(this).closest("tr").find('select[name="item_code[]"]').select2();
+            $(this).closest("tr").find('select[name="part_id[]"]').select2();
+            
+         });
+      }, 2000);
    }
    
  
@@ -1690,6 +1825,9 @@
       row.parentNode.removeChild(row); 
       mycalc();
       recalcIdcone();   
+      --PBarcode;
+      --CBarcode;
+      PrevAddBtnDisabled();
    }
    
    

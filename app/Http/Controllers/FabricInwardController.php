@@ -180,7 +180,10 @@ class FabricInwardController extends Controller
         $vendorData = DB::select("select ac_short_name, ledger_master.ac_code from vendor_purchase_order_master 
                             INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId GROUP BY vendor_purchase_order_master.vendorId");
                             
-        return view('FabricInwardMaster',compact('vendorData','Ledger','FabricCuttingOutwardList','RackMasterList','LocationList', 'POList', 'PartList','FGList','CPList', 'counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','FGECodeList','BillToList'));
+        $PageLock = DB::table('page_locks')->select('isFlag')->where('page_key', 'fabric_inward')->get();
+        $isLockFlag =  isset($PageLock[0]->isFlag) ? $PageLock[0]->isFlag : 0;           
+               
+        return view('FabricInwardMaster',compact('isLockFlag','vendorData','Ledger','FabricCuttingOutwardList','RackMasterList','LocationList', 'POList', 'PartList','FGList','CPList', 'counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','FGECodeList','BillToList'));
 
     }
 
@@ -3902,6 +3905,23 @@ P2
         return response()->json(['vpo_code'=>$vpo_code,'html'=>$html]);
     }
  
+    public function UpdatePageLockStatus(Request $request)
+    {
+        $pageKey = $request->page_key;
+        $userId  = $request->userId;
+        $flag    = $request->isFlag;
+
+        DB::table('page_locks')
+            ->updateOrInsert(
+                ['page_key' => $pageKey, 'userId' => $userId],
+                [
+                    'isFlag'    => $flag,
+                    'locked_at' => now()
+                ]
+            );
+
+        return response()->json(['success' => true]);
+    }
 
 
 }

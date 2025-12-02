@@ -593,7 +593,7 @@
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;"  readOnly/></td>
                                  <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;" required /></td>
                                  <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code1" style="width:80px; height:30px;" readOnly/></td>
-                                 <td><input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left" disabled></td>
+                                 <td><input type="button" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left" @if($FabricInwardMasterList->isReturnFabricInward == 1) disabled @endif ></td>
                                  <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X"  disabled></td>
                               </tr>
                               @php $no=$no+1; @endphp
@@ -628,7 +628,7 @@
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" required  {{$dis}} />
                                  <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}} required /></td>
                                  <td><input type="text" name="track_code[]"  value="" id="track_code" style="width:80px;" {{$dis}}  /></td>
-                                 <td><input type="button" style="width:40px;" onclick="insertcone1();" name="Abutton" value="+" class="btn btn-warning pull-left"></td>
+                                 <td><input type="button" onclick="insertcone1();" name="Abutton" value="+" class="btn btn-warning pull-left"></td>
                                  <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
                               </tr>
                               @endif
@@ -1301,19 +1301,18 @@
    });
     
    $("table.footable_3").on("input", 'input[name="gram_per_meter[]"], input[name="meter[]"]', function () {
-      CalculateRow($(this).closest("tr"));
+      var gram_per_meter = parseFloat($(this).parent().parent('tr').find('td input[name="gram_per_meter[]"]').val()) || 0;
+      var meter          = parseFloat($(this).parent().parent('tr').find('td input[name="meter[]"]').val()) || 0;
+
+      var kg = (meter * gram_per_meter).toFixed(2);
+      $(this).parent().parent('tr').find('td input[name="kg[]"]').val(kg);
+
+      mycalc();
    });
 
-   function CalculateRow(row)
-   { 
-      console.log("hi");
-   	var gram_per_meter=+row.find('input[name^="gram_per_meter[]"]').val();
-          var meter=+row.find('input[name^="meter[]"]').val();
-    	var kg=parseFloat(meter * gram_per_meter).toFixed(2);
-          row.find('input[name^="kg[]"]').val(kg);
-   	mycalc();
-   }
-   
+
+   function CalculateRow(row) {  var gram_per_meter=+row.find('input[name^="gram_per_meter[]"]').val(); var meter=+row.find('input[name^="meter[]"]').val(); var kg=parseFloat(meter * gram_per_meter).toFixed(2); row.find('input[name^="kg[]"]').val(kg); mycalc(); }
+
    
    function getDetails(po_code){
    
