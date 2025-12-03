@@ -975,7 +975,7 @@ ini_set('memory_limit', '10G');
       var $newRow = $lastRow.clone();
    
       // Clear input/select values
-      $newRow.find("input, select").val("");
+      $newRow.find("#bomdis select, #bomdis input").val("");
    
       // Append new row
       $newRow.appendTo($table);
@@ -1429,8 +1429,6 @@ ini_set('memory_limit', '10G');
                 
             if(item_qtys>0)
             {
-               
-            console.log("ms");
                     Amount=item_qtys*item_rates;
                     disc_amt=(Amount*(disc_pers/100));
                     row.find('input[name^="disc_amounts[]"]').val((disc_amt).toFixed(4));
@@ -1438,8 +1436,7 @@ ini_set('memory_limit', '10G');
                     row.find('input[name^="amounts[]"]').val((Amount).toFixed(4));
                  
                 if(pur_igsts!=0)
-                {
-            console.log("bg");
+                { 
                      Iamt=(Amount*(pur_igsts/100));
                      row.find('input[name^="iamts[]"]').val((Iamt).toFixed(4));
                      TAmount=Amount+Iamt+freight_amt;
@@ -1447,11 +1444,6 @@ ini_set('memory_limit', '10G');
                 }
                 else
                 {
-            console.log("sdf");
-            
-            console.log("Amount="+Amount);
-            console.log("pur_cgsts="+pur_cgsts);
-            
                      Camt=(Amount*(pur_cgsts/100));
                      row.find('input[name^="camts[]"]').val((Camt).toFixed(4));
                      
@@ -1683,10 +1675,10 @@ ini_set('memory_limit', '10G');
     
         var final_rate = conQty && SecConQty ? (rateM / (conQty * SecConQty)) : 0;
         $("#footable_2 > tbody")
-            .find(`tr:eq(${idx}) td:eq(9) input`)
+            .find(`tr:eq(${idx}) td:eq(12) input`)
             .removeAttr('max');
         $("#footable_2 > tbody")
-            .find(`tr:eq(${idx}) td:eq(10) input`)
+            .find(`tr:eq(${idx}) td:eq(13) input`)
             .val(final_rate.toFixed(4));
     
         

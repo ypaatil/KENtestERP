@@ -368,7 +368,7 @@ ini_set('memory_limit', '10G');
                               and bom_packing_trims_details.item_code='".$row->item_code."'");
                               }
                               @endphp
-                              <td><input  style="width:80px;height:30px;" type="number"  step="any" class="RATE" name="item_rates[]" value="{{ $row->item_rate }}" id="item_rate"  @php  if(Session::get('user_type')!=1 && $is_approved==1){ echo 'readOnly'; } @endphp required></td>
+                              <td><input  style="width:80px;height:30px;" type="number"  step="any" class="RATE" name="item_rates[]" value="{{ round($row->item_rate,2) }}" id="item_rate"  @php  if(Session::get('user_type')!=1 && $is_approved==1){ echo 'readOnly'; } @endphp required></td>
                               <td><input readOnly style="width:80px;height:30px;" readOnly type="number" id="pur_cgst" step="any"  class="" name="pur_cgsts[]" value="{{ $row->pur_cgst }}"></td>
                               <td><input  style="width:80px;height:30px;"  type="number" readOnly step="any" id="camt" class="GSTAMT" name="camts[]" value="{{ $row->camt }}"></td>
                               <td><input readOnly style="width:80px;height:30px;" readOnly type="number" step="any" id="pur_sgst" class="" name="pur_sgsts[]" value="{{ $row->pur_sgst }}"></td>
@@ -381,15 +381,24 @@ ini_set('memory_limit', '10G');
                               <td><input type="text"  name="moq[]" id="moq" value="{{ $row->moq }}" style="width:80px;  height:30px;" readOnly/></td>
                               <td><input type="text" name="freight_amt[]" class="FREIGHT" id="freight_amt" value="{{ $row->freight_amt }}" style="width:80px;height:30px;"></td>
                               <td><input  style="width:80px;height:30px;"  type="number" readOnly step="any" id="total_amount" class="TOTAMT" name="total_amounts[]" value="{{ $row->total_amount }}">
-                                 <input type="hidden" step="any"  name="conQtys[]" readOnly value="{{ $row->conQty }}" style="width:80px; height:30px;">
-                                 <input type="hidden" step="any"  name="unitIdMs[]" readOnly value="{{ $row->unitIdM }}" style="width:80px; height:30px;">
-                                 <input type="hidden" step="any"  name="priUnitds[]" readOnly value="{{ $row->priUnitd }}" style="width:80px; height:30px;">
-                                 <input type="hidden" step="any"  name="SecConQtys[]" readOnly value="{{ $row->SecConQty }}" style="width:80px; height:30px;">
-                                 <input type="hidden" step="any"  name="secUnitIds[]" readOnly value="{{ $row->secUnitId }}" style="width:80px; height:30px;">
-                                 <input type="hidden" step="any"  name="poQtys[]" readOnly value="{{ $row->poQty }}" style="width:80px; height:30px;">
-                                 <input type="hidden" step="any"  name="poUnitIds[]" readOnly  value="{{ $row->poUnitId }}" style="width:80px; height:30px;">
-                                 <input type="hidden" step="any"  name="rateMs[]" readOnly  value="{{ $row->rateM }}" style="width:80px; height:30px;">
-                                 <input type="hidden" step="any"  name="totalQtys[]" readOnly value="{{ $row->totalQty }}" style="width:80px; height:30px;">
+                                    <input type="hidden" name="conQtys[]" value="{{ ($row->conQty > 0) ? $row->conQty : 1000 }}">
+    
+                                    <input type="hidden" name="unitIdMs[]" value="{{ ($row->unitIdM > 0) ? $row->unitIdM : 5 }}">
+                                    
+                                    <input type="hidden" name="priUnitds[]" value="{{ ($row->priUnitd > 0) ? $row->priUnitd : 10 }}">
+                                    
+                                    <input type="hidden" name="SecConQtys[]" value="{{ ($row->SecConQty > 0) ? $row->SecConQty : 10 }}">
+                                    
+                                    <input type="hidden" name="secUnitIds[]" value="{{ ($row->secUnitId > 0) ? $row->secUnitId : 11 }}">
+                                    
+                                    <input type="hidden" name="poQtys[]" value="{{ ($row->poQty > 0) ? $row->poQty : 0 }}">
+                                    
+                                    <input type="hidden" name="poUnitIds[]" value="{{ ($row->poUnitId > 0) ? $row->poUnitId : 9 }}">
+                                    
+                                    <input type="hidden" name="rateMs[]" value="{{ ($row->rateM > 0) ? $row->rateM : 0 }}">
+                                    
+                                    <input type="hidden" name="totalQtys[]" value="{{ ($row->totalQty > 0) ? $row->totalQty : 0 }}">
+
                               </td>
                            </tr>
                            @php $no=$no+1;  @endphp
@@ -2080,7 +2089,7 @@ ini_set('memory_limit', '10G');
     
     
     
-   closemodal();
+//   closemodal();
      
    var final_rate = (parseFloat(rateM)/(parseFloat(conQty) * parseFloat(SecConQty)));
       
@@ -2152,29 +2161,26 @@ ini_set('memory_limit', '10G');
                         </tr>
                      </thead>
                      <tbody>
-                        <th><input id="conQty" type="number" value="0"  onkeyup="calcQty();calcPOQty();mycalc();"/></th>
+                        <th><input id="conQty" type="number" value="1000"  onkeyup="calcQty();calcPOQty();mycalc();"/></th>
                         <th>
                            <select id="unitIdM" >
                               @foreach($unitlist as  $rowunit)
-                              <option value="{{ $rowunit->unit_id  }}"
-                                 >{{ $rowunit->unit_name }}</option>
+                              <option value="{{ $rowunit->unit_id  }}" {{ $rowunit->unit_id == 5 ? 'selected="selected"' : '' }}>{{ $rowunit->unit_name }}</option>
                               @endforeach
                            </select>
                         </th>
                         <th>
                            <select id="priUnitd" >
                               @foreach($unitlist as  $rowunit)
-                              <option value="{{ $rowunit->unit_id  }}"
-                                 >{{ $rowunit->unit_name }}</option>
+                              <option value="{{ $rowunit->unit_id  }}" {{ $rowunit->unit_id == 10 ? 'selected="selected"' : '' }}>{{ $rowunit->unit_name }}</option>
                               @endforeach
                            </select>
                         </th>
-                        <th><input id="SecConQty" type="number" value="0"  onkeyup="calcQty();calcPOQty();mycalc();"/></th>
+                        <th><input id="SecConQty" type="number" value="10"  onkeyup="calcQty();calcPOQty();mycalc();"/></th>
                         <th>
                            <select id="secUnitId" >
                               @foreach($unitlist as  $rowunit)
-                              <option value="{{ $rowunit->unit_id  }}"
-                                 >{{ $rowunit->unit_name }}</option>
+                              <option value="{{ $rowunit->unit_id  }}" {{ $rowunit->unit_id == 11 ? 'selected="selected"' : '' }} >{{ $rowunit->unit_name }}</option>
                               @endforeach
                            </select>
                         </th>
@@ -2183,8 +2189,7 @@ ini_set('memory_limit', '10G');
                         <th>
                            <select id="poUnitId" >
                               @foreach($unitlist as  $rowunit)
-                              <option value="{{ $rowunit->unit_id  }}"
-                                 >{{ $rowunit->unit_name }}</option>
+                              <option value="{{ $rowunit->unit_id  }}" {{ $rowunit->unit_id == 9 ? 'selected="selected"' : '' }} >{{ $rowunit->unit_name }}</option>
                               @endforeach
                            </select>
                         </th>

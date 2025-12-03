@@ -391,6 +391,16 @@ class PurchaseOrderController extends Controller
                     'freight_hsn'    => 0,
                     'freight_amt'    => $request->freight_amt[$i] ?? 0,
                     'total_amount'   => $request->total_amounts[$i] ?? 0,
+                    'conQty'=> isset($request->conQtys[$i])?$request->conQtys[$i]:1000, 
+                    'unitIdM'=> isset($request->unitIdMs[$i]) ? $request->unitIdMs[$i] : 5,
+                    'priUnitd'=> isset($request->priUnitds[$i])?$request->priUnitds[$i]: 10,
+                    'SecConQty'=> isset($request->SecConQtys[$i])?$request->SecConQtys[$i]:10,
+                    'secUnitId'=>isset($request->secUnitIds[$i])?$request->secUnitIds[$i]: 11,
+                    'poQty'=> isset($request->poQtys[$i])? $request->poQtys[$i]:0,
+                    'poUnitId'=>isset($request->poUnitIds[$i]) ? $request->poUnitIds[$i] : 9,
+                    'rateM'=> isset($request->rateMs[$i])?$request->rateMs[$i]:0,
+                    'totalQty'=> isset($request->totalQtys[$i])? $request->totalQtys[$i] :0,
+            
     
                     'firm_id' => $firm_id
                 ];
@@ -721,7 +731,6 @@ class PurchaseOrderController extends Controller
             'poUnitId'=>isset($request->poUnitIds[$x]) ? $request->poUnitIds[$x] : $request->unit_id[$x],
             'rateM'=> isset($request->rateMs[$x])?$request->rateMs[$x]:0,
             'totalQty'=> isset($request->totalQtys[$x])? $request->totalQtys[$x] :0,
-            
              
             'firm_id' => $request->firm_id);
             
@@ -2156,7 +2165,7 @@ class PurchaseOrderController extends Controller
                         <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($max).'"  value="'.( 0 + round($value->item_qty)).'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
                         </td>
-                        <td><input type="number" step="any" name="item_rates[]" min="0" max="'.$value->rate_per_unit.'" value="'.$value->rate_per_unit.'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
+                        <td><input type="number" step="any" name="item_rates[]" min="0" max="'.$value->rate_per_unit.'" value="'.(rount($value->rate_per_unit,2)).'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
                         <td><input type="number" step="any" name="pur_cgsts[]" readOnly value="'.$CPer.'" class="pur_cgsts"  id="pur_cgst" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any" name="camts[]" readOnly value="'.number_format((float)$Camt, 2, '.', '').'" class="GSTAMT"  id="camt" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any" name="pur_sgsts[]" readOnly value="'.$SPer.'" class=""  id="pur_sgst" style="width:80px; height:30px;" required/></td>
@@ -2338,7 +2347,7 @@ class PurchaseOrderController extends Controller
                         <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($max).'"  value="'.round($value->item_qty).'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
                         </td>
-                        <td><input type="number" step="any"    name="item_rates[]" min="0" max="'.$value->rate_per_unit.'" value="'.$value->rate_per_unit.'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
+                        <td><input type="number" step="any"    name="item_rates[]" min="0" max="'.$value->rate_per_unit.'" value="'.(round($value->rate_per_unit,2)).'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
                         <td><input type="number" step="any"    name="pur_cgsts[]" readOnly value="'.$CPer.'" class="pur_cgsts"  id="pur_cgst" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"   name="camts[]" readOnly value="'.number_format((float)$Camt, 2, '.', '').'" class="GSTAMT"  id="camt" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"    name="pur_sgsts[]" readOnly value="'.$SPer.'" class=""  id="pur_sgst" style="width:80px; height:30px;" required/></td>
@@ -2572,7 +2581,7 @@ class PurchaseOrderController extends Controller
                         <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.$button_qty.'"  value="'.$button_qty.'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
                         </td>
-                        <td><input type="number" step="any"    name="item_rates[]" min="0" max="'.$button_rate.'" value="'.$button_rate.'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
+                        <td><input type="number" step="any"    name="item_rates[]" min="0" max="'.$button_rate.'" value="'.(round($button_rate,2)).'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
                         <td><input type="number" step="any"    name="pur_cgsts[]" readOnly value="'.$CPer.'" class="pur_cgsts"  id="pur_cgst" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"   name="camts[]" readOnly value="'.number_format((float)$Camt, 2, '.', '').'" class="GSTAMT"  id="camt" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"    name="pur_sgsts[]" readOnly value="'.$SPer.'" class=""  id="pur_sgst" style="width:80px; height:30px;" required/></td>
@@ -2807,7 +2816,7 @@ class PurchaseOrderController extends Controller
                         <td><input type="number" step="any" class="ITEMQTY"   name="item_qtys[]"    min="'.round($value->moq).'" max="'.round($button_qty).'"  value="'.round($button_qty).'" id="item_qty" style="width:80px;  height:30px;" required/>
                         	<input type="hidden"  class="ROWCOUNT" id="ROWCOUNT"   value="1">
                         </td>
-                        <td><input type="number" step="any"    name="item_rates[]" min="0" max="'.$button_rate.'" value="'.$button_rate.'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
+                        <td><input type="number" step="any"    name="item_rates[]" min="0" max="'.$button_rate.'" value="'.(round($button_rate,2)).'" class="RATE"  id="item_rate" style="width:80px; height:30px;"  required/></td>
                         <td><input type="number" step="any"    name="pur_cgsts[]" readOnly value="'.$CPer.'" class="pur_cgsts"  id="pur_cgst" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"   name="camts[]" readOnly value="'.number_format((float)$Camt, 2, '.', '').'" class="GSTAMT"  id="camt" style="width:80px; height:30px;" required/></td>
                         <td><input type="number" step="any"    name="pur_sgsts[]" readOnly value="'.$SPer.'" class=""  id="pur_sgst" style="width:80px; height:30px;" required/></td>
