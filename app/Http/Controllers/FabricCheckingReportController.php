@@ -71,12 +71,15 @@ public function FabricCheckPrint($chk_code)
         ->join('cp_master', 'cp_master.cp_id', '=', 'fabric_checking_master.cp_id')
             
         ->join('inward_master', 'inward_master.in_code', '=', 'fabric_checking_master.in_code')
-        ->join('ledger_master as LM1', 'LM1.Ac_code', '=', 'inward_master.Ac_code')
+         ->join('ledger_master as LM1', 'LM1.Ac_code', '=', 'inward_master.Ac_code')
+        ->leftJoin('ledger_master as LM_BUYER', 'LM_BUYER.Ac_code', '=', 'inward_master.buyer_id')
+         ->join('ledger_master as LM_SUPPLIER', 'LM_SUPPLIER.Ac_code', '=', 'fabric_checking_master.Ac_code')
+       
         ->join('po_type_master', 'po_type_master.po_type_id', '=', 'inward_master.po_type_id')
 
         ->where('fabric_checking_master.chk_code',$chk_code)
         ->get(['fabric_checking_master.*','usermaster.username','ledger_master.Ac_name','cp_master.cp_name' ,'inward_master.po_code',
-            'inward_master.po_type_id','LM1.ac_short_name as buyer', 'po_type_master.po_type_name','inward_master.fge_code',]);
+            'inward_master.po_type_id', 'po_type_master.po_type_name','inward_master.fge_code', 'inward_master.in_code as grn_no', 'LM_BUYER.Ac_name as buyer_name']);
         
           $GetPO=FabricInwardModel::select('po_code')->where('in_code',$fabricChekingMaster[0]->in_code)->get();
           //$po_code= $GetPO[0]->po_code ? $GetPO[0]->po_code : "-";

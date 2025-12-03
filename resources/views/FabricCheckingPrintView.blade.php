@@ -538,7 +538,7 @@
                               <div class="info-row">
                                 <div class="label">Buyer Name</div>
                                 <div class="colon">: </div>
-                                <div class="value">{{ $rowMaster->buyer  }}</div>
+                                <div class="value">{{ $rowMaster->buyer_name   }}</div>
                             </div>
                             <div class="info-row">
                                 <div class="label">Fabric Gate No.</div>
@@ -566,6 +566,7 @@
                                 <th>Fabric Quality</th>
                                 <th>GRN Qty</th>
                                 <th>QC Qty</th>
+                                <th>Reject Qty</th>
                                 <th>Short Qty</th>
                                 <th>Excess Qty</th>
                                 <th>UOM</th>
@@ -604,8 +605,8 @@
                                 <td class="text-start">{{ $rowDetail->item_description }}</td>
                                 <td class="text-end">{{ indian_number_format_for_value($rowDetail->old_meter,2) }}</td>
                                 <td class="text-end">{{ indian_number_format_for_value($rowDetail->meter,2) }}</td>
-
-                                <td class="text-end">{{ indian_number_format_for_value($rowDetail->reject_short_meter,2) }}</td>
+                                <td class="text-end">{{ indian_number_format_for_value($rowDetail->reject_short_meter,2) }} </td> 
+                                <td class="text-end">{{ indian_number_format_for_value($rowDetail->short_meter,2) }}</td>
                                 <td class="text-end">{{ indian_number_format_for_value($rowDetail->extra_meter,2) }}</td>
                                 <td class="text-end">{{ $rowDetail->unit_name }}</td>
                                 <td class="text-center">{{ $rowDetail->shade_name }}</td>
@@ -629,32 +630,17 @@
                                 <td class="text-end fw-bold">{{indian_number_format_for_value($totalPassed,2)}} </td>
                                 <td class="text-end fw-bold">{{indian_number_format_for_value($totalshort,2)}}</td>
                                 <td class="text-end fw-bold">{{indian_number_format_for_value($totalExtra,2)}} </td>
-                                <td class="text-end fw-bold"> {{ indian_number_format_for_value($rowMaster->total_kg,2)}}</td>
+                                <td class="text-end fw-bold"></td>
                                 <td class="text-end fw-bold" colspan="5"></td>
                             </tr>
                         </tfoot>
                     </table>
 
 
-                    <h4 class="text-center mt-6 fw-bold">Fabric Checking Details: (Rejected)</h4>
+                  
                     <table class="table table-bordered table-sm">
                         <thead>
-                            <tr>
-                                <th>Sr.No.</th>
-                                <th>Item Code</th>
-                                <th>Roll No</th>
-                                <th>Fabric Color Code</th>
-                                <th>Actual Width</th>
-                                <th>Quality</th>
-                                <th>GRN Meter</th>
-                                <th>QC Meter</th>
-                                <th>Short</th>
-                                <th>Excess</th>
-                                <th>Kg</th>
-                                <th>Shade</th>
-                                <th>Status</th>
-                                <th>Defect</th>
-                            </tr>
+                            
                         </thead>
                         <tbody>
                             @php
@@ -673,25 +659,6 @@
                             $no=1; @endphp
                             @foreach($FabricChekingdetailslists as $rowDetail)
 
-                            <tr>
-                                <td class="text-end">{{ $no }}</td>
-                                <td class="text-center">{{ $rowDetail->item_code }}</td>
-                                <td class="text-center">{{ $rowDetail->track_code }}</td>
-
-                                <td class="text-start">{{ $rowDetail->item_name }}</td>
-                                <td class="text-end">{{ $rowDetail->width }}</td>
-                                <td class="text-start">{{ $rowDetail->item_description }}</td>
-                                <td class="text-end">{{ indian_number_format_for_value($rowDetail->old_meter,2) }}</td>
-                                <td class="text-end">{{ $rowDetail->meter }}</td>
-                                <td class="text-end">{{ $rowDetail->reject_short_meter }}</td>
-
-                                <td class="text-end">{{ $rowDetail->extra_meter }}</td>
-                                <td class="text-end">{{ $rowDetail->kg }}</td>
-                                <td class="text-end">{{ $rowDetail->shade_name }}</td>
-                                <td class="text-start">{{ $rowDetail->fcs_name }}</td>
-                                <td class="text-end">{{ $rowDetail->fabricdefect_name }}</td>
-
-                            </tr>
                             @php
                             $no=$no+1;
                             $totalReject=$totalReject+$rowDetail->meter;
@@ -701,7 +668,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td class="text-end fw-bold" colspan="8"><b>Checker Name:{{ $rowMaster->in_narration }} </b></td>
+                                
                                 <td class="text-end fw-bold">Received Total: {{$rowMaster->total_meter}} </td>
                                 <td class="text-end fw-bold">Passed Meter: {{$totalPassed - $totalReject}}</td>
                                 <td class="text-end fw-bold">Rejected Meter: {{$totalReject}} </td>
@@ -720,7 +687,7 @@
                                         <th>Sr.No.</th>
                                         <th>Shade</th>
                                         <th>Meter</th>
-                                        <th>Roll No</th>
+                                        <th>No. Of Rolls</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -747,8 +714,8 @@
                                     <tr>
                                         <td class="text-end" style="vertical-align: middle;">{{ $no }}</td>
                                         <td class="text-start" style="vertical-align: middle;padding-left: 8%;">{{ $rowDetail->shade_name }}</td>
-                                        <td class="text-end" style="vertical-align: middle;">{{ $rowDetail->summeter }}</td>
-                                        <td class="text-start" style="vertical-align: middle;">{{ $rowDetail->track_codes}}</td>
+                                        <td class="text-end" style="vertical-align: middle;">{{ indian_number_format_for_value($rowDetail->summeter,2) }}</td>
+                                        <td class="text-start" style="vertical-align: middle;">{{ str_replace(' ', ', ', $rowDetail->track_codes) }}</td>
                                     </tr>
                                     @php
                                     $no=$no+1;
@@ -761,7 +728,7 @@
                                     <tr>
                                         <td></td>
                                         <td class="text-end " nowrap><b>Total Meter:</b></td>
-                                        <td class="text-end fw-bold"> {{$totalsum}} </td>
+                                        <td class="text-end fw-bold"> {{indian_number_format_for_value($totalsum,2)}} </td>
                                         <td></td>
                                     </tr>
                                 </tfoot>
@@ -796,9 +763,9 @@
                                     @foreach($FabricActual_Width as $rowDetail)
                                     <tr>
                                         <td class="text-end" style="vertical-align: middle;">{{ $no }}</td>
-                                        <td class="text-end" style="vertical-align: middle;">{{ $rowDetail->width }}</td>
-                                        <td class="text-end" style="vertical-align: middle;" class="text-right">{{$rowDetail->totalMeter}}</td>
-                                        <td class="text-start" style="vertical-align: middle;">{{$rowDetail->track_codes}}</td>
+                                        <td class="text-end" style="vertical-align: middle;">{{ indian_number_format_for_value($rowDetail->width,2) }}</td>
+                                        <td class="text-end" style="vertical-align: middle;" class="text-right">{{indian_number_format_for_value($rowDetail->totalMeter,2)}}</td>
+                                        <td class="text-start" style="vertical-align: middle;">{{ str_replace(' ', ', ', $rowDetail->track_codes) }}</td>
                                     </tr>
                                     @php
                                     $no=$no+1;
@@ -809,8 +776,8 @@
                                 <tfoot>
                                     <tr>
                                         <td></td>
-                                        <td class="text-end fw-bold">Total : </td>
-                                        <td class="text-end fw-bold">{{$totalsum}}</td>
+                                        <td class="text-end fw-bold">Total Meter : </td>
+                                        <td class="text-end fw-bold">{{indian_number_format_for_value($totalsum,2)}}</td>
                                         <td></td>
                                     </tr>
                                 </tfoot>
