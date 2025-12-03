@@ -929,9 +929,18 @@ class StockAssociationController extends Controller
 
             return indian_number_format_for_value( round($remainStock, 2) , 2);
         })
-        ->addColumn('totalAssoc', fn($row) => indian_number_format_for_value( round($row->totalAssoc, 2) ,2)    )
-        ->addColumn('bill_to', fn($row) => $row->site_code ? "{$row->trade_name}({$row->site_code})" : $row->trade_name)
-        ->addColumn('trimOutwardStock', fn($row) =>  indian_number_format_for_value( round($row->trimOutwardStock, 2)  ,2) )
+        ->addColumn('totalAssoc', function($row) {
+    return indian_number_format_for_value(round($row->totalAssoc, 2), 2);
+})
+
+->addColumn('bill_to', function($row) {
+    return $row->site_code ? ($row->trade_name . '(' . $row->site_code . ')') : $row->trade_name;
+})
+
+->addColumn('trimOutwardStock', function($row) {
+    return indian_number_format_for_value(round($row->trimOutwardStock, 2), 2);
+})
+
         ->rawColumns(['srno','avilable_stock','remainStock','totalAssoc','trimOutwardStock','bill_to'])
         ->make(true);
 }
