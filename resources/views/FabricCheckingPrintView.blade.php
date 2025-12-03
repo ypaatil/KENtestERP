@@ -30,7 +30,7 @@
         }
 
         .invoice-container {
-            max-width: 1600px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             padding: 30px;
@@ -489,15 +489,26 @@
                     <div class="row  border-top border-bottom  g-0">
                         <div class="col-md-6 p-2 border-end">
                             <div class="info-row">
-                                <div class="label">Chk No</div>
+                                <div class="label">Checking No.</div>
                                 <div class="colon">:</div>
                                 <div class="value"> {{ $rowMaster->chk_code }} </div>
                             </div>
                             <div class="info-row">
-                                <div class="label">Chk Date</div>
+                                <div class="label">Checking Date</div>
                                 <div class="colon">: </div>
                                 <div class="value"> {{ \Carbon\Carbon::parse($rowMaster->chk_date)->format('d-m-Y') }}</div>
                             </div>
+                             <div class="info-row">
+                                <div class="label">PO No.</div>
+                                <div class="colon">: </div>
+                                <div class="value">{{ $rowMaster->po_code }} </div>
+                            </div>
+                             <div class="info-row">
+                                <div class="label">PO Type</div>
+                                <div class="colon">: </div>
+                                <div class="value">{{ $rowMaster->po_type_name   }}</div> 
+                            </div>
+                           
                             <div class="info-row">
                                 <div class="label">GRN No</div>
                                 <div class="colon">:</div>
@@ -510,7 +521,7 @@
                         </div>
                         <div class="col-md-6 p-2 ">
                             <div class="info-row">
-                                <div class="label">Invoice No</div>
+                                <div class="label">Invoice No.</div>
                                 <div class="colon">:</div>
                                 <div class="value"> {{ $rowMaster->invoice_no }}</div>
                             </div>
@@ -520,9 +531,19 @@
                                 <div class="value">{{ \Carbon\Carbon::parse($rowMaster->invoice_date)->format('d-m-Y') }}</div>
                             </div>
                             <div class="info-row">
-                                <div class="label">Supplier</div>
+                                <div class="label">Supplier Name</div>
                                 <div class="colon">:</div>
                                 <div class="value">{{ $rowMaster->Ac_name }}</div>
+                            </div>
+                              <div class="info-row">
+                                <div class="label">Buyer Name</div>
+                                <div class="colon">: </div>
+                                <div class="value">{{ $rowMaster->buyer  }}</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="label">Fabric Gate No.</div>
+                                <div class="colon">: </div>
+                                <div class="value">{{ $rowMaster->fge_code  }}</div>
                             </div>
 
 
@@ -538,16 +559,16 @@
                                 <th>Sr.No.</th>
                                 <th>Item Code</th>
                                 <th>Roll No</th>
-                                <th>Fabric Color Code</th>
+                                <th>Fabric  Code</th>
 
                                 <th>Actual Width</th>
                                 <th>Supplier Roll No</th>
-                                <th>Quality</th>
-                                <th>GRN Meter</th>
-                                <th>QC Meter</th>
-                                <th>Short</th>
-                                <th>Excess</th>
-                                <th>Kg</th>
+                                <th>Fabric Quality</th>
+                                <th>GRN Qty</th>
+                                <th>QC Qty</th>
+                                <th>Short Qty</th>
+                                <th>Excess Qty</th>
+                                <th>UOM</th>
                                 <th>Shade</th>
                                 <th>Status</th>
                                 <th>Defect</th>   
@@ -557,6 +578,8 @@
                             @php
                             $FabricChekingdetailslists = App\Models\FabricCheckingDetailModel::
                             leftJoin('item_master','item_master.item_code', '=', 'fabric_checking_details.item_code')
+                            ->leftJoin('unit_master','unit_master.unit_id', '=', 'item_master.unit_id')
+
                             ->leftJoin('shade_master','shade_master.shade_id', '=', 'fabric_checking_details.shade_id')
                             ->leftJoin('part_master','part_master.part_id', '=', 'fabric_checking_details.part_id')
                             ->leftJoin('fabric_defect_master','fabric_defect_master.fdef_id', '=', 'fabric_checking_details.defect_id')
@@ -565,7 +588,7 @@
                             ->whereIn('fabric_checking_details.status_id', [1,2])
                             ->get(['fabric_checking_details.*','fabric_check_status_master.fcs_name',
                             'item_master.item_description','item_master.item_name','item_master.item_description',
-                            'item_master.color_name','item_master.dimension','shade_master.shade_name','part_master.part_name','fabric_defect_master.fabricdefect_name']);
+                            'item_master.color_name','item_master.dimension','shade_master.shade_name','part_master.part_name','fabric_defect_master.fabricdefect_name','unit_master.unit_name']);
                             $totalPassed=0; $totalExtra=0; $totalshort=0;
                             $no=1; @endphp
                             @foreach($FabricChekingdetailslists as $rowDetail)
@@ -576,16 +599,16 @@
                                 <td class="text-center">{{ $rowDetail->track_code }}</td>
 
                                 <td class="text-start">{{ $rowDetail->item_name }}</td>
-                                <td class="text-end">{{ $rowDetail->width }}</td>
+                                <td class="text-end">{{ indian_number_format_for_value($rowDetail->width,2 )}}</td>
                                 <td class="text-end">{{ $rowDetail->roll_no }}</td>
                                 <td class="text-start">{{ $rowDetail->item_description }}</td>
-                                <td class="text-end">{{ $rowDetail->old_meter }}</td>
-                                <td class="text-end">{{ $rowDetail->meter }}</td>
+                                <td class="text-end">{{ indian_number_format_for_value($rowDetail->old_meter,2) }}</td>
+                                <td class="text-end">{{ indian_number_format_for_value($rowDetail->meter,2) }}</td>
 
-                                <td class="text-end">{{ $rowDetail->reject_short_meter }}</td>
-                                <td class="text-end">{{ $rowDetail->extra_meter }}</td>
-                                <td class="text-end">{{ $rowDetail->kg }}</td>
-                                <td class="text-end">{{ $rowDetail->shade_name }}</td>
+                                <td class="text-end">{{ indian_number_format_for_value($rowDetail->reject_short_meter,2) }}</td>
+                                <td class="text-end">{{ indian_number_format_for_value($rowDetail->extra_meter,2) }}</td>
+                                <td class="text-end">{{ $rowDetail->unit_name }}</td>
+                                <td class="text-center">{{ $rowDetail->shade_name }}</td>
                                 <td class="text-start">{{ $rowDetail->fcs_name }}</td>
                                 <td class="text-end">{{ $rowDetail->fabricdefect_name }}</td>
                             </tr>
@@ -600,13 +623,13 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="6" class="text-end fw-bold"><b>Checker Name:{{ $rowMaster->in_narration }} </b></td>
+                                <td colspan="6" class="text-end fw-bold"><b></b></td>
                                 <td class="text-end fw-bold"><b>Total:</b></td>
-                                <td class="text-end fw-bold">{{ $rowMaster->total_meter }}</td>
-                                <td class="text-end fw-bold">{{$totalPassed}} </td>
-                                <td class="text-end fw-bold">{{$totalshort}}</td>
-                                <td class="text-end fw-bold">{{$totalExtra}} </td>
-                                <td class="text-end fw-bold"> {{ $rowMaster->total_kg }}</td>
+                                <td class="text-end fw-bold">{{ indian_number_format_for_value($rowMaster->total_meter,2) }}</td>
+                                <td class="text-end fw-bold">{{indian_number_format_for_value($totalPassed,2)}} </td>
+                                <td class="text-end fw-bold">{{indian_number_format_for_value($totalshort,2)}}</td>
+                                <td class="text-end fw-bold">{{indian_number_format_for_value($totalExtra,2)}} </td>
+                                <td class="text-end fw-bold"> {{ indian_number_format_for_value($rowMaster->total_kg,2)}}</td>
                                 <td class="text-end fw-bold" colspan="5"></td>
                             </tr>
                         </tfoot>
@@ -658,7 +681,7 @@
                                 <td class="text-start">{{ $rowDetail->item_name }}</td>
                                 <td class="text-end">{{ $rowDetail->width }}</td>
                                 <td class="text-start">{{ $rowDetail->item_description }}</td>
-                                <td class="text-end">{{ $rowDetail->old_meter }}</td>
+                                <td class="text-end">{{ indian_number_format_for_value($rowDetail->old_meter,2) }}</td>
                                 <td class="text-end">{{ $rowDetail->meter }}</td>
                                 <td class="text-end">{{ $rowDetail->reject_short_meter }}</td>
 

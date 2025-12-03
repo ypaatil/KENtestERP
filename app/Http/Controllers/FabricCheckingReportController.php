@@ -68,9 +68,15 @@ public function FabricCheckPrint($chk_code)
          
          $fabricChekingMaster = FabricCheckingModel::join('usermaster', 'usermaster.userId', '=', 'fabric_checking_master.userId')
         ->join('ledger_master', 'ledger_master.Ac_code', '=', 'fabric_checking_master.Ac_code')
-            ->join('cp_master', 'cp_master.cp_id', '=', 'fabric_checking_master.cp_id')
+        ->join('cp_master', 'cp_master.cp_id', '=', 'fabric_checking_master.cp_id')
+            
+        ->join('inward_master', 'inward_master.in_code', '=', 'fabric_checking_master.in_code')
+        ->join('ledger_master as LM1', 'LM1.Ac_code', '=', 'inward_master.Ac_code')
+        ->join('po_type_master', 'po_type_master.po_type_id', '=', 'inward_master.po_type_id')
+
         ->where('fabric_checking_master.chk_code',$chk_code)
-        ->get(['fabric_checking_master.*','usermaster.username','ledger_master.Ac_name','cp_master.cp_name']);
+        ->get(['fabric_checking_master.*','usermaster.username','ledger_master.Ac_name','cp_master.cp_name' ,'inward_master.po_code',
+            'inward_master.po_type_id','LM1.ac_short_name as buyer', 'po_type_master.po_type_name','inward_master.fge_code',]);
         
           $GetPO=FabricInwardModel::select('po_code')->where('in_code',$fabricChekingMaster[0]->in_code)->get();
           //$po_code= $GetPO[0]->po_code ? $GetPO[0]->po_code : "-";
