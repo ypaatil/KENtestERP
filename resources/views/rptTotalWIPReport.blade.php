@@ -168,7 +168,10 @@ $srno = 1;
 // --------------------------------------------------
 // Collect all sales_order_no
 // --------------------------------------------------
-$salesOrders = array_map(fn($x) => $x->tr_code, $Buyer_Purchase_Order_List);
+//$salesOrders = array_map(fn($x) => $x->tr_code, $Buyer_Purchase_Order_List);
+$salesOrders = array_map(function ($x) {
+    return $x->tr_code;
+}, $Buyer_Purchase_Order_List);
 $soList = "'" . implode("','", $salesOrders) . "'";
 
 $vendorFilter = ($vendorId > 0) ? " AND vendor_work_order_master.vendorId = $vendorId " : "";
@@ -305,13 +308,14 @@ foreach ($Buyer_Purchase_Order_List as $row) {
     $WIP_Adjust_qty     = $WIPAdjustMap[$tr]->wip_adj ?? 0;
     $rejectionQty       = $RejectMap[$tr]->reject_qty ?? 0;
 
-    // Order type
-    $order_type = match($row->order_type){
-        1 => 'Fresh',
-        2 => 'Stock',
-        3 => 'Job Work',
-        default => ''
-    };
+      // Order type
+   $orderTypeMap = [
+    1 => 'Fresh',
+    2 => 'Stock',
+    3 => 'Job Work'
+];
+
+$order_type = isset($orderTypeMap[$row->order_type]) ? $orderTypeMap[$row->order_type] : '';
 
     $sewing  = $cutPanelIssueQty - $stichingQty;
 
