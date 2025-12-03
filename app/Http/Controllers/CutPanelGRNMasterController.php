@@ -1453,9 +1453,10 @@ foreach($SizeList as $sz)
          $CutPanelGRNMaster = CutPanelGRNMasterModel::join('usermaster', 'usermaster.userId', '=', 'cut_panel_grn_master.userId')
          ->join('ledger_master', 'ledger_master.Ac_code', '=', 'cut_panel_grn_master.vendorId')
          ->leftJoin('vendor_purchase_order_master', 'vendor_purchase_order_master.vpo_code', '=','cut_panel_grn_master.vpo_code')
+         ->leftjoin('fg_master','fg_master.fg_id','=','cut_panel_grn_master.fg_id')
         ->where('cut_panel_grn_master.cpg_code', $cpg_code)
          ->get(['cut_panel_grn_master.*','usermaster.username','ledger_master.Ac_name','cut_panel_grn_master.sales_order_no',
-         'ledger_master.gst_no','ledger_master.pan_no','ledger_master.state_id','ledger_master.address' ]);
+         'ledger_master.gst_no','ledger_master.pan_no','ledger_master.state_id','ledger_master.address','fg_master.fg_name' ]);
        
        
           

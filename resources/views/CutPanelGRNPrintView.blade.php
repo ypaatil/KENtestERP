@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Cutting Print</title>
+    <title>Cutting Print | Ken Global Designs Pvt. Ltd.</title>
     <!-- Web Fonts -->
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' type='text/css'>
     <!-- Stylesheets -->
@@ -175,37 +175,7 @@
                 padding: 10px;
             }
 
-            @media print {
-
-                .table-bordered th {
-                    vertical-align: middle;
-                    text-align: center;
-                    white-space: nowrap;
-                }
-
-                table.table th,
-                table.table td {
-                    color: #000 !important;
-                    white-space: normal !important;
-                    font-size: 11pt;
-                }
-
-                /* th,
-                td {
-                    white-space: normal !important;
-                    font-size: 10pt !important;
-                   
-              
-
-                } */
-
-                #printInvoice {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                }
-            }
-
-
+           
             .table-bordered td,
             .table-bordered th {
 
@@ -259,6 +229,38 @@
                 overflow: visible !important;
             }
         }
+
+         @media print {
+
+                .table-bordered th {
+                    vertical-align: middle;
+                    text-align: center;
+                    white-space: nowrap;
+                }
+
+                table.table th,
+                table.table td {
+                    color: #000 !important;
+                    white-space: normal !important;
+                    font-size: 11pt;
+                }
+
+                /* th,
+                td {
+                    white-space: normal !important;
+                    font-size: 10pt !important;
+                   
+              
+
+                } */
+
+                #printInvoice {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                }
+            }
+
+
 
         .verticalLine {
             border-right: solid grey;
@@ -486,7 +488,7 @@
                         <div class="green-part"></div>
                     </div>
 
-                    <h3 class="fw-bold text-center"></h3>
+                    <h3 class="fw-bold text-center">Cutting Details</h3>
 
                     <!-- Sales Info -->
                     <div class="row g-0  border-top border-bottom ">
@@ -495,18 +497,18 @@
                             <div class="">
 
                                 <div class="info-row">
-                                    <div class="label">Cut Panel GRN No</div>
+                                    <div class="label">Cutting  No.</div>
                                     <div class="colon">:</div>
                                     <div class="value">{{ $CutPanelGRNMaster[0]->cpg_code }}</div>
 
                                 </div>
                                 <div class="info-row">
-                                    <div class="label">Cut Panel GRN Date</div>
+                                    <div class="label">Cutting Date</div>
                                     <div class="colon">:</div>
                                     <div class="value"> {{ \Carbon\Carbon::parse( $CutPanelGRNMaster[0]->cpg_date)->format('d-m-Y') }}</div>
                                 </div>
                                 <div class="info-row">
-                                    <div class="label">Sales Order no</div>
+                                    <div class="label">Sales Order No.</div>
                                     <div class="colon">:</div>
                                     <div class="value"> {{ $CutPanelGRNMaster[0]->sales_order_no }}</div>
                                 </div>
@@ -514,6 +516,16 @@
                                     <div class="label">Process Order No</div>
                                     <div class="colon">:</div>
                                     <div class="value"> {{ $CutPanelGRNMaster[0]->vpo_code }}</div>
+                                </div>
+                                 <div class="info-row">
+                                    <div class="label">Style No.</div>
+                                    <div class="colon">:</div>
+                                    <div class="value"> {{ $CutPanelGRNMaster[0]->style_no }}</div>
+                                </div>
+                                 <div class="info-row">
+                                    <div class="label">Style Name</div>
+                                    <div class="colon">:</div>
+                                    <div class="value"> {{ $CutPanelGRNMaster[0]->fg_name }}</div>
                                 </div>
                             </div>
 
@@ -666,7 +678,7 @@
         </div>
     </div>
 
-    <p class="text-center d-print-none"><a href="#">&laquo; Back to List</a></p>
+    <p class="text-center d-print-none"><a href="/FinishingInhouse">&laquo; Back to List</a></p>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script>
