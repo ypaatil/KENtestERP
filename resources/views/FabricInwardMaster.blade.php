@@ -289,7 +289,7 @@
                                     <td><input type="text" name="track_code[]" id="track_code" style="width:80px;height:30px;" readOnly></td>
 
                                     <td>
-                                       <input type="button" style="width:40px;" onclick="insertcone();" name="print" value="+" class="btn btn-warning pull-left AButton">
+                                       <input type="button" onclick="insertcone();" name="print" value="+" class="btn btn-warning pull-left AButton">
                                     </td>
 
                                     <td>
@@ -665,134 +665,169 @@
       </div>
    </div>
    <input type="hidden" id="isLockFlag" value="{{ $isLockFlag }}">
+   <input type="hidden" id="isLockUserId" value="{{ $isLockUserId }}">
 </div>
 
 <!-- end row -->
 <script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
 <!-- end row -->
 <script>
-    
-      // ------- PAGE KEY (unique for every page) ----------
-   var pageKey = "fabric_inward";     // change this as per page
-   var userId  = $("#userId").val();               // your logged-in userId
+   // ------------------------------------------------
+   // BASIC CONFIG
+   // ------------------------------------------------
+   const pageKey = "fabric_inward";
+   const userId = document.getElementById("userId").value;
 
-   // ---------- On Page Load: Mark Active ---------------
-   $(document).ready(function () 
-   {
-      var isLockFlag = $("#isLockFlag").val();
-      var username = $("#username").val();
-      if(parseInt(isLockFlag) == 1)
-      {
-            ShowBlockMessage(username);
-      }
+   // USER HOLDS LOCK FLAG
+   let hasLock = false;
 
-      $.ajax({
-         url: "/pageLock",
-         type: "POST",
-         data: {
-               page_key: pageKey,
-               userId:   userId,
-               isFlag:   1
-         },
-         success: function(res)
-         {
-            console.log('Page is locked');
+
+   // ------------------------------------------------
+   // ON PAGE LOAD → CHECK STATUS
+   // ------------------------------------------------
+   document.addEventListener("DOMContentLoaded", function () {
+
+      var username = document.getElementById("username").value;
+      fetch("/PageLockStatus", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({ page_key: pageKey })
+      })
+      .then(r => r.json())
+      .then(res => {
+
+         // --- Case 1: Page not locked → Lock it ---
+         if (res.isFlag == 0) {
+               LockPage();
+               return;
          }
+
+         // --- Case 2: Locked by someone else ---
+         if (res.isFlag == 1 && parseInt(res.userId) !== parseInt(userId)) {
+               ShowBlockMessage("User : " + username);
+               DisablePage();
+               return;
+         }
+
+         // --- Case 3: Locked by same user ---
+         if (res.isFlag == 1 && parseInt(res.userId) === parseInt(userId)) {
+               hasLock = true;
+               console.log("Already locked by same user.");
+         }
+
+      });
+   });
+
+
+   // ------------------------------------------------
+   // FUNCTION : LOCK PAGE
+   // ------------------------------------------------
+   function LockPage() {
+
+      var username = document.getElementById("username").value;
+
+      fetch("/pageLock", {
+         method: "POST",
+         headers: { "Content-Type": "application/json" },
+         body: JSON.stringify({
+               page_key: pageKey,
+               userId: userId,
+               isFlag: 1
+         })
+      })
+      .then(r => r.json())
+      .then(res => {
+
+         if (res.status === "blocked") {
+               ShowBlockMessage("User : " + username);
+               DisablePage();
+               return;
+         }
+
+         hasLock = true;
+         console.log("Page locked successfully.");
+      });
+   }
+
+
+
+   // ------------------------------------------------
+   // UNLOCK ONLY WHEN USER REALLY LEAVES
+   // ------------------------------------------------
+   window.addEventListener("beforeunload", function (e) {
+
+      // If page reload → DO NOT unlock
+      const navType = performance.getEntriesByType("navigation")[0].type;
+      if (navType === "reload") return;
+
+      // Unlock only if THIS user holds the lock
+      if (!hasLock) return;
+
+      const data = JSON.stringify({
+         page_key: pageKey,
+         userId: userId,
+         isFlag: 0
       });
 
+      navigator.sendBeacon("/pageLock", new Blob([data], { type: "application/json" }));
    });
 
 
-   // ---------- On Page Close: Mark Inactive ------------
-   window.addEventListener("beforeunload", function () {
-      let data = new FormData();
-      data.append("page_key", pageKey);
-      data.append("userId", userId);
-      data.append("isFlag", 0);       // page inactive
 
-      // sendBeacon works even when closing browser
-      navigator.sendBeacon("/pageLock", data);
-   });
- 
-   function ShowBlockMessage(lockedUserName) 
-   {
-      $("body").append(`
-         <div id="waOverlay"
-               style="
-                  position: fixed;
-                  inset: 0;
-                  background: rgba(0,0,0,0.55);
-                  backdrop-filter: blur(6px);
-                  z-index: 999999;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-               ">
+
+   // ------------------------------------------------
+   // UI HANDLING
+   // ------------------------------------------------
+   function DisablePage() {
+      document.querySelectorAll("input, select, textarea, button")
+         .forEach(el => el.disabled = true);
+   }
+
+
+   // ------------------------------------------------
+   // OVERLAY POPUP
+   // ------------------------------------------------
+   function ShowBlockMessage(msg) {
+
+      document.body.insertAdjacentHTML('beforeend', `
+         <div id="lockOverlay" style="
+               position: fixed; inset: 0;
+               background: rgba(0,0,0,0.55);
+               display: flex;
+               justify-content: center;
+               align-items: center;
+               z-index: 999999;">
                
-               <div id="waPopup"
-                  style="
-                     background: #ffffff;
-                     width: 320px;
-                     padding: 25px 30px;
-                     border-radius: 18px;
-                     text-align: center;
-                     font-family: 'Segoe UI', sans-serif;
-                     box-shadow: 0 8px 30px rgba(0,0,0,0.25);
-                     animation: fadeIn 0.3s ease-out;
-                  ">
+               <div style="
+                  background: white;
+                  padding: 20px 30px;
+                  border-radius: 14px;
+                  width: 320px;
+                  text-align: center;
+                  font-family: Segoe UI, sans-serif;">
                   
-                  <div style="
-                     font-size: 20px;
-                     font-weight: 600;
-                     color: #333;
-                     margin-bottom: 12px;
-                  ">
-                     This form is currently in use
-                  </div>
+                  <h3 style="margin-bottom: 10px;">Page Locked</h3>
+                  <p style="margin-bottom: 20px;">${msg} is currently using this page.</p>
 
-                  <div style="
-                     font-size: 16px;
-                     color: #555;
-                     line-height: 1.4;
-                     margin-bottom: 25px;
-                  ">
-                     <b>${lockedUserName}</b> is using this form right now.  
-                     Please try again later.
-                  </div>
-
-                  <button style="
+                  <button onclick="CloseOverlay()" style="
                      background: #25D366;
                      color: white;
+                     padding: 8px 25px;
+                     border-radius: 20px;
                      border: none;
-                     padding: 10px 25px;
-                     border-radius: 50px;
-                     font-size: 15px;
-                     cursor: pointer;
-                     font-weight: 600;
-                     box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-                  "
-                  onclick="CloseWhatsAppOverlay()">
+                     cursor: pointer;">
                      OK
                   </button>
                </div>
          </div>
-
-         <style>
-               @keyframes fadeIn {
-                  from {opacity: 0; transform: translateY(20px);}
-                  to   {opacity: 1; transform: translateY(0);}
-               }
-         </style>
       `);
-
-      // Disable all form inputs/buttons
-      $("input, select, textarea, button").prop("disabled", true);
    }
 
-   // Close overlay if needed
-   function CloseWhatsAppOverlay() {
-      $("#waOverlay").remove();
+   function CloseOverlay() {
+      const o = document.getElementById("lockOverlay");
+      if (o) o.remove();
    }
+
 
 
    $(document).on('keydown', 'input[type="number"]', function(e) {
@@ -1048,7 +1083,8 @@
                data:{'po_code':po_code,item_code:item_code},
                success: function(data)
                {
-                     +row.find('input[name^="item_rates[]"]').val(data[0]['item_rate']);              
+                     +row.find('input[name^="item_rates[]"]').val((parseFloat(data[0]['item_rate']) || 0).toFixed(2));
+          
                }
             });   
         }
@@ -1386,7 +1422,11 @@
       $("#part_id").select2();
 
       selselect();
-      $("#footable_2 tbody tr").find("td input[name='item_rates[]']").prop('readonly', false);   // most reliable
+      
+      if($("#is_opening").is(":checked"))
+      {
+         $("#footable_2 tbody tr").find("td input[name='item_rates[]']").prop('readonly', false);   // most reliable
+      }
       
    }
    

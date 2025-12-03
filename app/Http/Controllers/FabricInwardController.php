@@ -179,11 +179,13 @@ class FabricInwardController extends Controller
         
         $vendorData = DB::select("select ac_short_name, ledger_master.ac_code from vendor_purchase_order_master 
                             INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId GROUP BY vendor_purchase_order_master.vendorId");
-                            
-        $PageLock = DB::table('page_locks')->select('isFlag')->where('page_key', 'fabric_inward')->get();
-        $isLockFlag =  isset($PageLock[0]->isFlag) ? $PageLock[0]->isFlag : 0;           
+        // DB::enableQueryLog();                  
+        $PageLock = DB::table('page_locks')->select('isFlag', 'userId')->where('page_key', 'fabric_inward')->get();
+        // dd(DB::getQueryLog());
+        $isLockFlag =  isset($PageLock[0]->isFlag) ? $PageLock[0]->isFlag : 0;       
+        $isLockUserId =  isset($PageLock[0]->userId) ? $PageLock[0]->userId : 0;               
                
-        return view('FabricInwardMaster',compact('isLockFlag','vendorData','Ledger','FabricCuttingOutwardList','RackMasterList','LocationList', 'POList', 'PartList','FGList','CPList', 'counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','FGECodeList','BillToList'));
+        return view('FabricInwardMaster',compact('isLockFlag','isLockUserId','vendorData','Ledger','FabricCuttingOutwardList','RackMasterList','LocationList', 'POList', 'PartList','FGList','CPList', 'counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','FGECodeList','BillToList'));
 
     }
 
@@ -581,7 +583,14 @@ class FabricInwardController extends Controller
         $vendorData = DB::select("select ac_short_name, ledger_master.ac_code from vendor_purchase_order_master 
                             INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId GROUP BY vendor_purchase_order_master.vendorId");
     
-        return view('FabricInwardMasterEdit',compact('vendorData','FabricCuttingOutwardList','FabricInwardMasterList','FGECodeList','POList','LocationList',  'RackMasterList', 'PartList', 'Ledger','CPList','FGList', 'FabricInwardDetails','counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','BillToList'));
+                             // DB::enableQueryLog();                  
+        $PageLock = DB::table('page_locks')->select('isFlag', 'userId')->where('page_key', 'fabric_inward')->get();
+        // dd(DB::getQueryLog());
+        $isLockFlag =  isset($PageLock[0]->isFlag) ? $PageLock[0]->isFlag : 0;       
+        $isLockUserId =  isset($PageLock[0]->userId) ? $PageLock[0]->userId : 0;               
+               
+
+        return view('FabricInwardMasterEdit',compact('isLockFlag','isLockUserId','vendorData','FabricCuttingOutwardList','FabricInwardMasterList','FGECodeList','POList','LocationList',  'RackMasterList', 'PartList', 'Ledger','CPList','FGList', 'FabricInwardDetails','counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','BillToList'));
     }
 
     /**
@@ -1447,9 +1456,9 @@ P2
                             <td class="text-center">'.($sr_no++).'</td>  
                             <td class="text-center">'.$row->item_code.'</td>  
                             <td>'.$row->item_name.'</td>  
-                            <td class="text-center">'.$row->item_qty.'</td>    
-                            <td class="text-center">'.$row->to_be_received.'</td>    
-                            <td class="text-center bal_qty">'.($row->item_qty-$row->to_be_received).'</td>    
+                            <td class="text-center">'.(round($row->item_qty,2)).'</td>    
+                            <td class="text-center">'.(round($row->to_be_received,2)).'</td>    
+                            <td class="text-center bal_qty">'.(round(($row->item_qty-$row->to_be_received),2)).'</td>    
                     </tr>'; 
         }
 
@@ -3904,8 +3913,8 @@ P2
         
         return response()->json(['vpo_code'=>$vpo_code,'html'=>$html]);
     }
- 
-    public function UpdatePageLockStatus(Request $request)
+    
+   public function UpdatePageLockStatus(Request $request)
     {
         $pageKey = $request->page_key;
         $userId  = $request->userId;
@@ -3913,9 +3922,10 @@ P2
 
         DB::table('page_locks')
             ->updateOrInsert(
-                ['page_key' => $pageKey, 'userId' => $userId],
+                ['page_key' => $pageKey],
                 [
                     'isFlag'    => $flag,
+                    'userId'    => $userId,
                     'locked_at' => now()
                 ]
             );
@@ -3923,5 +3933,18 @@ P2
         return response()->json(['success' => true]);
     }
 
+
+
+    public function PageLockStatus(Request $request)
+    {
+        $pageKey = $request->page_key; 
+
+        $pageData = DB::table('page_locks')
+            ->where('page_key', $pageKey)
+            ->first();
+
+
+        return response()->json($pageData);
+    }
 
 }

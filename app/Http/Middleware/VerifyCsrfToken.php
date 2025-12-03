@@ -14,7 +14,8 @@ class VerifyCsrfToken extends Middleware
     protected $except = [
         'SendEmailToClient',
         '/codex-command',
-        '/pageLock'
+        '/pageLock',
+        '/PageLockStatus'        
     ];
     
     // protected $except = [
