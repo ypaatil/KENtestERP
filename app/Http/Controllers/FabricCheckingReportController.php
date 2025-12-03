@@ -78,8 +78,8 @@ public function FabricCheckPrint($chk_code)
         ->join('po_type_master', 'po_type_master.po_type_id', '=', 'inward_master.po_type_id')
 
         ->where('fabric_checking_master.chk_code',$chk_code)
-        ->get(['fabric_checking_master.*','usermaster.username','ledger_master.Ac_name','cp_master.cp_name' ,'inward_master.po_code',
-            'inward_master.po_type_id', 'po_type_master.po_type_name','inward_master.fge_code', 'inward_master.in_code as grn_no', 'LM_BUYER.Ac_name as buyer_name']);
+        ->get(['fabric_checking_master.*','usermaster.username','ledger_master.ac_short_name','cp_master.cp_name' ,'inward_master.po_code',
+            'inward_master.po_type_id', 'po_type_master.po_type_name','inward_master.fge_code', 'inward_master.in_code as grn_no', 'LM_BUYER.ac_short_name as buyer_name']);
         
           $GetPO=FabricInwardModel::select('po_code')->where('in_code',$fabricChekingMaster[0]->in_code)->get();
           //$po_code= $GetPO[0]->po_code ? $GetPO[0]->po_code : "-";

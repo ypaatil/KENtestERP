@@ -30,7 +30,7 @@
         }
 
         .invoice-container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
             background: white;
             padding: 30px;
@@ -463,13 +463,12 @@
                         <div class="col-md-4 verticalLine text-center p-2">
                             <img src="http://kenerp.com/logo/ken.jpeg" alt="Ken Enterprise Pvt. Ltd." height="130" width="230">
                         </div>
-
+                        @php
+                        $data= getCompanyAddress();
+                        @endphp
                         <div class="col-md-7" style="margin-top:10px;">
-                            <h4 class="mb-2 fw-bold">KEN GLOBAL DESIGNS PRIVATE LIMITED</h4>
-                            <p>Reg.Office:18/20 Back Side Of Hotel City In, Industrial Estate, Ichalkaranji-416115<br>
-                                Tal Hatkanangale Dist Kolhapur Maharashtra INDIA.<br>
-                                Works: Gat No 298&299,At Kondigare, Tal: Shirol, Dist: Kolhapur-416102 <br>
-                                Tel : +91230 2438538 Email:office@kenindia.in
+                            <h4 class="mb-2 fw-bold">{{$data['heading']}}</h4>
+                            <p>{!!$data['address']!!}
                             </p>
                         </div>
 
@@ -533,7 +532,7 @@
                             <div class="info-row">
                                 <div class="label">Supplier Name</div>
                                 <div class="colon">:</div>
-                                <div class="value">{{ $rowMaster->Ac_name }}</div>
+                                <div class="value">{{ $rowMaster->ac_short_name }}</div>
                             </div>
                               <div class="info-row">
                                 <div class="label">Buyer Name</div>
@@ -552,7 +551,7 @@
                     </div>
 
 
-                    <h4 class="text-center mt-6 fw-bold">Fabric Checking Details</h4>
+                    <h4 class="text-center mt-6 fw-bold">Roll-wise QC Details</h4>
                     <table class="table table-bordered table-sm">
                         <thead>
                             <tr>
@@ -669,9 +668,9 @@
                         <tfoot>
                             <tr>
                                 
-                                <td class="text-end fw-bold">Received Total: {{$rowMaster->total_meter}} </td>
-                                <td class="text-end fw-bold">Passed Meter: {{$totalPassed - $totalReject}}</td>
-                                <td class="text-end fw-bold">Rejected Meter: {{$totalReject}} </td>
+                                <td class="text-end fw-bold">Received Total: {{indian_number_format_for_value($rowMaster->total_meter,2)}} </td>
+                                <td class="text-end fw-bold">Passed Meter: {{indian_number_format_for_value($totalPassed - $totalReject,2)}}</td>
+                                <td class="text-end fw-bold">Rejected Meter: {{indian_number_format_for_value($totalReject,2)}} </td>
                                 <td class="text-end fw-bold" colspan="2"><b>Total Pass </b>: {{round((($totalPassed/$rowMaster->total_meter)*100),2) - round((($totalReject/$rowMaster->total_meter)*100),2)}}%</td>
                                 <td class="text-end fw-bold" colspan="2"><b>Total Reject </b>: {{round((($totalReject/$rowMaster->total_meter)*100),2)}}% </td>
                             </tr>
@@ -680,7 +679,7 @@
 
                     <div class="row mt-3">
                         <div class="col-md-6">
-                            <h4 class="text-center mt-6 fw-bold">Shade Summary</h4>
+                            <h4 class="text-center mt-6 fw-bold">Shade-wise Rolls Summary</h4>
                             <table class="table table-bordered border-end border-start table-sm">
                                 <thead>
                                     <tr>
@@ -739,7 +738,7 @@
                         @endforeach
                         @endif
                         <div class="col-md-6">
-                            <h4 class="text-center mt-6 fw-bold">Width Summary</h4>
+                            <h4 class="text-center mt-6 fw-bold">Width-wise Rolls Summary</h4>
                             <table class="table table-bordered border-start border-end table-sm">
                                 <thead>
                                     <tr>
@@ -800,7 +799,7 @@
         </div>
     </div>
 
-    <p class="text-center d-print-none"><a href="/SalesOrderCosting">&laquo; Back to List</a></p>
+     <p class="text-center d-print-none"><a href="/SalesOrderCosting">&laquo; Back to List</a></p>
 
 
     <script type="text/javascript" src="{{URL::asset('assets/js/exporttoexcel.js')}}"></script>
