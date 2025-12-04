@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Vendor Work Order | Ken Global Designs Pvt. Ltd.</title>
+    <title>Vendor Work Order Print | Ken Global Designs Pvt. Ltd.</title>
     <!-- Web Fonts -->
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' type='text/css'>
     <!-- Stylesheets -->
@@ -389,7 +389,7 @@
 
             table.second th:nth-child(3),
             table.second td:nth-child(3) {
-                width: 150px !important;
+                width: auto !important;
             }
 
             table.second th:nth-child(4),
@@ -405,7 +405,7 @@
 
             table.second th:nth-child(6),
             table.second td:nth-child(6) {
-                width: auto !important;
+                width: 150px !important;
             }
 
             table.second th:nth-child(7),
@@ -517,14 +517,13 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                         <div class="col-md-4 verticalLine text-center p-2">
                             <img src="http://kenerp.com/logo/ken.jpeg" alt="Ken Enterprise Pvt. Ltd." height="130" width="230">
                         </div>
+                         @php
+                        $data= getCompanyAddress();
+                        @endphp
 
                         <div class="col-md-7" style="margin-top:10px;">
-                            <h4 class="mb-2 fw-bold">KEN GLOBAL DESIGNS PRIVATE LIMITED</h4>
-                            <p>Reg.Office:18/20 Back Side Of Hotel City In, Industrial Estate, Ichalkaranji-416115<br>
-                                Tal Hatkanangale Dist Kolhapur Maharashtra INDIA.<br>
-                                Works: Gat No 298&299,At Kondigare, Tal: Shirol, Dist: Kolhapur-416102 <br>
-                                Tel : +91230 2438538 Email:office@kenindia.in
-                            </p>
+                            <h4 class="mb-2 fw-bold">{{$data['heading']}}</h4>
+                            <p>{!!$data['address']!!}<p>
                         </div>
 
                         <div class="col-md-2">
@@ -546,26 +545,22 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                             <div class="">
 
                                 <div class="info-row">
-                                    <div class="label">VWO Date</div>
+                                    <div class="label">Work Order Date</div>
                                     <div class="colon">:</div>
                                     <div class="value">{{ \Carbon\Carbon::parse($BOMList[0]->vw_date)->format('d-m-Y') }}</div>
 
                                 </div>
                                 <div class="info-row">
-                                    <div class="label">Order No</div>
+                                    <div class="label"> Work Order No.</div>
                                     <div class="colon">:</div>
                                     <div class="value">{{ $BOMList[0]->vw_code }}</div>
                                 </div>
                                 <div class="info-row">
-                                    <div class="label">Sales Order no</div>
+                                    <div class="label">Sales Order No.</div>
                                     <div class="colon">:</div>
                                     <div class="value"> {{ $BOMList[0]->sales_order_no }}</div>
                                 </div>
-                                <div class="info-row">
-                                    <div class="label">SAM</div>
-                                    <div class="colon">:</div>
-                                    <div class="value"> {{indian_number_format_for_value( $BOMList[0]->sam,2) }} </div>
-                                </div>
+                               
                                 <div class="info-row">
                                     <div class="label">Buyer Name</div>
                                     <div class="colon">:</div>
@@ -603,6 +598,11 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                                 <div class="label">Style No.</div>
                                 <div class="colon">:</div>
                                 <div class="value">{{ $BOMList[0]->style_no }}</div>
+                            </div>
+                             <div class="info-row">
+                                    <div class="label">SAM</div>
+                                    <div class="colon">:</div>
+                                    <div class="value"> {{indian_number_format_for_value( $BOMList[0]->sam,2) }} </div>
                             </div>
 
 
@@ -719,12 +719,13 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                             <tr style=" text-align:center;">
                                 <th>Sr.No.</th>
                                 <th>Item Code</th>
+                                <th>Classification</th>
                                 <th>Item Name</th>
                                 <th> Garment Color </th>
                                 <th>Sizes</th>
-                                <th>Classification</th>
+                               
 
-                                <th>Cons(Mtr/Nos)</th>
+                                <th>Consumption</th>
                                 <th>UOM</th>
                                 <th>Wastage %</th>
                                 <th> Qty</th>
@@ -823,10 +824,11 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
                             <tr>
                                 <td class="text-end">{{ $no }}</td>
                                 <td class="text-center">{{ $rowDetailtrims->item_code }}</td>
+                                <td class="text-start">{{ $rowDetailtrims->class_name }}</td>
                                 <td class="text-start">{{ $rowDetailtrims->item_name }}</td>
                                 <td class="text-start">{{rtrim($colors, ',');}} </td>
                                 <td class="text-start">{{rtrim($sizes, ',');}} </td>
-                                <td class="text-start">{{ $rowDetailtrims->class_name }}</td>
+                                
 
                                 <td class="text-end">{{ number_format($rowDetailtrims->consumption ,2) }}</td>
                                 <td class="text-center">{{ $rowDetailtrims->unit_name  }}</td>
@@ -864,19 +866,10 @@ $BuyerPurchaseOrderMasterList = App\Models\BuyerPurchaseOrderMasterModel::select
         </div>
     </div>
 
-    <p class="text-center d-print-none"><a href="#">&laquo; Back to List</a></p>
+    <p class="text-center d-print-none"><a href="/SalesOrderCosting">&laquo; Back to List</a></p>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script>
-        function printDiv(divId) {
-            var printContents = document.getElementById(divId).innerHTML;
-            var originalContents = document.body.innerHTML;
-            document.body.innerHTML = printContents;
-
-            document.body.innerHTML = originalContents;
-            location.reload();
-        }
-    </script>
+    
 </body>
 
 </html>
