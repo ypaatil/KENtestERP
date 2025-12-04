@@ -239,8 +239,9 @@ class FabricInwardController extends Controller
     DB::select("update inward_master set buyer_id='".$buyer_id."' where po_code ='".$request->po_code."'");
   
     if(count($item_code)>0)
-    {
-        
+    { 
+        DB::select("update counter_number set tr_no=tr_no + 1 where c_name ='C1' AND type='FABRIC_INWARD'"); 
+            
         if(isset($request->item_code) && is_array($request->item_code))
         {
             for($x=0; $x<count($request->item_code); $x++) 
@@ -254,7 +255,8 @@ class FabricInwardController extends Controller
                 $latest_track_code = isset($latestTrackCodeData[0]->new_track_code) ? $latestTrackCodeData[0]->new_track_code : '';
 
                 if($request->cp_id==1)
-                {                         
+                { 
+                         
                             $purchaseOrderData = DB::table('purchase_order')->where('pur_code', $po_code)->first();
             
                             $buyer_id = isset($purchaseOrderData->buyer_id) ? $purchaseOrderData->buyer_id : 0;
@@ -369,7 +371,7 @@ class FabricInwardController extends Controller
                     }
                     else
                     {
-        
+                                
                         $purchaseOrderData = DB::table('purchase_order')->where('pur_code', $request->po_code)->first();
         
                         $buyer_id = isset($purchaseOrderData->buyer_id) ? $purchaseOrderData->buyer_id : 0;
