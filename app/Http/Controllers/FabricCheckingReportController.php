@@ -71,9 +71,9 @@ public function FabricCheckPrint($chk_code)
         ->join('cp_master', 'cp_master.cp_id', '=', 'fabric_checking_master.cp_id')
             
         ->join('inward_master', 'inward_master.in_code', '=', 'fabric_checking_master.in_code')
-         ->join('ledger_master as LM1', 'LM1.Ac_code', '=', 'inward_master.Ac_code')
+        ->join('ledger_master as LM1', 'LM1.Ac_code', '=', 'inward_master.Ac_code')
         ->leftJoin('ledger_master as LM_BUYER', 'LM_BUYER.Ac_code', '=', 'inward_master.buyer_id')
-         ->join('ledger_master as LM_SUPPLIER', 'LM_SUPPLIER.Ac_code', '=', 'fabric_checking_master.Ac_code')
+        ->join('ledger_master as LM_SUPPLIER', 'LM_SUPPLIER.Ac_code', '=', 'fabric_checking_master.Ac_code')
        
         ->join('po_type_master', 'po_type_master.po_type_id', '=', 'inward_master.po_type_id')
 
