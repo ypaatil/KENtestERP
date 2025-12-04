@@ -27,6 +27,8 @@ use Illuminate\Support\Facades\Artisan;
 use DateTime;
 use App\Services\FabricInwardDetailActivityLog;
 use App\Services\FabricInwardMasterActivityLog;
+use App\Models\PageLockModel;
+use Carbon\Carbon;
 use Log;
 
 
@@ -3912,39 +3914,98 @@ P2
         }
         
         return response()->json(['vpo_code'=>$vpo_code,'html'=>$html]);
-    }
-    
-   public function UpdatePageLockStatus(Request $request)
+    } 
+   /**
+     * Update page lock status (lock/unlock)
+     */
+    public function UpdatePageLockStatus(Request $request)
     {
-        $pageKey = $request->page_key;
-        $userId  = $request->userId;
-        $flag    = $request->isFlag;
+        $pageKey = $request->input('page_key');
+        $userId  = $request->input('userId', null);
+        $isFlag  = intval($request->input('isFlag', 0));
+        $tabId   = $request->input('tabId');
 
-        DB::table('page_locks')
-            ->updateOrInsert(
+        if (!$pageKey || !$tabId) {
+            return response()->json(['error' => 'page_key and tabId required'], 400);
+        }
+
+        $lock = PageLockModel::where('page_key', $pageKey)->first();
+
+        if ($isFlag === 1) {
+            // BLOCK if another tab owns the lock
+            if ($lock && $lock->isFlag == 1 && $lock->tabId !== $tabId) {
+                return response()->json([
+                    'status' => 'blocked',
+                    'userId' => $lock->userId,
+                    'tabId'  => $lock->tabId
+                ]);
+            }
+
+            // Lock or refresh for this tab
+            PageLockModel::updateOrCreate(
                 ['page_key' => $pageKey],
                 [
-                    'isFlag'    => $flag,
                     'userId'    => $userId,
-                    'locked_at' => now()
+                    'locked_at' => now(),
+                    'isFlag'    => 1,
+                    'tabId'     => $tabId
                 ]
             );
 
-        return response()->json(['success' => true]);
+            return response()->json([
+                'status' => 'locked',
+                'tabId'  => $tabId
+            ]);
+        }
+
+        // UNLOCK request (only this tab can unlock)
+        if ($isFlag === 0) {
+            if ($lock && $lock->tabId === $tabId) {
+                $lock->update([
+                    'isFlag'    => 0,
+                    'userId'    => null,
+                    'tabId'     => null,
+                    'locked_at' => null
+                ]);
+            }
+            return response()->json(['status' => 'unlocked']);
+        }
+
+        return response()->json(['error' => 'invalid isFlag'], 400);
     }
 
-
-
+    /**
+     * PageLockStatus
+     * Called on page load before locking
+     */
     public function PageLockStatus(Request $request)
     {
-        $pageKey = $request->page_key; 
+        $pageKey = $request->input('page_key');
 
-        $pageData = DB::table('page_locks')
-            ->where('page_key', $pageKey)
-            ->first();
+        if (!$pageKey) {
+            return response()->json([
+                'error' => 'page_key required'
+            ], 400);
+        }
 
+        $lock = PageLockModel::where('page_key', $pageKey)->first();
 
-        return response()->json($pageData);
+        // If no record → page free
+        if (!$lock) {
+            return response()->json([
+                'isFlag' => 0,
+                'userId' => null,
+                'tabId'  => null
+            ]);
+        }
+
+        return response()->json([
+            'isFlag' => intval($lock->isFlag),
+            'userId' => $lock->userId,
+            'tabId'  => $lock->tabId
+        ]);
     }
+
+
 
 }

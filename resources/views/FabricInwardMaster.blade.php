@@ -666,168 +666,90 @@
    </div>
    <input type="hidden" id="isLockFlag" value="{{ $isLockFlag }}">
    <input type="hidden" id="isLockUserId" value="{{ $isLockUserId }}">
+   <meta name="csrf-token" content="{{ csrf_token() }}">
 </div>
 
 <!-- end row -->
 <script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
 <!-- end row -->
 <script>
-   // ------------------------------------------------
-   // BASIC CONFIG
-   // ------------------------------------------------
+ /* ==========================
+   PAGE LOCK FRONTEND (WORKING)
+   ========================== */
+
    const pageKey = "fabric_inward";
-   const userId = document.getElementById("userId").value;
+   const userId  = document.getElementById("userId").value;
+   const csrf    = document.querySelector('meta[name="csrf-token"]').content;
 
-   // USER HOLDS LOCK FLAG
-   let hasLock = false;
+   // ------------------------------
+   // Generate unique tab ID
+   // ------------------------------
+   let tabId = sessionStorage.getItem("tabId_global");
+   if (!tabId) {
+      tabId = crypto.randomUUID();
+      sessionStorage.setItem("tabId_global", tabId);
+   }
+   console.log("TabId =", tabId);
 
-
-   // ------------------------------------------------
-   // ON PAGE LOAD → CHECK STATUS
-   // ------------------------------------------------
-   document.addEventListener("DOMContentLoaded", function () {
-
-      var username = document.getElementById("username").value;
-      fetch("/PageLockStatus", {
+   // ------------------------------
+   // Helper function to POST JSON
+   // ------------------------------
+   function postJson(url, data) {
+      return fetch(url, {
          method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({ page_key: pageKey })
-      })
-      .then(r => r.json())
-      .then(res => {
-
-         // --- Case 1: Page not locked → Lock it ---
-         if (res.isFlag == 0) {
-               LockPage();
-               return;
-         }
-
-         // --- Case 2: Locked by someone else ---
-         if (res.isFlag == 1 && parseInt(res.userId) !== parseInt(userId)) {
-               ShowBlockMessage("User : " + username);
-               DisablePage();
-               return;
-         }
-
-         // --- Case 3: Locked by same user ---
-         if (res.isFlag == 1 && parseInt(res.userId) === parseInt(userId)) {
-               hasLock = true;
-               console.log("Already locked by same user.");
-         }
-
-      });
-   });
-
-
-   // ------------------------------------------------
-   // FUNCTION : LOCK PAGE
-   // ------------------------------------------------
-   function LockPage() {
-
-      var username = document.getElementById("username").value;
-
-      fetch("/pageLock", {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({
-               page_key: pageKey,
-               userId: userId,
-               isFlag: 1
-         })
-      })
-      .then(r => r.json())
-      .then(res => {
-
-         if (res.status === "blocked") {
-               ShowBlockMessage("User : " + username);
-               DisablePage();
-               return;
-         }
-
-         hasLock = true;
-         console.log("Page locked successfully.");
-      });
+         headers: {
+               "Content-Type": "application/json",
+               "X-CSRF-TOKEN": csrf,
+               "Accept": "application/json"
+         },
+         body: JSON.stringify(data)
+      }).then(r => r.json());
    }
 
+   // ------------------------------
+   // Attempt to lock page on load
+   // ------------------------------
+   document.addEventListener("DOMContentLoaded", () => {
+      lockThisPage();
+   });
 
+   // ------------------------------
+   // Lock function
+   // ------------------------------
+   let isLocked = false;
 
-   // ------------------------------------------------
-   // UNLOCK ONLY WHEN USER REALLY LEAVES
-   // ------------------------------------------------
-   window.addEventListener("beforeunload", function (e) {
-
-      // If page reload → DO NOT unlock
-      const navType = performance.getEntriesByType("navigation")[0].type;
-      if (navType === "reload") return;
-
-      // Unlock only if THIS user holds the lock
-      if (!hasLock) return;
-
-      const data = JSON.stringify({
+   function lockThisPage() {
+      postJson("/UpdatePageLockStatus", {
          page_key: pageKey,
          userId: userId,
-         isFlag: 0
+         isFlag: 1,
+         tabId: tabId
+      }).then(res => {
+         console.log("Lock response:", res);
+
+         if (res.status === "blocked" && res.tabId !== tabId) {
+               alert("This page is already open in another tab by user: " + res.userId);
+               window.location.href = "/FabricInward";
+         } else if (res.status === "locked") {
+               isLocked = true; // this tab now owns the lock
+         }
+      }).catch(err => console.error("Lock failed:", err));
+   }
+
+
+   // ------------------------------
+   // Unlock page on tab close
+   // ------------------------------
+   window.addEventListener("beforeunload", () => {
+      const json = JSON.stringify({
+         page_key: pageKey,
+         userId: userId,
+         isFlag: 0,
+         tabId: tabId
       });
 
-      navigator.sendBeacon("/pageLock", new Blob([data], { type: "application/json" }));
+      navigator.sendBeacon("/UpdatePageLockStatus", new Blob([json], { type: "application/json" }));
    });
-
-
-
-
-   // ------------------------------------------------
-   // UI HANDLING
-   // ------------------------------------------------
-   function DisablePage() {
-      document.querySelectorAll("input, select, textarea, button")
-         .forEach(el => el.disabled = true);
-   }
-
-
-   // ------------------------------------------------
-   // OVERLAY POPUP
-   // ------------------------------------------------
-   function ShowBlockMessage(msg) {
-
-      document.body.insertAdjacentHTML('beforeend', `
-         <div id="lockOverlay" style="
-               position: fixed; inset: 0;
-               background: rgba(0,0,0,0.55);
-               display: flex;
-               justify-content: center;
-               align-items: center;
-               z-index: 999999;">
-               
-               <div style="
-                  background: white;
-                  padding: 20px 30px;
-                  border-radius: 14px;
-                  width: 320px;
-                  text-align: center;
-                  font-family: Segoe UI, sans-serif;">
-                  
-                  <h3 style="margin-bottom: 10px;">Page Locked</h3>
-                  <p style="margin-bottom: 20px;">${msg} is currently using this page.</p>
-
-                  <button onclick="CloseOverlay()" style="
-                     background: #25D366;
-                     color: white;
-                     padding: 8px 25px;
-                     border-radius: 20px;
-                     border: none;
-                     cursor: pointer;">
-                     OK
-                  </button>
-               </div>
-         </div>
-      `);
-   }
-
-   function CloseOverlay() {
-      const o = document.getElementById("lockOverlay");
-      if (o) o.remove();
-   }
-
 
 
    $(document).on('keydown', 'input[type="number"]', function(e) {
