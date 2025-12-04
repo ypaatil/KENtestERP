@@ -513,19 +513,20 @@
                                     <div class="value"> {{ $CutPanelGRNMaster[0]->sales_order_no }}</div>
                                 </div>
                                 <div class="info-row">
-                                    <div class="label">Process Order No</div>
+                                    <div class="label">Process Order No.</div>
                                     <div class="colon">:</div>
                                     <div class="value"> {{ $CutPanelGRNMaster[0]->vpo_code }}</div>
+                                </div>
+                                
+                                 <div class="info-row">
+                                    <div class="label">Style Name</div>
+                                    <div class="colon">:</div>
+                                    <div class="value"> {{ $CutPanelGRNMaster[0]->fg_name }}</div>
                                 </div>
                                  <div class="info-row">
                                     <div class="label">Style No.</div>
                                     <div class="colon">:</div>
                                     <div class="value"> {{ $CutPanelGRNMaster[0]->style_no }}</div>
-                                </div>
-                                 <div class="info-row">
-                                    <div class="label">Style Name</div>
-                                    <div class="colon">:</div>
-                                    <div class="value"> {{ $CutPanelGRNMaster[0]->fg_name }}</div>
                                 </div>
                             </div>
 
@@ -561,7 +562,7 @@
 
                         <div class="col-md-6 p-2 border-end">
                             <div class="">
-                                <p><b>Vendor :</b></p>
+                                <p><b>Vendor Name :</b></p>
                                 <p><b>{{ $CutPanelGRNMaster[0]->Ac_name }}</b> <br> {{ $CutPanelGRNMaster[0]->address }}</p>
 
                                 <div class="info-row">
@@ -579,11 +580,11 @@
                     </div>
 
                     <!-- Assortment Table -->
-                    <h4 class="text-center  fw-bold">Cut Panel GRN Details</h4>
+                    <h4 class="text-center  fw-bold">Assortment Details</h4>
                     <table class="table table-bordered table-sm second">
                         <thead>
                             <tr>
-                                <th>Sr No</th>
+                                <th>Sr.No.</th>
                                 <th>Item Name </th>
                                 <th>Garment Color</th>
                                 @foreach ($SizeDetailList as $sz)
@@ -681,16 +682,7 @@
     <p class="text-center d-print-none"><a href="/FinishingInhouse">&laquo; Back to List</a></p>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script>
-        function printDiv(divId) {
-            var printContents = document.getElementById(divId).innerHTML;
-            var originalContents = document.body.innerHTML;
-            document.body.innerHTML = printContents;
-
-            document.body.innerHTML = originalContents;
-            location.reload();
-        }
-    </script>
+   
 </body>
 
 </html>
