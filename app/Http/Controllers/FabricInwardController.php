@@ -3765,13 +3765,37 @@ P2
 
     public function GetFabricInwardOutwardData(Request $request)
     {
-        $detailData = DB::SELECT("SELECT sum(meter) as total_meter,(select ifnull(sum(inward_details.meter),0) FROM inward_details 
-                        INNER JOIN inward_master ON inward_master.in_code = inward_details.in_code
-                        WHERE inward_details.item_code = fabric_outward_details.item_code 
-                        AND inward_master.vpo_code = fabric_outward_details.vpo_code) as received,
-                        item_master.item_name, fabric_outward_details.item_code  FROM fabric_outward_details 
-                        INNER JOIN item_master ON item_master.item_code = fabric_outward_details.item_code
-                        WHERE fabric_outward_details.vpo_code='".$request->vpo_code."' GROUP BY fabric_outward_details.item_code");
+        $detailData = DB::select("
+            SELECT 
+                SUM(fod.meter) AS total_meter,
+
+                (
+                    SELECT IFNULL(SUM(id.meter), 0)
+                    FROM inward_details id
+                    INNER JOIN inward_master im 
+                        ON im.in_code = id.in_code
+                    WHERE id.item_code = vpod.item_code
+                    AND im.vpo_code = vpod.vpo_code
+                ) AS received,
+
+                imast.item_name,
+                vpod.item_code
+                
+            FROM vendor_purchase_order_detail vpod
+            
+            LEFT JOIN fabric_outward_details fod 
+                ON fod.vpo_code = vpod.vpo_code 
+            AND fod.item_code = vpod.item_code
+
+            INNER JOIN item_master imast 
+                ON imast.item_code = vpod.item_code
+
+            WHERE vpod.vpo_code = ?
+
+            GROUP BY vpod.item_code, imast.item_name
+        ", [$request->vpo_code]);
+
+
                                   
         $html = '';
         $sr_no = 1; 

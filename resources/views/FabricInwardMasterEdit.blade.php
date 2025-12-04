@@ -1290,7 +1290,7 @@
     $("#item_code" + (indexcone - 1)).select2();
     $("#part_id" + (indexcone - 1)).select2();
 
-    selselect();
+   //  selselect();
 }
 
 
