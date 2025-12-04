@@ -2405,12 +2405,17 @@ foreach($SizeList as $sz)
      public function StitchingGRNPrintView($sti_code)
     {
                
-         $StitchingInhouseMaster = StitchingInhouseMasterModel::join('usermaster', 'usermaster.userId', '=', 'stitching_inhouse_master.userId')
-         ->join('ledger_master', 'ledger_master.Ac_code', '=', 'stitching_inhouse_master.vendorId')
-         ->leftJoin('vendor_work_order_master', 'vendor_work_order_master.vw_code', '=','stitching_inhouse_master.vw_code')
+        $StitchingInhouseMaster = StitchingInhouseMasterModel::join('usermaster', 'usermaster.userId', '=', 'stitching_inhouse_master.userId')
+        ->join('ledger_master', 'ledger_master.Ac_code', '=', 'stitching_inhouse_master.vendorId')
+
+        ->join('main_style_master', 'main_style_master.mainstyle_id', '=', 'stitching_inhouse_master.mainstyle_id') 
+        ->join('sub_style_master', 'sub_style_master.substyle_id', '=', 'stitching_inhouse_master.substyle_id') 
+        ->join('fg_master', 'fg_master.fg_id', '=', 'stitching_inhouse_master.fg_id') 
+
+        ->leftJoin('vendor_work_order_master', 'vendor_work_order_master.vw_code', '=','stitching_inhouse_master.vw_code')
         ->where('stitching_inhouse_master.sti_code', $sti_code)
-         ->get(['stitching_inhouse_master.*','usermaster.username','ledger_master.Ac_name','stitching_inhouse_master.sales_order_no',
-         'ledger_master.gst_no','ledger_master.pan_no','ledger_master.state_id','ledger_master.address' ]);
+        ->get(['stitching_inhouse_master.*','usermaster.username','ledger_master.ac_short_name','stitching_inhouse_master.sales_order_no',
+         'ledger_master.gst_no','ledger_master.pan_no','ledger_master.state_id','ledger_master.address','main_style_master.mainstyle_name','sub_style_master.substyle_name','fg_master.fg_name' ]);
        
           
         $BuyerPurchaseOrderMasterList = BuyerPurchaseOrderMasterModel::where('tr_code',$StitchingInhouseMaster[0]->sales_order_no)->get();
