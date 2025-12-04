@@ -589,7 +589,8 @@ class FabricInwardController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request,$id,FabricInwardDetailActivityLog $loggerDetail,FabricInwardMasterActivityLog $loggerMaster)
-    {
+    { 
+        // echo '<pre>'; print_R($_POST);exit;
         $this->validate($request, [
              
             'in_code'=>'required',
@@ -707,26 +708,23 @@ class FabricInwardController extends Controller
  
     
 
-        DB::table('inward_details')->where('in_code', $in_code)->delete();
-        DB::table('fabric_transaction')->where('tr_code', $in_code)->delete();
+        // DB::table('inward_details')->where('in_code', $in_code)->delete();
+        // DB::table('fabric_transaction')->where('tr_code', $in_code)->delete();
        
-        $track_code = CounterNumberModel::where('c_code','=',$request->c_code )->where('type','=','FABRIC_INWARD' )->first(); 
-        $CBarcodes = $track_code->CBarcode;
-        $PBarcodes = $track_code->PBarcode;
+        // $track_code = CounterNumberModel::where('c_code','=',$request->c_code )->where('type','=','FABRIC_INWARD' )->first(); 
+        // $CBarcodes = $track_code->CBarcode;
+        // $PBarcodes = $track_code->PBarcode;
 
-        $CBarcodes1 = isset($track_code->CBarcode) ? $track_code->CBarcode : 0;
-        $PBarcodes1 = isset($track_code->PBarcode) ? $track_code->PBarcode : 0;
+        // $CBarcodes1 = isset($track_code->CBarcode) ? $track_code->CBarcode : 0;
+        // $PBarcodes1 = isset($track_code->PBarcode) ? $track_code->PBarcode : 0;
         
         
 
   
-        $item_code = $request->input('item_code');
+    $item_code = $request->input('item_code');
     if($item_code != "")
-    {
-        
-        
-        
-          DB::select("update counter_number set tr_no=tr_no + 1, PBarcode='".$PBarcodes1."', CBarcode='".$CBarcodes1."'   where c_name ='C1' AND type='FABRIC_INWARD'"); 
+    { 
+          DB::select("update counter_number set tr_no=tr_no + 1  where c_name ='C1' AND type='FABRIC_INWARD'"); 
         
         
             $newDataDetail2=[];
@@ -745,10 +743,29 @@ class FabricInwardController extends Controller
                                             ->get();
                     $buyer_name = isset($buyerData[0]->buyer_name) ? $buyerData[0]->buyer_name : "";
 
+                    $newRow = $request->newRow[$x] ?? 0;
+
+                    if ($newRow == 1) 
+                    {
+                        $latestTrackCodeData = DB::SELECT("SELECT track_code AS latest_track_code,
+                                CONCAT(
+                                    LEFT(track_code, 1), 
+                                    CAST(SUBSTRING(track_code, 2) AS UNSIGNED) + 1
+                                ) AS new_track_code  FROM inward_details ORDER BY CAST(SUBSTRING(track_code, 2) AS UNSIGNED) DESC  LIMIT 1");
+
+                        $PBarcodeFinal = isset($latestTrackCodeData[0]->new_track_code) ? $latestTrackCodeData[0]->new_track_code : '';
+                    }
+                    else
+                    {
+
+                        $PBarcodeFinal = $request->track_code[$x];
+                    }
+
+
                     if($request->cp_id==1)
                     {
 
-                        if($request->track_code[$x]==''){ $PBarcodeFinal='P'.++$PBarcodes; }else{$PBarcodeFinal=$request->track_code[$x];}
+                        // if($request->track_code[$x]==''){ $PBarcodeFinal='P'.++$PBarcodes; }else{$PBarcodeFinal=$request->track_code[$x];}
                         
                         $purchaseOrderData = DB::table('purchase_order')->where('pur_code', $po_code)->first();
         
@@ -797,11 +814,19 @@ class FabricInwardController extends Controller
                                     'userId'=>$request->userId,
                                      
                                 );
-                        
-                         
-                            FabricInwardDetailModel::insert($data2);
-                            FabricTransactionModel::insert($data3);
+                            DB::table('inward_details')->updateOrInsert(
+                                ['track_code' => $PBarcodeFinal],  // find row
+                                $data2                              // update data
+                            );
+                        // DB::enableQueryLog();
+                            DB::table('fabric_transaction')->updateOrInsert(
+                                ['track_code' => $PBarcodeFinal],
+                                $data3
+                            );
+                            // dd(DB::getQueryLog());
+
                             
+                        //  echo "hii"; exit;
                         $itemData = DB::table('item_master')->join('quality_master','quality_master.quality_code','=','item_master.quality_code')->select('item_name', 'item_description','quality_master.quality_name')->where('item_code', $item_code)->first();
                         $ledgerData = DB::table('ledger_master')->select('ac_name')->where('ac_code', $request->Ac_code)->first();
                         
@@ -851,21 +876,6 @@ class FabricInwardController extends Controller
                         $rate = $request->item_rates[$x];
                         $rack_id = 0;
                           
-                        
-                        // DB::SELECT('INSERT INTO dump_fabric_stock_data(in_date,suplier_name,po_no,grn_no,invoice_no,item_code,shade_no,item_name,quality_name,
-                        //         color,item_Description,po_status,job_status_id,track_name,grn_qty,rate,rack_name,tr_type)
-                        //         select "'.$in_date.'","'.$suplier_name.'","'.$po_no.'","'.$grn_no.'","'.$invoice_no.'","'.$item_code.'","'.$shade_no.'","'.addslashes($item_name).'",
-                        //         "'.$quality_name.'","'.$color.'","'.addslashes($item_description).'","'.$po_status.'","'.$job_status_id.'","'.$track_name.'","'.$grn_qty.'","'.$rate.'","'.$rack_id.'",1');
-                        // $buyerData = DB::table('purchaseorder_detail')
-                        //             ->select('LM1.ac_short_name as buyer_name', 'purchaseorder_detail.job_status_id', 'job_status_master.job_status_name')
-                        //             ->join('purchase_order', 'purchase_order.pur_code', '=', 'purchaseorder_detail.pur_code')
-                        //             ->join('buyer_purchse_order_master', 'buyer_purchse_order_master.tr_code', '=', 'purchaseorder_detail.sales_order_no')
-                        //             ->join('ledger_master as LM1', 'LM1.ac_code', '=', 'purchase_order.buyer_id')
-                        //             ->leftJoin('job_status_master', 'job_status_master.job_status_id', '=', 'purchaseorder_detail.job_status_id')
-                        //             ->where('purchaseorder_detail.pur_code', $request->po_code)
-                        //             ->where('purchaseorder_detail.item_code', $request->item_code[$x])
-                        //             ->groupBy('purchaseorder_detail.pur_code')
-                        //             ->get();
                         $buyerData = DB::table('purchase_order')->select('LM1.ac_name as buyer_name')->join('ledger_master as LM1', 'LM1.ac_code', '=', 'purchase_order.buyer_id')->where('purchase_order.pur_code','=', $po_no)->get();
                                                 
                         $buyer_name = isset($buyerData[0]->buyer_name) ? $buyerData[0]->buyer_name : "";
@@ -987,7 +997,7 @@ class FabricInwardController extends Controller
                     }
                     else
                     {
-                        if($request->track_code[$x]==''){ $CBarcodeFinal='I'.++$CBarcodes; }else{$CBarcodeFinal=$request->track_code[$x];}
+                        // if($request->track_code[$x]==''){ $CBarcodeFinal='I'.++$CBarcodes; }else{$CBarcodeFinal=$request->track_code[$x];}
                         
                         $purchaseOrderData = DB::table('purchase_order')->where('pur_code', $request->po_code)->first();
         
@@ -1014,7 +1024,7 @@ class FabricInwardController extends Controller
                             'isReturnFabricInward'=>$request->isReturnFabricInward,
                             'vw_code'=> $request->vw_code,
                             'suplier_roll_no' => $request->suplier_roll_no[$x],
-                            'track_code' => $CBarcodeFinal,
+                            'track_code' => $PBarcodeFinal,
                             'usedflag' => '0',
                             'buyer_id' => $buyer_id,
                             'fge_code'=>$request->fge_code
@@ -1029,7 +1039,7 @@ class FabricInwardController extends Controller
                                     'item_code'=>$request->item_code[$x], 
                                     'part_id' =>$request->part_id[$x],
                                     'shade_id' =>'1',
-                                    'track_code' => $CBarcodeFinal,
+                                    'track_code' => $PBarcodeFinal,
                                     'old_meter'=>'0',
                                     'short_meter'=>'0',
                                     'rejected_meter'=>'0',
@@ -1040,8 +1050,17 @@ class FabricInwardController extends Controller
                                     'userId'=>$request->userId
                                 );
                                 
-                            FabricInwardDetailModel::insert($data2);
-                            FabricTransactionModel::insert($data3);
+                          
+                            DB::table('inward_details')->updateOrInsert(
+                                ['track_code' => $PBarcodeFinal],  // find row
+                                $data2                              // update data
+                            );
+                        // DB::enableQueryLog();
+                            DB::table('fabric_transaction')->updateOrInsert(
+                                ['track_code' => $PBarcodeFinal],
+                                $data3
+                            );
+
                             
                             //DB::table('dump_fabric_stock_data')->where('grn_no', $in_code)->where('item_code', $request->item_code[$x])->where('po_no', $request->po_code)->delete();
                                $buyerData = DB::table('purchaseorder_detail')
@@ -1243,16 +1262,6 @@ class FabricInwardController extends Controller
             ]);
             }     
               
-              
-      
-     //dd(DB::getQueryLog());
-     
-     
-      //  $query = DB::getQueryLog();
-            //  $query = end($query);
-            //  dd($query);
-                
-                
             
         
         $ledgerData = DB::SELECT("SELECT ac_short_name FROM ledger_master WHERE ac_code='".$buyer_id."'");

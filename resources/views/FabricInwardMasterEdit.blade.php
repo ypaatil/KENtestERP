@@ -256,15 +256,15 @@
                               }
                               @endphp
                               <tr>
-                                 <td><input type="text" name="id[]" value="{{ $no }}" id="id" style="width:50px;" {{$dis}} /></td>
-                                 <td><input type="text" name="item_codes[]" value="{{ $List->item_code }}" id="item_codes" style="width:80px;" {{$dis}} /></td>
+                                 <td><input type="text" name="id[]" value="{{ $no }}" id="id" style="width:50px;" readonly /></td>
+                                 <td><input type="text" name="item_codes[]" value="{{ $List->item_code }}" id="item_codes" style="width:80px;"  readonly /></td>
                                  <td>
-                                    <select name="item_code[]"  id="item_code" style="width:200px; height:30px;" required onchange="getRateFromPO(this);" {{$dis}} > 
+                                    <select name="item_code[]"  id="item_code" style="width:200px; height:30px;"  onchange="getRateFromPO(this);" disabled> 
                                     <option value="{{ $List->item_code }}">{{ $List->item_name }}</option>
                                     </select>
                                  </td>
                                  <td>
-                                    <select name="part_id[]"  id="part_id" style="width:200px; height:30px;" required  {{$dis}} >
+                                    <select name="part_id[]"  id="part_id" style="width:200px; height:30px;" disabled>
                                     <option value="">--Part--</option>
                                     @foreach($PartList as  $row)
                                     <option value="{{ $row->part_id }}"
@@ -280,7 +280,7 @@
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;" readonly/></td>
                                  <td><input type="number" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}} required /></td>
                                  <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code" style="width:80px; height:30px;" required readOnly/></td>
-                                 <td><input type="button" style="width:40px;" onclick="insertcone();" name="Abutton" value="+" class="btn btn-warning pull-left"></td>
+                                 <td><input type="button" onclick="insertcone();" name="Abutton" value="+" class="btn btn-warning pull-left"></td>
                                  <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
                               </tr>
                               @php $no=$no+1; @endphp
@@ -572,7 +572,7 @@
                                  <td><input type="text" name="id[]" value="{{ $no }}" id="id" style="width:50px;"  readOnly /></td>
                                  <td><input type="text" name="item_codes[]" value="{{ $List->item_code }}" id="item_codes" style="width:80px;"   readOnly /></td>
                                  <td>
-                                    <select name="item_code[]"  id="item_code" style="width:200px; height:30px;" required onchange="getRateFromPO(this);"  disabled> 
+                                    <select name="item_code[]"  id="item_code" style="width:200px; height:30px;" onchange="getRateFromPO(this);"  disabled> 
                                     <option value="{{ $List->item_code }}">{{ $List->item_name }}</option>
                                     </select>
                                  </td>
@@ -593,7 +593,8 @@
                                  <td><input type="number" step="any"    name="item_rates[]"   value="{{ $List->item_rate }}" id="item_rates" style="width:80px;height:30px;"  {{$dis}} />
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;"  readOnly/></td>
                                  <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;" required /></td>
-                                 <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code1" style="width:80px; height:30px;" readOnly/></td>
+                                 <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code1" style="width:80px; height:30px;" readOnly/>
+                                 <input type="hidden" class="newRow" name="newRow[]" value="0" id="newRow" /></td>
                                  <td><input type="button" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left" @if($FabricInwardMasterList->isReturnFabricInward == 1) disabled @endif ></td>
                                  <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X"  disabled></td>
                               </tr>
@@ -628,7 +629,8 @@
                                  <td><input type="number" step="any"    name="item_rates[]"   value="0" id="item_rates" style="width:80px;height:30px;" required  {{$dis}}  />
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" required  {{$dis}} />
                                  <td><input type="text" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}} required /></td>
-                                 <td><input type="text" name="track_code[]"  value="" id="track_code" style="width:80px;" {{$dis}}  /></td>
+                                 <td><input type="text" name="track_code[]"  value="" id="track_code" style="width:80px;" {{$dis}}  />
+                                 <input type="hidden" class="newRow" name="newRow[]" value="0" id="newRow" /></td>
                                  <td><input type="button" onclick="insertcone1();" name="Abutton" value="+" class="btn btn-warning pull-left"></td>
                                  <td><input type="button" class="btn btn-danger pull-left" onclick="deleteRowcone(this);" value="X" ></td>
                               </tr>
@@ -1128,6 +1130,7 @@
     t1.id = "id" + indexcone;
     t1.name = "id[]";
     t1.value = indexcone;
+    t1.readOnly = true;
     cell1.appendChild(t1);
 
     // ---------------- Item Code Text ----------------
@@ -1136,6 +1139,7 @@
     t2.style = "display: table-cell; width:80px;";
     t2.id = "item_codes" + indexcone;
     t2.name = "item_codes[]";
+    t2.readOnly = true;
     cell2.appendChild(t2);
 
     // ---------------- Item Code Dropdown (Select2) ----------------
@@ -1252,8 +1256,18 @@
         ++CBarcode;
         tc.value = 'I' + CBarcode;
     }
-    tc.style = "display: table-cell; width:80px;height:30px;";
-    cell11.appendChild(tc);
+   tc.style = "display: table-cell; width:80px;height:30px;";
+   cell11.appendChild(tc);
+    
+   var t14=document.createElement("input"); 
+   t14.type="hidden";
+   t14.step="any";
+   t14.readOnly=true;
+   t14.id = "newRow"+indexcone;
+   t14.name= "newRow[]";
+   t14.value="1";
+   cell11.appendChild(t14); 
+   
 
     // ---------------- ADD BUTTON ----------------
     var cell12 = row.insertCell(11);
@@ -1355,19 +1369,22 @@
       
       t1.id = "id"+indexcone;
       t1.name= "id[]";
+      t1.readOnly = true;
       t1.value=indexcone;
       
       cell1.appendChild(t1);
       
-      
-      var cell1=row.insertCell(1);
-      var t1=document.createElement("input");
-      t1.style="display: table-cell; width:50px;";
-      //t1.className="form-control col-sm-1";
-      
-      t1.id = "item_codes"+indexcone;
-      t1.name= "item_codes[]";
-      
+      var cell1 = row.insertCell(1);
+      var t1 = document.createElement("input");
+      t1.style = "display: table-cell; width:80px;";
+      t1.id = "item_codes" + indexcone;
+      t1.readOnly = true;
+      t1.name = "item_codes[]";
+
+      // Copy value from existing input
+      var previousValue = document.getElementById("item_codes").value;
+      t1.value = previousValue;
+
       cell1.appendChild(t1);
       
       var cell5 = row.insertCell(2);
@@ -1376,6 +1393,7 @@
       y = x.clone();
       y.attr("id","item_code");
       y.attr("name","item_code[]");
+      y.attr("disabled",true); 
       y.width(200);
       y.height(30);
       y.appendTo(cell5);
@@ -1482,6 +1500,7 @@
       var t7=document.createElement("input");
       t7.style="display: table-cell; width:80px;height:30px;";
       t7.type="text";
+      t7.readOnly=true; 
       t7.id = "track_code"+indexcone;
       t7.name="track_code[]";
       if($("#cp_id").val()==1)
@@ -1493,6 +1512,15 @@
          t7.value='I'+(++CBarcode);
       }
       cell7.appendChild(t7);
+    
+      var t14=document.createElement("input"); 
+      t14.type="hidden";
+      t14.step="any";
+      t14.readOnly=true;
+      t14.id = "newRow"+indexcone;
+      t14.name= "newRow[]";
+      t14.value="1";
+      cell7.appendChild(t14); 
       
       var cell8=row.insertCell(11);
       var btnAdd = document.createElement("INPUT");
