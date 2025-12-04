@@ -90,11 +90,8 @@
                               <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $row->c_code }}">
                               <input type="hidden" name="cp_id" class="form-control" id="cp_id" value="1">
                               <input type="hidden" name="tab_button" class="form-control" id="tab_button" value="1">
-                              <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
-                              <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
                               @endforeach
                               <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="userId">
-                              <input type="hidden" name="username" value="{{ Session::get('username') }}" class="form-control" id="username">
                            </div>
                         </div>
 
@@ -235,7 +232,6 @@
                                     <th>Rate Per Meter</th>
                                     <th>Amount</th>
                                     <th nowrap>Suplier Roll No.</th>
-                                    <th>Track Code</th>
                                     <th>Add</th>
                                     <th>Remove</th>
                                  </tr>
@@ -286,8 +282,6 @@
 
                                     <td><input type="number" step="any" min="0" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;" required></td>
 
-                                    <td><input type="text" name="track_code[]" id="track_code" style="width:80px;height:30px;" readOnly></td>
-
                                     <td>
                                        <input type="button" onclick="insertcone();" name="print" value="+" class="btn btn-warning pull-left AButton">
                                     </td>
@@ -310,7 +304,6 @@
                                     <th>Rate Per Meter</th>
                                     <th>Amount</th>
                                     <th>Suplier Roll No.</th>
-                                    <th>Track Code</th>
                                     <th>Add</th>
                                     <th>Remove</th>
                                  </tr>
@@ -362,7 +355,7 @@
                         <div class="col-sm-6">
                            <label class="form-label"></label>
                            <div class="form-group">
-                              <button type="submit" class="btn btn-primary w-md" onclick="UpdateBarcode(); EnableFields();" id="Submit">Submit</button>
+                              <button type="submit" class="btn btn-primary w-md" onclick="EnableFields();" id="Submit">Submit</button>
                               <a href="{{ Route('FabricInward.index') }}" class="btn btn-warning w-md">Cancel</a>
                            </div>
                         </div>
@@ -394,8 +387,6 @@
                      <input type="hidden" name="cp_id" class="form-control" id="cp_id1" value="1">
                      <input type="hidden" name="Ac_code" class="form-control" id="Ac_code1" value="">
                      <input type="hidden" name="tab_button" class="form-control" id="tab_button" value="2">
-                     <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
-                     <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
                      @endforeach
                      <div class="row">
                         <div class="col-md-3 mt-4 m-0">
@@ -521,7 +512,6 @@
                                     <th>Amount</th>
                                     <th nowrap>Suplier Roll No.</th>
                                     <th>Old Track Code</th>
-                                    <th>New Track Code</th>
                                     <th>Add</th>
                                     <th>Remove</th>
                                  </tr>
@@ -574,8 +564,6 @@
 
                                     <td><input type="text" id="track_code1" style="width:80px;height:30px;" value="-" readOnly></td>
 
-                                    <td><input type="text" name="track_code[]" id="newTrackCode" style="width:80px;height:30px;" readOnly></td>
-
                                     <td>
                                        <input type="button" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left addbtn AButton">
                                     </td>
@@ -599,7 +587,6 @@
                                     <th>Amount</th>
                                     <th>Suplier Roll No.</th>
                                     <th>Old Track Code</th>
-                                    <th>New Track Code</th>
                                     <th>Add</th>
                                     <th>Remove</th>
                                  </tr>
@@ -651,7 +638,7 @@
                         <div class="col-sm-6">
                            <label class="form-label"></label>
                            <div class="form-group">
-                              <button type="submit" class="btn btn-primary w-md" onclick="UpdateBarcode(); EnableFields();" id="Submit">Submit</button>
+                              <button type="submit" class="btn btn-primary w-md" onclick="EnableFields();" id="Submit">Submit</button>
                               <a href="{{ Route('FabricInward.index') }}" class="btn btn-warning w-md">Cancel</a>
                            </div>
                         </div>
@@ -663,94 +650,13 @@
             </div>
          </div>
       </div>
-   </div>
-   <input type="hidden" id="isLockFlag" value="{{ $isLockFlag }}">
-   <input type="hidden" id="isLockUserId" value="{{ $isLockUserId }}">
-   <meta name="csrf-token" content="{{ csrf_token() }}">
+   </div> 
 </div>
 
 <!-- end row -->
 <script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
 <!-- end row -->
 <script>
- /* ==========================
-   PAGE LOCK FRONTEND (WORKING)
-   ========================== */
-
-   const pageKey = "fabric_inward";
-   const userId  = document.getElementById("userId").value;
-   const csrf    = document.querySelector('meta[name="csrf-token"]').content;
-
-   // ------------------------------
-   // Generate unique tab ID
-   // ------------------------------
-   let tabId = sessionStorage.getItem("tabId_global");
-   if (!tabId) {
-      tabId = crypto.randomUUID();
-      sessionStorage.setItem("tabId_global", tabId);
-   }
-   console.log("TabId =", tabId);
-
-   // ------------------------------
-   // Helper function to POST JSON
-   // ------------------------------
-   function postJson(url, data) {
-      return fetch(url, {
-         method: "POST",
-         headers: {
-               "Content-Type": "application/json",
-               "X-CSRF-TOKEN": csrf,
-               "Accept": "application/json"
-         },
-         body: JSON.stringify(data)
-      }).then(r => r.json());
-   }
-
-   // ------------------------------
-   // Attempt to lock page on load
-   // ------------------------------
-   document.addEventListener("DOMContentLoaded", () => {
-      lockThisPage();
-   });
-
-   // ------------------------------
-   // Lock function
-   // ------------------------------
-   let isLocked = false;
-
-   function lockThisPage() {
-      postJson("/UpdatePageLockStatus", {
-         page_key: pageKey,
-         userId: userId,
-         isFlag: 1,
-         tabId: tabId
-      }).then(res => {
-         console.log("Lock response:", res);
-
-         if (res.status === "blocked" && res.tabId !== tabId) {
-               alert("This page is already open in another tab by user: " + res.userId);
-               window.location.href = "/FabricInward";
-         } else if (res.status === "locked") {
-               isLocked = true; // this tab now owns the lock
-         }
-      }).catch(err => console.error("Lock failed:", err));
-   }
-
-
-   // ------------------------------
-   // Unlock page on tab close
-   // ------------------------------
-   window.addEventListener("beforeunload", () => {
-      const json = JSON.stringify({
-         page_key: pageKey,
-         userId: userId,
-         isFlag: 0,
-         tabId: tabId
-      });
-
-      navigator.sendBeacon("/UpdatePageLockStatus", new Blob([json], { type: "application/json" }));
-   });
-
 
    $(document).on('keydown', 'input[type="number"]', function(e) {
        const invalidKeys = ['e', 'E', '+', '-'];
@@ -777,15 +683,13 @@
         }); 
    });
    
-   $("#return-tab").click(function () {
-      serBarocode1();
-   });
-
    function DisabledPO(el)
    {
       if($(el).is(":checked"))
       {
          
+         $("#return-tab").prop("disabled", true);
+
          $("#is_opening").attr("disabled", true);
          $("#po_code").attr("disabled", true);
          $("#po_type_id").val(2).attr("disabled", true);
@@ -933,6 +837,7 @@
    
    function DisableDropdown()
    {
+         $("#delivery-tab").prop("disabled", true);
          if($("#isOutsideVendor").is(":checked"))
          {
             $("#isReturnFabricInward").attr('disabled', true); 
@@ -949,6 +854,7 @@
 
    function GetDCDropdown()
    { 
+         $("#delivery-tab").prop('disabled', true);
          if($("#isReturnFabricInward").is(":checked"))
          {
             $("#footable_4").addClass("hide");
@@ -1014,63 +920,13 @@
    
    
    
-   var PBarcode=$("#PBarcode").val();
-   var CBarcode=$("#CBarcode").val();
-   
-   
-   function UpdateBarcode()
-   {
-        $("#PBarcode").val(PBarcode);
-        $("#CBarcode").val(CBarcode);
-         
-   }
-   
-   
    function EnableFields()
    {
        $("select").prop('disabled', false);
        $("input").prop('disabled', false);
    }
    
-   function serBarocode1()
-   { 
-      if($("#cp_id1").val()==1)
-      { 
-         ++PBarcode;
-         $("#newTrackCode").val('P'.concat(PBarcode.toString()));
-         //alert($("#track_code").val());
-      }
-      else if($("#cp_id1").val()==2)
-      {      
-         var CBar='';
-         CBar='I' + parseInt(++CBarcode);
-         $("#newTrackCode").val(CBar);
-      }
-   }
    
-   
-   function serBarocode()
-   { 
-      if($("#cp_id").val()==1)
-      { 
-         ++PBarcode;
-         $("#track_code").val('P'.concat(PBarcode.toString()));
-         //alert($("#track_code").val());
-      }
-      else if($("#cp_id").val()==2)
-      {      
-         var CBar='';
-         CBar='I' + parseInt(++CBarcode);
-         $("#track_code").val(CBar);
-      }
-   }
-   
-   
-   
-   $(document).ready(function()
-   {
-        serBarocode();
-   }); 
    
    function getPODetails()
    {     
@@ -1287,28 +1143,7 @@
       t4.required="true";
       cell4.appendChild(t4);
       
-      var cell7 = row.insertCell(10);
-      var t7=document.createElement("input");
-      t7.style="display: table-cell; width:80px;height:30px;";
-      t7.type="text";
-      t7.readOnly=true;
-      t7.id = "track_code"+indexcone;
-      t7.name="track_code[]";
-      if($("#cp_id").val()==1)
-      {
-         ++PBarcode;
-      t7.value='P'+PBarcode;
-      }
-      else
-      {
-         ++CBarcode;
-         t7.value='I'+CBarcode;
-      } 
-      
-      
-      cell7.appendChild(t7);   
-      
-      var cell8=row.insertCell(11);
+      var cell8=row.insertCell(10);
       var btnAdd = document.createElement("INPUT");
       btnAdd.id = "Abutton";
       btnAdd.type = "button";
@@ -1318,7 +1153,7 @@
       btnAdd.setAttribute("onclick", "insertcone();");
       cell8.appendChild(btnAdd);
       
-      var cell9=row.insertCell(12);
+      var cell9=row.insertCell(11);
       var btnRemove = document.createElement("INPUT");
       btnRemove.id = "Dbutton";
       btnRemove.type = "button";
@@ -1498,23 +1333,6 @@
       tc1.value = '-';
       tc1.style = "display: table-cell; width:80px;height:30px;";
       cell11.appendChild(tc1);
-
-      // ---------------- Track Code ----------------
-      var cell12 = row.insertCell(-1);
-      var tc = document.createElement("input");
-      tc.type = "text";
-      tc.readOnly = true;
-      tc.id = "track_code" + indexcone;
-      tc.name = "track_code[]";
-      if ($("#cp_id1").val() == 1) {
-         ++PBarcode;
-         tc.value = 'P' + PBarcode;
-      } else {
-         ++CBarcode;
-         tc.value = 'I' + CBarcode;
-      }
-      tc.style = "display: table-cell; width:80px;height:30px;";
-      cell12.appendChild(tc);
 
       // ---------------- ADD BUTTON ----------------
       var cell13 = row.insertCell(-1);
@@ -1836,7 +1654,8 @@
    
    function getDetails(po_code)
    {
-       
+
+         $("#return-tab").prop("disabled", true);
          $.ajax({
             type:"GET",
             url:"{{ route('getPoMasterDetail') }}",

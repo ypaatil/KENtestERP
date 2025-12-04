@@ -181,13 +181,9 @@ class FabricInwardController extends Controller
         
         $vendorData = DB::select("select ac_short_name, ledger_master.ac_code from vendor_purchase_order_master 
                             INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId GROUP BY vendor_purchase_order_master.vendorId");
-        // DB::enableQueryLog();                  
-        $PageLock = DB::table('page_locks')->select('isFlag', 'userId')->where('page_key', 'fabric_inward')->get();
-        // dd(DB::getQueryLog());
-        $isLockFlag =  isset($PageLock[0]->isFlag) ? $PageLock[0]->isFlag : 0;       
-        $isLockUserId =  isset($PageLock[0]->userId) ? $PageLock[0]->userId : 0;               
+        // DB::enableQueryLog();                                 
                
-        return view('FabricInwardMaster',compact('isLockFlag','isLockUserId','vendorData','Ledger','FabricCuttingOutwardList','RackMasterList','LocationList', 'POList', 'PartList','FGList','CPList', 'counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','FGECodeList','BillToList'));
+        return view('FabricInwardMaster',compact('vendorData','Ledger','FabricCuttingOutwardList','RackMasterList','LocationList', 'POList', 'PartList','FGList','CPList', 'counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','FGECodeList','BillToList'));
 
     }
 
@@ -245,24 +241,20 @@ class FabricInwardController extends Controller
     if(count($item_code)>0)
     {
         
-        $CBarcodes1 = isset($request->CBarcode) ? $request->CBarcode : 0;
-        $PBarcodes1 = isset($request->PBarcode) ? $request->PBarcode : 0;
-        
-        DB::select("update counter_number set tr_no=tr_no + 1, PBarcode='".$PBarcodes1."', CBarcode='".$CBarcodes1."'   where c_name ='C1' AND type='FABRIC_INWARD'"); 
-    
-        $track_code = CounterNumberModel::where('c_code','=',$request->c_code )->where('type','=','FABRIC_INWARD' )->first();  
-       
-        $PBarcodes= $track_code->PBarcode;
-        $CBarcodes= $track_code->CBarcode;
-        
         if(isset($request->item_code) && is_array($request->item_code))
         {
             for($x=0; $x<count($request->item_code); $x++) 
             { 
+                $latestTrackCodeData = DB::SELECT("SELECT track_code AS latest_track_code,
+                        CONCAT(
+                            LEFT(track_code, 1), 
+                            CAST(SUBSTRING(track_code, 2) AS UNSIGNED) + 1
+                        ) AS new_track_code  FROM inward_details ORDER BY CAST(SUBSTRING(track_code, 2) AS UNSIGNED) DESC  LIMIT 1");
+
+                $latest_track_code = isset($latestTrackCodeData[0]->new_track_code) ? $latestTrackCodeData[0]->new_track_code : '';
+
                 if($request->cp_id==1)
-                {
-                         if($request->track_code[$x]==''){ $PBarcodeFinal='P'.++$PBarcodes; }else{$PBarcodeFinal=$request->track_code[$x];}
-                         
+                {                         
                             $purchaseOrderData = DB::table('purchase_order')->where('pur_code', $po_code)->first();
             
                             $buyer_id = isset($purchaseOrderData->buyer_id) ? $purchaseOrderData->buyer_id : 0;
@@ -283,7 +275,7 @@ class FabricInwardController extends Controller
                             'amount' => $request->amounts[$x],
                             'shade_id' =>'1',
                             'suplier_roll_no' => $request->suplier_roll_no[$x],
-                            'track_code' => $PBarcodeFinal,
+                            'track_code' => $latest_track_code,
                             'is_opening'=>$is_opening,
                             'isReturnFabricInward'=>$request->isReturnFabricInward,
                             'vw_code'=>$request->vw_code,
@@ -300,7 +292,7 @@ class FabricInwardController extends Controller
                                 'item_code'=>$request->item_code[$x], 
                                 'part_id' =>$request->part_id[$x],
                                 'shade_id' =>'1',
-                                'track_code' => $PBarcodeFinal,
+                                'track_code' => $latest_track_code,
                                 'old_meter'=>'0',
                                 'short_meter'=>'0',
                                 'rejected_meter'=>'0',
@@ -364,7 +356,7 @@ class FabricInwardController extends Controller
                             $item_description =  str_replace('"', '', $item_description);
                             $po_status = $po_status;
                             $job_status_id = $job_status_id;
-                            $track_name = $PBarcodeFinal;
+                            $track_name = $latest_track_code;
                             $grn_qty = $request->meter[$x];
                             $rate = $request->item_rates[$x];
                             $rack_id = 0;
@@ -378,8 +370,6 @@ class FabricInwardController extends Controller
                     else
                     {
         
-                        if($request->track_code[$x]==''){ $CBarcodeFinal='I'.++$CBarcodes; }else{$CBarcodeFinal=$request->track_code[$x];}
-                        
                         $purchaseOrderData = DB::table('purchase_order')->where('pur_code', $request->po_code)->first();
         
                         $buyer_id = isset($purchaseOrderData->buyer_id) ? $purchaseOrderData->buyer_id : 0;
@@ -400,7 +390,7 @@ class FabricInwardController extends Controller
                             'amount' => $request->amounts[$x],
                             'shade_id' =>'1',
                             'suplier_roll_no' => $request->suplier_roll_no[$x],
-                            'track_code' => $CBarcodeFinal,
+                            'track_code' => $latest_track_code,
                             'usedflag' => '0',
                             'is_opening'=>$is_opening,
                             'buyer_id'=>$buyer_id,
@@ -419,7 +409,7 @@ class FabricInwardController extends Controller
                                     'item_code'=>$request->item_code[$x], 
                                     'part_id' =>$request->part_id[$x],
                                     'shade_id' =>'1',
-                                    'track_code' =>$CBarcodeFinal,
+                                    'track_code' =>$latest_track_code,
                                     'old_meter'=>'0',
                                     'short_meter'=>'0',
                                     'rejected_meter'=>'0',
@@ -487,7 +477,7 @@ class FabricInwardController extends Controller
                             $item_description =  str_replace('"', '', $item_description);
                             $po_status = $po_status;
                             $job_status_id = $job_status_id;
-                            $track_name = $CBarcodeFinal;
+                            $track_name = $latest_track_code;
                             $grn_qty = $request->meter[$x];
                             $rate = $request->item_rates[$x];
                             $rack_id = 0;
@@ -584,15 +574,9 @@ class FabricInwardController extends Controller
 
         $vendorData = DB::select("select ac_short_name, ledger_master.ac_code from vendor_purchase_order_master 
                             INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId GROUP BY vendor_purchase_order_master.vendorId");
-    
-                             // DB::enableQueryLog();                  
-        $PageLock = DB::table('page_locks')->select('isFlag', 'userId')->where('page_key', 'fabric_inward')->get();
-        // dd(DB::getQueryLog());
-        $isLockFlag =  isset($PageLock[0]->isFlag) ? $PageLock[0]->isFlag : 0;       
-        $isLockUserId =  isset($PageLock[0]->userId) ? $PageLock[0]->userId : 0;               
-               
+            
 
-        return view('FabricInwardMasterEdit',compact('isLockFlag','isLockUserId','vendorData','FabricCuttingOutwardList','FabricInwardMasterList','FGECodeList','POList','LocationList',  'RackMasterList', 'PartList', 'Ledger','CPList','FGList', 'FabricInwardDetails','counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','BillToList'));
+        return view('FabricInwardMasterEdit',compact('vendorData','FabricCuttingOutwardList','FabricInwardMasterList','FGECodeList','POList','LocationList',  'RackMasterList', 'PartList', 'Ledger','CPList','FGList', 'FabricInwardDetails','counter_number','ItemList','POTypeList','gstlist','BOMLIST','vendorProcessOrderList','BillToList'));
     }
 
     /**
@@ -3829,19 +3813,10 @@ P2
         $html = '';
         $srno = 1;
         $srno1 = 1;
-        $user_type=Session::get('user_type');
-        $last = DB::table('inward_details')
-            ->join('inward_master', 'inward_master.in_code', '=', 'inward_details.in_code')
-            ->where('inward_details.track_code', 'like', 'P%')
-            ->orderBy('inward_master.sr_no', 'DESC')
-            ->value('inward_details.track_code');
+        
 
         foreach($detailData as $details)
         {
-
-            $number = (int) substr($last, 1) + $srno1; // remove 'P'
-            $newTrackCode = 'P' . ($number);
-           
             $html .= '<tr>
                             <td><input type="text" name="id[]" value="'.($srno++).'" id="id" style="width:50px;" readonly></td>
 
@@ -3900,8 +3875,6 @@ P2
 
                             <td><input type="text"  id="track_code1" value="'.$details->roll_no.'" style="width:80px;height:30px;" readonly ></td>
 
-                            <td><input type="text" name="track_code[]" id="newTrackCode" value="'.$newTrackCode.'" style="width:80px;height:30px;" readonly ></td>
-
                             <td>
                                 <input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left AButton" disabled> 
                             </td>
@@ -3915,97 +3888,6 @@ P2
         
         return response()->json(['vpo_code'=>$vpo_code,'html'=>$html]);
     } 
-   /**
-     * Update page lock status (lock/unlock)
-     */
-    public function UpdatePageLockStatus(Request $request)
-    {
-        $pageKey = $request->input('page_key');
-        $userId  = $request->input('userId', null);
-        $isFlag  = intval($request->input('isFlag', 0));
-        $tabId   = $request->input('tabId');
-
-        if (!$pageKey || !$tabId) {
-            return response()->json(['error' => 'page_key and tabId required'], 400);
-        }
-
-        $lock = PageLockModel::where('page_key', $pageKey)->first();
-
-        if ($isFlag === 1) {
-            // BLOCK if another tab owns the lock
-            if ($lock && $lock->isFlag == 1 && $lock->tabId !== $tabId) {
-                return response()->json([
-                    'status' => 'blocked',
-                    'userId' => $lock->userId,
-                    'tabId'  => $lock->tabId
-                ]);
-            }
-
-            // Lock or refresh for this tab
-            PageLockModel::updateOrCreate(
-                ['page_key' => $pageKey],
-                [
-                    'userId'    => $userId,
-                    'locked_at' => now(),
-                    'isFlag'    => 1,
-                    'tabId'     => $tabId
-                ]
-            );
-
-            return response()->json([
-                'status' => 'locked',
-                'tabId'  => $tabId
-            ]);
-        }
-
-        // UNLOCK request (only this tab can unlock)
-        if ($isFlag === 0) {
-            if ($lock && $lock->tabId === $tabId) {
-                $lock->update([
-                    'isFlag'    => 0,
-                    'userId'    => null,
-                    'tabId'     => null,
-                    'locked_at' => null
-                ]);
-            }
-            return response()->json(['status' => 'unlocked']);
-        }
-
-        return response()->json(['error' => 'invalid isFlag'], 400);
-    }
-
-    /**
-     * PageLockStatus
-     * Called on page load before locking
-     */
-    public function PageLockStatus(Request $request)
-    {
-        $pageKey = $request->input('page_key');
-
-        if (!$pageKey) {
-            return response()->json([
-                'error' => 'page_key required'
-            ], 400);
-        }
-
-        $lock = PageLockModel::where('page_key', $pageKey)->first();
-
-        // If no record → page free
-        if (!$lock) {
-            return response()->json([
-                'isFlag' => 0,
-                'userId' => null,
-                'tabId'  => null
-            ]);
-        }
-
-        return response()->json([
-            'isFlag' => intval($lock->isFlag),
-            'userId' => $lock->userId,
-            'tabId'  => $lock->tabId
-        ]);
-    }
-
-
+   
 
 }

@@ -408,7 +408,7 @@
                      <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $FabricInwardMasterList->c_code }}">
                      <input type="hidden" name="created_at" class="form-control" id="created_at" value="{{ $FabricInwardMasterList->created_at }}">  
                      <input type="hidden" name="cp_id" class="form-control" id="cp_id" value="1">
-                     <input type="hidden" name="tab_button" class="form-control" id="tab_button" value="1">
+                     <input type="hidden" name="tab_button" class="form-control" id="tab_button" value="2">
                      <input type="hidden" name="Ac_code" class="form-control" id="Ac_code1" value="{{ $FabricInwardMasterList->Ac_code }}">
                      <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="formrow-email-input"> 
                      <div class="col-md-3 mt-4 m-0">
@@ -700,172 +700,13 @@
       </div>
       <!-- end card -->
    </div>
-   <!-- end col -->
-   <!-- end col -->
-   <input type="hidden" id="isLockFlag" value="{{ $isLockFlag }}">
-   <input type="hidden" id="isLockUserId" value="{{ $isLockUserId }}">
+   <!-- end col --> 
 </div>
 <!-- end row -->
 <script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
 <!-- end row -->
 <script>
-
- // ------------------------------------------------
-   // BASIC CONFIG
-   // ------------------------------------------------
-   const pageKey = "fabric_inward";
-   const userId = document.getElementById("userId").value;
-
-   // USER HOLDS LOCK FLAG
-   let hasLock = false;
-
-
-   // ------------------------------------------------
-   // ON PAGE LOAD → CHECK STATUS
-   // ------------------------------------------------
-   document.addEventListener("DOMContentLoaded", function () {
-
-      var username = document.getElementById("username").value;
-      fetch("/PageLockStatus", {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({ page_key: pageKey })
-      })
-      .then(r => r.json())
-      .then(res => {
-
-         // --- Case 1: Page not locked → Lock it ---
-         if (res.isFlag == 0) {
-               LockPage();
-               return;
-         }
-
-         // --- Case 2: Locked by someone else ---
-         if (res.isFlag == 1 && parseInt(res.userId) !== parseInt(userId)) {
-               ShowBlockMessage("User : " + username);
-               DisablePage();
-               return;
-         }
-
-         // --- Case 3: Locked by same user ---
-         if (res.isFlag == 1 && parseInt(res.userId) === parseInt(userId)) {
-               hasLock = true;
-               console.log("Already locked by same user.");
-         }
-
-      });
-   });
-
-
-   // ------------------------------------------------
-   // FUNCTION : LOCK PAGE
-   // ------------------------------------------------
-   function LockPage() {
-
-      var username = document.getElementById("username").value;
-
-      fetch("/pageLock", {
-         method: "POST",
-         headers: { "Content-Type": "application/json" },
-         body: JSON.stringify({
-               page_key: pageKey,
-               userId: userId,
-               isFlag: 1
-         })
-      })
-      .then(r => r.json())
-      .then(res => {
-
-         if (res.status === "blocked") {
-               ShowBlockMessage("User : " + username);
-               DisablePage();
-               return;
-         }
-
-         hasLock = true;
-         console.log("Page locked successfully.");
-      });
-   }
-
-
-
-   // ------------------------------------------------
-   // UNLOCK ONLY WHEN USER REALLY LEAVES
-   // ------------------------------------------------
-   window.addEventListener("beforeunload", function (e) {
-
-      // If page reload → DO NOT unlock
-      const navType = performance.getEntriesByType("navigation")[0].type;
-      if (navType === "reload") return;
-
-      // Unlock only if THIS user holds the lock
-      if (!hasLock) return;
-
-      const data = JSON.stringify({
-         page_key: pageKey,
-         userId: userId,
-         isFlag: 0
-      });
-
-      navigator.sendBeacon("/pageLock", new Blob([data], { type: "application/json" }));
-   });
-
-
-
-
-   // ------------------------------------------------
-   // UI HANDLING
-   // ------------------------------------------------
-   function DisablePage() {
-      document.querySelectorAll("input, select, textarea, button")
-         .forEach(el => el.disabled = true);
-   }
-
-
-   // ------------------------------------------------
-   // OVERLAY POPUP
-   // ------------------------------------------------
-   function ShowBlockMessage(msg) {
-
-      document.body.insertAdjacentHTML('beforeend', `
-         <div id="lockOverlay" style="
-               position: fixed; inset: 0;
-               background: rgba(0,0,0,0.55);
-               display: flex;
-               justify-content: center;
-               align-items: center;
-               z-index: 999999;">
-               
-               <div style="
-                  background: white;
-                  padding: 20px 30px;
-                  border-radius: 14px;
-                  width: 320px;
-                  text-align: center;
-                  font-family: Segoe UI, sans-serif;">
-                  
-                  <h3 style="margin-bottom: 10px;">Page Locked</h3>
-                  <p style="margin-bottom: 20px;">${msg} is currently using this page.</p>
-
-                  <button onclick="CloseOverlay()" style="
-                     background: #25D366;
-                     color: white;
-                     padding: 8px 25px;
-                     border-radius: 20px;
-                     border: none;
-                     cursor: pointer;">
-                     OK
-                  </button>
-               </div>
-         </div>
-      `);
-   }
-
-   function CloseOverlay() {
-      const o = document.getElementById("lockOverlay");
-      if (o) o.remove();
-   }
-   
+  
    $(document).on('keydown', 'input[type="number"]', function(e) {
        const invalidKeys = ['e', 'E', '+', '-'];
    
