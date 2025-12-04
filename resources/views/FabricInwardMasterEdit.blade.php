@@ -272,7 +272,7 @@
                                  <td><input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="{{ $List->taga_qty }}" id="taga_qty1" style="width:50px;"/><input type="number" step="0.01"class="METER" name="meter[]" onkeyup="mycalc();" value="{{ $List->meter }}" id="meter1" style="width:80px; height:30px;" required  {{$dis}}  /></td>
                                  <td><input type="number" step="any"  name="gram_per_meter[]" onkeyup="mycalc();" value="{{ $List->gram_per_meter }}" id="gram_per_meter" style="width:80px; height:30px;" required  {{$dis}}  /></td>
                                  <td><input type="number" step="any" class="KG" name="kg[]" onkeyup="mycalc();" value="{{ $List->kg }}" id="kg" style="width:80px; height:30px;" readonly  {{$dis}}  /></td>
-                                 <td><input type="number" step="any"    name="item_rates[]"   value="{{ $List->item_rate }}" id="item_rates" style="width:80px;height:30px;" readonly    />
+                                 <td><input type="number" step="any"    name="item_rates[]"   value="{{ $List->item_rate }}" id="item_rates" style="width:80px;height:30px;" />
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;" readonly/></td>
                                  <td><input type="number" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}} required /></td>
                                  <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code" style="width:80px; height:30px;" required readOnly/></td>
@@ -1404,7 +1404,7 @@
       t3.id = "item_rates"+indexcone;
       t3.name="item_rates[]";
       t3.value="0";
-      t3.readOnly=true;
+      t3.readOnly=false;
       if($('#is_opening').prop('checked')) 
       {t3.readOnly=false;}else{t3.readOnly=true;}
       cell3.appendChild(t3);
