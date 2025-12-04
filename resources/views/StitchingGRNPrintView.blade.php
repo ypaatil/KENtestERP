@@ -514,7 +514,7 @@
                         </div>
                         <div class="col-md-6 p-2 ">
                             <div class="info-row">
-                                <div class="label">Main style Name</div>
+                                <div class="label">Main Style Name</div>
                                 <div class="colon">:</div>
                                 <div class="value">{{ $StitchingInhouseMaster[0]->mainstyle_name }} </div>
                             </div>
@@ -642,7 +642,7 @@
                                 @if(isset($row->s20)) <td class="text-end">{{number_format($row->s20)}}</td> @php $s20Total +=
                                 $row->s20; @endphp @endif
 
-                                <td class="text-end">{{$row->size_qty_total}}</td>
+                                <td class="text-end">{{number_format($row->size_qty_total)}}</td>
                             </tr>
 
                             @php
@@ -663,16 +663,21 @@
                                 @php
                                 $var = "s".$i."Total";
                                 @endphp
-                                <td class="text-end fw-bold">{{ $$var }}</td>
+                                <td class="text-end fw-bold">{{ number_format($$var) }}</td>
                                 @php $i++; @endphp
                                 @endforeach
 
-                                <td class="text-end fw-bold">{{ $totalQty }}</td>
+                                <td class="text-end fw-bold">{{ number_format($totalQty) }}</td>
                             </tr>
                         </tfoot>
 
 
                     </table>
+                     <footer>
+                        <div class="row">
+                            <div class="col-md-6"><b> Remark:</b> </div>
+                        </div>
+                    </footer>
 
 
                     <table class="table" style="margin-top: 100px;">
@@ -685,11 +690,7 @@
 
                     </table>
                     <!-- Footer -->
-                    <footer>
-                        <div class="row">
-                            <div class="col-md-6"><b>Order Remark:</b> </div>
-                        </div>
-                    </footer>
+                   
 
                 </div>
             </main>
