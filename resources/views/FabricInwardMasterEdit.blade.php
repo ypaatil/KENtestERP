@@ -81,10 +81,6 @@
                         <div class="mb-3">
                            <label for="in_date" class="form-label">In Date</label>
                            <input type="date" name="in_date" class="form-control" id="in_date" value="{{ $FabricInwardMasterList->in_date }}" required>
-                           @foreach($counter_number as  $row)
-                           <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
-                           <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
-                           @endforeach 
                            <input type="hidden" name="in_code" class="form-control" id="in_code" value="{{ $FabricInwardMasterList->in_code }}">
                            <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $FabricInwardMasterList->c_code }}">
                            <input type="hidden" name="created_at" class="form-control" id="created_at" value="{{ $FabricInwardMasterList->created_at }}">  
@@ -163,7 +159,7 @@
                      <div class="col-md-2 hide">
                         <div class="mb-3">
                            <label for="formrow-inputState" class="form-label">CP Type</label>
-                           <select name="cp_id" class="form-select" id="cp_id" required onchange="serBarocode();" disabled>
+                           <select name="cp_id" class="form-select" id="cp_id" required  disabled>
                               <option value="">--Select CP Type--</option>
                               @foreach($CPList as  $rowCP)
                               {
@@ -400,10 +396,6 @@
                   @csrf 
                   <div class="row">  
                      <input type="hidden" name="in_date" class="form-control" id="in_date" value="{{ $FabricInwardMasterList->in_date }}" required>
-                     @foreach($counter_number as  $row)
-                     <input type="hidden" name="PBarcode" class="form-control" id="PBarcode" value="{{ $row->PBarcode }}">
-                     <input type="hidden" name="CBarcode" class="form-control" id="CBarcode" value="{{ $row->CBarcode }}">
-                     @endforeach 
                      <input type="hidden" name="in_code" class="form-control" id="in_code" value="{{ $FabricInwardMasterList->in_code }}">
                      <input type="hidden" name="c_code" class="form-control" id="c_code" value="{{ $FabricInwardMasterList->c_code }}">
                      <input type="hidden" name="created_at" class="form-control" id="created_at" value="{{ $FabricInwardMasterList->created_at }}">  
@@ -1064,53 +1056,6 @@
       $("#fge_code").prop("required", false);
    }
    
-   var PBarcode=$("#PBarcode").val();
-   var CBarcode=$("#CBarcode").val();
-   
-   
-   function UpdateBarcode()
-   {
-       $("#PBarcode").val(PBarcode);
-        $("#CBarcode").val(CBarcode);
-   }
-   
-   $("#return-tab").click(function () {
-      serBarocode1();
-   });
-
-      function serBarocode1()
-   { 
-      if($("#cp_id").val()==1)
-      { 
-         ++PBarcode;
-         $("#track_code1").val('P'.concat(PBarcode.toString()));
-         //alert($("#track_code").val());
-      }
-      else if($("#cp_id").val()==2)
-      {      
-         var CBar='';
-         CBar='I' + parseInt(++CBarcode);
-         $("#track_code1").val(CBar);
-      }
-   }
-   
-
-   function serBarocode()
-   {
-              if($("#cp_id").val()==1)
-              {
-                       
-                      ++PBarcode;
-                      $("#track_code").val('P'.concat(PBarcode.toString()));
-                     //alert($("#track_code").val());
-              }
-              else if($("#cp_id").val()==2)
-              {       var CBar='';
-                      CBar='I' + parseInt(++CBarcode);
-                       $("#track_code").val(CBar);
-              }
-   }
-   
    
    var indexcone = 2;
    
@@ -1248,16 +1193,9 @@
     tc.readOnly = true;
     tc.id = "track_code" + indexcone;
     tc.name = "track_code[]";
-
-    if ($("#cp_id").val() == 1) {
-        ++PBarcode;
-        tc.value = 'P' + PBarcode;
-    } else {
-        ++CBarcode;
-        tc.value = 'I' + CBarcode;
-    }
-   tc.style = "display: table-cell; width:80px;height:30px;";
-   cell11.appendChild(tc);
+    tc.value = '-';
+    tc.style = "display: table-cell; width:80px;height:30px;";
+    cell11.appendChild(tc);
     
    var t14=document.createElement("input"); 
    t14.type="hidden";
@@ -1503,14 +1441,7 @@
       t7.readOnly=true; 
       t7.id = "track_code"+indexcone;
       t7.name="track_code[]";
-      if($("#cp_id").val()==1)
-      {
-      t7.value='P'+(++PBarcode);
-      }
-      else
-      {
-         t7.value='I'+(++CBarcode);
-      }
+      t7.value='-';
       cell7.appendChild(t7);
     
       var t14=document.createElement("input"); 
