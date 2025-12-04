@@ -510,8 +510,7 @@
                                     <th>KG</th>
                                     <th>Rate Per Meter</th>
                                     <th>Amount</th>
-                                    <th nowrap>Suplier Roll No.</th>
-                                    <th>Old Track Code</th>
+                                    <th nowrap>Suplier Roll No.</th> 
                                     <th>Add</th>
                                     <th>Remove</th>
                                  </tr>
@@ -561,9 +560,7 @@
                                     <td><input type="number" step="any" min="0" class="AMT" readOnly name="amounts[]" value="0" id="amounts" style="width:80px;height:30px;"></td>
 
                                     <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="" id="suplier_roll_no" style="width:100px;height:30px;" required></td>
-
-                                    <td><input type="text" id="track_code1" style="width:80px;height:30px;" value="-" readOnly></td>
-
+ 
                                     <td>
                                        <input type="button" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left addbtn AButton">
                                     </td>
@@ -586,7 +583,6 @@
                                     <th>Rate Per Meter</th>
                                     <th>Amount</th>
                                     <th>Suplier Roll No.</th>
-                                    <th>Old Track Code</th>
                                     <th>Add</th>
                                     <th>Remove</th>
                                  </tr>
@@ -1227,8 +1223,7 @@
       var cell4 = row.insertCell(-1);
       var pt = $("#part_id").clone(false);
       pt.attr("id", "part_id" + indexcone);
-      pt.attr("name", "part_id[]");
-      pt.val("");
+      pt.attr("name", "part_id[]"); 
       pt.appendTo(cell4);
 
       // Hidden taga qty
@@ -1322,17 +1317,7 @@
       roll.name = "suplier_roll_no[]";
       roll.required = true;
       roll.style = "display: table-cell; width:100px;height:30px;";
-      cell10.appendChild(roll);
-
-      // ---------------- Track Code (readonly) ----------------
-      var cell11 = row.insertCell(-1);
-      var tc1 = document.createElement("input");
-      tc1.type = "text";
-      tc1.readOnly = true;
-      tc1.id = "track_code1" + indexcone;
-      tc1.value = '-';
-      tc1.style = "display: table-cell; width:80px;height:30px;";
-      cell11.appendChild(tc1);
+      cell10.appendChild(roll); 
 
       // ---------------- ADD BUTTON ----------------
       var cell13 = row.insertCell(-1);

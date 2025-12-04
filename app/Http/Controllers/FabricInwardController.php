@@ -3739,22 +3739,40 @@ P2
 
     public function GetItemPucharseOrder(Request $request)
     {
-        // DB::enableQueryLog();
-        $vendorPurchaseOrderList = DB::query()
-            ->fromSub(function ($query) use ($request) {
-                $query->from('vendor_purchase_order_fabric_details')
-                    ->select('vendor_purchase_order_fabric_details.item_code')
-                    ->where('vpo_code', $request->vpo_code);
-            }, 'combined')
-            ->join('item_master', 'item_master.item_code', '=', 'combined.item_code')
-            ->select('item_master.item_code', 'item_master.item_name')
-            ->groupBy('combined.item_code', 'item_master.item_name')
-            ->get();
+        $vpoCode = $request->vpo_code;
 
-        // dd(DB::getQueryLog());
+        $vendorPurchaseOrderList = DB::select("
+            SELECT   
+                imast.item_name,
+                fod.item_code
+            FROM fabric_outward_details AS fod
+            INNER JOIN item_master AS imast 
+                ON imast.item_code = fod.item_code
+            WHERE fod.vpo_code = ?
+            GROUP BY fod.item_code, imast.item_name
+
+            UNION
+
+            SELECT  
+                imast2.item_name,
+                vpod.item_code
+            FROM vendor_purchase_order_detail AS vpod
+            LEFT JOIN fabric_outward_details AS fod2 
+                ON fod2.vpo_code = vpod.vpo_code 
+                AND fod2.item_code = vpod.item_code
+            INNER JOIN item_master AS imast2 
+                ON imast2.item_code = vpod.item_code
+            WHERE vpod.vpo_code = ?
+            GROUP BY vpod.item_code, imast2.item_name
+        ", [
+            $vpoCode,
+            $vpoCode
+        ]);
+
+        // Generate dropdown
         $html = '<option value="">--Select Item--</option>';
 
-        if ($vendorPurchaseOrderList->count() > 0) {
+        if (count($vendorPurchaseOrderList) > 0) {
             foreach ($vendorPurchaseOrderList as $row) {
                 $html .= '<option value="' . $row->item_code . '">(' . $row->item_code . ') ' . $row->item_name . '</option>';
             }
@@ -3763,40 +3781,60 @@ P2
         return response()->json(['html' => $html]);
     }
 
+
     public function GetFabricInwardOutwardData(Request $request)
     {
         $detailData = DB::select("
-            SELECT 
-                SUM(fod.meter) AS total_meter,
+                            SELECT 
+                                SUM(fod.meter) AS total_meter,
+                                (
+                                    SELECT IFNULL(SUM(id.meter), 0)
+                                    FROM inward_details id
+                                    INNER JOIN inward_master im 
+                                        ON im.in_code = id.in_code
+                                    WHERE id.item_code = fod.item_code
+                                    AND im.vpo_code = fod.vpo_code
+                                ) AS received,
+                                imast.item_name,
+                                fod.item_code
+                            FROM fabric_outward_details fod
+                            INNER JOIN item_master imast 
+                                ON imast.item_code = fod.item_code
+                            WHERE fod.vpo_code = ?
+                            GROUP BY fod.item_code, imast.item_name
 
-                (
-                    SELECT IFNULL(SUM(id.meter), 0)
-                    FROM inward_details id
-                    INNER JOIN inward_master im 
-                        ON im.in_code = id.in_code
-                    WHERE id.item_code = vpod.item_code
-                    AND im.vpo_code = vpod.vpo_code
-                ) AS received,
+                            UNION
 
-                imast.item_name,
-                vpod.item_code
-                
-            FROM vendor_purchase_order_detail vpod
-            
-            LEFT JOIN fabric_outward_details fod 
-                ON fod.vpo_code = vpod.vpo_code 
-            AND fod.item_code = vpod.item_code
+                            SELECT 
+                                SUM(fod2.meter) AS total_meter,
+                                (
+                                    SELECT IFNULL(SUM(id.meter), 0)
+                                    FROM inward_details id
+                                    INNER JOIN inward_master im 
+                                        ON im.in_code = id.in_code
+                                    WHERE id.item_code = vpod.item_code
+                                    AND im.vpo_code = vpod.vpo_code
+                                ) AS received,
+                                imast2.item_name,
+                                vpod.item_code
+                            FROM vendor_purchase_order_detail vpod
+                            
+                            LEFT JOIN fabric_outward_details fod2 
+                                ON fod2.vpo_code = vpod.vpo_code 
+                                AND fod2.item_code = vpod.item_code
 
-            INNER JOIN item_master imast 
-                ON imast.item_code = vpod.item_code
+                            INNER JOIN item_master imast2 
+                                ON imast2.item_code = vpod.item_code
 
-            WHERE vpod.vpo_code = ?
+                            WHERE vpod.vpo_code = ?
 
-            GROUP BY vpod.item_code, imast.item_name
-        ", [$request->vpo_code]);
+                            GROUP BY vpod.item_code, imast2.item_name
+                        ", [
+                            $request->vpo_code,
+                            $request->vpo_code
+                        ]);
 
 
-                                  
         $html = '';
         $sr_no = 1; 
         
@@ -3898,8 +3936,6 @@ P2
                             <td><input type="number" step="any" class="AMT" readOnly name="amounts[]" value="'.($details->outward_meter * $details->item_rate).'" id="amounts" style="width:80px;height:30px;" readonly></td>
 
                             <td><input type="text" class="suplier_roll_no" name="suplier_roll_no[]" value="'.$details->suplier_roll_no.'" id="suplier_roll_no" style="width:100px;height:30px;"></td>
-
-                            <td><input type="text"  id="track_code1" value="'.$details->roll_no.'" style="width:80px;height:30px;" readonly ></td>
 
                             <td>
                                 <input type="button" style="width:40px;" onclick="insertcone1();" name="AButton" value="+" class="btn btn-warning pull-left AButton" disabled> 
