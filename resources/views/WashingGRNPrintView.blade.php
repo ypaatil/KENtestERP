@@ -739,11 +739,6 @@ $washingOutData = explode("-", $BOMList[0]->vpo_code);
 
                     </table>
 
-                    <table class="table border-top border-down">
-                        <thead>
-                            <th colspan="10" class="text-center">NOT FOR SALE, FOR JOB WORK ONLY </th>
-                        </thead>
-                    </table>
                     <div class="col-md-12 p-0">
                         <h4 class="mt-2" style="font-size:15px;"><b>Comments:</b> {{$BOMList[0]->narration}}</h4>
                     </div>
