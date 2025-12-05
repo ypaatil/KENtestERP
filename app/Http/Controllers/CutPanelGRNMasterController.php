@@ -1448,7 +1448,7 @@ foreach($SizeList as $sz)
     {
         
          
-    //   DB::enableQueryLog();
+   
        
          $CutPanelGRNMaster = CutPanelGRNMasterModel::join('usermaster', 'usermaster.userId', '=', 'cut_panel_grn_master.userId')
          ->join('ledger_master', 'ledger_master.Ac_code', '=', 'cut_panel_grn_master.vendorId')
@@ -1470,7 +1470,7 @@ foreach($SizeList as $sz)
             $no=$no+1;
         }
         $sizes=rtrim($sizes,',');
-        //  DB::enableQueryLog();  
+    
           $CutPanelGRNList = DB::select("SELECT   item_master.item_name,	cut_panel_grn_size_detail.color_id, color_master.color_name, ".$sizes.", 
         sum(size_qty_total) as size_qty_total  from 	cut_panel_grn_size_detail 
         inner join item_master on item_master.item_code=	cut_panel_grn_size_detail.item_code 
