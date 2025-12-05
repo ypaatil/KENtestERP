@@ -225,7 +225,7 @@ class VendorPurchaseOrderController extends Controller
                 ->join('sub_style_master', 'sub_style_master.substyle_id', '=', 'vendor_purchase_order_master.substyle_id', 'left outer')  
                 ->join('fg_master', 'fg_master.fg_id', '=', 'vendor_purchase_order_master.fg_id', 'left outer')   
                 ->where('vendor_purchase_order_master.delflag','=', '0')
-                ->whereIN('vendor_purchase_order_master.vpo_code', [$vpoCodes])
+                ->whereIN('vendor_purchase_order_master.vpo_code', $vpoCodes)
                 ->get(['vendor_purchase_order_master.*','usermaster.username','ledger_master.Ac_name','LM2.Ac_name as vendorName','LM2.address', 'LM2.pan_no','LM2.gst_no','costing_type_master.cost_type_name','season_master.season_name',
                 'currency_master.currency_name','main_style_master.mainstyle_name','sub_style_master.substyle_name','fg_master.fg_name']);
                 

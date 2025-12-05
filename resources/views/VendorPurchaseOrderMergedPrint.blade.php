@@ -79,7 +79,7 @@
                     
                     $VendorPurchaseOrderMaster = DB::table('vendor_purchase_order_master')->join('usermaster', 'usermaster.userId', '=', 'vendor_purchase_order_master.userId')
                                  ->leftJoin('ledger_master', 'ledger_master.Ac_code', '=', 'vendor_purchase_order_master.vendorId')
-                                 ->whereIn('vendor_purchase_order_master.vpo_code', [$vpoCodes])
+                                 ->whereIn('vendor_purchase_order_master.vpo_code', $vpoCodes)
                                  ->get(['vendor_purchase_order_master.*','usermaster.username','ledger_master.ac_short_name as Ac_name','ledger_master.address',
                                  'ledger_master.gst_no','ledger_master.pan_no','ledger_master.state_id']);
                                  
