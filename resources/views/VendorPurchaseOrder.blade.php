@@ -804,40 +804,42 @@
                      var itemCodeMap = {};
 
                      $('#footable_4 tbody tr').each(function () {
-                           var row = $(this);
-                           var itemCode = row.find('td input').eq(1).val();
-                           var bomQty = row.find('td input[name="bom_qtyss[]"]').val() || 0;
-                           var colorName = row.find('td input[name="color_ids[]"]').val();
-                           var sizeIds = row.find('td input[name="sizes_ids[]"]').val();
+                        var row = $(this);
+                        var itemCode = row.find('td input').eq(1).val();
+                        var bomQty = parseFloat(row.find('td input[name="bom_qtyss[]"]').val()) || 0;
+                        var colorName = row.find('td input[name="color_ids[]"]').val();
+                        var sizeIds = row.find('td input[name="sizes_ids[]"]').val();
 
-                           console.log("bomQty=>"+bomQty);
-                           // Skip rows with zero BOM quantity
-                           if (bomQty <= 0) {
-                              row.remove();
-                              return; // move to next iteration
+                        console.log("bomQty => " + bomQty);
+
+                        // Skip rows with zero BOM quantity
+                        if (bomQty <= 0) {
+                           row.remove();
+                           return;
+                        }
+
+                        if (itemCodeMap[itemCode]) {
+                           // If duplicate itemCode
+                           if (!sizeIds.includes(",")) {
+                                 itemCodeMap[itemCode].bomTotal += bomQty;  // now numeric addition
                            }
 
-                           if (itemCodeMap[itemCode]) {
-                              // If duplicate itemCode
-                              if (!sizeIds.includes(",")) {
-                                 itemCodeMap[itemCode].bomTotal += bomQty;
-                              }
-
-                              if (!itemCodeMap[itemCode].colors.includes(colorName)) {
+                           if (!itemCodeMap[itemCode].colors.includes(colorName)) {
                                  itemCodeMap[itemCode].colors.push(colorName);
-                              }
+                           }
 
-                              row.remove();
-                           } else {
-                              // New itemCode entry
-                              itemCodeMap[itemCode] = {
+                           row.remove();
+                        } else {
+                           // New itemCode entry
+                           itemCodeMap[itemCode] = {
                                  row: row,
-                                 bomTotal: bomQty,
+                                 bomTotal: bomQty,   // numeric because we parsed it
                                  colors: [colorName],
                                  sizeIds: sizeIds
-                              };
-                           }
+                           };
+                        }
                      });
+
  
                      // Update merged rows with totals and colors
                      $.each(itemCodeMap, function (itemCode, data) {
