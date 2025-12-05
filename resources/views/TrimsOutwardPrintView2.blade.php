@@ -71,7 +71,7 @@
     }
 
     :root {
-        --label-width: 170px;
+        --label-width: 210px;
     }
 
     :root {
