@@ -690,21 +690,58 @@
                }
                });
                  
-               var size_qty_array=$(row).closest("tr").find('input[name="size_qty_array[]"]').val();
-               var size_array=$(row).closest("tr").find('input[name="size_array[]"]').val();
-               
-               $.ajax({
-               dataType: "json",
-               url: "{{ route('GetTrimsConsumptionPO') }}",
-               data:{'color_id':color_id,'size_qty_total':size_qty_total,'sales_order_no':sales_order_no,'no':no},
-               success: function(data){
-                
-                 $("#TrimFabricData").append(data.html);
-                 setTimeout(removeDuplicateRows1, 500); 
-               }
+               var size_qty_total=0; 
+               var size_array=$("#footable_2 > tbody > tr").find('input[name^="size_array[]"]').val(); 
+               var color_id= $(row).find('td select[name^="color_id[]"]').val();
+               var allTotal=$("#allTotal").val();
+               var sumAllTotal=$("#sumAllTotal").val();
+               var values = [];
+               $("#footable_2 tr td  input[class='size_qty_total']").each(function() 
+               {
+                    size_qty_total += parseFloat($(this).val());
+                       
                });
-               
-               
+               var color_ids = [];
+                
+                $("#footable_2 tr td select[name='color_id[]']").each(function() {
+                    var val = $(this).val();
+                    if (val) 
+                    {  
+                        color_ids.push(val);
+                    }
+               });
+                
+               color_ids = color_ids.join(",");
+
+               var size_qty_array = $(row).find('td input[name^="size_qty_array[]"]').val(); 
+
+               var tbl_len = $('#footable_2 tbody tr').filter(function() {
+                  var val = parseFloat($(this).find('input[name="size_qty_total[]"]').val()) || 0;
+                  return val > 0;
+               }).length;
+
+
+                 $.ajax({
+                  dataType: "json",
+                  url: "{{ route('GetTrimsConsumptionPO') }}",
+                  data: {
+                     'tbl_len': tbl_len,
+                     'color_id': color_id,
+                     'size_qty_total': size_qty_total,
+                     'sales_order_no': sales_order_no,
+                     'no': no,
+                     'size_qty_array': size_qty_array,
+                     'size_array': size_array,
+                     'allTotal': allTotal,
+                     'sumAllTotal': sumAllTotal,
+                     'color_ids': color_ids
+                  },
+                  success: function (data) 
+                  {
+                     $("#TrimFabricData").append(data.html);
+                      setTimeout(removeDuplicateRows1, 500); 
+                  }
+               }); 
                
              }
              no=no+1;
@@ -821,7 +858,7 @@
                      recalcIdcone4();
                   }
                });
-                mycalc();
+               mycalc();
        }
        
        $("#Submit").removeAttr('disabled');
@@ -1060,11 +1097,11 @@
       var consumption=+row.find('input[name^="consumption[]"]').val();
       var wastage=+row.find('input[name^="wastage[]"]').val();
       var rate_per_unit=+row.find('input[name^="rate_per_unit[]"]').val();
-      var qty=$("#final_bom_qty").val();
+      var qty=+row.find('input[name^="size_qty[]"]').val();
       var final_cons=parseFloat(consumption) + parseFloat(consumption*(wastage/100));
       
-      var bom_qty=(parseFloat(final_cons) * parseInt(qty)).toFixed(2);
-      var bom_qty1=(parseInt(bom_qty) + (parseInt(bom_qty)*(wastage/100))).toFixed(2);
+      var bom_qty=(parseFloat(final_cons) * parseFloat(qty)).toFixed(2);
+      var bom_qty1=(parseFloat(bom_qty)).toFixed(2);
        
       var total_price=(bom_qty*rate_per_unit).toFixed(2);
       row.find('input[name^="bom_qty[]"]').val(bom_qty1);
@@ -1283,7 +1320,7 @@
      
      
     var final_cons=parseFloat(consumption) + parseFloat(consumption*(wastage/100));
-   var bom_qty=(parseFloat(final_cons) * parseInt(qty)).toFixed(2);
+   var bom_qty=(parseFloat(final_cons) * parseFloat(qty)).toFixed(2);
      
     var total_price=(bom_qty*rate_per_unit).toFixed(2);
     row.find('input[name^="bom_qtyss[]"]').val(bom_qty);
@@ -1297,25 +1334,42 @@
    CalculateQtyRowProsx($(this).closest("tr"));
    
    });
-   function CalculateQtyRowProsx(row)
-   {    
-    var consumption=+row.find('input[name^="consumptionsx[]"]').val();
-    var wastage=+row.find('input[name^="wastagesx[]"]').val();
-    var rate_per_unit=+row.find('input[name^="rate_per_unitsx[]"]').val();
+   // function CalculateQtyRowProsx(row)
+   // {    
+   //  var consumption=+row.find('input[name^="consumptionsx[]"]').val();
+   //  var wastage=+row.find('input[name^="wastagesx[]"]').val();
+   //  var rate_per_unit=+row.find('input[name^="rate_per_unitsx[]"]').val();
    //  var  qty=+row.find('input[name^="bom_qtysx1[]"]').val();
 
-    console.log(row);
-    var qty=$("#final_bom_qty").val();
-    var final_cons=parseFloat(consumption);
-    var bom_qty=(parseFloat(final_cons) * parseFloat(qty)).toFixed(2);
+   // //  console.log(row);
+   // //  var qty=$("#final_bom_qty").val();
+   //  var final_cons=parseFloat(consumption);
+   //  var bom_qty=(parseFloat(final_cons) * parseFloat(qty)).toFixed(2);
     
     
-    var total_price=(bom_qty*rate_per_unit).toFixed(2);
-    row.find('input[name^="bom_qtysx[]"]').val(bom_qty);
-    row.find('input[name^="total_amountsx[]"]').val(total_price);
-    mycalc();
+   //  var total_price=(bom_qty*rate_per_unit).toFixed(2);
+   //  row.find('input[name^="bom_qtysx[]"]').val(bom_qty);
+   //  row.find('input[name^="total_amountsx[]"]').val(total_price);
+   //  mycalc();
+   // }
+    
+   function CalculateQtyRowProsx(row)
+   {   
+      var consumption=+row.find('input[name^="consumptionsx[]"]').val();
+      var wastage=+row.find('input[name^="wastagesx[]"]').val();
+      var rate_per_unit=+row.find('input[name^="rate_per_unitsx[]"]').val();
+      var qty=+row.find('input[name^="size_qtysx[]"]').val();
+      var final_cons=parseFloat(consumption) + parseFloat(consumption*(wastage/100));
+      
+      var bom_qty=(parseFloat(final_cons) * parseFloat(qty)).toFixed(2);
+      var bom_qty1=(parseFloat(bom_qty)).toFixed(2);
+       
+      var total_price=(bom_qty*rate_per_unit).toFixed(2);
+      row.find('input[name^="bom_qtysx[]"]').val(bom_qty1);
+      row.find('input[name^="total_amountsx[]"]').val(total_price);
+      mycalc();
+    
    }
-    
     
       $('table.footable_3').on("change", 'input[name^="consumptions[]"],input[name^="wastages[]"],input[name^="rate_per_units[]"],input[name^="bom_qtys[]"]', function()
    {

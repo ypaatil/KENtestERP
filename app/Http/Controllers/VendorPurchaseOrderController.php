@@ -620,33 +620,32 @@ class VendorPurchaseOrderController extends Controller
                 if(isset($item_code) && count($item_code)>0)
                 {   
                 
-                for($x=0; $x<count($request->item_code); $x++) 
-                {
-                    # code...
-             
-                        $data4[]=array(
-                        'vpo_code'=>$TrNo, 
-                        'vpo_date'=>$request->vpo_date,  
-                        'cost_type_id'=>$request->cost_type_id,
-                        'process_id'=>$request->process_id,
-                        'Ac_code'=>$request->Ac_code, 
-                        'sales_order_no'=>$request->sales_order_no,
-                        'season_id'=>$request->season_id,
-                        'currency_id'=>$request->currency_id, 
-                        'item_code' => $request->item_code[$x],
-                        'class_id' => $request->class_id[$x],
-                        'description' => $request->description[$x],
-                        'color_id' => isset($request->color_id[$x]) ? $request->color_id[$x] : "",
-                        'consumption' => $request->consumption[$x],
-                        'unit_id'=> $request->unit_id[$x],
-                        'wastage' => $request->wastage[$x],
-                        'bom_qty' => $request->bom_qty[$x] ,
-                         'actual_qty' => $request->bom_qty1[$x],
-                        'final_cons' => $request->final_cons[$x],
-                        'size_qty' => $request->size_qty[$x] 
-                        );
-                           
-                } // if loop avoid zero qty
+                    for($x = 0; $x < count($request->item_code); $x++)
+                    {
+                        $data4[] = [
+                            'vpo_code' => $TrNo,
+                            'vpo_date' => $request->vpo_date,
+                            'cost_type_id' => $request->cost_type_id,
+                            'process_id' => $request->process_id,
+                            'Ac_code' => $request->Ac_code,
+                            'sales_order_no' => $request->sales_order_no,
+                            'season_id' => $request->season_id,
+                            'currency_id' => $request->currency_id,
+
+                            'item_code' => $request->item_code[$x] ?? "",
+                            'class_id'  => $request->class_id[$x] ?? 0,
+                            'description' => $request->description[$x] ?? "",
+                            'color_id' => $request->color_id[$x] ?? 0,
+                            'consumption' => $request->consumption[$x] ?? 0,
+                            'unit_id' => $request->unit_id[$x] ?? 0,
+                            'wastage' => $request->wastage[$x] ?? 0,
+                            'bom_qty' => $request->bom_qty[$x] ?? 0,
+                            'actual_qty' => $request->bom_qty1[$x] ?? 0,
+                            'final_cons' => $request->final_cons[$x] ?? 0,
+                            'size_qty' => $request->size_qty[$x] ?? 0
+                        ];
+                    }
+
                            
                            VendorPurchaseOrderFabricDetailModel::insert($data4);
                         }
@@ -1575,7 +1574,12 @@ public function VPO_GetClassList(Request $request)
             $color_id= $request->input('color_id');
             $size_qty_total= $request->input('size_qty_total');
             $sales_order_no= $request->input('sales_order_no');
-           
+            $size_qty_array = $request->input('size_qty_array');
+            $size_array     = $request->input('size_array');
+            $allTotal1      = $request->allTotal;
+            $allTotal       = $request->size_qty_total;
+            $sumAllTotal    = $request->sumAllTotal;
+
             $item_code= $request->item_code;
             $sales_order_no= $request->sales_order_no;
          //print_r($item_code);
@@ -1611,7 +1615,7 @@ public function VPO_GetClassList(Request $request)
                  $ClassList = ClassificationModel::where('delflag','=', '0')->where('class_id','=',$rows->class_id)->get();
              
                 $total_consumption= ($rows->consumption);
-                $bom_qty=round(($rows->consumption*$size_qty_total),2);
+                $bom_qty=round(($rows->consumption*$sumAllTotal),2);
              
                  if(Session::get('user_type') == 1)
                  {
