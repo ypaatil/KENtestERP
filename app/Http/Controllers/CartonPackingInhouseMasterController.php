@@ -4002,12 +4002,19 @@ foreach($SizeList as $sz)
                     'mainstyle_name'=>$row->mainstyle_name,
                     'color_name'=>$row->color_name,
                     'size_name'=>$row->size_name,
-                    'packing_qty'     => number_format(round($packing_qty, 2), 2, '.', ','),
+                    /*'packing_qty'     => number_format(round($packing_qty, 2), 2, '.', ','),
                     'carton_pack_qty' => number_format(round($carton_pack_qty, 2), 2, '.', ','),
                     'transfer_qty'    => number_format(round($transfer_qty, 2), 2, '.', ','),
                     'stock'           => number_format(round($stock, 2), 2, '.', ','),
                     'fob_rate'        => number_format($fob_rate1, 2, '.', ','),
-                    'value'           => number_format(round($value, 2), 2, '.', ','),
+                    'value'           => number_format(round($value, 2), 2, '.', ','),*/
+
+                    'packing_qty'     => indian_number_format_for_value(round($packing_qty, 2), 2 ),
+                    'carton_pack_qty' => indian_number_format_for_value(round($carton_pack_qty, 2), 2 ),
+                    'transfer_qty'    => indian_number_format_for_value(round($transfer_qty, 2), 2 ),
+                    'stock'           => indian_number_format_for_value(round($stock, 2), 2 ),
+                    'fob_rate'        => indian_number_format_for_value($fob_rate1, 2 ),
+                    'value'           => indian_number_format_for_value(round($value, 2), 2),
 
                 );    
                 
@@ -4019,12 +4026,19 @@ foreach($SizeList as $sz)
         }  
          
         $jsonData = json_encode($html);
-        
+        /*
         return response()->json(['html' => $jsonData,'total_packing'=>(money_format('%!.0n',round($total_packing))),
                             'total_carton'=>(money_format('%!.0n',round($total_carton))),'total_transfer'=>(money_format('%!.0n',round($total_transfer))),'total_stock'=>(money_format('%!.0n',round($total_stock))),
                             'total_value'=>(money_format('%!.0n',round($total_value))),'total_stock1'=>round($total_stock/100000,2),'total_value1'=>round($total_value/100000, 2),
                             'Ac_code'=>$Ac_code,'sales_order_no'=>$sales_order_no,'brand_id'=>$brand_id,'mainstyle_id'=>$mainstyle_id,'color_id'=>$color_id,'job_status_id'=>$job_status_id,'orderTypeId'=>$orderTypeId]);
-    }
+        */
+        return response()->json(['html' => $jsonData,'total_packing'=>( indian_number_format_for_value( round($total_packing) ,2 )  ),
+    'total_carton'=>(indian_number_format_for_value( round($total_carton),2)),'total_transfer'=>(indian_number_format_for_value(round($total_transfer),2)),'total_stock'=>(indian_number_format_for_value(round($total_stock),2)),
+    'total_value'=>(indian_number_format_for_value(round($total_value),2)),'total_stock1'=>round($total_stock/100000,2),'total_value1'=>round($total_value/100000, 2),
+    'Ac_code'=>$Ac_code,'sales_order_no'=>$sales_order_no,'brand_id'=>$brand_id,'mainstyle_id'=>$mainstyle_id,'color_id'=>$color_id,'job_status_id'=>$job_status_id,'orderTypeId'=>$orderTypeId]);
+        
+    
+                        }
     
     
     public function FGStockReportTrial2(Request $request)

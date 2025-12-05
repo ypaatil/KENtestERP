@@ -120,13 +120,14 @@ function buildSimpleFilter(selector, colIndex) {
  
   let tableId = $('table.dataTable').attr('id'); 
   let table = null;
-
+ 
   if(tableId == 'dt')
   table = $('#dt').DataTable();
   else
   table = $('#'+tableId).DataTable();  
 
   const menu = $(selector);
+ 
 
   let valuesToShow;
 
@@ -176,16 +177,32 @@ try{
     const checked = prevChecked.length === 0 || prevChecked.includes(v) ? 'checked' : '';
     html += `<label><input type='checkbox' class='opt' value='${v}' ${checked}> ${v}</label>`;
   });*/
-
+  let valuebtnclickforgetalldata = 0;
   valuesToShow.forEach(v => {  
     const safeValue = escapeHtml(v); // Escape quotes and HTML
     const checked = prevChecked.length === 0 || prevChecked.includes(v) ? 'checked' : '';
-
-    html += `
+  
+    try {
+    valuebtnclickforgetalldata = sessionStorage.getItem('btnclickforgetalldata');
+    } catch (error) {
+    valuebtnclickforgetalldata = 0;
+    }  
+     
+    if(valuebtnclickforgetalldata == 1){
+       html += `
+        <label>
+            <input type="checkbox" class="opt" value="${safeValue}" checked> 
+            ${v}
+        </label>`;
+    }
+    else{
+      html += `
         <label>
             <input type="checkbox" class="opt" value="${safeValue}" ${checked}> 
             ${v}
         </label>`;
+    }
+    
 });
 
   html += `
@@ -197,11 +214,11 @@ try{
   `;
  
   menu.html(html);
-
+   
   // Handle select-all state
   const allCount = valuesToShow.length;
   const checkedCount = menu.find('.opt:checked').length;
-  menu.find('.select-all').prop('checked', allCount === checkedCount);
+  menu.find('.select-all').prop('checked', allCount === checkedCount);  
 }
 
 function buildColouredFilter(selector, colIndex) {
@@ -862,6 +879,47 @@ function applyDateFilter(col, menu) {
         buildSimpleFilter('.total-wip', 16);
         buildSimpleFilter('.order-rate', 17);
         buildSimpleFilter('.total-wip-value', 18);
+      }
+
+      function buildAllMenusFGStockReport(){
+        buildSimpleFilter('.sr-no', 0);
+        buildSimpleFilter('.sales-order-no', 1);
+        buildSimpleFilter('.buyer-name', 2);
+        buildSimpleFilter('.brand', 3);
+        buildSimpleFilter('.sam', 4);
+        buildSimpleFilter('.order-type', 5);
+        buildSimpleFilter('.style-category', 6);
+        buildSimpleFilter('.garment-color', 7);
+        buildSimpleFilter('.size', 8);
+        buildSimpleFilter('.inward-qty', 9);
+        buildSimpleFilter('.outward-qty', 10);
+        buildSimpleFilter('.transfered-qty', 11);
+        buildSimpleFilter('.fg-stock', 12);
+        buildSimpleFilter('.fob-rate', 13);
+        buildSimpleFilter('.value', 14);
+      }
+
+      function updateTotalValuesForFGStockReport() {
+        const data = $('#tbl').DataTable().rows({ search: 'applied' }).data();
+        let head_packing_grn_qty = 0;
+        let head_carton_packing_qty=0;
+        let head_transfered_qty=0;
+        let head_fg_stock=0;
+        let head_value=0;
+
+        data.each(function (row) {        
+            head_packing_grn_qty         += parseFloat(row['packing_qty']?.toString().replace(/,/g, '')) || 0;
+            head_carton_packing_qty           += parseFloat(row['carton_pack_qty']?.toString().replace(/,/g, '')) || 0;
+            head_transfered_qty         += parseFloat(row['transfer_qty']?.toString().replace(/,/g, '')) || 0;
+            head_fg_stock           += parseFloat(row['stock']?.toString().replace(/,/g, '')) || 0;
+            head_value         += parseFloat(row['value']?.toString().replace(/,/g, '')) || 0;            
+        });
+      
+        $('#head_packing_grn_qty').text(formatNumberTableHead(head_packing_grn_qty));
+        $('#head_carton_packing_qty').text(formatNumberTableHead(head_carton_packing_qty));
+        $('#head_transfered_qty').text(formatNumberTableHead(head_transfered_qty));
+        $('#head_fg_stock').text(formatNumberTableHead(head_fg_stock));
+        $('#head_value').text(formatNumberTableHead(head_value));        
       }
 
        function table_values_indian_format()  {

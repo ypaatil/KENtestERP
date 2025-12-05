@@ -229,21 +229,22 @@
                             <th id="head_value">{{$total_value}}</th>
                         </tr>
                         <tr style="text-align:center; white-space:nowrap">
-						    <th>Sr. No.</th>
-						    <th>Sales Order No</th>
-						    <th>Buyer Name</th>
-						    <th>Brand</th>
-						    <th>SAM</th>
-						    <th>Order Type</th>
-							<th>Style Category</th> 
-                            <th>Garment Color</th> 
-                            <th>Size</th> 
-                            <th>Inward Qty</th> 
-                            <th>Outward Qty</th>
-                            <th>Transfered Qty</th>
-                            <th>FG Stock</th>
-                            <th>FOB Rate</th>
-                            <th>Value</th>
+						    <th>Sr. No.<span class="filter-icon  hide">🔽</span><div class="filter-menu sr-no"></div></th>
+                            <th>Sales Order No<span class="filter-icon">🔽</span><div class="filter-menu sales-order-no"></div></th>
+                            <th>Buyer Name<span class="filter-icon">🔽</span><div class="filter-menu buyer-name"></div></th>
+                            <th>Brand<span class="filter-icon">🔽</span><div class="filter-menu brand"></div></th>
+                            <th>SAM<span class="filter-icon">🔽</span><div class="filter-menu sam"></div></th>
+                            <th>Order Type<span class="filter-icon">🔽</span><div class="filter-menu order-type"></div></th>
+                            <th>Style Category<span class="filter-icon">🔽</span><div class="filter-menu style-category"></div></th>
+                            <th>Garment Color<span class="filter-icon">🔽</span><div class="filter-menu garment-color"></div></th>
+                            <th>Size<span class="filter-icon">🔽</span><div class="filter-menu size"></div></th>
+                            <th>Inward Qty<span class="filter-icon">🔽</span><div class="filter-menu inward-qty"></div></th>
+                            <th>Outward Qty<span class="filter-icon">🔽</span><div class="filter-menu outward-qty"></div></th>
+                            <th>Transfered Qty<span class="filter-icon">🔽</span><div class="filter-menu transfered-qty"></div></th>
+                            <th>FG Stock<span class="filter-icon">🔽</span><div class="filter-menu fg-stock"></div></th>
+                            <th>FOB Rate<span class="filter-icon">🔽</span><div class="filter-menu fob-rate"></div></th>
+                            <th>Value<span class="filter-icon">🔽</span><div class="filter-menu value"></div></th>
+
                         </tr>
                         </thead>
                        <tbody>
@@ -292,8 +293,21 @@
     
    let page = 1;
 
+
+
+
    function tableData(job_status_id) 
    {
+         $('#head_packing_grn_qty').text(0);
+        $('#head_carton_packing_qty').text(0);
+        $('#head_transfered_qty').text(0);
+        $('#head_fg_stock').text(0);
+        $('#head_value').text(0);    
+        sessionStorage.setItem('btnclickforgetalldata', 1);    
+         removeFilterColor();
+        
+
+
          var currentURL = window.location.href; 
                         
          var totalpacking_qty = 0;
@@ -413,8 +427,7 @@
            
                 },
                 success: function(data) 
-                { 
-                   
+                {                
                     // if(lastRow != 'undefined')
                     // {
                     //     lastRow.after(data); 
@@ -443,26 +456,30 @@
                          $('#tbl').DataTable({
                             "dom": 'lBfrtip', // 'f' added for the search box
                             "pageLength": 10,
+                             initComplete: function () {
+                             buildAllMenusFGStockReport();                                
+                             sessionStorage.setItem('btnclickforgetalldata', 0);                                 
+                            },
                             buttons: [
                                 {
                                     extend: 'copyHtml5',
                                     text: 'Copy',
-                                    title: exportTitle
+                                    title: exportTitle, exportOptions: commonExportOptions() 
                                 },
                                 {
                                     extend: 'excelHtml5',
                                     text: 'Excel',
-                                    title: exportTitle
+                                    title: exportTitle, exportOptions: commonExportOptions() 
                                 },
                                 {
                                     extend: 'csvHtml5',
                                     text: 'CSV',
-                                    title: exportTitle
+                                    title: exportTitle, exportOptions: commonExportOptions() 
                                 },
                                 {
                                     extend: 'pdfHtml5',
                                     text: 'PDF',
-                                    title: exportTitle,
+                                    title: exportTitle, exportOptions: commonExportOptions() ,
                                     orientation: 'landscape',     // or 'portrait'
                                     pageSize: 'A4',               // A4, A3, etc.
                                     customize: function (doc) {
@@ -472,7 +489,7 @@
                                 {
                                     extend: 'print',
                                     text: 'Print Table',
-                                    title: exportTitle
+                                    title: exportTitle, exportOptions: commonExportOptions() 
                                 }
                             ],
                             data: myArray,
@@ -530,6 +547,38 @@
             });
     }
     
+
+             // Start script for filter search and apply        
+         $(document).on('click', '.apply-btn', function() {
+         const menu = $(this).closest('.filter-menu');
+       
+         if (!validateFilterMenu(menu)) {
+               return;
+         }
+
+         if (menu.hasClass('sr-no')) applySimpleFilter(0, menu);
+        else if (menu.hasClass('sales-order-no')) applySimpleFilter(1, menu);
+        else if (menu.hasClass('buyer-name')) applySimpleFilter(2, menu);
+        else if (menu.hasClass('brand')) applySimpleFilter(3, menu);
+        else if (menu.hasClass('sam')) applySimpleFilter(4, menu);
+        else if (menu.hasClass('order-type')) applySimpleFilter(5, menu);
+        else if (menu.hasClass('style-category')) applySimpleFilter(6, menu);
+        else if (menu.hasClass('garment-color')) applySimpleFilter(7, menu);
+        else if (menu.hasClass('size')) applySimpleFilter(8, menu);
+        else if (menu.hasClass('inward-qty')) applySimpleFilter(9, menu);
+        else if (menu.hasClass('outward-qty')) applySimpleFilter(10, menu);
+        else if (menu.hasClass('transfered-qty')) applySimpleFilter(11, menu);
+        else if (menu.hasClass('fg-stock')) applySimpleFilter(12, menu);
+        else if (menu.hasClass('fob-rate')) applySimpleFilter(13, menu);
+        else if (menu.hasClass('value')) applySimpleFilter(14, menu);
+
+
+
+         $('.filter-menu').hide();         
+         buildAllMenusFGStockReport();
+         updateTotalValuesForFGStockReport();      
+         });
+         // End script for filter search and apply
     
     $( document ).ready(function() 
     {   
@@ -547,7 +596,7 @@
         {
             $("#All").trigger('click');
         }
-        
+       sessionStorage.setItem('btnclickforgetalldata', 0); 
     });
     
     function filters(value,row)
@@ -712,5 +761,7 @@
           window.ajax_loading = false; 
       });
    });
+
+  
 </script>                                        
 @endsection
