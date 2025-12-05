@@ -462,7 +462,7 @@
                                                       </select>
                                                    </td>
                                                    <td><input type="text"    name="description[]" value="{{$List->description}}" readOnly id="description" style="width:200px; height:30px;" required /></td>
-                                                   <td><input type="number" step="any"    name="consumption[]" value="{{$List->consumption}}" readOnly id="consumption" style="width:80px; height:30px;" required /></td>
+                                                   <td><input type="number" step="any"    name="consumption[]" value="{{round($List->consumption,2)}}" readOnly id="consumption" style="width:80px; height:30px;" required /></td>
                                                    <td>
                                                       <select name="unit_id[]" class="select2" id="unit_id" style="width:100px; height:30px;" required disabled>
                                                          <option value="">--Unit List--</option>
@@ -485,7 +485,7 @@
                                                             $mx = 5;    
                                                          }
                                                    @endphp
-                                                   <td><input type="number" max="{{$mx}}" step="any" min="0" class="WASTAGE" name="wastage[]" value="{{$List->wastage}}" id="wastage" style="width:80px; height:30px;" required @php if($List->item_count>0){ echo 'readOnly'; } @endphp /></td>
+                                                   <td><input type="number" max="{{$mx}}" step="any" min="0" class="WASTAGE" name="wastage[]" value="{{$List->wastage}}" id="wastage" style="width:80px; height:30px;" required @php if($List->item_count>0){ echo 'readOnly'; } @endphp  readonly/></td>
                                                    <td><input type="text" name="bom_qty[]" value="{{$List->bom_qty}}" id="bom_qty" style="width:80px; height:30px;" required readOnly/></td>
                                                       <input type="hidden"  name="bom_qty1[]" value="{{$List->actual_qty}}" id="bom_qty1" style="width:80px; height:30px;" required readOnly/>
                                                       <input type="hidden"  name="final_cons[]" value="{{$List->final_cons}}" id="final_cons'.$no.'" style="width:80px; height:30px;" required readOnly />

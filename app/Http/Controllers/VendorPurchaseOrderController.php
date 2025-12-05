@@ -1773,8 +1773,8 @@ $html.='</select></td>
  
  <td><input type="text"  readOnly  name="description[]" value="'.$codefetch->description.'" id="description" style="width:200px; height:30px;" required /></td> 
  
-<td><input type="number" step="any" name="consumption[]" value="'.$codefetch->consumption.'" id="consumption" style="width:80px; height:30px;" required />
-<input type="hidden" name="rate_per_unit[]" value="'.$codefetch->rate_per_unit.'" id="rate_per_unit" style="width:80px; height:30px;" />
+<td><input type="number" step="any" name="consumption[]" value="'.(round($codefetch->consumption,2)).'" id="consumption" style="width:80px; height:30px;" required />
+<input type="hidden" name="rate_per_unit[]" value="'.(round($codefetch->rate_per_unit,2)).'" id="rate_per_unit" style="width:80px; height:30px;" />
 </td> 
   
 <td> <select name="unit_id[]"  id="unit_id'.$no.'" style="width:100px; height:30px;" disabled>
@@ -1789,7 +1789,7 @@ foreach($UnitList as  $rowunit)
 }
 $html.='</select></td> 
 
-<td><input type="number" step="any" max="'.$mx.'" min="0" class="WASTAGE" onchange="calculateBomWithWastage1(this);" name="wastage[]" value="0" id="wastage'.$no.'" style="width:80px; height:30px;" '.$wastageDisabled.' /></td> 
+<td><input type="number" step="any" max="'.$mx.'" min="0" class="WASTAGE" onchange="calculateBomWithWastage1(this);" name="wastage[]" value="0" id="wastage'.$no.'" style="width:80px; height:30px;" '.$wastageDisabled.' readonly /></td> 
 <td><input type="text"  name="bom_qty[]" value="'.$bom_qty.'" id="bom_qty'.$no.'" style="width:80px; height:30px;" required readOnly />
 
 <input type="hidden"  name="bom_qty1[]" value="'.$bom_qty.'" id="bom_qty1'.$no.'" style="width:80px; height:30px;" required readOnly />
