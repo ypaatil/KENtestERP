@@ -176,7 +176,7 @@
                      <div class="col-md-2">
                         <div class="form-check form-check-primary mb-3">
                            <input class="form-check-input" type="checkbox" id="is_opening" name="is_opening" style="font-size: 25px;margin-top: 30px;margin-left: 0px;" onclick="enable(this.value);"
-                           @if($FabricInwardMasterList->is_opening==1)checked @else disabled @endif    >
+                           @if($FabricInwardMasterList->is_opening==1)checked @else disabled @endif   disabled >
                            <label class="form-check-label" for="is_opening" style="margin-top: 30px;position: absolute;margin-left: 20px;font-size: 16px;">
                            Opening Stock
                            </label>

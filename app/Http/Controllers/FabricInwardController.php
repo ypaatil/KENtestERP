@@ -195,7 +195,7 @@ class FabricInwardController extends Controller
      */
     public function store(Request $request)
     {
-        //print_R($_POST);exit;
+        // echo '<pre>';print_R($_POST);exit;
         $this->validate($request, [
              
                 'in_code'=>'required',
@@ -569,7 +569,7 @@ class FabricInwardController extends Controller
         else 
         {     
             $BillToList = DB::SELECT("SELECT ledger_details.sr_no, ledger_details.trade_name, ledger_details.site_code FROM purchase_order 
-            INNER JOIN ledger_details ON ledger_details.sr_no = purchase_order.bill_to WHERE purchase_order.Ac_code='".$FabricInwardMasterList->Ac_code."'");
+            INNER JOIN ledger_details ON ledger_details.sr_no = purchase_order.bill_to");
         }
 
         $FabricCuttingOutwardList =  DB::table('fabric_outward_cutting_department_master')->where('delflag','=', '0')->get();
