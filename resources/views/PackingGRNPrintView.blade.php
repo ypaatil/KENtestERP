@@ -650,16 +650,16 @@
                             @endphp
 
                             <tr>
-                                <td class="text-end" colspan="3">Total :</td>
+                                <td class="text-end fw-bold" colspan="3">Total :</td>
 
                                 @foreach($SizeDetailList as $i => $sz)
                                 @php $key = 's'.($i+1); @endphp
-                                <td class="text-end">{{ number_format($sizeTotals[$key]) }}</td>
+                                <td class="text-end fw-bold">{{ number_format($sizeTotals[$key]) }}</td>
                                 @endforeach
 
-                                <td class="text-end">{{ number_format($totalQty) }}</td>
+                                <td class="text-end fw-bold">{{ number_format($totalQty) }}</td>
                                 <td></td>
-                                <td class="text-end">{{ number_format($totalAmt) }}</td>
+                                <td class="text-end fw-bold">{{ number_format($totalAmt) }}</td>
                             </tr>
                         </tfoot>
 
