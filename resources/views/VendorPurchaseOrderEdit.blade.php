@@ -434,6 +434,7 @@
                                                 @if(count($FabricList)>0)
                                                 @php $no=1; @endphp
                                                 @foreach($FabricList as $List) 
+                                                @if($List->bom_qty>0)
                                                 <tr>
                                                    <td><input type="text" name="id" value="{{ $no }}" id="id" style="width:50px;" readOnly/></td>
                                                    <td>
@@ -491,6 +492,7 @@
                                                       <input type="hidden"  name="final_cons[]" value="{{$List->final_cons}}" id="final_cons'.$no.'" style="width:80px; height:30px;" required readOnly />
                                                       <input type="hidden"  name="size_qty[]" value="{{$List->size_qty}}" id="size_qty'.$no.'" style="width:80px; height:30px;" required readOnly />
                                                 </tr>
+                                                @endif
                                                 @php $no=$no+1;  @endphp
                                                 @endforeach
                                                 @endif
