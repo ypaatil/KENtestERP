@@ -771,49 +771,57 @@ class FabricInwardController extends Controller
         
                         $buyer_id = isset($purchaseOrderData->buyer_id) ? $purchaseOrderData->buyer_id : 0;
                         
-                        $data2=array(
-                        'in_code' =>$in_code,
-                        'in_date' => $request->in_date,
-                        'po_code'=>$po_code,
-                        'cp_id' =>$request->cp_id,
-                        'Ac_code' =>$request->Ac_code,
-                        'item_code'=>$request->item_code[$x], 
-                        'part_id' =>$request->part_id[$x],
-                        'roll_no' => $request->id[$x],
-                        'meter' => $request->meter[$x],
-                        'gram_per_meter' => $request->gram_per_meter[$x],
-                        'kg' => $request->kg[$x],
-                        'item_rate' => $request->item_rates[$x],
-                        'amount' => $request->amounts[$x],
-                        'shade_id' =>'1',
-                        'suplier_roll_no' => $request->suplier_roll_no[$x],
-                        'track_code' => $PBarcodeFinal,
-                        'usedflag' => '0',
-                        'is_opening'=>$is_opening,
-                        'location_id'=>$request->location_id,
-                        'buyer_id'=>$buyer_id,
-                        'fge_code'=>$request->fge_code
+                        $data2 = array(
+                            'in_code'           => $in_code,
+                            'in_date'           => $request->in_date,
+                            'po_code'           => $po_code,
+                            'cp_id'             => $request->cp_id,
+                            'Ac_code'           => $request->Ac_code,
+                            'item_code'         => $request->item_code[$x] ?? null,
+                            'part_id'           => $request->part_id[$x] ?? null,
+                            'roll_no'           => $request->id[$x] ?? null,
+                            'meter'             => $request->meter[$x] ?? 0,
+                            'gram_per_meter'    => $request->gram_per_meter[$x] ?? 0,
+                            'kg'                => $request->kg[$x] ?? 0,
+                            'item_rate'         => $request->item_rates[$x] ?? 0,
+                            'amount'            => $request->amounts[$x] ?? 0,
+                            'shade_id'          => 1,
+                            'suplier_roll_no'   => $request->suplier_roll_no[$x] ?? null,
+                            'track_code'        => $PBarcodeFinal,
+                            'usedflag'          => 0,
+                            'is_opening'        => $is_opening,
+                            'location_id'       => $request->location_id,
+                            'buyer_id'          => $buyer_id,
+                            'fge_code'          => $request->fge_code
                         );
-                        
-                           $data3=array(
-                                    'tr_code' =>$in_code,
-                                    'tr_date' => $request->in_date,
-                                    'Ac_code' =>$request->Ac_code,
-                                    'cp_id' =>$request->cp_id,
-                                    'po_code'=>$request->po_code,
-                                    'item_code'=>$request->item_code[$x], 
-                                    'part_id' =>$request->part_id[$x],
-                                    'shade_id' =>'1',
-                                    'track_code' => $PBarcodeFinal,
-                                    'old_meter'=>'0',
-                                    'short_meter'=>'0',
-                                    'rejected_meter'=>'0',
-                                    'meter' => $request->meter[$x],
-                                    'tr_type' => '1',
-                                    'rack_id' =>0,
-                                    'userId'=>$request->userId,
-                                     
-                                );
+
+                                                
+                        $data3 = array(
+                            'tr_code'        => $in_code,
+                            'tr_date'        => $request->in_date,
+                            'Ac_code'        => $request->Ac_code,
+                            'cp_id'          => $request->cp_id,
+                            'po_code'        => $request->po_code,
+
+                            // SAFE ACCESS with null-coalescing
+                            'item_code'      => $request->item_code[$x] ?? null,
+                            'part_id'        => $request->part_id[$x] ?? null,
+
+                            'shade_id'       => '1',
+                            'track_code'     => $PBarcodeFinal,
+
+                            'old_meter'      => 0,
+                            'short_meter'    => 0,
+                            'rejected_meter' => 0,
+
+                            // SAFE meter access
+                            'meter'          => $request->meter[$x] ?? 0,
+
+                            'tr_type'        => '1',
+                            'rack_id'        => 0,
+                            'userId'         => $request->userId ?? null,
+                        );
+
                             DB::table('inward_details')->updateOrInsert(
                                 ['track_code' => $PBarcodeFinal],  // find row
                                 $data2                              // update data
@@ -1003,53 +1011,67 @@ class FabricInwardController extends Controller
         
                         $buyer_id = isset($purchaseOrderData->buyer_id) ? $purchaseOrderData->buyer_id : 0;
                         
-                        $data2=array(
-                        
-                            'in_code' =>$in_code,
-                            'in_date' => $request->in_date,
-                            'po_code'=>$request->po_code,
-                            'cp_id' =>$request->cp_id,
-                            'Ac_code' =>$request->Ac_code,
-                            'item_code'=>$request->item_code[$x], 
-                            'part_id' =>$request->part_id[$x],
-                            'roll_no' => $request->id[$x],
-                            'meter' => $request->meter[$x],
-                            'gram_per_meter' => $request->gram_per_meter[$x],
-                            'kg' => $request->kg[$x],
-                            'item_rate' => $request->item_rates[$x],
-                            'amount' => $request->amounts[$x],
-                            'shade_id' =>'1',
-                            'is_opening'=>$is_opening,
-                            'location_id'=>$request->location_id,
-                            'isReturnFabricInward'=>$request->isReturnFabricInward,
-                            'vw_code'=> $request->vw_code,
-                            'suplier_roll_no' => $request->suplier_roll_no[$x],
-                            'track_code' => $PBarcodeFinal,
-                            'usedflag' => '0',
-                            'buyer_id' => $buyer_id,
-                            'fge_code'=>$request->fge_code
+                        $data2 = array(
+                            'in_code'              => $in_code,
+                            'in_date'              => $request->in_date,
+                            'po_code'              => $request->po_code,
+                            'cp_id'                => $request->cp_id,
+                            'Ac_code'              => $request->Ac_code,
+
+                            // SAFE indexed values
+                            'item_code'            => $request->item_code[$x] ?? null,
+                            'part_id'              => $request->part_id[$x] ?? null,
+                            'roll_no'              => $request->id[$x] ?? null,
+                            'meter'                => $request->meter[$x] ?? 0,
+                            'gram_per_meter'       => $request->gram_per_meter[$x] ?? 0,
+                            'kg'                   => $request->kg[$x] ?? 0,
+                            'item_rate'            => $request->item_rates[$x] ?? 0,
+                            'amount'               => $request->amounts[$x] ?? 0,
+
+                            'shade_id'             => '1',
+                            'is_opening'           => $is_opening,
+                            'location_id'          => $request->location_id ?? null,
+                            'isReturnFabricInward' => $request->isReturnFabricInward ?? 0,
+                            'vw_code'              => $request->vw_code ?? null,
+
+                            // SAFE supplier roll number
+                            'suplier_roll_no'      => $request->suplier_roll_no[$x] ?? null,
+
+                            'track_code'           => $PBarcodeFinal,
+                            'usedflag'             => '0',
+                            'buyer_id'             => $buyer_id,
+                            'fge_code'             => $request->fge_code ?? null,
+                        );
+
+                          $data3 = array(
+                                'tr_code'        => $in_code,
+                                'tr_date'        => $request->in_date,
+                                'Ac_code'        => $request->Ac_code,
+                                'cp_id'          => $request->cp_id,
+                                'po_code'        => $request->po_code,
+
+                                // SAFE indexed values
+                                'item_code'      => $request->item_code[$x] ?? null,
+                                'part_id'        => $request->part_id[$x] ?? null,
+
+                                'shade_id'       => '1',
+                                'track_code'     => $PBarcodeFinal,
+
+                                'old_meter'      => 0,
+                                'short_meter'    => 0,
+                                'rejected_meter' => 0,
+
+                                // SAFE meter access
+                                'meter'          => $request->meter[$x] ?? 0,
+
+                                'tr_type'        => '1',
+                                'rack_id'        => 0,
+                                'is_opening'     => $is_opening,
+
+                                // SAFE user ID
+                                'userId'         => $request->userId ?? null,
                             );
-                            
-                               $data3=array(
-                                    'tr_code' =>$in_code,
-                                    'tr_date' => $request->in_date,
-                                    'Ac_code' =>$request->Ac_code,
-                                    'cp_id' =>$request->cp_id,
-                                    'po_code'=>$request->po_code,
-                                    'item_code'=>$request->item_code[$x], 
-                                    'part_id' =>$request->part_id[$x],
-                                    'shade_id' =>'1',
-                                    'track_code' => $PBarcodeFinal,
-                                    'old_meter'=>'0',
-                                    'short_meter'=>'0',
-                                    'rejected_meter'=>'0',
-                                    'meter' => $request->meter[$x],
-                                    'tr_type' => '1',
-                                    'rack_id' => 0,
-                                    'is_opening'=>$is_opening,
-                                    'userId'=>$request->userId
-                                );
-                                
+
                           
                             DB::table('inward_details')->updateOrInsert(
                                 ['track_code' => $PBarcodeFinal],  // find row
@@ -1219,18 +1241,25 @@ class FabricInwardController extends Controller
                      
                      
                      
-                    $newDataDetail2[]=[
-                        'track_code' => $PBarcodeFinal, 
-                        'item_code'=>$request->item_code[$x], 
-                        'part_id' =>$request->part_id[$x],
-                        'roll_no' => $request->id[$x],
-                        'meter' => $request->meter[$x],
-                        'gram_per_meter' => $request->gram_per_meter[$x],
-                        'kg' => $request->kg[$x],
-                        'item_rate' => $request->item_rates[$x],
-                        'amount' => $request->amounts[$x],
-                        'shade_id' =>'1',
-                        'suplier_roll_no' => $request->suplier_roll_no[$x]];     
+                 $newDataDetail2[] = [
+                        'track_code'       => $PBarcodeFinal,
+
+                        // SAFE indexed fields
+                        'item_code'        => $request->item_code[$x] ?? null,
+                        'part_id'          => $request->part_id[$x] ?? null,
+                        'roll_no'          => $request->id[$x] ?? null,
+                        'meter'            => $request->meter[$x] ?? 0,
+                        'gram_per_meter'   => $request->gram_per_meter[$x] ?? 0,
+                        'kg'               => $request->kg[$x] ?? 0,
+                        'item_rate'        => $request->item_rates[$x] ?? 0,
+                        'amount'           => $request->amounts[$x] ?? 0,
+
+                        'shade_id'         => '1',
+
+                        // SAFE supplier roll no
+                        'suplier_roll_no'  => $request->suplier_roll_no[$x] ?? null,
+                    ];
+
                      
                      
                      

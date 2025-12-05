@@ -372,7 +372,7 @@
                      <div class="col-sm-6">
                         <label for="formrow-inputState" class="form-label"></label>
                         <div class="form-group">
-                           <button type="submit" class="btn btn-primary w-md" onclick="UpdateBarcode();EnableFields();" id="Submit">Submit</button>
+                           <button type="submit" class="btn btn-primary w-md" onclick="EnableFields();" id="Submit">Submit</button>
                            <a href="{{ Route('FabricInward.index') }}" class="btn btn-warning w-md">Cancel</a>
                         </div>
                      </div>
@@ -685,7 +685,7 @@
                      <div class="col-sm-6">
                         <label for="formrow-inputState" class="form-label"></label>
                         <div class="form-group">
-                           <button type="submit" class="btn btn-primary w-md" onclick="UpdateBarcode();EnableFields();" id="Submit">Submit</button>
+                           <button type="submit" class="btn btn-primary w-md" onclick="EnableFields();" id="Submit">Submit</button>
                            <a href="{{ Route('FabricInward.index') }}" class="btn btn-warning w-md">Cancel</a>
                         </div>
                      </div>
