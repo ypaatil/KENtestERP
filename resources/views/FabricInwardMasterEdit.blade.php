@@ -254,7 +254,8 @@
                               }
                               @endphp
                               <tr>
-                                 <td><input type="text" name="id[]" value="{{ $no }}" id="id" style="width:50px;" readonly /></td>
+                                 <td><input type="text" name="id[]" value="{{ $no }}" id="id" style="width:50px;" readonly />
+                                 <input type="hidden" name="inwardId[]" value="{{ $List->id }}" id="inwardId" style="width:50px;" readonly /></td>
                                  <td><input type="text" name="item_codes[]" value="{{ $List->item_code }}" id="item_codes" style="width:80px;"  readonly /></td>
                                  <td>
                                     <select name="item_code[]"  id="item_code" style="width:200px; height:30px;"  onchange="getRateFromPO(this);" disabled> 
@@ -285,7 +286,8 @@
                               @endforeach
                               @else
                               <tr>
-                                 <td><input type="text" name="id[]" value="1" id="id" style="width:50px;"  {{$dis}}  /></td>
+                                 <td><input type="text" name="id[]" value="1" id="id" style="width:50px;"  {{$dis}}  />
+                                 <input type="hidden" name="inwardId[]" value="0" id="inwardId" style="width:50px;" readonly /></td>
                                  <td>
                                     <select name="item_code[]" class="item"  id="item_code" style="width:100px;" required onchange="getRateFromPO(this);"  {{$dis}} >
                                     <option value="">--Item--</option>
@@ -1198,7 +1200,7 @@
     tc.readOnly = true;
     tc.id = "track_code" + indexcone;
     tc.name = "track_code[]";
-    tc.value = '-';
+    tc.value = '';
     tc.style = "display: table-cell; width:80px;height:30px;";
     cell11.appendChild(tc);
     
@@ -1209,6 +1211,15 @@
    t14.id = "newRow"+indexcone;
    t14.name= "newRow[]";
    t14.value="1";
+   cell11.appendChild(t14); 
+   
+   var t14=document.createElement("input"); 
+   t14.type="hidden";
+   t14.step="any";
+   t14.readOnly=true;
+   t14.id = "inwardId"+indexcone;
+   t14.name= "inwardId[]";
+   t14.value="0";
    cell11.appendChild(t14); 
    
 

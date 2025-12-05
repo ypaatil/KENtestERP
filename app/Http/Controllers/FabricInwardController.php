@@ -720,7 +720,7 @@ class FabricInwardController extends Controller
         
         
 
-  
+    $postedIds = []; // initialize array before loop 
     $item_code = $request->input('item_code');
     if($item_code != "")
     { 
@@ -743,22 +743,33 @@ class FabricInwardController extends Controller
                                             ->get();
                     $buyer_name = isset($buyerData[0]->buyer_name) ? $buyerData[0]->buyer_name : "";
 
-                    $newRow = $request->newRow[$x] ?? 0;
+                    // $newRow = $request->newRow[$x] ?? 0;
 
-                    if ($newRow == 1) 
-                    {
-                        $latestTrackCodeData = DB::SELECT("SELECT track_code AS latest_track_code,
-                                CONCAT(
-                                    LEFT(track_code, 1), 
-                                    CAST(SUBSTRING(track_code, 2) AS UNSIGNED) + 1
-                                ) AS new_track_code  FROM inward_details ORDER BY CAST(SUBSTRING(track_code, 2) AS UNSIGNED) DESC  LIMIT 1");
+                    $trackCodeInput = trim($request->track_code[$x] ?? '');
 
-                        $PBarcodeFinal = isset($latestTrackCodeData[0]->new_track_code) ? $latestTrackCodeData[0]->new_track_code : '';
-                    }
-                    else
-                    {
+                    if ($trackCodeInput == '' || $trackCodeInput == '-' || $trackCodeInput == null) {
 
-                        $PBarcodeFinal = $request->track_code[$x];
+                        // Get latest track code from DB
+                        $latestTrackCodeData = DB::select("
+                            SELECT track_code AS latest_track_code,
+                            CONCAT(
+                                LEFT(track_code, 1), 
+                                CAST(SUBSTRING(track_code, 2) AS UNSIGNED) + 1
+                            ) AS new_track_code  
+                            FROM inward_details 
+                            ORDER BY CAST(SUBSTRING(track_code, 2) AS UNSIGNED) DESC  
+                            LIMIT 1
+                        ");
+
+                        // Generate new code
+                        $PBarcodeFinal = isset($latestTrackCodeData[0]->new_track_code)
+                                        ? $latestTrackCodeData[0]->new_track_code
+                                        : 'P1';  // fallback when table empty
+
+                    } else {
+
+                        // Use existing track code from UI
+                        $PBarcodeFinal = $trackCodeInput;
                     }
 
 
@@ -822,10 +833,32 @@ class FabricInwardController extends Controller
                             'userId'         => $request->userId ?? null,
                         );
 
-                            DB::table('inward_details')->updateOrInsert(
-                                ['track_code' => $PBarcodeFinal],  // find row
-                                $data2                              // update data
-                            );
+                            // DB::table('inward_details')->updateOrInsert(
+                            //     ['id' => $request->inwardId],  // find row
+                            //     $data2                              // update data
+                            // );
+
+                                // Get inwardId safely
+                            $inwardId1 = !empty($request->inwardId[$x]) ? (int)$request->inwardId[$x] : 0;
+
+
+                            // If ID exists → UPDATE
+                            if ($inwardId1 > 0 && DB::table('inward_details')->where('id', $inwardId1)->exists()) {
+
+                                DB::table('inward_details')
+                                    ->where('id', $inwardId1)
+                                    ->update($data2);
+
+                                $postedIds[] = $inwardId1;
+
+                            } else {
+
+                                // New row → INSERT
+                                $newId = DB::table('inward_details')->insertGetId($data2);
+
+                                $postedIds[] = $newId;
+                            } 
+
                         // DB::enableQueryLog();
                             DB::table('fabric_transaction')->updateOrInsert(
                                 ['track_code' => $PBarcodeFinal],
@@ -1074,7 +1107,7 @@ class FabricInwardController extends Controller
 
                           
                             DB::table('inward_details')->updateOrInsert(
-                                ['track_code' => $PBarcodeFinal],  // find row
+                                ['id' => $request->inwardId],  // find row
                                 $data2                              // update data
                             );
                         // DB::enableQueryLog();
@@ -1266,7 +1299,11 @@ class FabricInwardController extends Controller
                 }
               
               
-              
+              DB::table('inward_details')
+                    ->where('in_code', $in_code)
+                    ->whereNotIn('id', $postedIds)
+                    ->delete();
+
                          $combinedNewData = $newDataDetail2;       
            
             try {
