@@ -597,11 +597,11 @@
                                                             $mx = 5;    
                                                          }
                                                    @endphp
-                                                   <td><input type="number" max="{{$mx}}" step="any" min="0" class="WASTAGE1"  name="wastagesx[]" value="{{$List->wastage}}" id="wastagesx" style="width:80px; height:30px;" required /></td>
-                                                   <td><input type="text"     name="bom_qtysx[]" value="{{$List->bom_qty}}" id="bom_qtys" style="width:80px; height:30px;" required readOnly/></td>
-                                                   <input type="hidden"      name="bom_qtysx1[]" value="{{$List->actual_qty}}" id="bom_qtysx1" style="width:80px; height:30px;" required readOnly/>
-                                                   <input type="hidden"  name="final_conssx[]" value="{{$List->final_cons}}" id="final_conssx'.$no.'" style="width:80px; height:30px;" required readOnly />
-                                                   <input type="hidden"  name="size_qtysx[]" value="{{$List->size_qty}}" id="size_qtysx'.$no.'" style="width:80px; height:30px;" required readOnly />
+                                                   <td><input type="number" max="{{$mx}}" step="any" min="0" class="WASTAGE1"  name="wastagesx[]" value="{{$List->wastage}}" id="wastagesx" style="width:80px; height:30px;" readOnly /></td>
+                                                   <td><input type="text"     name="bom_qtysx[]" value="{{$List->bom_qty}}" id="bom_qtys" style="width:80px; height:30px;" readOnly/></td>
+                                                   <input type="hidden"      name="bom_qtysx1[]" value="{{$List->actual_qty}}" id="bom_qtysx1" style="width:80px; height:30px;" readOnly/>
+                                                   <input type="hidden"  name="final_conssx[]" value="{{$List->final_cons}}" id="final_conssx'.$no.'" style="width:80px; height:30px;" readOnly />
+                                                   <input type="hidden"  name="size_qtysx[]" value="{{$List->size_qty}}" id="size_qtysx'.$no.'" style="width:80px; height:30px;" readOnly />
                                                 </tr>   
                                                 @php $no=$no+1;  @endphp
                                                 @endforeach
