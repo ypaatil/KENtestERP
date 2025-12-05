@@ -581,7 +581,7 @@
                     <table class="table table-bordered table-sm">
                         <thead>
                             <tr>
-                                <th>Sr No</th>
+                                <th>Sr.No.</th>
                                 <th>Item Name</th>
                                 <th>Garment Color</th>
                                 @foreach ($SizeDetailList as $sz)
