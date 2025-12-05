@@ -88,7 +88,7 @@
                            <input type="hidden" name="userId" value="{{ Session::get('userId') }}" class="form-control" id="userId">
                            <input type="hidden" name="username" value="{{ Session::get('username') }}" class="form-control" id="username">
                            <input type="hidden" name="cp_id" class="form-control" id="cp_id" value="1"> 
-                           <input type="hidden" name="Ac_code" class="form-control" id="Ac_code1" value="{{ $FabricInwardMasterList->Ac_code }}"></div>
+                           <input type="hidden" name="Ac_code" class="form-control" id="Ac_code1" value="{{ $FabricInwardMasterList->Ac_code }}">
                         </div>
                      </div>
                      <div class="col-md-2">
