@@ -71,7 +71,7 @@
     }
 
     :root {
-        --label-width: 170px;
+        --label-width: 210px;
     }
 
     :root {
@@ -503,7 +503,7 @@
                                     </div>
                                 </div>
                                 <div class="info-row">
-                                    <div class="label">Job/Cutting PO No.</div>
+                                    <div class="label">Job Work / Packing PO No.</div>
                                     <div class="colon">:</div>
                                     <div class="value">
                                         {{ $TrimsOutwardMaster[0]->vw_code ? $TrimsOutwardMaster[0]->vw_code : $TrimsOutwardMaster[0]->vpo_code }}
