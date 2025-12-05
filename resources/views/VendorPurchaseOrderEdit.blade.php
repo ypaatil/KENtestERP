@@ -1111,6 +1111,8 @@
                 } else {
                     seen1[key] = true;
                 }
+
+                CalculateQtyRowProsx(row);
         });
     }
     
@@ -1725,8 +1727,8 @@
     var consumption=+row.find('input[name^="consumptionsx[]"]').val();
     var wastage=+row.find('input[name^="wastagesx[]"]').val();
     var rate_per_unit=+row.find('input[name^="rate_per_unitsx[]"]').val();
-     var  qty=+row.find('input[name^="bom_qtysx1[]"]').val();
-     //var qty=$("#final_bom_qty").val();
+   //   var  qty=+row.find('input[name^="bom_qtysx1[]"]').val();
+    var qty=$("#final_bom_qty").val();
     var final_cons=parseFloat(consumption) + parseFloat(consumption*(wastage/100));
    var bom_qty=(parseFloat(final_cons) * parseInt(qty)).toFixed(2);
     

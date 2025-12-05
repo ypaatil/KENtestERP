@@ -1584,7 +1584,7 @@ public function VPO_GetClassList(Request $request)
            
            $color_ids = $color_id;
 
-        //   DB::enableQueryLog();
+    //    DB::enableQueryLog();
             $codefetch = DB::table('bom_trim_fabric_details')
             ->select("color_id", "item_code", "consumption", "description", "wastage", "class_id", "unit_id", "rate_per_unit")
             ->where(function($query) use ($color_ids) {
@@ -1627,8 +1627,7 @@ public function VPO_GetClassList(Request $request)
                 $html .='
                 <td><input type="text" name="id[]" value="'.$no.'" id="id" style="width:50px;"/></td>';
                 $html.=' 
-                 
-                 <td> <select name="item_codesx[]"  id="item_code'.$no.'" style="width:250px; height:30px;" required disabled>
+                 <td> <select name="item_codesx[]"  id="item_code'.$no.'" style="width:250px; height:30px;" disabled>
                 <option value="">--Item List--</option>';
                 foreach($ItemList as  $rowitem)
                 {
@@ -1639,8 +1638,9 @@ public function VPO_GetClassList(Request $request)
                     $html.='>'.$rowitem->item_name.'</option>';
                 }
                 $html.='</select></td>
+                 <td><input type="text" name="itemcode[]" value="'.$rows->item_code.'" id="itemcode" style="width:80px;" readonly/></td>
                  
-                 <td> <select name="class_idsx[]"  id="class_id'.$no.'" style="width:250px; height:30px;" required disabled>
+                 <td> <select name="class_idsx[]"  id="class_id'.$no.'" style="width:250px; height:30px;" disabled>
                 <option value="">--Classification--</option>';
                 foreach($ClassList as  $rowclass)
                 {
@@ -1652,9 +1652,9 @@ public function VPO_GetClassList(Request $request)
                  
                  <td><input type="text"  readOnly  name="descriptionsx[]" value="'.$rows->description.'" id="description" style="width:200px; height:30px;" required /></td> 
                  
-                <td><input type="number" step="any" readOnly   name="consumptionsx[]" value="'.$rows->consumption.'" id="consumption" style="width:80px; height:30px;" required /></td> 
+                <td><input type="number" step="any" readOnly   name="consumptionsx[]" value="'.(round($rows->consumption,3)).'" id="consumption" style="width:80px; height:30px;"/></td> 
                   
-                <td> <select name="unit_idsx[]"  id="unit_id'.$no.'" style="width:100px; height:30px;" required disabled>
+                <td> <select name="unit_idsx[]"  id="unit_id'.$no.'" style="width:100px; height:30px;" disabled>
                 <option value="">--Unit--</option>';
                 foreach($UnitList as  $rowunit)
                 {
@@ -1666,12 +1666,12 @@ public function VPO_GetClassList(Request $request)
                 }
                 $html.='</select></td> 
                 
-                <td><input type="number" step="any" max="'.$mx.'" min="0" class="WASTAGE"  name="wastagesx[]" value="'.$rows->wastage.'" id="wastage'.$no.'" style="width:80px; height:30px;" required /></td> 
-                <td><input type="text"  name="bom_qtysx[]" value="'.$bom_qty.'" id="bom_qty'.$no.'" style="width:80px; height:30px;" required readOnly />
+                <td><input type="number" step="any" max="'.$mx.'" min="0" class="WASTAGE"  name="wastagesx[]" value="'.$rows->wastage.'" id="wastage'.$no.'" style="width:80px; height:30px;"  readonly /></td> 
+                <td><input type="text"  name="bom_qtysx[]" value="'.$bom_qty.'" id="bom_qty'.$no.'" style="width:80px; height:30px;" readOnly />
                 
-                <input type="hidden"  name="bom_qtysx1[]" value="'.$bom_qty.'" id="bom_qty1'.$no.'" style="width:80px; height:30px;" required readOnly />
-                <input type="hidden"  name="final_conssx[]" value="'.$total_consumption.'" id="size_qt'.$no.'" style="width:80px; height:30px;" required readOnly />
-                <input type="hidden"  name="size_qtysx[]" value="'.$size_qty_total.'" id="size_qty'.$no.'" style="width:80px; height:30px;" required readOnly />
+                <input type="hidden"  name="bom_qtysx1[]" value="'.$bom_qty.'" id="bom_qty1'.$no.'" style="width:80px; height:30px;" readOnly />
+                <input type="hidden"  name="final_conssx[]" value="'.$total_consumption.'" id="size_qt'.$no.'" style="width:80px; height:30px;" readOnly />
+                <input type="hidden"  name="size_qtysx[]" value="'.$size_qty_total.'" id="size_qty'.$no.'" style="width:80px; height:30px;" readOnly />
                  
                 </td>';
             
@@ -1773,7 +1773,7 @@ $html.='</select></td>
  
  <td><input type="text"  readOnly  name="description[]" value="'.$codefetch->description.'" id="description" style="width:200px; height:30px;" required /></td> 
  
-<td><input type="number" step="any" name="consumption[]" value="'.(round($codefetch->consumption,2)).'" id="consumption" style="width:80px; height:30px;" required />
+<td><input type="number" step="any" name="consumption[]" value="'.(round($codefetch->consumption,3)).'" id="consumption" style="width:80px; height:30px;" required />
 <input type="hidden" name="rate_per_unit[]" value="'.(round($codefetch->rate_per_unit,2)).'" id="rate_per_unit" style="width:80px; height:30px;" />
 </td> 
   
