@@ -272,7 +272,7 @@
                                  <td><input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="{{ $List->taga_qty }}" id="taga_qty1" style="width:50px;"/><input type="number" step="0.01"class="METER" name="meter[]" onkeyup="mycalc();" value="{{ $List->meter }}" id="meter1" style="width:80px; height:30px;" required  {{$dis}}  /></td>
                                  <td><input type="number" step="any"  name="gram_per_meter[]" onkeyup="mycalc();" value="{{ $List->gram_per_meter }}" id="gram_per_meter" style="width:80px; height:30px;" required  {{$dis}}  /></td>
                                  <td><input type="number" step="any" class="KG" name="kg[]" onkeyup="mycalc();" value="{{ $List->kg }}" id="kg" style="width:80px; height:30px;" readonly  {{$dis}}  /></td>
-                                 <td><input type="number" step="any"    name="item_rates[]"   value="{{ $List->item_rate }}" id="item_rates" style="width:80px;height:30px;" />
+                                 <td><input type="number" step="any"    name="item_rates[]"   value="{{ $List->item_rate }}" id="item_rates" style="width:80px;height:30px;" readonly    />
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="{{ $List->amount }}" id="amounts" style="width:80px;height:30px;" readonly/></td>
                                  <td><input type="number" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="{{ $List->suplier_roll_no }}" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}} required /></td>
                                  <td><input type="text" name="track_code[]"  value="{{ $List->track_code }}" id="track_code" style="width:80px; height:30px;" required readOnly/></td>
@@ -307,7 +307,7 @@
                                  <td><input type="hidden" class="TAGAQTY" onkeyup="mycalc();" value="1" id="taga_qty1" style="width:50px;"/><input type="number" step="0.01" class="METER" name="meter[]" onkeyup="mycalc();" value="0" id="meter1" style="width:80px;" required  {{$dis}}  /></td>
                                  <td><input type="number" step="any"  name="gram_per_meter[]"  value="0" id="gram_per_meter" style="width:80px;" required  {{$dis}}  /></td>
                                  <td><input type="number" step="any" class="KG" name="kg[]" onkeyup="mycalc();" value="0" id="kg" style="width:80px;" readonly  {{$dis}}  /></td>
-                                 <td><input type="number" step="any"    name="item_rates[]"   value="0" id="item_rates" style="width:80px;height:30px;" readonly  {{$dis}}  />
+                                 <td><input type="number" step="any"    name="item_rates[]"   value="0" id="item_rates" style="width:80px;height:30px;" readonly    />
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" readonly  {{$dis}} />
                                  <td><input type="number" step="any" class="suplier_roll_no"  name="suplier_roll_no[]"   value="" id="suplier_roll_no" style="width:100px;height:30px;"  {{$dis}}  required /></td>
                                  <td><input type="text" name="track_code[]"  value="" id="track_code" style="width:80px;" {{$dis}}  /></td>
@@ -565,7 +565,8 @@
                                  <td><input type="text" name="item_codes[]" value="{{ $List->item_code }}" id="item_codes" style="width:80px;"   readOnly /></td>
                                  <td>
                                     <select name="item_code[]"  id="item_code" style="width:200px; height:30px;" onchange="getRateFromPO(this);"  disabled> 
-                                    <option value="{{ $List->item_code }}">{{ $List->item_name }}</option>
+                                       <option value="">--Select--</option>
+                                       <option value="{{ $List->item_code }}">{{ $List->item_name }}</option>
                                     </select>
                                  </td>
                                  <td>
@@ -881,15 +882,17 @@
           url: "{{ route('ItemRateFromPO') }}",
           data:{'po_code':po_code,item_code:item_code},
           success: function(data){
-               +row.find('input[name^="item_rates[]"]').val(data[0]['item_rate'])
+               var rate = parseFloat(data[0]['item_rate']).toFixed(2);
+               row.find('input[name^="item_rates[]"]').val(rate);
+
+               var qty =  row.find('input[name^="meter[]"]').val();
+ 
+               row.find('td input[name="amounts[]"]').val(qty*rate);
                
       }
-      });
-          
-          
-          
-          
+      });   
    }
+
    function enable(opening)
    {
       
@@ -1225,12 +1228,12 @@
     del.onclick = function () { deleteRowcone(this); }
     cell13.appendChild(del);
 
-    // Scroll to new row
-    var w = $(window);
-    var tr = $('#footable_3').find('tr').eq(indexcone);
-    if (tr.length) {
-        $('html,body').animate({ scrollTop: tr.offset().top - (w.height() / 2) }, 1000);
-    }
+   //  // Scroll to new row
+   //  var w = $(window);
+   //  var tr = $('#footable_3').find('tr').eq(indexcone);
+   //  if (tr.length) {
+   //      $('html,body').animate({ scrollTop: tr.offset().top - (w.height() / 2) }, 1000);
+   //  }
 
     $("#cntrr1").val(parseInt($("#cntrr1").val()) + 1);
 
@@ -1324,18 +1327,25 @@
       t1.value = previousValue;
 
       cell1.appendChild(t1);
-      
       var cell5 = row.insertCell(2);
-      var t5=document.createElement("select");
+      var t5 = document.createElement("select");
+
       var x = $("#item_code"),
-      y = x.clone();
-      y.attr("id","item_code");
-      y.attr("name","item_code[]");
-      y.attr("disabled",true); 
+         y = x.clone();
+
+      y.attr("id", "item_code");
+      y.attr("name", "item_code[]");
+      y.attr("value", "");
+      y.attr("disabled", false);
       y.width(200);
       y.height(30);
+
+      // Add blank option at top
+      y.prepend('<option value="" selected>--Select--</option>');
+
+      // Append to cell
       y.appendTo(cell5);
-      
+
       
       
       var cell3 = row.insertCell(3);
@@ -1361,65 +1371,98 @@
       cell3.appendChild(t7);
       
       var cell7 = row.insertCell(4);
-      var t8=document.createElement("input");
-      t8.style="display: table-cell; width:80px;height:30px;";
-      t8.type="number";
-      t8.step="any";
-      t8.className="METER";
-      t8.id = "meter"+indexcone;
-      t8.name="meter[]";
-      t8.onkeyup=mycalc();
+      var t8 = document.createElement("input");
+      t8.style = "display: table-cell; width:80px;height:30px;";
+      t8.type = "number";
+      t8.step = "any";
+      t8.className = "METER";
+      t8.id = "meter" + indexcone;
+
+      // safely get previous meter value
+      var previousValue1 = document.getElementById("meter" + (indexcone - 1))?.value || "";
+      t8.value = previousValue1;
+
+      t8.name = "meter[]";
+      t8.onkeyup = mycalc;
       cell7.appendChild(t8);
-      
+
       var cell7 = row.insertCell(5);
-      var t8=document.createElement("input");
-      t8.style="display: table-cell; width:80px;height:30px;";
-      t8.type="number";
-      t8.step="any";
-      t8.id = "gram_per_meter"+indexcone;
-      t8.name="gram_per_meter[]";
-      t8.onkeyup=mycalc();
+      var t8 = document.createElement("input");
+      t8.style = "display: table-cell; width:80px;height:30px;";
+      t8.type = "number";
+      t8.step = "any";
+
+      // Get previous value safely
+      var prevInput = document.getElementById("gram_per_meter");
+      var previousValue2 = prevInput ? prevInput.value : "";
+      t8.value = previousValue2;
+
+      t8.id = "gram_per_meter" + indexcone;
+      t8.name = "gram_per_meter[]";
+      t8.onkeyup = mycalc;
+
       cell7.appendChild(t8);
-      
+
+
       var cell7 = row.insertCell(6);
-      var t8=document.createElement("input");
-      t8.style="display: table-cell; width:80px;height:30px;";
-      t8.type="number";
-      t8.step="any";
-      t8.readOnly="true";
-      t8.className="KG";
-      t8.id = "kg"+indexcone;
-      t8.name="kg[]";
-      t8.readOnly=true;
-      t8.onkeyup=mycalc();
+      var t8 = document.createElement("input");
+      t8.style = "display: table-cell; width:80px;height:30px;";
+      t8.type = "number";
+      t8.step = "any";
+      t8.readOnly = true;
+      t8.className = "KG";
+
+      // get previous KG value safely
+      var allKg = document.getElementsByClassName("KG");
+      var previousValue3 = "";
+
+      if (allKg.length > 0) {
+         previousValue3 = allKg[allKg.length - 1].value;   // last KG value
+      }
+
+      t8.value = previousValue3;
+
+      // assign id
+      t8.id = "kg" + indexcone;
+      t8.name = "kg[]";
+      t8.onkeyup = mycalc;
+
       cell7.appendChild(t8);
-      
+
+
+
+            
       
       var cell3 = row.insertCell(7);
-      var t3=document.createElement("input");
-      t3.style="display: table-cell; width:80px;height:30px;";
-      t3.type="number";
-      t3.step="any";
-      t3.required="true";
-      t3.id = "item_rates"+indexcone;
-      t3.name="item_rates[]";
-      t3.value="0";
-      t3.readOnly=false;
-      if($('#is_opening').prop('checked')) 
-      {t3.readOnly=false;}else{t3.readOnly=true;}
+      var t3 = document.createElement("input");
+      t3.style = "display: table-cell; width:80px;height:30px;";
+      t3.type = "number";
+      t3.step = "any";
+      t3.required = true;
+
+      var previousValue4 = document.getElementById("item_rates" + (indexcone - 1))?.value || "";
+      t3.value = previousValue4;
+
+      t3.id = "item_rates" + indexcone;
+      t3.name = "item_rates[]";
+      t3.readOnly = !$('#is_opening').prop('checked');
       cell3.appendChild(t3);
-      
+
       var cell3 = row.insertCell(8);
-      var t3=document.createElement("input");
-      t3.style="display: table-cell; width:80px;height:30px;";
-      t3.type="number";
-      t3.readOnly="true";
-      t3.step="any";
-      t3.className="AMT";
-      t3.id = "amounts"+indexcone;
-      t3.name="amounts[]";
-      t3.value="0";
+      var t3 = document.createElement("input");
+      t3.style = "display: table-cell; width:80px;height:30px;";
+      t3.type = "number";
+      t3.readOnly = true;
+      t3.step = "any";
+      t3.className = "AMT";
+
+      var previousValue5 = document.getElementById("amounts" + (indexcone - 1))?.value || "";
+      t3.value = previousValue5;
+
+      t3.id = "amounts" + indexcone;
+      t3.name = "amounts[]";
       cell3.appendChild(t3);
+
          
       var cell4 = row.insertCell(9);
       var t4=document.createElement("input");
@@ -1474,34 +1517,43 @@
       btnRemove.setAttribute("onclick", "deleteRowcone(this)");
       cell9.appendChild(btnRemove);
       
-      var w = $(window);
-      var row = $('#footable_3').find('tr').eq(indexcone);
+      // var w = $(window);
+      // var row = $('#footable_3').find('tr').eq(indexcone);
       
-      if (row.length){
-      $('html,body').animate({scrollTop: row.offset().top - (w.height()/2)}, 1000 );
-      }
-      
+      // if (row.length){
+      // $('html,body').animate({scrollTop: row.offset().top - (w.height()/2)}, 1000 );
+      // }
       document.getElementById('cntrr').value = parseInt(document.getElementById('cntrr').value)+1;
-      
+      CalculateRow($(row));
+      mycalc();
       indexcone++;
       mycalc();
       recalcIdcone();
-      $("#footable_2 tbody tr").find("td input[name='item_rates[]']").prop('readonly', false);   // most reliable
+      // $("#footable_2 tbody tr").find("td input[name='item_rates[]']").prop('readonly', true);   // most reliable
    }
    
    
     $(document).on("keyup", 'input[name^="meter[]"],input[name^="item_rates[]"]', function (event) {
           CalculateRow($(this).closest("tr"));
-         });
-      function CalculateRow(row)
-      {
-          var item_qtys=+row.find('input[name^="meter[]"]').val();
-          var item_rates=+row.find('input[name^="item_rates[]"]').val();
-          var amount=(parseFloat(item_qtys)*parseFloat(item_rates)).toFixed();
-          row.find('input[name^="amounts[]"]').val(amount);
-          mycalc();
-      }
-   
+    });
+
+   function CalculateRow(row)
+   {
+      console.log(row);
+
+      var item_qtys = parseFloat(row.find('input[name="meter[]"]').val()) || 0;
+      var item_rates = parseFloat(row.find('input[name="item_rates[]"]').val()) || 0;
+
+      console.log("item_qtys : " + item_qtys);
+      console.log("item_rates : " + item_rates);
+
+      var amount = (item_qtys * item_rates).toFixed(2);
+
+      row.find('input[name="amounts[]"]').val(amount);
+
+      mycalc();
+   }
+
    
    function mycalc()
    {  
