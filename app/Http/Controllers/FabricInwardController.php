@@ -568,8 +568,7 @@ class FabricInwardController extends Controller
         } 
         else 
         {     
-            $BillToList = DB::SELECT("SELECT ledger_details.sr_no, ledger_details.trade_name, ledger_details.site_code FROM purchase_order 
-            INNER JOIN ledger_details ON ledger_details.sr_no = purchase_order.bill_to");
+            $BillToList = DB::SELECT("SELECT ledger_details.sr_no, ledger_details.trade_name, ledger_details.site_code FROM ledger_details  GROUP BY ledger_details.sr_no");
         }
 
         $FabricCuttingOutwardList =  DB::table('fabric_outward_cutting_department_master')->where('delflag','=', '0')->get();
