@@ -84,7 +84,7 @@
                                  ->leftJoin('location_master', 'location_master.loc_id', '=', 'outward_for_packing_master.sent_to')
                                  ->leftJoin('fg_master', 'fg_master.fg_id', '=', 'outward_for_packing_master.fg_id')
                                  ->leftJoin('vendor_work_order_master', 'vendor_work_order_master.vw_code', '=','outward_for_packing_master.vw_code')
-                                 ->whereIn('outward_for_packing_master.ofp_code', [$ofpCodes])
+                                 ->whereIn('outward_for_packing_master.ofp_code', $ofpCodes)
                                  ->get(['outward_for_packing_master.*','usermaster.username','ledger_master.ac_short_name as Ac_name','LM1.ac_short_name as vendor_name','LM1.address as vendor_address', 'outward_for_packing_master.sales_order_no',
                                  'ledger_master.gst_no','ledger_master.pan_no','ledger_master.state_id','ledger_master.address','mainstyle_name','location_master.location as sent_to','location_master.loc_inc as loc_address','fg_name']);
                      
