@@ -1130,7 +1130,7 @@ class PackingInhouseMasterController extends Controller
          ->join('ledger_master', 'ledger_master.Ac_code', '=', 'packing_inhouse_master.vendorId')
          ->leftJoin('vendor_purchase_order_master', 'vendor_purchase_order_master.vpo_code', '=','packing_inhouse_master.vpo_code')
         ->where('packing_inhouse_master.pki_code', $pki_code)
-         ->get(['packing_inhouse_master.*','usermaster.username','ledger_master.Ac_name','packing_inhouse_master.sales_order_no',
+         ->get(['packing_inhouse_master.*','usermaster.username','ledger_master.ac_short_name','packing_inhouse_master.sales_order_no',
          'ledger_master.gst_no','ledger_master.pan_no','ledger_master.state_id','ledger_master.address' ]);
        
      
