@@ -519,6 +519,35 @@
                             </div>
                             @endif
                         </div>
+
+                         <div class="col-md-6 p-2 ">
+                            <div class="info-row">
+                                <div class="label">Main Style Name</div>
+                                <div class="colon">:</div>
+                                <div class="value">{{ $PackingInhouseMaster[0]->mainstyle_name }}  </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="label">Sub Style Name</div>
+                                <div class="colon">: </div>
+                                <div class="value">{{ $PackingInhouseMaster[0]->substyle_name }} </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="label">Style No.</div>
+                                <div class="colon">:</div>
+                                <div class="value"> {{ $PackingInhouseMaster[0]->style_no }}   </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="label">Style Name</div>
+                                <div class="colon">:</div>
+                                <div class="value">{{ $PackingInhouseMaster[0]->fg_name }}  </div>
+                            </div>
+
+                        </div>
+
+                        
+
+                    </div>
+                     <div class="row g-0  border-bottom ">
                         <div class="col-md-6 p-2 border-end">
                             <div class="info-row">
                                 <div class="label">Vendor</div>
@@ -542,7 +571,9 @@
                             </div>
 
                         </div>
+                        <div class="col-md-6 p-2">
 
+                        </div>
                     </div>
 
 
@@ -619,16 +650,16 @@
                             @endphp
 
                             <tr>
-                                <th class="text-end" colspan="3">Total :</th>
+                                <td class="text-end" colspan="3">Total :</td>
 
                                 @foreach($SizeDetailList as $i => $sz)
                                 @php $key = 's'.($i+1); @endphp
-                                <th class="text-end">{{ number_format($sizeTotals[$key]) }}</th>
+                                <td class="text-end">{{ number_format($sizeTotals[$key]) }}</td>
                                 @endforeach
 
-                                <th class="text-end">{{ number_format($totalQty) }}</th>
-                                <th></th>
-                                <th class="text-end">{{ number_format($totalAmt) }}</th>
+                                <td class="text-end">{{ number_format($totalQty) }}</td>
+                                <td></td>
+                                <td class="text-end">{{ number_format($totalAmt) }}</td>
                             </tr>
                         </tfoot>
 
