@@ -1585,7 +1585,7 @@ public function VPO_GetClassList(Request $request)
            $color_ids = $color_id;
 
     //    DB::enableQueryLog();
-            $codefetch = DB::table('bom_trim_fabric_details')
+            $rows = DB::table('bom_trim_fabric_details')
             ->select("color_id", "item_code", "consumption", "description", "wastage", "class_id", "unit_id", "rate_per_unit")
             ->where(function($query) use ($color_ids) {
                 $color_ids_array = explode(',', $color_ids);
@@ -1594,7 +1594,7 @@ public function VPO_GetClassList(Request $request)
                 }
             })
             ->where('sales_order_no', '=', $sales_order_no)
-            ->get();
+            ->first();
                 // dd(DB::getQueryLog());
            
               
@@ -1604,8 +1604,7 @@ public function VPO_GetClassList(Request $request)
             
             //echo '<pre>';print_R($codefetch);exit;
             $html = '';
-            foreach($codefetch as $rows)
-            {
+             
                 
                  $UnitList = UnitModel::where('delflag','=', '0')->where('unit_id','=',$rows->unit_id)->get();
                  $ItemList = ItemModel::where('delflag','=', '0')->where('item_code','=',$rows->item_code)->get(); 
@@ -1666,7 +1665,7 @@ public function VPO_GetClassList(Request $request)
                 }
                 $html.='</select></td> 
                 
-                <td><input type="number" step="any" max="'.$mx.'" min="0" class="WASTAGE"  name="wastagesx[]" value="'.$rows->wastage.'" id="wastage'.$no.'" style="width:80px; height:30px;"  readonly /></td> 
+                <td><input type="number" step="any" max="'.$mx.'" min="0" class="WASTAGE"  name="wastagesx[]" value="0" id="wastage'.$no.'" style="width:80px; height:30px;"  readonly /></td> 
                 <td><input type="text"  name="bom_qtysx[]" value="'.$bom_qty.'" id="bom_qty'.$no.'" style="width:80px; height:30px;" readOnly />
                 
                 <input type="hidden"  name="bom_qtysx1[]" value="'.$bom_qty.'" id="bom_qty1'.$no.'" style="width:80px; height:30px;" readOnly />
@@ -1677,7 +1676,7 @@ public function VPO_GetClassList(Request $request)
             
               
                  $html .='</tr>';
-            }
+            // }
              
             return response()->json(['html' => $html]);
      

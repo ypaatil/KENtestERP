@@ -654,9 +654,8 @@
                     row.remove();
                 } else {
                     seen1[key] = true;
+                    CalculateQtyRowProsx(row);
                 }
-
-                CalculateQtyRowProsx(row);
         });
    }
 
@@ -697,12 +696,11 @@
                $.ajax({
                dataType: "json",
                url: "{{ route('GetTrimsConsumptionPO') }}",
-               data:{'color_id':color_id,'size_qty_total':size_qty_total,'sales_order_no':sales_order_no,'no':no,'size_qty_array':size_qty_array,'size_array':size_array},
+               data:{'color_id':color_id,'size_qty_total':size_qty_total,'sales_order_no':sales_order_no,'no':no},
                success: function(data){
                 
                  $("#TrimFabricData").append(data.html);
                  setTimeout(removeDuplicateRows1, 500); 
-
                }
                });
                
@@ -1300,14 +1298,16 @@
    
    });
    function CalculateQtyRowProsx(row)
-   {   
+   {    
     var consumption=+row.find('input[name^="consumptionsx[]"]').val();
     var wastage=+row.find('input[name^="wastagesx[]"]').val();
     var rate_per_unit=+row.find('input[name^="rate_per_unitsx[]"]').val();
-   //   var  qty=+row.find('input[name^="bom_qtysx1[]"]').val();
+   //  var  qty=+row.find('input[name^="bom_qtysx1[]"]').val();
+
+    console.log(row);
     var qty=$("#final_bom_qty").val();
-    var final_cons=parseFloat(consumption) + parseFloat(consumption*(wastage/100));
-   var bom_qty=(parseFloat(final_cons) * parseInt(qty)).toFixed(2);
+    var final_cons=parseFloat(consumption);
+    var bom_qty=(parseFloat(final_cons) * parseFloat(qty)).toFixed(2);
     
     
     var total_price=(bom_qty*rate_per_unit).toFixed(2);
