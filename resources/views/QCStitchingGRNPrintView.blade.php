@@ -158,28 +158,7 @@
                 padding: 2px;
             }
 
-            @media print {
-
-                .table-bordered th {
-                    vertical-align: middle;
-                    text-align: center;
-                    white-space: nowrap;
-
-                }
-
-                th,
-                td {
-                    white-space: normal !important;
-                    /* allow text to wrap */
-
-                }
-
-                #printInvoice {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                }
-            }
-
+            
 
             .table-bordered td,
             .table-bordered th {
@@ -234,6 +213,29 @@
                 overflow: visible !important;
             }
         }
+
+        @media print {
+
+                .table-bordered th {
+                    vertical-align: middle;
+                    text-align: center;
+                    white-space: nowrap;
+
+                }
+
+                th,
+                td {
+                    white-space: normal !important;
+                    /* allow text to wrap */
+
+                }
+
+                #printInvoice {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                }
+            }
+
 
         .verticalLine {
             border-right: solid grey;
@@ -494,7 +496,7 @@
                             <div class="info-row">
                                 <div class="label">QC Date</div>
                                 <div class="colon">: </div>
-                                <div class="value"> {{ $QCStitchingInhouseMaster[0]->qcsti_date }} </div>
+                                <div class="value"> {{ \Carbon\Carbon::parse($QCStitchingInhouseMaster[0]->qcsti_date)->format('d-m-Y') }} </div>
                             </div>
                             <div class="info-row">
                                 <div class="label">Sales Order no</div>
