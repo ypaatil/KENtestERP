@@ -345,7 +345,9 @@ class TrimsOutwardCuttingDepartmentController extends Controller
             SELECT trims_outward_cutting_department_details.*, 
                 item_master.item_name,
                 item_master.color_name,
-                item_master.unit_id 
+                item_master.unit_id, 
+                item_master.cat_id, 
+                item_master.class_id 
             FROM trims_outward_cutting_department_details 
             INNER JOIN item_master 
                 ON item_master.item_code = trims_outward_cutting_department_details.item_code
@@ -368,10 +370,10 @@ class TrimsOutwardCuttingDepartmentController extends Controller
 
         foreach($detailData as $row)
         {
-            $html .= '<tr>
+            $html .= '<tr item_code="'.$row->item_code.'" cat_id="'.$row->cat_id.'" class_id="'.$row->class_id.'"  qty="'.$row->item_qty.'">
                 <td><input type="text" style="width:60px;" value="'.($sr_no++).'" readonly></td>
                 <td>
-                    <select name="item_codes[]" style="width:150px;height:30px;">
+                    <select name="item_codes[]" style="width:252px;height:30px;">
                         <option value="">--- Select ---</option>';
 
                         foreach($itemlist as $item){
@@ -419,7 +421,7 @@ class TrimsOutwardCuttingDepartmentController extends Controller
                 </td>
 
                 <td class="text-center">
-                    <button type="button" onclick="mycalc();" class="btn btn-warning">+</button>
+                    <button type="button" onclick="mycalc();" class="btn btn-warning Abutton1">+</button>
                 </td>
 
                 <td class="text-center">

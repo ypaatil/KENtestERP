@@ -1,17 +1,29 @@
 @extends('layouts.master') 
 @section('content')
 <style>
-    .hide{
-        display:none;
-    }
-    
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { 
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-        margin: 0; 
-    }
+  .hide
+   {
+   display:none!important;
+   }
+   .navbar-brand-box
+   {
+   width: 266px !important;
+   }
+   /* Hide arrows in Chrome, Safari, Edge, Opera */
+   input[type=number]::-webkit-inner-spin-button,
+   input[type=number]::-webkit-outer-spin-button {
+   -webkit-appearance: none;
+   margin: 0;
+   }
+   /* Hide arrows in Firefox */
+   input[type=number] {
+   -moz-appearance: textfield;
+   }
+
+   td,th
+   {
+      text-align: center;
+   }
 </style>
 <div class="row">
    <div class="col-12">
@@ -216,7 +228,7 @@
                            <tr>
                               <td><input type="text" name="id" value="1" id="id"  style="width:50px;"/></td>
                               <td>
-                                 <select name="item_codes[]" class="item" id="item_code" class="select2" style="width:200px;height:30px;">
+                                 <select name="item_codes[]" class="item" id="item_code" class="select2" style="width:200px;height:30px;" onchange="CheckDuplicateRow(this);">
                                       
                                     <option value="">--- Select Item ---</option>
                                     @foreach($itemlist as  $rowitem)
@@ -324,12 +336,7 @@
                      <div class="mb-3">
                         <label for="formrow-email-input" class="form-label">Total Amount</label>
                         <input type="text" name="total_amount" class="form-control" id="total_amount" value="{{ $purchasefetch->total_amount }}" required>
-                     </div>
-                  </div>
-                  <div class="col-md-2">
-                     <div class="mb-3">
-                        <label for="total_allocate_qty" class="form-label">Total Allocated Qty</label>
-                        <input type="text" class="form-control" id="total_allocate_qty" value="">
+                        <input type="hidden" class="form-control" id="total_allocate_qty" value="0">
                      </div>
                   </div>
                </div>
@@ -370,7 +377,29 @@
                      } 
                   @endphp
                   <div class="row">
-                     <div class="col-md-3">
+                     <div class="col-md-3 mt-4 m-0">
+                        <div class="mb-3">
+                           <div class="form-check form-check-primary mb-5">
+                              <input class="form-check-input" type="checkbox" id="isReturnTrimsInward" onchange="GetDCDropdown();" name="isReturnTrimsInward" 
+                                  style="font-size: 30px;margin-left: 0px;margin-top: -3px;" @if($purchasefetch->isReturnFabricInward==1)checked @else disabled @endif disabled>
+                              <label class="form-check-label" for="isReturnTrimsInward" style="position: absolute;margin-left: 20px;font-size: 14px;">
+                              Trims Return From Inhouse
+                              </label>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-md-3 mt-4 m-0">
+                        <div class="mb-3">
+                           <div class="form-check form-check-primary mb-5">
+                              <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" onchange="DisableDropdown();" 
+                                 style="font-size: 30px;margin-left: 0px;margin-top: -3px;"  @if($purchasefetch->isOutsideVendor==1)checked @else disabled @endif disabled />
+                              <label class="form-check-label" for="isOutsideVendor" style="position: absolute;margin-left: 20px;font-size: 14px;">
+                              From Outsource Vendor
+                              </label>
+                           </div>
+                        </div>
+                     </div>
+                     <div class="col-md-2">
                         <div class="mb-3">
                            <label for="formrow-email-input" class="form-label">DC Date</label>
                            <input type="hidden" name="trimDate" class="form-control" id="formrow-email-input" value="{{ $purchasefetch->trimDate  }}" required>
@@ -388,7 +417,7 @@
                            </select>
                         </div>
                      </div> 
-                     <div class="col-md-3">
+                     <div class="col-md-2">
                            <label for="tge_code" class="form-label">Trim Gate Code</label>
                            <select name="tge_code" class="form-select select2" id="tge_code" disabled>
                               <option value="">--Select--</option>
@@ -399,7 +428,7 @@
                               @endforeach
                            </select>
                         </div>
-                     <div class="col-md-4">
+                     <div class="col-md-3">
                            <label for="formrow-inputState" class="form-label">Location/Warehouse</label>
                            <select name="location_id" class="form-select select2  " id="location_id" disabled>
                               <option value="">--Select Buyer--</option>
@@ -411,28 +440,6 @@
                               }
                               @endforeach
                            </select>
-                     </div>
-                     <div class="col-md-3 mt-4 m-0">
-                        <div class="mb-3">
-                           <div class="form-check form-check-primary mb-5">
-                              <input class="form-check-input" type="checkbox" id="isReturnTrimsInward" onchange="GetDCDropdown();" name="isReturnTrimsInward" 
-                                  style="font-size: 30px;margin-left: 0px;margin-top: -3px;" @if($purchasefetch->isReturnFabricInward==1)checked @else disabled @endif>
-                              <label class="form-check-label" for="isReturnTrimsInward" style="position: absolute;margin-left: 20px;font-size: 14px;">
-                              Trims Return From Inhouse
-                              </label>
-                           </div>
-                        </div>
-                     </div>
-                     <div class="col-md-3 mt-4 m-0">
-                        <div class="mb-3">
-                           <div class="form-check form-check-primary mb-5">
-                              <input class="form-check-input" type="checkbox" id="isOutsideVendor" name="isOutsideVendor" onchange="DisableDropdown();" 
-                                 style="font-size: 30px;margin-left: 0px;margin-top: -3px;"  @if($purchasefetch->isOutsideVendor==1)checked @else disabled @endif/>
-                              <label class="form-check-label" for="isOutsideVendor" style="position: absolute;margin-left: 20px;font-size: 14px;">
-                              From Outsource Vendor
-                              </label>
-                           </div>
-                        </div>
                      </div>
                      <div class="col-md-2" id="workOrder">
                         <div class="mb-3">
@@ -483,7 +490,7 @@
                               <tr>
                                  <td><input type="text" name="id" value="1" id="id"  style="width:50px;"/></td>
                                  <td>
-                                    <select name="item_codes[]" class="item" id="item_code" class="select2" style="width:200px;height:30px;">
+                                    <select name="item_codes[]" class="item" id="item_code" class="select2" style="width:200px;height:30px;" onchange="CheckDuplicateRow(this);">
                                        
                                        <option value="">--- Select Item ---</option>
                                        @foreach($itemlist as  $rowitem)
@@ -591,14 +598,9 @@
                         <div class="mb-3">
                            <label for="formrow-email-input" class="form-label">Total Amount</label>
                            <input type="text" name="total_amount" class="form-control" id="total_amount1" value="{{ $purchasefetch->total_amount }}" required>
+                           <input type="hidden" class="form-control" id="total_allocate_qty1" value="0">
                         </div>
-                     </div>
-                     <div class="col-md-2">
-                        <div class="mb-3">
-                           <label for="total_allocate_qty" class="form-label">Total Allocated Qty</label>
-                           <input type="text" class="form-control" id="total_allocate_qty1" value="">
-                        </div>
-                     </div>
+                     </div> 
                   </div>
                   </br>  
                   <button type="submit" class="btn btn-success w-md" onclick="EnableFields();" id="Submit">Save</button>
@@ -647,6 +649,39 @@
 <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery.lazy/1.7.9/jquery.lazy.plugins.min.js"></script>
 <script>
 
+   let duplicateChecking = false;   // global flag
+
+   function CheckDuplicateRow(row)
+   {
+      if (duplicateChecking) return;  // stop repeated alerts
+
+      let selectedVal = $(row).val();
+
+      // get all selected item codes except current
+      let allSelected = $('select[name="item_codes[]"]').not(row).map(function () {
+         return $(this).val();
+      }).get();
+
+      if (allSelected.includes(selectedVal)) {
+
+         duplicateChecking = true;  // block next alerts
+
+         alert("This Item is already selected in another row!");
+
+         // reset and re-init Select2
+         $(row).val(null).trigger('change.select2');
+         $(row).select2('destroy');
+         $(row).select2({
+               placeholder: "Select Item",
+               allowClear: true
+         });
+
+         // unlock alert **after resetting is done**
+         setTimeout(() => duplicateChecking = false, 300);
+      }
+   }
+
+
    $(document).ready(function() 
    {
         $('#frmData').submit(function() {
@@ -664,39 +699,44 @@
    });
     
    
-   function DisableDropdown()
+ function DisableDropdown()
    {
-        if($("#isOutsideVendor").is(":checked"))
-        {
-           $("#isReturnTrimsInward").attr('disabled', true); 
-         //   $("#vw_code").attr('onchange', 'GetFabricOutwardData()');
-        }
-        else
-        {
-           $("#isReturnTrimsInward").attr('disabled', false);  
-        }          
-   
+         $("#delivery-tab").prop("disabled", true);
+         if($("#isOutsideVendor").is(":checked"))
+         {
+            $("#isReturnFabricInward").attr('disabled', true); 
+            $("#vpo_code").prop('disabled', false); 
+            $("#vpo_code").attr('onchange', 'GetFabricOutwardData()');
+         }
+         else
+         {
+            $("#vpo_code").prop('disabled', true); 
+            $("#isReturnFabricInward").attr('disabled', false);  
+         }          
+
    } 
-   
+
    function GetDCDropdown()
    { 
-        if($("#isReturnTrimsInward").is(":checked"))
-        {
-           $("#isOutsideVendor").attr('disabled', true);
-           $("#invoice_no1").removeAttr('name').removeAttr('required').addClass("hide");
-           $("#tocd_code").attr('name', 'invoice_no').attr('required', true).removeClass("hide"); 
-        }
-        else
-        {
-           $("#isOutsideVendor").attr('disabled', false);
-           $("#invoice_no1").attr('name', 'invoice_no').attr('required', true).removeClass("hide");
-           $("#tocd_code").removeAttr('name').removeAttr('required').addClass("hide"); 
-        }
+         $("#delivery-tab").prop('disabled', true);
+         if($("#isReturnFabricInward").is(":checked"))
+         {
+            $("#footable_4").addClass("hide");
+            $("#isOutsideVendor").attr('disabled', true);
+            $("#invoice_no1").removeAttr('name').removeAttr('required').addClass("hide");
+            $("#tocd_code").attr('name', 'invoice_no').attr('required', true).removeClass("hide"); 
+         }
+         else
+         {
+            $("#invoice_no1").attr('name', 'invoice_no').attr('required', true).removeClass("hide");
+            $("#tocd_code").removeAttr('name').removeAttr('required').addClass("hide"); 
+         }
+         $("#isReturnFabricInward").attr('disabled', true);
+         $("#isOutsideVendor").attr('disabled', true);
    }
-   
 
-    function GetPurchaseBillDetails()
-    {
+   function GetPurchaseBillDetails()
+   {
        var po_code = $("#po_code").val(); 
        
         $.ajax({
@@ -709,9 +749,9 @@
                $("#bill_to").html(data.detail); 
            }
         }); 
-    } 
+   } 
     
-    var vw_code = $("#vw_code").val();
+    var vpo_code = $("#vpo_code").val();
    //  if(vw_code != "")
    //  {
    //        GetVendorName(vw_code);
@@ -843,6 +883,20 @@
       var row4 = $(obj).attr('cat_id');
       var row5 = $(obj).attr('class_id');
       var isClick = $(obj).attr('isClick');
+      
+      setTimeout(() => {
+
+         $('#footable_2')
+           .find('select, button')
+           .not('select[name="rack_id[]"]')
+           .prop('disabled', true);
+         
+         $('#footable_2')
+           .find('input') 
+           .prop('readOnly', true);
+
+       }, 500);
+
       if($('#is_opening').is(":checked") == true)
       {
            var is_opening = 1;
@@ -1509,6 +1563,7 @@
        function CalculateRow(row)
        {
            var item_qtys=+row.find('input[name^="item_qtys[]"]').val();
+           $(row).attr("qty", item_qtys);
            var item_rates=+row.find('input[name^="item_rates[]"]').val();
            var amount=(parseFloat(item_qtys)*parseFloat(item_rates)).toFixed(2);
            row.find('input[name^="amounts[]"]').val(amount);

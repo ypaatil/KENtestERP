@@ -22,6 +22,11 @@ ini_set('memory_limit', '1G');
    input[type=number] {
    -moz-appearance: textfield;
    }
+
+   td,th
+   {
+      text-align: center;
+   }
 </style>
 <div class="row">
    <div class="col-12">
@@ -196,7 +201,7 @@ ini_set('memory_limit', '1G');
                               <tr item_code="" isClick = "0" qty="" bom_code="" cat_id="" class_id="">
                                  <td><input type="text" name="id" value="1" id="id"  style="width:50px;" readonly/></td>
                                  <td>
-                                    <select name="item_codes[]" class="select2" id="item_codes" style="width:252px;height:30px;" onchange="GetUnit(this);" >
+                                    <select name="item_codes[]" class="select2" id="item_codes" style="width:252px;height:30px;" onchange="GetUnit(this);CheckDuplicateRow(this);" >
                                        <option value="">--- Select Item ---</option>
                                        @foreach($itemlist as  $rowitem)
                                        <option value="{{ $rowitem->item_code}}">{{ $rowitem->item_name }}-({{ $rowitem->item_code}}) </option>
@@ -278,14 +283,9 @@ ini_set('memory_limit', '1G');
                         <div class="mb-3">
                            <label for="total_amount" class="form-label">Total Amount</label>
                            <input type="text" name="total_amount" class="form-control" id="total_amount" readonly>
+                           <input type="hidden" class="form-control" id="total_allocate_qty" value="0">
                         </div>
-                     </div>
-                     <div class="col-md-2">
-                        <div class="mb-3">
-                           <label for="total_allocate_qty" class="form-label">Total Allocated Qty</label>
-                           <input type="text" class="form-control" id="total_allocate_qty" value="" readonly>
-                        </div>
-                     </div>
+                     </div> 
                   </div>
                   <div>
                      <button type="submit" class="btn btn-success w-md" onclick="EnableFields();" id="Submit">Save</button>
@@ -313,43 +313,6 @@ ini_set('memory_limit', '1G');
                   <input type="hidden" name="tab_button" class="form-control" id="tab_button" value="2">
                   @csrf 
                   <div class="row">
-                     <div class="col-md-3">
-                        <div class="mb-3">
-                           <label for="invoice_date" class="form-label">DC Date</label>
-                           <input type="date" name="invoice_date" class="form-control" id="invoice_date" value="{{date('Y-m-d')}}" required>
-                           <input type="hidden" name="userId" value="{{ Session::get('userId')}}" class="form-control" id="formrow-email-input">
-                        </div>
-                     </div>
-                     <div class="col-md-2">
-                        <div class="mb-3">
-                           <label for="formrow-email-input" class="form-label">DC No</label>
-                           <input type="text" name="invoice_no" id="invoice_no1" class="form-control" value=""  > 
-                           <select name="invoice_no" class="form-select select2 hide" id="tocd_code" onchange="GetTrimsCuttingDeptData();">
-                              <option value="">--Select--</option>
-                              @foreach($TrimsCuttingOutwardList as  $row)
-                              <option value="{{ $row->tocd_code }}">{{ $row->tocd_code }}</option> 
-                              @endforeach
-                           </select>
-                        </div>
-                     </div>
-                     <div class="col-md-3">
-                        <label for="tge_code" class="form-label">Trim Gate Code</label>
-                        <select name="tge_code" class="form-select select2" id="tge_code" required>
-                           <option value="">--Select--</option>
-                           @foreach($TGEList as  $row) 
-                           <option value="{{ $row->tge_code }}">{{ $row->tge_code }}</option>
-                           @endforeach
-                        </select>
-                     </div>
-                     <div class="col-md-4">
-                        <label for="location_id" class="form-label">Location/Warehouse</label>
-                        <select name="location_id" class="form-select select2  " id="location_id" required>
-                           <option value="">--Location--</option>
-                           @foreach($LocationList as  $row) 
-                           <option value="{{ $row->loc_id }}" {{ $row->loc_id == 4 ? 'selected="selected"' : '' }}>{{ $row->location }}</option> 
-                           @endforeach
-                        </select>
-                     </div>
                      <div class="col-md-3 mt-4 m-0">
                         <div class="mb-3">
                            <div class="form-check form-check-primary mb-5">
@@ -369,6 +332,43 @@ ini_set('memory_limit', '1G');
                               </label>
                            </div>
                         </div>
+                     </div>
+                     <div class="col-md-2">
+                        <div class="mb-3">
+                           <label for="invoice_date" class="form-label">DC Date</label>
+                           <input type="date" name="invoice_date" class="form-control" id="invoice_date" value="{{date('Y-m-d')}}" required>
+                           <input type="hidden" name="userId" value="{{ Session::get('userId')}}" class="form-control" id="formrow-email-input">
+                        </div>
+                     </div>
+                     <div class="col-md-2">
+                        <div class="mb-3">
+                           <label for="formrow-email-input" class="form-label">DC No</label>
+                           <input type="text" name="invoice_no" id="invoice_no1" class="form-control" value=""  > 
+                           <select name="invoice_no" class="form-select select2 hide" id="tocd_code" onchange="GetTrimsCuttingDeptData();">
+                              <option value="">--Select--</option>
+                              @foreach($TrimsCuttingOutwardList as  $row)
+                              <option value="{{ $row->tocd_code }}">{{ $row->tocd_code }}</option> 
+                              @endforeach
+                           </select>
+                        </div>
+                     </div>
+                     <div class="col-md-2">
+                        <label for="tge_code" class="form-label">Trim Gate Code</label>
+                        <select name="tge_code" class="form-select select2" id="tge_code" required>
+                           <option value="">--Select--</option>
+                           @foreach($TGEList as  $row) 
+                           <option value="{{ $row->tge_code }}">{{ $row->tge_code }}</option>
+                           @endforeach
+                        </select>
+                     </div>
+                     <div class="col-md-3">
+                        <label for="location_id" class="form-label">Location/Warehouse</label>
+                        <select name="location_id" class="form-select select2  " id="location_id" required>
+                           <option value="">--Location--</option>
+                           @foreach($LocationList as  $row) 
+                           <option value="{{ $row->loc_id }}" {{ $row->loc_id == 4 ? 'selected="selected"' : '' }}>{{ $row->location }}</option> 
+                           @endforeach
+                        </select>
                      </div>
                      <div class="col-md-2" id="workOrder">
                         <div class="mb-3">
@@ -416,7 +416,7 @@ ini_set('memory_limit', '1G');
                               <tr item_code="" isClick = "0" qty="" bom_code="" cat_id="" class_id="">
                                  <td><input type="text" name="id" value="1" id="id"  style="width:50px;" readonly/></td>
                                  <td>
-                                    <select name="item_codes[]" class="select2" id="item_codes" style="width:252px;height:30px;" onchange="GetUnit(this);" >
+                                    <select name="item_codes[]" class="select2" id="item_codes" style="width:252px;height:30px;" onchange="GetUnit(this);CheckDuplicateRow(this);" >
                                        <option value="">--- Select Item ---</option>
                                        @foreach($itemlist as  $rowitem)
                                        <option value="{{ $rowitem->item_code}}">{{ $rowitem->item_name }}-({{ $rowitem->item_code}}) </option>
@@ -498,12 +498,7 @@ ini_set('memory_limit', '1G');
                         <div class="mb-3">
                            <label for="total_amount" class="form-label">Total Amount</label>
                            <input type="number" step="any" name="total_amount" class="form-control" id="total_amount1" readonly>
-                        </div>
-                     </div>
-                     <div class="col-md-2">
-                        <div class="mb-3">
-                           <label for="total_allocate_qty1" class="form-label">Total Allocated Qty</label>
-                           <input type="number" step="any" class="form-control" id="total_allocate_qty1" value="" readonly>
+                           <input type="hidden" class="form-control" id="total_allocate_qty1" value="0" readonly>
                         </div>
                      </div>
                   </div>
@@ -545,6 +540,38 @@ ini_set('memory_limit', '1G');
 <!-- end row -->
 <script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
 <script>
+
+   let duplicateChecking = false;   // global flag
+
+   function CheckDuplicateRow(row)
+   {
+      if (duplicateChecking) return;  // stop repeated alerts
+
+      let selectedVal = $(row).val();
+
+      // get all selected item codes except current
+      let allSelected = $('select[name="item_codes[]"]').not(row).map(function () {
+         return $(this).val();
+      }).get();
+
+      if (allSelected.includes(selectedVal)) {
+
+         duplicateChecking = true;  // block next alerts
+
+         alert("This Item is already selected in another row!");
+
+         // reset and re-init Select2
+         $(row).val(null).trigger('change.select2');
+         $(row).select2('destroy');
+         $(row).select2({
+               placeholder: "Select Item",
+               allowClear: true
+         });
+
+         // unlock alert **after resetting is done**
+         setTimeout(() => duplicateChecking = false, 300);
+      }
+   }
 
    $(document).on('keydown', 'input[type="number"]', function(e) {
        const invalidKeys = ['e', 'E', '+', '-'];
@@ -744,10 +771,16 @@ ini_set('memory_limit', '1G');
        var Click = $("#mainAllocation").attr('isClick');
        
       setTimeout(() => {
+
          $('#footable_2')
-           .find('input, select, button')
+           .find('select, button')
            .not('select[name="rack_id[]"]')
            .prop('disabled', true);
+         
+         $('#footable_2')
+           .find('input') 
+           .prop('readOnly', true);
+
        }, 500);
    
         
@@ -898,6 +931,7 @@ ini_set('memory_limit', '1G');
          var t1=document.createElement("input");
          t1.style="display: table-cell; width:50px; height:30px;";
          //t1.className="form-control col-sm-1";
+         t1.readOnly="true";
          
          t1.id = "id"+index;
          t1.name= "id[]";
@@ -1037,7 +1071,7 @@ ini_set('memory_limit', '1G');
          var t1=document.createElement("input");
          t1.style="display: table-cell; width:50px; height:30px;";
          //t1.className="form-control col-sm-1";
-         
+         t1.readOnly = true;
          t1.id = "id"+index;
          t1.name= "id[]";
          t1.value=index;
@@ -1309,7 +1343,7 @@ ini_set('memory_limit', '1G');
             //  $('#select2-chosen-1').html(qhtml);   
       }
       });
-       $("#po_code").attr('disabled', true);
+      $("#po_code").attr('disabled', true);
    }
    
   function mycalc() 
@@ -1322,12 +1356,13 @@ ini_set('memory_limit', '1G');
 
       // SUM QTY
       let sumQty = 0;
-      $(".QTY").each(function () {
+      $("#footable_2 .QTY").each(function () {
          let v = parseFloat($(this).val()) || 0;
          sumQty += v;
       });
 
       let totalqty = safeVal("#totalqty");
+      console.log(sumQty);
       if (totalqty) totalqty.val(sumQty.toFixed(2));
 
       let totalqty2 = safeVal("#totalqty1");
@@ -1335,7 +1370,7 @@ ini_set('memory_limit', '1G');
 
       // SUM AMOUNT
       let sumAmt = 0;
-      $(".AMT").each(function () {
+      $("#footable_2 .AMT").each(function () {
          let v = parseFloat($(this).val()) || 0;
          sumAmt += v;
       });
@@ -1504,6 +1539,7 @@ ini_set('memory_limit', '1G');
    function CalculateRow(row)
    {
       var item_qtys=+row.find('input[name^="item_qtys[]"]').val();
+      $(row).attr("qty", item_qtys);
       var item_rates=+row.find('input[name^="item_rates[]"]').val();
       var amount=(parseFloat(item_qtys)*parseFloat(item_rates)).toFixed(2);
       row.find('input[name^="amounts[]"]').val(amount);
@@ -1579,6 +1615,7 @@ ini_set('memory_limit', '1G');
            success: function (response) {
                $("#trimInward").empty(); // Clear old content
                $("#trimInward").append(response.html); // Append new content instead of replacing everything
+               mycalc();
            },
            error: function (xhr, status, error) {
                console.error("Error:", error);
