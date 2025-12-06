@@ -148,7 +148,7 @@ ini_set('memory_limit', '1G');
                      </div>
                      <div class="col-md-2">
                         <div class="form-check form-check-primary mb-5">
-                           <input class="form-check-input" type="checkbox" id="is_opening" name="is_opening" style="font-size: 25px;margin-top: 30px;margin-left: 0px;" onchange="DisabledPO();" >
+                           <input class="form-check-input" type="checkbox" id="is_opening" name="is_opening" style="font-size: 25px;margin-top: 30px;margin-left: 0px;" onchange="DisabledPO(this);" >
                            <label class="form-check-label" for="is_opening" style="margin-top: 30px;position: absolute;margin-left: 20px;font-size: 16px;">
                            Opening Stock
                            </label>
@@ -585,6 +585,7 @@ ini_set('memory_limit', '1G');
 
    function DisableDropdown()
    {
+        $("#delivery-tab").prop("disabled", true);
         if($("#isOutsideVendor").is(":checked"))
         {
            $("#isReturnTrimsInward").attr('disabled', true); 
@@ -596,9 +597,11 @@ ini_set('memory_limit', '1G');
         }          
    
    } 
+ 
    
    function GetDCDropdown()
    { 
+        $("#delivery-tab").prop("disabled", true);
         if($("#isReturnTrimsInward").is(":checked"))
         {
            $("#isOutsideVendor").attr('disabled', true);
@@ -1231,19 +1234,41 @@ ini_set('memory_limit', '1G');
       })
    }
    
-   function DisabledPO()
-   {
-      $("#po_code").attr("disabled", true);
-      $("#po_type_id").val(2).attr("disabled", true);
-      $("#Ac_code").val(50).trigger('change').attr("disabled", true);
-      setTimeout(function() {
-           $("#bill_to").val(1083).trigger('change');
-      }, 1000);
-      $("#bill_to").attr("disabled", false);
-      $("#tge_code").attr("disabled", true);
-      $("#tge_code").removeAttr("required");
-   }
    
+   function DisabledPO(el)
+   {
+      if($(el).is(":checked"))
+      {
+         
+         $("#return-tab").prop("disabled", true);
+
+         $("#is_opening").attr("disabled", true);
+         $("#po_code").attr("disabled", true);
+         $("#po_type_id").val(2).attr("disabled", true);
+         $("#Ac_code").val(50).trigger('change').attr("disabled", true);
+         // $("#isReturnFabricInward").prop('checked', false).attr("disabled", true);
+         setTimeout(function() {
+               $("#bill_to").val(1083).trigger('change');
+         }, 1000);
+
+         $("#tge_code").prop("required", false);
+         $("#footable_2 tbody tr").find("td input[name='item_rates[]']").prop('readonly', false);   // most reliable
+      }
+      else
+      {
+         $("#po_code").val("").trigger('change').attr("disabled", false);
+         $("#po_type_id").val(2).attr("disabled", false);
+         $("#Ac_code").val(50).trigger('change').attr("disabled", true);
+
+         setTimeout(function() {
+               $("#bill_to").val(1083).trigger('change');
+         }, 1000);
+ 
+         $("#tge_code").attr("disabled", false).removeAttr("required");
+      }
+      $("#bill_to").attr("disabled", true);
+      $("#tge_code").prop("required", false);
+   }
      
    function GetPartyDetailsSale()
    {
@@ -1265,7 +1290,7 @@ ini_set('memory_limit', '1G');
    
    function getPODetails()
    {
-
+      $("#return-tab").prop("disabled", true);
       $("#is_opening").attr("disabled", true);
       document.getElementById('Ac_code').disabled =true;
       document.getElementById('po_type_id').disabled=true;
