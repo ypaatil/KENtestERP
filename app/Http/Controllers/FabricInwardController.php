@@ -280,7 +280,7 @@ class FabricInwardController extends Controller
                             'track_code' => $latest_track_code,
                             'is_opening'=>$is_opening,
                             'isReturnFabricInward'=>$request->isReturnFabricInward,
-                            'vw_code'=>$request->vw_code,
+                            'vpo_code'=>$request->vpo_code,
                             'location_id'=>$request->location_id,
                             'buyer_id'=>$buyer_id,
                             'usedflag' => '0',
@@ -397,7 +397,7 @@ class FabricInwardController extends Controller
                             'is_opening'=>$is_opening,
                             'buyer_id'=>$buyer_id,
                             'isReturnFabricInward'=>$request->isReturnFabricInward,
-                            'vw_code'=>$request->vw_code,
+                            'vpo_code'=>$request->vpo_code,
                             'location_id'=>$request->location_id,
                             'fge_code'=>$request->fge_code,
                             );
@@ -421,7 +421,7 @@ class FabricInwardController extends Controller
                                     'userId'=>$request->userId,
                                     'is_opening'=>$is_opening,
                                     'isReturnFabricInward'=>$request->isReturnFabricInward,
-                                    'vw_code'=>$request->vw_code);
+                                    'vpo_code'=>$request->vpo_code);
                             
                             
                               $buyerData = DB::table('purchaseorder_detail')
@@ -1064,7 +1064,7 @@ class FabricInwardController extends Controller
                             'is_opening'           => $is_opening,
                             'location_id'          => $request->location_id ?? null,
                             'isReturnFabricInward' => $request->isReturnFabricInward ?? 0,
-                            'vw_code'              => $request->vw_code ?? null,
+                            'vpo_code'              => $request->vpo_code ?? null,
 
                             // SAFE supplier roll number
                             'suplier_roll_no'      => $request->suplier_roll_no[$x] ?? null,
@@ -3985,7 +3985,7 @@ P2
                                         $selectedPart  = '';
                                         if($row->part_id == 1)
                                         {
-                                            $selectedPart = 'selected';
+                                            $selectedPart = 'selected'; 
                                         }
 
                                         $html .= '<option value="'.$row->part_id.'" '.$selectedPart.'>'.$row->part_name.'</option>';
