@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Trims Outward (GST Print)</title>
+    <title>Trims Outward (GST Print) | Ken Global Designs Pvt. Ltd.</title>
     <!-- Web Fonts -->
     <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900' type='text/css'>
     <!-- Stylesheets -->
@@ -70,7 +70,7 @@
         }
 
         :root {
-            --label-width: 170px;
+            --label-width: 210px;
         }
 
         :root {
@@ -504,14 +504,12 @@
                         <div class="col-md-4 verticalLine text-center p-2">
                             <img src="http://kenerp.com/logo/ken.jpeg" alt="Ken Enterprise Pvt. Ltd." height="130" width="230">
                         </div>
-
+                        @php
+                        $data= getCompanyAddress();
+                        @endphp
                         <div class="col-md-7" style="margin-top:10px;">
-                            <h4 class="mb-2 fw-bold">KEN GLOBAL DESIGNS PRIVATE LIMITED</h4>
-                            <p>Reg.Office:18/20 Back Side Of Hotel City In, Industrial Estate, Ichalkaranji-416115<br>
-                                Tal Hatkanangale Dist Kolhapur Maharashtra INDIA.<br>
-                                Works: Gat No 298&299,At Kondigare, Tal: Shirol, Dist: Kolhapur-416102 <br>
-                                Tel : +91230 2438538 Email:office@kenindia.in
-                            </p>
+                            <h4 class="mb-2 fw-bold">{{$data['heading']}}</h4>
+                            <p>{!!$data['address']!!}</p>
                         </div>
 
                         <div class="col-md-2">
@@ -549,9 +547,9 @@
                                     <div class="value">{{ $SalesOrder[0]->sales_order_no }} </div>
                                 </div>
                                 <div class="info-row">
-                                    <div class="label">Job/Cutting PO No</div>
+                                    <div class="label">Job Work / Packing PO No.</div>
                                     <div class="colon">:</div>
-                                    <div class="value">{{ $TrimsOutwardMaster[0]->vw_code }} </div>
+                                    <div class="value"> {{ $TrimsOutwardMaster[0]->vw_code ? $TrimsOutwardMaster[0]->vw_code : $TrimsOutwardMaster[0]->vpo_code }} </div>
                                 </div>
                                 <div class="info-row">
                                     <div class="label">Style</div>

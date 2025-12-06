@@ -303,9 +303,9 @@ function getCompanyAddress()
 
         'heading' => 'KEN GLOBAL DESIGNS PRIVATE LIMITED',
 
-        'address' => '  Reg. Office: 18/20, Back Side of Hotel City Inn, Industrial Estate, Ichalkaranji – 416115 <br>
+        'address' => '  Reg. Office: 18/20, Back Side of Hotel City Inn, Industrial Estate, Ichalkaranji - 416115 <br>
                         Tal. Hatkanangale, Dist. Kolhapur, Maharashtra, India <br>
-                        Works: Gat No. 298 & 299, At Kondigre, Tal. Shirol, Dist. Kolhapur – 416102 <br>
+                        Works: Gat No. 298 & 299, At Kondigre, Tal. Shirol, Dist. Kolhapur - 416102 <br>
                         Tel: +91 230 2438538 | Email: office@kenindia.in'        
     ];
 }
