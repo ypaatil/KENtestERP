@@ -211,10 +211,10 @@ class FabricInwardController extends Controller
   
     $item_code = $request->item_code; 
    
-    $sr_no = FabricInwardModel::max('sr_no');            
-    $is_opening=isset($request->is_opening) ? 1 : 0;
-    $isReturnFabricInward=isset($request->isReturnFabricInward) ? 1 : 0;
-    $isOutsideVendor=isset($request->isOutsideVendor) ? 1 : 0;
+    $sr_no = FabricInwardModel::max('sr_no');             
+    $is_opening = $request->boolean('is_opening');
+    $isReturnFabricInward = $request->boolean('isReturnFabricInward');
+    $isOutsideVendor = $request->boolean('isOutsideVendor'); 
                 
     if($is_opening==1){$po_code='OSF'.($sr_no+1);}else{ $po_code= $request->input('po_code');}             
     
@@ -279,7 +279,7 @@ class FabricInwardController extends Controller
                             'suplier_roll_no' => $request->suplier_roll_no[$x],
                             'track_code' => $latest_track_code,
                             'is_opening'=>$is_opening,
-                            'isReturnFabricInward'=>$request->isReturnFabricInward,
+                            'isReturnFabricInward'=>$isReturnFabricInward,
                             'vpo_code'=>$request->vpo_code,
                             'location_id'=>$request->location_id,
                             'buyer_id'=>$buyer_id,
@@ -396,7 +396,7 @@ class FabricInwardController extends Controller
                             'usedflag' => '0',
                             'is_opening'=>$is_opening,
                             'buyer_id'=>$buyer_id,
-                            'isReturnFabricInward'=>$request->isReturnFabricInward,
+                            'isReturnFabricInward'=>$isReturnFabricInward,
                             'vpo_code'=>$request->vpo_code,
                             'location_id'=>$request->location_id,
                             'fge_code'=>$request->fge_code,
@@ -420,7 +420,7 @@ class FabricInwardController extends Controller
                                     'rack_id' => 0,
                                     'userId'=>$request->userId,
                                     'is_opening'=>$is_opening,
-                                    'isReturnFabricInward'=>$request->isReturnFabricInward,
+                                    'isReturnFabricInward'=>$isReturnFabricInward,
                                     'vpo_code'=>$request->vpo_code);
                             
                             
@@ -604,9 +604,9 @@ class FabricInwardController extends Controller
              ]);
 
 
-         $is_opening=isset($request->is_opening) ? 1 : 0;
-         $isReturnFabricInward=isset($request->isReturnFabricInward) ? 1 : 0;
-         $isOutsideVendor=isset($request->isOutsideVendor) ? 1 : 0;
+        $is_opening = $request->boolean('is_opening');
+        $isReturnFabricInward = $request->boolean('isReturnFabricInward');
+        $isOutsideVendor = $request->boolean('isOutsideVendor'); 
 
     
     
@@ -1063,7 +1063,7 @@ class FabricInwardController extends Controller
                             'shade_id'             => '1',
                             'is_opening'           => $is_opening,
                             'location_id'          => $request->location_id ?? null,
-                            'isReturnFabricInward' => $request->isReturnFabricInward ?? 0,
+                            'isReturnFabricInward' => $isReturnFabricInward ?? 0,
                             'vpo_code'              => $request->vpo_code ?? null,
 
                             // SAFE supplier roll number
@@ -1298,10 +1298,13 @@ class FabricInwardController extends Controller
                 }
               
               
-              DB::table('inward_details')
+            if (!empty($postedIds)) {
+                DB::table('inward_details')
                     ->where('in_code', $in_code)
                     ->whereNotIn('id', $postedIds)
                     ->delete();
+            }
+
 
                          $combinedNewData = $newDataDetail2;       
            
@@ -3985,7 +3988,7 @@ P2
                                         $selectedPart  = '';
                                         if($row->part_id == 1)
                                         {
-                                            $selectedPart = 'selected'; 
+                                            $selectedPart = 'selected';
                                         }
 
                                         $html .= '<option value="'.$row->part_id.'" '.$selectedPart.'>'.$row->part_name.'</option>';

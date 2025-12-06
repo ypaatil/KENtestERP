@@ -570,7 +570,7 @@
                                  <td>
                                     <select name="item_code[]"  id="item_code" style="width:200px; height:30px;" onchange="getRateFromPO(this);"  disabled> 
                                        <option value="">--Select--</option>
-                                       <option value="{{ $List->item_code }}">{{ $List->item_name }}</option>
+                                       <option value="{{ $List->item_code }}" selected >{{ $List->item_name }}</option>
                                     </select>
                                  </td>
                                  <td>
