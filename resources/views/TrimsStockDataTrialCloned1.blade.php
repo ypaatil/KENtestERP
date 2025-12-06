@@ -219,34 +219,35 @@
                <table id="dt" class="table table-bordered nowrap w-100">
                   <thead> 
                      <tr style="text-align:center;">
-                        <th>Action</th>
-                        <th>Supplier Name</th>
-                        <th>Bill To</th>
-                        <th>Buyer Name</th>
-                        <th>PO Status</th>
-                        <th>Close Date</th>
-                        <th>PO No</th>
-                        <th>PO Type</th>
-                        <th>Item Code</th>
-                        <th>Item Name</th>
-                        <th>Width</th>
-                        <th>Color</th>
-                        <th>Item Description</th>
-                        <th>GRN Qty</th>
-                        <th>Outward Qty</th>
-                        <th>Stock Qty</th>
-                        <th>rate</th>
-                        <th>Value</th>
-                        <th  class="text-center"> 0-30 Days<br/> Qty </th>
-                        <th  class="text-center">  0-30 Days<br/> Value</th>
-                        <th  class="text-center">  31-60 Days<br/> Qty</th>
-                        <th  class="text-center"> 31-60 Days<br/> Value </th>
-                        <th  class="text-center">61-90 Days<br/> Qty </th>
-                        <th  class="text-center"> 61-90 Days<br/> Value </th>
-                        <th  class="text-center"> 91-180 Days<br/> Qty </th>
-                        <th  class="text-center">91-180 Days<br/> Value  </th>
-                        <th  class="text-center">180+ Days<br/>Qty </th>
-                        <th  class="text-center">180+ Days<br/> Value </th>
+                        <th>Action <span class="filter-icon hide">🔽</span><div class="filter-menu action"></div></th>
+                        <th>Supplier Name <span class="filter-icon">🔽</span><div class="filter-menu supplier-name"></div></th>
+                        <th>Bill To <span class="filter-icon">🔽</span><div class="filter-menu bill-to"></div></th>
+                        <th>Buyer Name <span class="filter-icon">🔽</span><div class="filter-menu buyer-name"></div></th>
+                        <th>PO Status <span class="filter-icon">🔽</span><div class="filter-menu po-status"></div></th>
+                        <th>Close Date <span class="filter-icon">🔽</span><div class="filter-menu close-date"></div></th>
+                        <th>PO No <span class="filter-icon">🔽</span><div class="filter-menu po-no"></div></th>
+                        <th>PO Type <span class="filter-icon">🔽</span><div class="filter-menu po-type"></div></th>
+                        <th>Item Code <span class="filter-icon">🔽</span><div class="filter-menu item-code"></div></th>
+                        <th>Item Name <span class="filter-icon">🔽</span><div class="filter-menu item-name"></div></th>
+                        <th>Width <span class="filter-icon">🔽</span><div class="filter-menu width"></div></th>
+                        <th>Color <span class="filter-icon">🔽</span><div class="filter-menu color"></div></th>
+                        <th>Item Description <span class="filter-icon">🔽</span><div class="filter-menu item-description"></div></th>
+                        <th>GRN Qty <span class="filter-icon">🔽</span><div class="filter-menu grn-qty"></div></th>
+                        <th>Outward Qty <span class="filter-icon">🔽</span><div class="filter-menu outward-qty"></div></th>
+                        <th>Stock Qty <span class="filter-icon">🔽</span><div class="filter-menu stock-qty"></div></th>
+                        <th>Rate <span class="filter-icon">🔽</span><div class="filter-menu rate"></div></th>
+                        <th>Value <span class="filter-icon">🔽</span><div class="filter-menu value"></div></th>
+
+                        <th class="text-center">0-30 Days Qty <span class="filter-icon">🔽</span><div class="filter-menu stock-0-30"></div></th>
+                        <th class="text-center">0-30 Days Value <span class="filter-icon">🔽</span><div class="filter-menu value-0-30"></div></th>
+                        <th class="text-center">31-60 Days Qty <span class="filter-icon">🔽</span><div class="filter-menu stock-31-60"></div></th>
+                        <th class="text-center">31-60 Days Value <span class="filter-icon">🔽</span><div class="filter-menu value-31-60"></div></th>
+                        <th class="text-center">61-90 Days Qty <span class="filter-icon">🔽</span><div class="filter-menu stock-61-90"></div></th>
+                        <th class="text-center">61-90 Days Value <span class="filter-icon">🔽</span><div class="filter-menu value-61-90"></div></th>
+                        <th class="text-center">91-180 Days Qty <span class="filter-icon">🔽</span><div class="filter-menu stock-91-180"></div></th>
+                        <th class="text-center">91-180 Days Value <span class="filter-icon">🔽</span><div class="filter-menu value-91-180"></div></th>
+                        <th class="text-center">180+ Days Qty <span class="filter-icon">🔽</span><div class="filter-menu stock-180-plus"></div></th>
+                        <th class="text-center">180+ Days Value <span class="filter-icon">🔽</span><div class="filter-menu value-180-plus"></div></th>
                      </tr>
                   </thead>
                   <tbody>  
@@ -358,6 +359,8 @@
         }
     }
 
+    $( document ).ready(function() 
+    {      
     var job_status_id = getQueryParam('job_status_id');
     
     if(job_status_id == 1)
@@ -372,12 +375,22 @@
     {
         $("#All").trigger('click');
     }
+    sessionStorage.setItem('btnclickforgetalldata', 0); 
+    }); 
     
     function LoadTrimsStockDataTrialCloned1(job_status_id)
     {       
-      
+        sessionStorage.setItem('btnclickforgetalldata', 1);    
+        removeFilterColor();
         $('#dt').DataTable().clear().destroy();  
         var currentDate = getSearchParams("currentDate");
+
+        const today = new Date();
+        const day = String(today.getDate()).padStart(2, '0');
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        const year = today.getFullYear();
+        const formattedDate = `${day}-${month}-${year}`;
+        const exportTitle = 'Trims Stock Aging Report (' + formattedDate + ')'; 
        
         var URL = "LoadTrimsStockDataTrialCloned2?currentDate="+currentDate+"&job_status_id="+job_status_id;  
         $.ajax({
@@ -400,7 +413,19 @@
                 $('#dt').DataTable({
                     "dom": 'lBfrtip', // 'f' added for the search box
                     "pageLength": 10,
-                    "buttons": ['csv', 'print', 'excel', 'pdf'],
+                     initComplete: function () {
+                    buildAllMenusTrimsStockDataTrialClonedReport();
+                    sessionStorage.setItem('btnclickforgetalldata', 0); 
+                    },
+                    buttons: [
+                            { extend: 'copyHtml5', footer: true, title: exportTitle , exportOptions: commonExportOptions() 
+                            },
+                            { extend: 'excelHtml5', footer: true, title: exportTitle , exportOptions: commonExportOptions()  
+                            },
+                            { extend: 'csvHtml5', footer: true, title: exportTitle , exportOptions: commonExportOptions() 
+                            },
+                            { extend: 'pdfHtml5', footer: true, title: exportTitle , exportOptions: commonExportOptions()  }
+                    ], 
                     data: myArray,
                     columns: [
                         { data: "Action" },
@@ -478,6 +503,50 @@
             }
         });
     }
+
+
+                 // Start script for filter search and apply        
+         $(document).on('click', '.apply-btn', function() {
+         const menu = $(this).closest('.filter-menu');
+       
+         if (!validateFilterMenu(menu)) {
+               return;
+         }
+
+        if (menu.hasClass('action')) applySimpleFilter(0, menu);
+        else if (menu.hasClass('supplier-name')) applySimpleFilter(1, menu);
+        else if (menu.hasClass('bill-to')) applySimpleFilter(2, menu);
+        else if (menu.hasClass('buyer-name')) applySimpleFilter(3, menu);
+        else if (menu.hasClass('po-status')) applySimpleFilter(4, menu);
+        else if (menu.hasClass('close-date')) applySimpleFilter(5, menu);
+        else if (menu.hasClass('po-no')) applySimpleFilter(6, menu);
+        else if (menu.hasClass('po-type')) applySimpleFilter(7, menu);
+        else if (menu.hasClass('item-code')) applySimpleFilter(8, menu);
+        else if (menu.hasClass('item-name')) applySimpleFilter(9, menu);
+        else if (menu.hasClass('width')) applySimpleFilter(10, menu);
+        else if (menu.hasClass('color')) applySimpleFilter(11, menu);
+        else if (menu.hasClass('item-description')) applySimpleFilter(12, menu);
+        else if (menu.hasClass('grn-qty')) applySimpleFilter(13, menu);
+        else if (menu.hasClass('outward-qty')) applySimpleFilter(14, menu);
+        else if (menu.hasClass('stock-qty')) applySimpleFilter(15, menu);
+        else if (menu.hasClass('rate')) applySimpleFilter(16, menu);
+        else if (menu.hasClass('value')) applySimpleFilter(17, menu);
+        else if (menu.hasClass('stock-0-30')) applySimpleFilter(18, menu);
+        else if (menu.hasClass('value-0-30')) applySimpleFilter(19, menu);
+        else if (menu.hasClass('stock-31-60')) applySimpleFilter(20, menu);
+        else if (menu.hasClass('value-31-60')) applySimpleFilter(21, menu);
+        else if (menu.hasClass('stock-61-90')) applySimpleFilter(22, menu);
+        else if (menu.hasClass('value-61-90')) applySimpleFilter(23, menu);
+        else if (menu.hasClass('stock-91-180')) applySimpleFilter(24, menu);
+        else if (menu.hasClass('value-91-180')) applySimpleFilter(25, menu);
+        else if (menu.hasClass('stock-180-plus')) applySimpleFilter(26, menu);
+        else if (menu.hasClass('value-180-plus')) applySimpleFilter(27, menu);
+
+
+         $('.filter-menu').hide();         
+         buildAllMenusTrimsStockDataTrialClonedReport();       
+         });
+         // End script for filter search and apply  
 
  
     function DumpData()

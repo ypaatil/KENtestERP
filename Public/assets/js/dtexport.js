@@ -709,6 +709,30 @@ function applyDateFilter(col, menu) {
     buildSimpleFilter('.rack-code', 20);
   }
 
+  function buildAllMenusFabricStockDataTrialClonedReport(){ 
+    buildSimpleFilter('.suplier-name', 0);
+    buildSimpleFilter('.bill-to', 1);
+    buildSimpleFilter('.buyer-name', 2);
+    buildSimpleFilter('.status', 3);
+    buildSimpleFilter('.po-no', 4);
+    buildDateFilter('.close-date', 5);
+    buildSimpleFilter('.grn-no', 6);
+    buildDateFilter('.grn-date', 7);
+    buildSimpleFilter('.invoice-no', 8);
+    buildDateFilter('.invoice-date', 9);
+    buildSimpleFilter('.item-code', 10);
+    buildSimpleFilter('.preview', 11);
+    buildSimpleFilter('.shade-no', 12);
+    buildSimpleFilter('.checking-status', 13);
+    buildSimpleFilter('.item-name', 14);
+    buildSimpleFilter('.width', 15);
+    buildSimpleFilter('.quality-name', 16);
+    buildSimpleFilter('.color', 17);
+    buildSimpleFilter('.item-description', 18);
+    buildSimpleFilter('.track-code', 19);
+
+  }
+
 
     function updateFooterForFabricGRNDataReport() {
     const data = $('#dt').DataTable().rows({ search: 'applied' }).data();
@@ -897,6 +921,37 @@ function applyDateFilter(col, menu) {
         buildSimpleFilter('.fg-stock', 12);
         buildSimpleFilter('.fob-rate', 13);
         buildSimpleFilter('.value', 14);
+      }
+
+      function buildAllMenusTrimsStockDataTrialClonedReport(){
+        buildSimpleFilter('.action', 0);
+        buildSimpleFilter('.supplier-name', 1);
+        buildSimpleFilter('.bill-to', 2);
+        buildSimpleFilter('.buyer-name', 3);
+        buildSimpleFilter('.po-status', 4);
+        buildDateFilter('.close-date', 5);
+        buildSimpleFilter('.po-no', 6);
+        buildSimpleFilter('.po-type', 7);
+        buildSimpleFilter('.item-code', 8);
+        buildSimpleFilter('.item-name', 9);
+        buildSimpleFilter('.width', 10);
+        buildSimpleFilter('.color', 11);
+        buildSimpleFilter('.item-description', 12);
+        buildSimpleFilter('.grn-qty', 13);
+        buildSimpleFilter('.outward-qty', 14);
+        buildSimpleFilter('.stock-qty', 15);
+        buildSimpleFilter('.rate', 16);
+        buildSimpleFilter('.value', 17);
+        buildSimpleFilter('.stock-0-30', 18);
+        buildSimpleFilter('.value-0-30', 19);
+        buildSimpleFilter('.stock-31-60', 20);
+        buildSimpleFilter('.value-31-60', 21);
+        buildSimpleFilter('.stock-61-90', 22);
+        buildSimpleFilter('.value-61-90', 23);
+        buildSimpleFilter('.stock-91-180', 24);
+        buildSimpleFilter('.value-91-180', 25);
+        buildSimpleFilter('.stock-180-plus', 26);
+        buildSimpleFilter('.value-180-plus', 27);
       }
 
       function updateTotalValuesForFGStockReport() {

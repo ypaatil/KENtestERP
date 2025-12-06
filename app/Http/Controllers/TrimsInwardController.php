@@ -3581,6 +3581,7 @@ from item_master where item_code='$value->item_code'"));
 
             // Format all numeric fields for display
             // NOTE: money_format can be deprecated on some PHP builds. If it fails, replace with number_format.
+            /*
             $row['gq'] = money_format("%!.2n", round($num_gq, 2));
             $row['q_qty'] = money_format("%!.2n", round($num_q_qty, 2));
             $row['stocks'] = money_format("%!.2n", round($num_stocks, 2));
@@ -3606,6 +3607,33 @@ from item_master where item_code='$value->item_code'"));
             $row['outward_61_90'] = money_format("%!.2n", round(($row['outward_61_90']), 2));
             $row['outward_91_180'] = money_format("%!.2n", round(($row['outward_91_180']), 2));
             $row['outward_180_plus'] = money_format("%!.2n", round(($row['outward_180_plus']), 2));
+            */
+            //New Code
+            $row['gq'] = indian_number_format_for_value(round($num_gq, 2), 2);
+            $row['q_qty'] = indian_number_format_for_value(round($num_q_qty, 2), 2);
+            $row['stocks'] = indian_number_format_for_value(round($num_stocks, 2), 2);
+            $row['rate'] = indian_number_format_for_value(round($num_rate, 4), 4);
+            $row['value'] = indian_number_format_for_value(round($num_value, 2), 2);
+            $row['amount'] = indian_number_format_for_value(round($num_amount, 2), 2);
+
+            $row['stock_0_30'] = indian_number_format_for_value(round($row['stock_0_30'], 2), 2);
+            $row['stock_31_60'] = indian_number_format_for_value(round($row['stock_31_60'], 2), 2);
+            $row['stock_61_90'] = indian_number_format_for_value(round($row['stock_61_90'], 2), 2);
+            $row['stock_91_180'] = indian_number_format_for_value(round($row['stock_91_180'], 2), 2);
+            $row['stock_180_plus'] = indian_number_format_for_value(round($row['stock_180_plus'], 2), 2);
+
+            $row['value_0_30'] = indian_number_format_for_value(round($row['value_0_30'], 2), 2);
+            $row['value_31_60'] = indian_number_format_for_value(round($row['value_31_60'], 2), 2);
+            $row['value_61_90'] = indian_number_format_for_value(round($row['value_61_90'], 2), 2);
+            $row['value_91_180'] = indian_number_format_for_value(round($row['value_91_180'], 2), 2);
+            $row['value_180_plus'] = indian_number_format_for_value(round($row['value_180_plus'], 2), 2);
+
+            $row['outward_0_30'] = indian_number_format_for_value(round($row['outward_0_30'], 2), 2);
+            $row['outward_31_60'] = indian_number_format_for_value(round($row['outward_31_60'], 2), 2);
+            $row['outward_61_90'] = indian_number_format_for_value(round($row['outward_61_90'], 2), 2);
+            $row['outward_91_180'] = indian_number_format_for_value(round($row['outward_91_180'], 2), 2);
+            $row['outward_180_plus'] = indian_number_format_for_value(round($row['outward_180_plus'], 2), 2);
+
 
             $html[] = array_merge($row, ['Action' => $action, 'po_status' => $slider]);
 
