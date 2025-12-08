@@ -187,6 +187,7 @@ ini_set('memory_limit', '1G');
                            <thead>
                               <tr>
                                  <th>SrNo</th>
+                                 <th>Item Code</th>
                                  <th>Item Name</th>
                                  <th>UOM</th>
                                  <th>Quantity</th>
@@ -200,6 +201,7 @@ ini_set('memory_limit', '1G');
                            <tbody>
                               <tr item_code="" isClick = "0" qty="" bom_code="" cat_id="" class_id="">
                                  <td><input type="text" name="id" value="1" id="id"  style="width:50px;" readonly/></td>
+                                 <td><input type="text" name="itemsCode[]" value="" id="itemsCode"  style="width:100px;" readonly/></td>
                                  <td>
                                     <select name="item_codes[]" class="select2" id="item_codes" style="width:252px;height:30px;" onchange="GetUnit(this);CheckDuplicateRow(this);" >
                                        <option value="">--- Select Item ---</option>
@@ -241,6 +243,7 @@ ini_set('memory_limit', '1G');
                            <tfoot>
                               <tr>
                                  <th>SrNo</th>
+                                 <th>Item Code</th>
                                  <th>Item Name</th>
                                  <th>UOM</th>
                                  <th>Quantity</th>
@@ -402,6 +405,7 @@ ini_set('memory_limit', '1G');
                            <thead>
                               <tr>
                                  <th>Sr No</th>
+                                 <th>Item Code</th>
                                  <th>Item Name</th>
                                  <th>UOM</th>
                                  <th>Quantity</th>
@@ -415,6 +419,7 @@ ini_set('memory_limit', '1G');
                            <tbody id="detailTbl">
                               <tr item_code="" isClick = "0" qty="" bom_code="" cat_id="" class_id="">
                                  <td><input type="text" name="id" value="1" id="id"  style="width:50px;" readonly/></td>
+                                 <td><input type="text" name="itemsCode[]" value="" id="itemsCode1"  style="width:100px;" readonly/></td>
                                  <td>
                                     <select name="item_codes[]" class="select2" id="item_codes" style="width:252px;height:30px;" onchange="GetUnit(this);CheckDuplicateRow(this);" >
                                        <option value="">--- Select Item ---</option>
@@ -456,6 +461,7 @@ ini_set('memory_limit', '1G');
                            <tfoot>
                               <tr>
                                  <th>SrNo</th>
+                                 <th>Item Code</th>
                                  <th>Item Name</th>
                                  <th>UOM</th>
                                  <th>Quantity</th>
@@ -545,9 +551,10 @@ ini_set('memory_limit', '1G');
 
    function CheckDuplicateRow(row)
    {
+      let selectedVal = $(row).val(); 
+      $(row).closest('tr').find('input[name="itemsCode[]"]').val(selectedVal);
+      console.log(selectedVal);
       if (duplicateChecking) return;  // stop repeated alerts
-
-      let selectedVal = $(row).val();
 
       // get all selected item codes except current
       let allSelected = $('select[name="item_codes[]"]').not(row).map(function () {
@@ -612,6 +619,8 @@ ini_set('memory_limit', '1G');
 
    function DisableDropdown()
    {
+        $("#vendorId").attr('disabled', true);
+        $('input[type="checkbox"]').attr('disabled', true);
         $("#delivery-tab").prop("disabled", true);
         if($("#isOutsideVendor").is(":checked"))
         {
@@ -628,6 +637,9 @@ ini_set('memory_limit', '1G');
    
    function GetDCDropdown()
    { 
+        $("#vw_code").attr('disabled', true);
+        $("#vendorId").attr('disabled', true);
+        $('input[type="checkbox"]').attr('disabled', true);
         $("#delivery-tab").prop("disabled", true);
         if($("#isReturnTrimsInward").is(":checked"))
         {
@@ -937,8 +949,21 @@ ini_set('memory_limit', '1G');
          t1.name= "id[]";
          t1.value=index;
          cell1.appendChild(t1);
+
          
          var cell5 = row.insertCell(1);
+
+         var t3 = document.createElement("input");
+         t3.style = "display: table-cell; width:100px; height:30px;";
+         t3.type = "text";
+         t3.id = index;
+         t3.name = "itemsCode[]";
+         t3.readOnly = true;
+
+         cell5.appendChild(t3);
+
+
+         var cell5 = row.insertCell(2);
          var t5=document.createElement("select");
          var x = $("#item_codes"),
          y = x.clone();
@@ -948,7 +973,7 @@ ini_set('memory_limit', '1G');
          y.height(30);
          y.appendTo(cell5);
          
-         var cell2 = row.insertCell(2);
+         var cell2 = row.insertCell(3);
          var t2=document.createElement("select");
          var x = $("#unit_ids"),
          y = x.clone();
@@ -963,7 +988,7 @@ ini_set('memory_limit', '1G');
          y.appendTo(cell2);
          
          
-         var cell3 = row.insertCell(3);
+         var cell3 = row.insertCell(4);
          var t3=document.createElement("input");
          t3.style="display: table-cell; width:80px;height:30px;";
          t3.type="number";
@@ -985,7 +1010,7 @@ ini_set('memory_limit', '1G');
          cell3.appendChild(t3);
          
          
-         var cell3 = row.insertCell(4);
+         var cell3 = row.insertCell(5);
          var t3=document.createElement("input");
          t3.style="display: table-cell; width:80px;height:30px;";
          t3.type="number";
@@ -996,7 +1021,7 @@ ini_set('memory_limit', '1G');
          t3.value="0";
          cell3.appendChild(t3);
          
-         var cell3 = row.insertCell(5);
+         var cell3 = row.insertCell(6);
          var t3=document.createElement("input");
          t3.style="display: table-cell; width:80px;height:30px;";
          t3.type="number";
@@ -1009,7 +1034,7 @@ ini_set('memory_limit', '1G');
          t3.value="0";
          cell3.appendChild(t3);
          
-         var cell2 = row.insertCell(6);
+         var cell2 = row.insertCell(7);
          var t2=document.createElement("select");
          var x = $("#rack_id"),
          y = x.clone();
@@ -1023,7 +1048,7 @@ ini_set('memory_limit', '1G');
          y.appendTo(cell2);
          
          
-         var cell15=row.insertCell(7);
+         var cell15=row.insertCell(8);
          var btnAdd = document.createElement("INPUT");
          btnAdd.id = "Abutton";
          btnAdd.type = "button";
@@ -1032,7 +1057,7 @@ ini_set('memory_limit', '1G');
          btnAdd.setAttribute("onclick", "  mycalc();");
          cell15.appendChild(btnAdd);
          
-         var cell16=row.insertCell(8);
+         var cell16=row.insertCell(9);
          var btnRemove = document.createElement("INPUT");
          btnRemove.id = "Dbutton";
          btnRemove.type = "button";
@@ -1078,6 +1103,18 @@ ini_set('memory_limit', '1G');
          cell1.appendChild(t1);
          
          var cell5 = row.insertCell(1);
+
+         var t3 = document.createElement("input");
+         t3.style = "display: table-cell; width:100px; height:30px;";
+         t3.type = "text";
+         t3.id = index;
+         t3.name = "itemsCode[]";
+         t3.readOnly = true;
+
+         cell5.appendChild(t3);
+
+
+         var cell5 = row.insertCell(2);
          var t5=document.createElement("select");
          var x = $("#item_codes"),
          y = x.clone();
@@ -1087,7 +1124,7 @@ ini_set('memory_limit', '1G');
          y.height(30);
          y.appendTo(cell5);
          
-         var cell2 = row.insertCell(2);
+         var cell2 = row.insertCell(3);
          var t2=document.createElement("select");
          var x = $("#unit_ids"),
          y = x.clone();
@@ -1102,7 +1139,7 @@ ini_set('memory_limit', '1G');
          y.appendTo(cell2);
          
          
-         var cell3 = row.insertCell(3);
+         var cell3 = row.insertCell(4);
          var t3=document.createElement("input");
          t3.style="display: table-cell; width:80px;height:30px;";
          t3.type="number";
@@ -1124,7 +1161,7 @@ ini_set('memory_limit', '1G');
          cell3.appendChild(t3);
          
          
-         var cell3 = row.insertCell(4);
+         var cell3 = row.insertCell(5);
          var t3=document.createElement("input");
          t3.style="display: table-cell; width:80px;height:30px;";
          t3.type="number";
@@ -1135,7 +1172,7 @@ ini_set('memory_limit', '1G');
          t3.value="0";
          cell3.appendChild(t3);
          
-         var cell3 = row.insertCell(5);
+         var cell3 = row.insertCell(6);
          var t3=document.createElement("input");
          t3.style="display: table-cell; width:80px;height:30px;";
          t3.type="number";
@@ -1148,7 +1185,7 @@ ini_set('memory_limit', '1G');
          t3.value="0";
          cell3.appendChild(t3);
          
-         var cell2 = row.insertCell(6);
+         var cell2 = row.insertCell(7);
          var t2=document.createElement("select");
          var x = $("#rack_id"),
          y = x.clone();
@@ -1162,7 +1199,7 @@ ini_set('memory_limit', '1G');
          y.appendTo(cell2);
          
          
-         var cell15=row.insertCell(7);
+         var cell15=row.insertCell(8);
          var btnAdd = document.createElement("INPUT");
          btnAdd.id = "Abutton1";
          btnAdd.type = "button";
@@ -1171,7 +1208,7 @@ ini_set('memory_limit', '1G');
          btnAdd.setAttribute("onclick", "mycalc();");
          cell15.appendChild(btnAdd);
          
-         var cell16=row.insertCell(8);
+         var cell16=row.insertCell(9);
          var btnRemove = document.createElement("INPUT");
          btnRemove.id = "Dbutton1";
          btnRemove.type = "button";

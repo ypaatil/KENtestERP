@@ -1,10 +1,30 @@
 @extends('layouts.master') 
 @section('content')  
 <style>
-    .text-right
+   .hide
+   {
+   display:none!important;
+   }
+   .text-right
+   {
+      text-align: right;
+   }
+   
+    .navbar-brand-box
     {
-        text-align:right;
+        width: 266px !important;
     }
+
+   /* Hide arrows in Chrome, Safari, Edge, Opera */
+   input[type=number]::-webkit-inner-spin-button,
+   input[type=number]::-webkit-outer-spin-button {
+   -webkit-appearance: none;
+   margin: 0;
+   }
+   /* Hide arrows in Firefox */
+   input[type=number] {
+   -moz-appearance: textfield;
+   }
 </style> 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.1/sweetalert2.css" />
 <div class="row">
@@ -13,7 +33,7 @@
          <h4 class="mb-sm-0 font-size-18">Trims Inward</h4>
          <div class="page-title-right">
             <ol class="breadcrumb m-0">
-               <li class="breadcrumb-item"><a href="javascript: void(0);">Trims Inward</a></li>
+               <li class="breadcrumb-item"><a href="javascript: void(0);">Transaction</a></li>
                <li class="breadcrumb-item active">Trim Inward List</li>
             </ol>
          </div>

@@ -127,7 +127,7 @@ class TrimsInwardController extends Controller
         $POTypeList = POTypeModel::where('po_type_master.delflag', '=', '0')->get();
         $gstlist = DB::table('tax_type_master')->get();
         $ledgerlist = LedgerModel::where('ledger_master.delflag', '=', '0')->whereIn('ledger_master.bt_id', [1, 2, 4])->get();
-        $itemlist = DB::table('item_master')->where('item_master.delflag', '0')->where('item_master.cat_id', '!=', '1')->get();
+        $itemlist = DB::table('item_master')->where('item_master.delflag', '1')->where('item_master.cat_id', '!=', '1')->get();
         $unitlist = DB::table('unit_master')->get();
         $BillToList =  DB::table('ledger_details')->get();
 
@@ -1071,15 +1071,13 @@ from item_master where item_code='$value->item_code'"));
                 $html .= '</select></td>';
                 $html .= '<td><input type="number" step="any" class="toBeReceived"  name="toBeReceived[]" value="' . round($toBeReceived, 2) . '" id="toBeReceived" style="width:80px;height:30px;" readOnly/>
                                 </td>';
-                $html .= '<td><input type="number" step="any" class="QTY"  name="item_qtys[]" onchange="SetQtyToBtn(this);" allow="' . $allow_qty . '" purchase_qty = "' . $purchase_qty . '" current="' . round($item_qty, 2) . '" value="' . round($item_qty, 2) . '" id="item_qty" style="width:80px;height:30px;" readOnly/>
+                $html .= '<td><input type="number" step="any" class="QTY"  name="item_qtys[]" onchange="SetQtyToBtn(this);" allow="' . $allow_qty . '" purchase_qty = "' . $purchase_qty . '" current="' . round($item_qty, 2) . '" value="' . round($item_qty, 2) . '" id="item_qty" style="width:80px;height:30px;"/>
                         <input type="hidden"  name="hsn_code[]" value="' . $value->hsn_code  . '" id="hsn_code" style="width:80px; height:30px;" readOnly/>
                         </td>';
                 $html .= '<td><input type="number" step="any" name="item_rates[]" readOnly  value="' . round($value->item_rate, 5) . '" id="item_rates" style="width:80px;height:30px;"  readOnly/></td>';
 
-                $html .= '<td><input type="number" step="any" class="AMT"  name="amounts[]" readOnly value="' . (round($purchase_qty, 2) * round($value->item_rate, 2)) . '" id="amounts" style="width:80px;height:30px;"  readOnly/></td>';
-
-
-
+                $html .= '<td><input type="number" step="any" class="AMT" name="amounts[]" readonly value="' . round(($item_qty * $value->item_rate), 2) . '" id="amounts" style="width:80px;height:30px;"></td>';
+ 
                 $html .= '<td> <select name="rack_id[]"  id="rack_ids" style="width:100px; height:30px;">
                         <option value="">--Select Rack--</option>';
 

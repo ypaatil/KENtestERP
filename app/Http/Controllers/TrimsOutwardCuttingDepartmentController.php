@@ -372,6 +372,7 @@ class TrimsOutwardCuttingDepartmentController extends Controller
         {
             $html .= '<tr item_code="'.$row->item_code.'" cat_id="'.$row->cat_id.'" class_id="'.$row->class_id.'"  qty="'.$row->item_qty.'">
                 <td><input type="text" style="width:60px;" value="'.($sr_no++).'" readonly></td>
+                <td><input type="text" style="width:100px;" value="'.($row->item_code).'" name="itemsCode[]" readonly></td>
                 <td>
                     <select name="item_codes[]" style="width:252px;height:30px;">
                         <option value="">--- Select ---</option>';
