@@ -2813,7 +2813,7 @@ from item_master where item_code='$value->item_code'"));
             $concated = $srno . "," . $item_code;
 
             $html .= '<tr>
-              <td><input type="text" name="id" value="' . $no . '" id="id"  style="width:50px;"/></td>
+              <td><input type="text" name="id" value="' . $no . '" id="id"  style="width:50px;" readonly/></td>
               <td>
                  <span onclick="openmodal(' . $concated . ')" style="color:#556ee6; cursor: pointer;">' . $row->item_code . '</span>
               </td>

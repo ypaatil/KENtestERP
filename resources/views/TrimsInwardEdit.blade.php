@@ -226,7 +226,7 @@
                         <tbody id="bomdis" >
                            @if($detailpurchase =="") 
                            <tr>
-                              <td><input type="text" name="id" value="1" id="id"  style="width:50px;"/></td>
+                              <td><input type="text" name="id" value="1" id="id"  style="width:50px;" readonly/></td>
                               <td>
                                  <select name="item_codes[]" class="item" id="item_code" class="select2" style="width:200px;height:30px;" onchange="CheckDuplicateRow(this);">
                                       
@@ -488,7 +488,7 @@
                            <tbody id="bomdis1" >
                               @if($detailpurchase =="") 
                               <tr>
-                                 <td><input type="text" name="id" value="1" id="id"  style="width:50px;"/></td>
+                                 <td><input type="text" name="id" value="1" id="id"  style="width:50px;" readonly/></td>
                                  <td>
                                     <select name="item_codes[]" class="item" id="item_code" class="select2" style="width:200px;height:30px;" onchange="CheckDuplicateRow(this);">
                                        
