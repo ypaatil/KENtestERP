@@ -148,11 +148,12 @@ class TrimsInwardController extends Controller
             ->get();
 
         $TGEList = DB::table('trim_gate_entry_master')->where('delflag', '=', 0)->get();
+        $classList = DB::table('classification_master')->where('delflag', '=', 0)->where('cat_id', '!=', 1)->get();
         
         $vendorData = DB::select("select ac_short_name, ledger_master.ac_code from vendor_purchase_order_master 
                             INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId GROUP BY vendor_purchase_order_master.vendorId");
 
-        return view('TrimsInward', compact('TrimsCuttingOutwardList','firmlist','vendorData', 'RackList', 'ledgerlist', 'gstlist', 'itemlist', 'code', 'unitlist', 'POTypeList', 'JobStatusList', 'POList', 'LocationList', 'vendorWorkOrderList', 'TGEList', 'BillToList'));
+        return view('TrimsInward', compact('classList','TrimsCuttingOutwardList','firmlist','vendorData', 'RackList', 'ledgerlist', 'gstlist', 'itemlist', 'code', 'unitlist', 'POTypeList', 'JobStatusList', 'POList', 'LocationList', 'vendorWorkOrderList', 'TGEList', 'BillToList'));
     }
 
     /**
@@ -452,9 +453,10 @@ class TrimsInwardController extends Controller
                             INNER JOIN ledger_master ON ledger_master.ac_code = vendor_purchase_order_master.vendorId GROUP BY vendor_purchase_order_master.vendorId");
 
         $TrimsCuttingOutwardList =  DB::table('trims_outward_cutting_department_master')->where('delflag','=', '0')->get();
+        $classList = DB::table('classification_master')->where('delflag', '=', 0)->where('cat_id', '!=', 1)->get();
         
         //dd(DB::getQueryLog()); 
-        return view('TrimsInwardEdit', compact('TrimsCuttingOutwardList', 'POList', 'RackList','vendorData', 'purchasefetch', 'po_sr_no', 'firmlist', 'TGEList', 'ledgerlist', 'gstlist', 'itemlist', 'detailpurchase', 'unitlist', 'POTypeList', 'JobStatusList', 'BOMLIST', 'LocationList', 'vendorWorkOrderList', 'BillToList'));
+        return view('TrimsInwardEdit', compact('classList','TrimsCuttingOutwardList', 'POList', 'RackList','vendorData', 'purchasefetch', 'po_sr_no', 'firmlist', 'TGEList', 'ledgerlist', 'gstlist', 'itemlist', 'detailpurchase', 'unitlist', 'POTypeList', 'JobStatusList', 'BOMLIST', 'LocationList', 'vendorWorkOrderList', 'BillToList'));
     }
 
     /**
@@ -995,8 +997,8 @@ from item_master where item_code='$value->item_code'"));
                 <tr>
                     <th>Sr No</th>
                     <th>Item Code</th>
-                    <th>Item Name</th>
                     <th>Classification</th>
+                    <th>Item Name</th>
                     <th>UOM</th>
                     <th>To Be Received</th>
                     <th>Qty</th>
@@ -1041,8 +1043,10 @@ from item_master where item_code='$value->item_code'"));
 
                 $html .= '<td><input type="text" name="id[]" value="' . $no . '" id="id" style="width:50px;" readonly/></td>
                          
-                         <td> <span onclick="openmodal(' . $value->sr_no . ',' . $value->item_code . ');" style="color:#556ee6; cursor: pointer;">' . $value->item_code . '</span></td>
-                        <td> <select name="item_codes[]"  id="item_codes" style="width:300px; height:30px;" required disabled >
+                         <td> <span onclick="openmodal(' . $value->sr_no . ',' . $value->item_code . ');" style="color:#556ee6; cursor: pointer;">' . $value->item_code . '</span></td>';
+                        
+                $html .= '<td><input type="text" value="' . $value->class_name . '" style="width:250px;height:30px;" readOnly/> 
+                         <td> <select name="item_codes[]"  id="item_codes" style="width:300px; height:30px;" required disabled >
                         <option value="">--Select Item--</option>';
 
                 foreach ($itemlist as  $row1) {
@@ -1055,7 +1059,6 @@ from item_master where item_code='$value->item_code'"));
                 }
 
                 $html .= '</select></td> ';
-                $html .= '<td><input type="text" value="' . $value->class_name . '" style="width:250px;height:30px;" readOnly/>';
                 $html .= '<td> <select name="unit_ids[]"  id="unit_ids" style="width:80px; height:30px;" disabled >
                         <option value="">--Select Unit--</option>';
 
@@ -1159,7 +1162,7 @@ from item_master where item_code='$value->item_code'"));
 
         if ($is_opening == 1 || $po_type_id == 2) {
             $allocate_qty =  $exist_Item_qty;
-            $itemlist = DB::table('item_master')->where('item_master.item_code', '=', $item_code)->where('item_master.delflag', '0')->get();
+            $itemlist = DB::table('item_master')->where('item_master.item_code', '=', $item_code)->get();
             $html .= '<tr>
                     <td><input type="text" name="stock_bom_code[]" value="" class="form-control" style="width:100px;" readonly /></td>
                     <td><input type="text" name="sales_order_no[]" value="0" class="form-control" style="width:100px;" readonly/></td>

@@ -345,12 +345,15 @@ class TrimsOutwardCuttingDepartmentController extends Controller
             SELECT trims_outward_cutting_department_details.*, 
                 item_master.item_name,
                 item_master.color_name,
+                classification_master.class_name,
                 item_master.unit_id, 
                 item_master.cat_id, 
                 item_master.class_id 
             FROM trims_outward_cutting_department_details 
             INNER JOIN item_master 
                 ON item_master.item_code = trims_outward_cutting_department_details.item_code
+            INNER JOIN classification_master 
+                ON classification_master.class_id = item_master.class_id
             WHERE trims_outward_cutting_department_details.tocd_code = ?
         ", [$request->tocd_code]);
 
@@ -358,6 +361,11 @@ class TrimsOutwardCuttingDepartmentController extends Controller
         $sr_no = 1;
 
         $itemlist = DB::table('item_master')
+                        ->where('delflag', '0')
+                        ->where('cat_id', '!=', '1')
+                        ->get();
+
+        $classlist = DB::table('classification_master')
                         ->where('delflag', '0')
                         ->where('cat_id', '!=', '1')
                         ->get();
@@ -372,9 +380,19 @@ class TrimsOutwardCuttingDepartmentController extends Controller
         {
             $html .= '<tr item_code="'.$row->item_code.'" cat_id="'.$row->cat_id.'" class_id="'.$row->class_id.'"  qty="'.$row->item_qty.'">
                 <td><input type="text" style="width:60px;" value="'.($sr_no++).'" readonly></td>
-                <td><input type="text" style="width:100px;" value="'.($row->item_code).'" name="itemsCode[]" readonly></td>
+                <td><input type="text" style="width:100px;" value="'.($row->item_code).'" name="itemsCode[]" readonly></td> 
                 <td>
-                    <select name="item_codes[]" style="width:252px;height:30px;">
+                    <select name="class_id[]" style="width:252px;height:30px;" disabled>
+                        <option value="">--- Select ---</option>';
+
+                        foreach($classlist as $class){
+                            $selected = ($class->class_id == $row->class_id) ? 'selected' : '';
+                            $html .= '<option value="'.$class->class_id.'" '.$selected.'>'.$class->class_name.'</option>';
+                        }
+
+            $html .= '</select>
+                <td>
+                    <select name="item_codes[]" style="width:300px;height:30px;">
                         <option value="">--- Select ---</option>';
 
                         foreach($itemlist as $item){
@@ -386,7 +404,7 @@ class TrimsOutwardCuttingDepartmentController extends Controller
                 </td>
 
                 <td>
-                    <select name="unit_ids[]" style="width:150px;height:30px;">
+                    <select name="unit_ids[]" style="width:150px;height:30px;" disabled>
                         <option value="">--- Select ---</option>';
 
                         foreach($unitlist as $unit){
