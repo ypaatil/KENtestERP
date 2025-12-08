@@ -1356,7 +1356,7 @@ ini_set('memory_limit', '1G');
          $("#po_code").attr("disabled", true);
          $("#po_type_id").val(2).attr("disabled", true);
          $("#Ac_code").val(50).trigger('change').attr("disabled", true);
-         // $("#isReturnFabricInward").prop('checked', false).attr("disabled", true);
+         // $("#isReturnTrimsInward").prop('checked', false).attr("disabled", true);
          setTimeout(function() {
                $("#bill_to").val(1083).trigger('change');
          }, 1000);
@@ -1438,11 +1438,7 @@ ini_set('memory_limit', '1G');
       });
 
       let totalqty = safeVal("#totalqty");
-      console.log(sumQty);
       if (totalqty) totalqty.val(sumQty.toFixed(2));
-
-      let totalqty2 = safeVal("#totalqty1");
-      if (totalqty2) totalqty2.val(sumQty.toFixed(2));
 
       // SUM AMOUNT
       let sumAmt = 0;
@@ -1454,8 +1450,25 @@ ini_set('memory_limit', '1G');
       let totalAmt = safeVal("#total_amount");
       if (totalAmt) totalAmt.val(sumAmt.toFixed(2));
 
-      let totalAmt2 = safeVal("#total_amount1");
-      if (totalAmt2) totalAmt2.val(sumAmt.toFixed(2));
+       // SUM QTY
+      let sumQty1 = 0;
+      $("#footable_21 .QTY").each(function () {
+         let v = parseFloat($(this).val()) || 0;
+         sumQty1 += v;
+      });
+
+      let totalqty1 = safeVal("#totalqty1");
+      if (totalqty1) totalqty1.val(sumQty1.toFixed(2));
+
+      // SUM AMOUNT
+      let sumAmt2 = 0;
+      $("#footable_21 .AMT").each(function () {
+         let v = parseFloat($(this).val()) || 0;
+         sumAmt2 += v;
+      });
+
+      let totalAmt1 = safeVal("#total_amount1");
+      if (totalAmt1) totalAmt1.val(sumAmt2.toFixed(2)); 
    }
 
    

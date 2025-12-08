@@ -164,12 +164,11 @@ class TrimsInwardController extends Controller
      */
     public function store(Request $request)
     {
-        //echo '<pre>';print_r($_POST);exit;
-        $firm_id = $request->input('firm_id');
-        $is_opening = isset($request->is_opening) ? 1 : 0; 
-        $isReturnFabricInward=isset($request->isReturnFabricInward) ? 1 : 0;
-        $isOutsideVendor=isset($request->isOutsideVendor) ? 1 : 0;
-
+        // echo '<pre>'; print_R($_POST);exit;
+        $is_opening = $request->boolean('is_opening');
+        $isReturnTrimsInward = $request->boolean('isReturnTrimsInward');
+        $isOutsideVendor = $request->boolean('isOutsideVendor'); 
+        
         $codefetch = DB::table('counter_number')->select(DB::raw("tr_no + 1 as 'tr_no',c_code,code"))
             ->where('c_name', '=', 'C1')
             ->where('type', '=', 'TrimMaster')
@@ -197,7 +196,7 @@ class TrimsInwardController extends Controller
             "po_type_id" => $request->input('po_type_id'),
             "totalqty" => $request->input('totalqty'),
             'total_amount' => $request->total_amount,
-            'isReturnFabricInward' =>$isReturnFabricInward,
+            'isReturnTrimsInward' =>$isReturnTrimsInward,
             'vw_code' => $request->vw_code,
             "delflag" => 0,
             'is_opening' => $is_opening,
@@ -446,7 +445,7 @@ class TrimsInwardController extends Controller
         if (strpos($purchasefetch->po_code, "PO/") !== false) {
             $BillToList = DB::SELECT("SELECT ledger_details.sr_no, ledger_details.trade_name, ledger_details.site_code FROM purchase_order INNER JOIN ledger_details ON ledger_details.sr_no = purchase_order.bill_to WHERE purchase_order.pur_code='" . $purchasefetch->po_code . "'");
         } else {
-            $BillToList = DB::SELECT("SELECT ledger_details.sr_no, ledger_details.trade_name, ledger_details.site_code FROM purchase_order INNER JOIN ledger_details ON ledger_details.sr_no = purchase_order.bill_to WHERE purchase_order.Ac_code='" . $purchasefetch->Ac_code . "'");
+            $BillToList = DB::SELECT("SELECT ledger_details.sr_no, ledger_details.trade_name, ledger_details.site_code FROM purchase_order INNER JOIN ledger_details ON ledger_details.sr_no = purchase_order.bill_to");
         }
 
         $vendorData = DB::select("select ac_short_name, ledger_master.ac_code from vendor_purchase_order_master 
@@ -467,11 +466,12 @@ class TrimsInwardController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $pur_code, TrimsInOutActivityLog $loggerDetail, TrimsInOutMasterActivityLog $loggerMaster)
-    {
-        //echo '<pre>';print_R($_POST);exit;
-        $is_opening = isset($request->is_opening) ? 1 : 0; 
-        $isReturnFabricInward=isset($request->isReturnFabricInward) ? 1 : 0;
-        $isOutsideVendor=isset($request->isOutsideVendor) ? 1 : 0;
+    { 
+        
+        $is_opening = $request->boolean('is_opening');
+        $isReturnTrimsInward = $request->boolean('isReturnTrimsInward');
+        $isOutsideVendor = $request->boolean('isOutsideVendor'); 
+
         $po_code = '';
         $allocate_qtys = 0;
 
@@ -493,7 +493,7 @@ class TrimsInwardController extends Controller
             "po_type_id" => $request->input('po_type_id'),
             "totalqty" => $request->input('totalqty'),
             'total_amount' => $request->total_amount,
-            'isReturnFabricInward' => $isReturnFabricInward,
+            'isReturnTrimsInward' => $isReturnTrimsInward,
             'vw_code' => $request->vw_code,
             "delflag" => 0,
             'is_opening' => $is_opening,
@@ -509,7 +509,7 @@ class TrimsInwardController extends Controller
 
 
         $MasterOldFetch = DB::table('trimsInwardMaster')
-            ->select('trimDate', 'invoice_no', 'invoice_date', 'is_opening', 'totalqty', 'total_amount', 'isReturnFabricInward')
+            ->select('trimDate', 'invoice_no', 'invoice_date', 'is_opening', 'totalqty', 'total_amount', 'isReturnTrimsInward')
             ->where('trimCode', $request->trimCode)
             ->first();
 
@@ -522,7 +522,7 @@ class TrimsInwardController extends Controller
             'is_opening' => $request->is_opening,
             'totalqty' => $request->totalqty,
             'total_amount' => $request->total_amount,
-            'isReturnFabricInward' => $request->isReturnFabricInward
+            'isReturnTrimsInward' => $request->isReturnTrimsInward
         ];
 
 
@@ -2817,6 +2817,7 @@ from item_master where item_code='$value->item_code'"));
               <td>
                  <span onclick="openmodal(' . $concated . ')" style="color:#556ee6; cursor: pointer;">' . $row->item_code . '</span>
               </td>
+              <td><input type="text"  value="' . $row->class_name . '" style="width:250px;height:30px;" readonly> </td>
               <td>
                  <select name="item_codes[]" class="select2" id="item_codes"  class="select2" style="width:260px;height:30px;" onchange="GetUnit(this);" disabled>';
 
@@ -2824,7 +2825,6 @@ from item_master where item_code='$value->item_code'"));
 
             $html .= '</select>
               </td>
-              <td><input type="text"  value="' . $row->class_name . '" style="width:250px;height:30px;" readonly> </td>
               <td>
                  <select name="unit_ids[]"   id="unit_ids"   style="width:80px;height:30px;" disabled>
                     <option value="">--- Select Unit ---</option>';

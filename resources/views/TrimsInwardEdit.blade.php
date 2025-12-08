@@ -31,7 +31,7 @@
          <h4 class="mb-sm-0 font-size-18">Trims Inward : {{ $purchasefetch->trimCode }}</h4>
          <div class="page-title-right">
             <ol class="breadcrumb m-0">
-               <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
+               <li class="breadcrumb-item"><a href="javascript: void(0);">Transaction</a></li>
                <li class="breadcrumb-item active">Trims Inward</li>
             </ol>
          </div>
@@ -174,7 +174,7 @@
                   </div> 
                   <div class="col-md-2">
                      <div class="form-check form-check-primary mb-5">
-                        <input class="form-check-input" type="checkbox" id="is_opening" style="font-size: 25px;margin-top: 30px;margin-left: 0px;" name="is_opening"  @if($purchasefetch->is_opening==1) checked  @endif>
+                        <input class="form-check-input" type="checkbox" id="is_opening" style="font-size: 25px;margin-top: 30px;margin-left: 0px;" name="is_opening"  @if($purchasefetch->is_opening==1) checked  @endif disabled >
                         <label class="form-check-label" for="is_opening" style="margin-top: 30px;position: absolute;margin-left: 20px;font-size: 16px;">
                         Opening Stock
                         </label>
@@ -212,8 +212,8 @@
                            <tr>
                               <th>SrNo</th>
                               <th>Item Code</th>
-                              <th>Item Name</th>
                               <th>Classification</th>
+                              <th>Item Name</th>
                               <th>UOM</th>
                               <th>Quantity</th>
                               <th>Rate</th>
@@ -277,8 +277,8 @@
                            <tr>
                               <th>SrNo</th>
                               <th>Item Code</th>
-                              <th>Item Name</th>
                               <th>Classification</th>
+                              <th>Item Name</th>
                               <th>Unit</th>
                               <th>Quantity</th>
                               <th>Rate</th>
@@ -381,7 +381,7 @@
                         <div class="mb-3">
                            <div class="form-check form-check-primary mb-5">
                               <input class="form-check-input" type="checkbox" id="isReturnTrimsInward" onchange="GetDCDropdown();" name="isReturnTrimsInward" 
-                                  style="font-size: 30px;margin-left: 0px;margin-top: -3px;" @if($purchasefetch->isReturnFabricInward==1)checked @else disabled @endif disabled>
+                                  style="font-size: 30px;margin-left: 0px;margin-top: -3px;" @if($purchasefetch->isReturnTrimsInward==1)checked @else disabled @endif disabled>
                               <label class="form-check-label" for="isReturnTrimsInward" style="position: absolute;margin-left: 20px;font-size: 14px;">
                               Trims Return From Inhouse
                               </label>
@@ -444,7 +444,7 @@
                      <div class="col-md-2" id="workOrder">
                         <div class="mb-3">
                            <label for="" class="form-label">Vendor Work Order No.</label>   
-                           <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value);" >
+                           <select name="vw_code" class="form-select select2" id="vw_code" onchange="GetVendorName(this.value);" disabled>
                               <option value="">--Select--</option>
                               @foreach($vendorWorkOrderList as  $vendors)
                               <option value="{{ $vendors->vw_code  }}" {{ $vendors->vw_code == $purchasefetch->vw_code ? 'selected="selected"' : '' }}>{{ $vendors->vw_code }}</option>
@@ -455,7 +455,7 @@
                      <div class="col-md-3" id="vendorData">
                         <div class="mb-3">
                            <label for="" class="form-label">Vendor Name</label>   
-                           <select name="vendorId" class="form-select select2" id="vendorId" >
+                           <select name="vendorId" class="form-select select2" id="vendorId" disabled>
                               <option value="">--Select--</option>
                               @foreach($vendorData as  $rows)
                               <option value="{{ $rows->ac_code }}" {{ $rows->ac_code == $purchasefetch->vendorId ? 'selected="selected"' : '' }}> {{ $rows->ac_short_name }}</option>
@@ -474,8 +474,8 @@
                               <tr>
                                  <th>Sr No</th>
                                  <th>Item Code</th>
-                                 <th>Item Name</th>
                                  <th>Classification</th>
+                                 <th>Item Name</th>
                                  <th>UOM</th>
                                  <th>Quantity</th>
                                  <th>Rate</th>
@@ -539,8 +539,8 @@
                               <tr>
                                  <th>SrNo</th>
                                  <th>Item Code</th>
-                                 <th>Item Name</th>
                                  <th>Classification</th>
+                                 <th>Item Name</th>
                                  <th>Unit</th>
                                  <th>Quantity</th>
                                  <th>Rate</th>
@@ -704,14 +704,14 @@
          $("#delivery-tab").prop("disabled", true);
          if($("#isOutsideVendor").is(":checked"))
          {
-            $("#isReturnFabricInward").attr('disabled', true); 
+            $("#isReturnTrimsInward").attr('disabled', true); 
             $("#vpo_code").prop('disabled', false); 
             $("#vpo_code").attr('onchange', 'GetFabricOutwardData()');
          }
          else
          {
             $("#vpo_code").prop('disabled', true); 
-            $("#isReturnFabricInward").attr('disabled', false);  
+            $("#isReturnTrimsInward").attr('disabled', false);  
          }          
 
    } 
@@ -719,7 +719,7 @@
    function GetDCDropdown()
    { 
          $("#delivery-tab").prop('disabled', true);
-         if($("#isReturnFabricInward").is(":checked"))
+         if($("#isReturnTrimsInward").is(":checked"))
          {
             $("#footable_4").addClass("hide");
             $("#isOutsideVendor").attr('disabled', true);
@@ -731,7 +731,7 @@
             $("#invoice_no1").attr('name', 'invoice_no').attr('required', true).removeClass("hide");
             $("#tocd_code").removeAttr('name').removeAttr('required').addClass("hide"); 
          }
-         $("#isReturnFabricInward").attr('disabled', true);
+         $("#isReturnTrimsInward").attr('disabled', true);
          $("#isOutsideVendor").attr('disabled', true);
    }
 
@@ -1641,6 +1641,7 @@
    function EnableFields()
    {
         $("select").prop('disabled', false);
+        $("input").prop('disabled', false);
    }
    
    function getDetails(po_code){
