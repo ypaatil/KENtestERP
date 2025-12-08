@@ -477,7 +477,7 @@
                         <div class="green-part"></div>
                     </div>
 
-                    <h3 class=" fw-bold  text-center">Gate Pass/ Delivery Note</h3>
+                    <h3 class=" fw-bold  text-center">Gate Pass/ Delivery Note -  {{$VendorPurchaseOrderList[0]->process_name}}</h3>
                      @php
                     
                     $VendorPurchaseOrderMaster = DB::table('vendor_purchase_order_master')->join('usermaster', 'usermaster.userId', '=', 'vendor_purchase_order_master.userId')
@@ -500,7 +500,7 @@
                             <div class="">
 
                                 <div class="info-row">
-                                    <div class="label">Delivery No</div>
+                                    <div class="label">Delivery No.</div>
                                     <div class="colon">:</div>
                                     <div class="value"> {{$vpoCodes1}}</div>
                                 </div>
@@ -589,17 +589,17 @@
 
                         <div class="col-md-6 p-2 border-end">
                             <div class="">
-                                <p><b> Form</b></p>
+                                <p><b> Delivery Challan For :</b></p>
                                 <p><b> {{$VendorPurchaseOrderMaster[0]->Ac_name}}</b> </br>{{$VendorPurchaseOrderMaster[0]->address}}  </p>
                                 <div class="info-row">
                                     <div class="label">GST NO</div>
                                     <div class="colon">:</div>
-                                    <div class="value"> </div>
+                                    <div class="value">{{$VendorPurchaseOrderList[0]->gst_no}}  </div>
                                 </div>
                                 <div class="info-row">
                                     <div class="label">PAN NO</div>
                                     <div class="colon">:</div>
-                                    <div class="value"> </div>
+                                    <div class="value"> {{$VendorPurchaseOrderList[0]->pan_no}} </div>
                                 </div>
                             </div>
                         </div>
@@ -611,6 +611,7 @@
                        
                     <!-- Assortment Table -->
                     <h4 class="text-center fw-bold">Assortment Details</h4>
+                    <hr/>
                      @php
                
                      foreach($vpoCodes as $key=>$details)
@@ -744,12 +745,12 @@
                      <div class="col-md-12">
                       <span style="margin-left:9px;"><b>Remark : </b>{{$VendorPurchaseOrderMaster[0]->narration}}</span>
                   </div> 
-                   <hr/>  
-                      @php
+                    <hr/>  
+                    @php
                         }
                     @endphp
-                    <div class="col-md-12 text-right">
-                      <p style="margin-left:9px;"><b>Grand Total : <span id="grand_total"></span></b><p> 
+                  <div class="col-md-12 text-end">
+                      <h4><b>Grand Total : <span id="grand_total"></span></b><h4> 
                   </div><br/>
                   <div class="col-md-12 text-center" style="border:1px solid black;">
                         <h6><b>NOT FOR SALE, FOR JOB WORK ONLY</b></h6>
