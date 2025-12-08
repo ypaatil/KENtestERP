@@ -509,7 +509,28 @@
                                     <div class="colon">:</div>
                                     <div class="value">{{ date("d-m-Y", strtotime($VendorPurchaseOrderMaster[0]->vpo_date)) }}</div>
                                 </div>
+                                 <div class="info-row">
+                                    <div class="label">Process Type</div>
+                                    <div class="colon">:</div>
+                                    <div class="value"> {{$VendorPurchaseOrderList[0]->process_name}}</div>
+                                </div>
                                 <div class="info-row">
+                                    <div class="label">{{$VendorPurchaseOrderList[0]->process_name}} PO No.</div>
+                                    <div class="colon">:</div>
+                                    <div class="value">{{$VendorPurchaseOrderList[0]->vpo_code}} </div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="label">Style</div>
+                                    <div class="colon">:</div>
+                                    <div class="value"> {{$VendorPurchaseOrderList[0]->fg_name}} </div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="label">Style No.</div>
+                                    <div class="colon">:</div>
+                                    <div class="value"> {{$VendorPurchaseOrderList[0]->style_no}}</div>
+                                </div>
+
+                                <!-- <div class="info-row">
                                     <div class="label">From</div>
                                     <div class="colon">:</div>
                                     <div class="value"> {{$from_name}}</div>
@@ -519,11 +540,35 @@
                                     <div class="label">Address</div>
                                     <div class="colon">:</div>
                                     <div class="value">{{$from_address}}</div>
-                                </div>
+                                </div> -->
                             </div>
 
                         </div>
+                         @php
+                        $company=getCompanyInfo();
+                        @endphp
                         <div class="col-md-6 p-2">
+                            <p><b>Company Name: </b></p>
+                            <p> <b>{{ $company['name'] }}</b><br>{{ $company['address'] }}</p>
+
+                            <div class="info-row">
+                                <div class="label">PAN NO</div>
+                                <div class="colon">:</div>
+                                <div class="value">{{ $company['pan'] }} </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="label">GST NO</div>
+                                <div class="colon">:</div>
+                                <div class="value">{{ $company['gst'] }} </div>
+                            </div>
+                            <div class="info-row">
+                                <div class="label">STATE</div>
+                                <div class="colon">:</div>
+                                <div class="value"> {{ $company['state'] }}</div>
+                            </div>
+
+                        </div>
+                        <!-- <div class="col-md-6 p-2">
                             <div class="info-row">
                                     <div class="label">To</div>
                                     <div class="colon">:</div>
@@ -535,6 +580,31 @@
                                 <div class="value"> {{$VendorPurchaseOrderMaster[0]->address}} </div>
                             </div>
                            
+                        </div> -->
+                    </div>
+
+                     <!-- Second Row -->
+                    <div class="row g-0  border-bottom ">
+
+
+                        <div class="col-md-6 p-2 border-end">
+                            <div class="">
+                                <p><b> Form</b></p>
+                                <p><b> {{$VendorPurchaseOrderMaster[0]->Ac_name}}</b> </br>{{$VendorPurchaseOrderMaster[0]->address}}  </p>
+                                <div class="info-row">
+                                    <div class="label">GST NO</div>
+                                    <div class="colon">:</div>
+                                    <div class="value"> </div>
+                                </div>
+                                <div class="info-row">
+                                    <div class="label">PAN NO</div>
+                                    <div class="colon">:</div>
+                                    <div class="value"> </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 p-2">
+
                         </div>
                     </div>
 
@@ -581,7 +651,7 @@
                     @endphp
                     <table class="table table-bordered table-sm second">
                         <thead>
-                           <div class="text-start fw-bold mb-1">
+                           <div class="text-start fw-bold mb-1" style="margin-left:10px;">
                                 D. No. : {{$vpoCodes[$key]}},  
                                 Sales Order No : {{$VendorPurchaseOrderMaster[0]->sales_order_no}},  
                                 Style : {{$VendorPurchaseOrderMaster[0]->mainstyle_name}}
@@ -704,14 +774,7 @@
     <p class="text-center d-print-none"><a href="/OutwardForPacking">&laquo; Back to List</a></p>
    
      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>  $('#printInvoice').click(function(){
-      Popup($('.invoice')[0].outerHTML);
-      function Popup(data) 
-      {
-          window.print();
-          return true;
-      }
-      });
+    <script> 
       
     $(document).ready(function () 
     {
