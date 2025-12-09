@@ -329,13 +329,13 @@
                   <div class="col-md-2">
                      <div class="mb-3">
                         <label for="formrow-email-input" class="form-label">Total Quantity</label>
-                        <input type="text" name="totalqty" class="form-control" id="totalqty" value="{{ $purchasefetch->totalqty }}" required>
+                        <input type="text" name="totalqty" class="form-control" id="totalqty" value="{{ $purchasefetch->totalqty }}" readonly>
                      </div>
                   </div>
                   <div class="col-md-2">
                      <div class="mb-3">
                         <label for="formrow-email-input" class="form-label">Total Amount</label>
-                        <input type="text" name="total_amount" class="form-control" id="total_amount" value="{{ $purchasefetch->total_amount }}" required>
+                        <input type="text" name="total_amount" class="form-control" id="total_amount" value="{{ $purchasefetch->total_amount }}" readonly>
                         <input type="hidden" class="form-control" id="total_allocate_qty" value="0">
                      </div>
                   </div>
@@ -591,13 +591,13 @@
                      <div class="col-md-2">
                         <div class="mb-3">
                            <label for="formrow-email-input" class="form-label">Total Quantity</label>
-                           <input type="text" name="totalqty" class="form-control" id="totalqty1" value="{{ $purchasefetch->totalqty }}" required>
+                           <input type="text" name="totalqty" class="form-control" id="totalqty1" value="{{ $purchasefetch->totalqty }}" readonly>
                         </div>
                      </div>
                      <div class="col-md-2">
                         <div class="mb-3">
                            <label for="formrow-email-input" class="form-label">Total Amount</label>
-                           <input type="text" name="total_amount" class="form-control" id="total_amount1" value="{{ $purchasefetch->total_amount }}" required>
+                           <input type="text" name="total_amount" class="form-control" id="total_amount1" value="{{ $purchasefetch->total_amount }}" readonly>
                            <input type="hidden" class="form-control" id="total_allocate_qty1" value="0">
                         </div>
                      </div> 
@@ -1130,6 +1130,7 @@
    cell15.appendChild(btnAdd);
    
    var btnRemove = document.createElement("INPUT");
+   btnRemove.style="margin-left: 10px;";
    btnRemove.id = "Dbutton";
    btnRemove.type = "button";
    btnRemove.className="btn btn-danger pull-left";
@@ -1266,6 +1267,7 @@
    cell15.appendChild(btnAdd);
    
    var btnRemove = document.createElement("INPUT");
+   btnRemove.style="margin-left: 10px;";
    btnRemove.id = "Dbutton";
    btnRemove.type = "button";
    btnRemove.className="btn btn-danger pull-left";

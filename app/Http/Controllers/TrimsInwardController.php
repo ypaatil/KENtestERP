@@ -3668,6 +3668,7 @@ from item_master where item_code='$value->item_code'"));
             }, 'combined')
             ->join('item_master', 'item_master.item_code', '=', 'combined.item_code') // adjust join column name if needed
             ->select('item_master.item_code', 'item_master.item_name')
+            ->groupBy('combined.item_code')
             ->get();
 
 
@@ -3700,5 +3701,76 @@ from item_master where item_code='$value->item_code'"));
         ", [$code, $code]);
 
         return response()->json(['ac_code' => $vendorData[0]->ac_code]);
+    }
+   
+    public function GetTrimsInwardOutwardData(Request $request)
+    {
+        $detailData = DB::select("
+                            SELECT 
+                                SUM(fod.item_qty) AS total_qty,
+                                (
+                                    SELECT IFNULL(SUM(id.item_qty), 0)
+                                    FROM trimsinwarddetail id
+                                    INNER JOIN trimsinwardmaster im 
+                                        ON im.trimCode = id.trimCode
+                                    WHERE id.item_code = fod.item_code
+                                    AND im.vw_code = fod.vw_code
+                                ) AS received,
+                                imast.item_name,
+                                fod.item_code
+                            FROM trimsoutwarddetail fod
+                            INNER JOIN item_master imast 
+                                ON imast.item_code = fod.item_code
+                            WHERE fod.vw_code = ?
+                            GROUP BY fod.item_code, imast.item_name
+
+                            UNION
+
+                            SELECT 
+                                SUM(fod2.item_qty) AS total_qty,
+                                (
+                                    SELECT IFNULL(SUM(id.item_qty), 0)
+                                    FROM trimsinwarddetail id
+                                    INNER JOIN trimsinwardmaster im 
+                                        ON im.trimCode = id.trimCode
+                                    WHERE id.item_code = vpod.item_code
+                                    AND im.vw_code = vpod.vw_code
+                                ) AS received,
+                                imast2.item_name,
+                                vpod.item_code
+                            FROM vendor_work_order_detail vpod
+                            
+                            LEFT JOIN trimsoutwarddetail fod2 
+                                ON fod2.vw_code = vpod.vw_code 
+                                AND fod2.item_code = vpod.item_code
+
+                            INNER JOIN item_master imast2 
+                                ON imast2.item_code = vpod.item_code
+
+                            WHERE vpod.vw_code = ?
+
+                            GROUP BY vpod.item_code, imast2.item_name
+                        ", [
+                            $request->vw_code,
+                            $request->vw_code
+                        ]);
+
+
+        $html = '';
+        $sr_no = 1; 
+        
+        foreach($detailData as $row)
+        {
+            $html .='<tr class="item_code_'.$row->item_code.'">
+                       <td class="text-center">'.($sr_no++).'</td> 
+                       <td class="text-center">'.$row->item_code.'</td>
+                       <td>'.$row->item_name.'</td>
+                       <td class="text-center">'.$row->total_qty.'</td>
+                       <td class="text-center">'.$row->received.'</td>
+                       <td class="text-center bal_qty1">'.($row->total_qty-$row->received).'</td>
+                    </tr>';
+        }
+        
+        return response()->json(['html'=>$html]);
     }
 }

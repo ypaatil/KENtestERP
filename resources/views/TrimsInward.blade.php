@@ -23,10 +23,10 @@ ini_set('memory_limit', '1G');
    -moz-appearance: textfield;
    }
 
-   td,th
+   /* td,th
    {
       text-align: center;
-   }
+   } */
 </style>
 <div class="row">
    <div class="col-12">
@@ -409,6 +409,27 @@ ini_set('memory_limit', '1G');
                         <button type="button" name="allocate[]"  onclick="stockAllocate1();" id="mainAllocation1" isClick="0" class="btn btn-warning pull-center">Allocate</button> 
                      </div>
                   </div>
+               
+                  <!-- PURCHASE TABLE -->
+                  <div class="table-wrap hide" id="OutwardTbl">
+                     <div class="table-responsive">
+                        <table id="footable_4" class="table table-bordered table-striped m-b-0">
+                           <thead>
+                              <tr class="text-center">
+                                 <th>Sr No.</th>
+                                 <th>Item Code</th>
+                                 <th>Item Name</th>
+                                 <th>Outward Qty</th> 
+                                 <th>Received</th> 
+                                 <th>Balance Qty</th> 
+                              </tr>
+                           </thead>
+                           <tbody id="OutwardTbody">
+                           </tbody>
+                        </table>
+                     </div>
+                  </div>
+
                   <div class="table-wrap" id="trimInward1">
                      <div class="table-responsive">
                         <table id="footable_21" class="table  table-bordered table-striped m-b-0 footable_21">
@@ -619,6 +640,109 @@ ini_set('memory_limit', '1G');
        }
    });
    
+
+    $(document).on("input", 'input[name^="item_qtys[]"]', function (event) 
+   {
+         var row = $(this).closest("tr");
+
+         var current_item_code = row.find('select[name^="item_codes[]"]').val();
+   
+         var total = 0;
+
+         if($("#isOutsideVendor").is(":checked"))
+         {
+            var po_qty = parseFloat($(".item_code_" + current_item_code).find('.bal_qty1').html()) || 0;
+            var total = 0;
+
+            // First calculate total item_qtys already entered
+            $("#footable_21 > tbody > tr").each(function () {
+
+               var item_code = $(this).find('select[name="item_codes[]"]').val();
+               if (current_item_code === item_code) {
+
+                  var meterVal = parseFloat($(this).find('input[name="item_qtys[]"]').val()) || 0;
+                  total += meterVal;
+               }
+            });
+
+            // Now check the latest row where user typed item_qtys
+            var currentMeterInput = $(this);
+            var entered = parseFloat(currentMeterInput.val()) || 0;
+
+            // Remaining quantity
+            var remaining = po_qty - (total - entered);
+ 
+            // Case 1: Total exceeded
+            if (total > po_qty) {
+
+               alert("Quantity is exceeding " + po_qty);
+
+               if (remaining <= 0) {
+                  currentMeterInput.val(0);
+               } else {
+                  currentMeterInput.val(remaining);
+               }
+
+               return;
+            }
+
+            // --- DISABLE NEXT ROWS IF FIRST ROW IS FULL ---
+            if (total >= po_qty) {
+
+               // Disable all remaining rows for this item
+               $("#footable_3 > tbody > tr").each(function () {
+
+                  var item_code = $(this).find('select[name="item_codes[]"]').val();
+
+                  if (current_item_code === item_code) {
+
+                        var meterInput = $(this).find('input[name="item_qtys[]"]');
+
+                        // If this row is NOT the row with actual value (first filled row),
+                        // then force meter = 0 and disable it
+                        if (parseFloat(meterInput.val()) === 0) {
+
+                           meterInput.val(0);
+                           meterInput.prop("readonly", true);
+                        }
+                  }
+               });
+            } 
+            else 
+            {
+               // If remaining qty exists → allow but limit to remaining
+               if (entered > remaining) {
+                  alert("Only " + remaining + " quantity remaining!");
+
+                  currentMeterInput.val(remaining);
+               }
+            }
+
+         }
+         else
+         {
+            var po_qty = $(".item_code_" + current_item_code).find('.bal_qty').html();
+            $("#footable_2 > tbody > tr").each(function() {
+
+               var item_code = $(this).find('select[name="item_codes[]"]').val();
+
+               if (current_item_code === item_code) {
+                  var meter = parseFloat($(this).find('input[name="item_qtys[]"]').val()) || 0;
+                  total = total + meter;
+               } 
+               // 5% allowed quantity
+               var allow_qty = parseFloat(po_qty) + (parseFloat(po_qty) * 0.05);
+      
+
+               if (parseFloat(total) > parseFloat(allow_qty)) {
+                  alert("Quantity is allow only 5%");
+               }
+            });
+         } 
+
+         CalculateRow($(this).closest("tr"));
+   });
+   
    function GetTrimsCuttingDeptData()
    {
         var tocd_code  = $("#tocd_code").val();
@@ -637,6 +761,28 @@ ini_set('memory_limit', '1G');
 
    }
 
+    
+   function GetTrimsInwardOutwardData()
+   {
+         $("#isReturnTrimInward").attr('disabled', true);
+         $("#isOutsideVendor").attr('disabled', true);
+         var vw_code = $("#vw_code").val();
+         $.ajax({
+            type:"GET",
+            url:"{{ route('GetTrimsInwardOutwardData') }}", 
+            data:{vw_code:vw_code},
+            success:function(response)
+            {
+               $("#OutwardTbl").removeClass("hide");
+               $("#OutwardTbody").html(response.html);            
+            }
+         });  
+
+         GetVendorName(vw_code);
+         $("#vw_code").prop('disabled', true);
+   }
+
+
    function DisableDropdown()
    {
         $("#vendorId").attr('disabled', true);
@@ -645,7 +791,9 @@ ini_set('memory_limit', '1G');
         if($("#isOutsideVendor").is(":checked"))
         {
            $("#isReturnTrimsInward").attr('disabled', true); 
-         //   $("#vw_code").attr('onchange', 'GetFabricOutwardData()');
+           $("#vw_code").attr('onchange', 'GetTrimsInwardOutwardData()');
+           $("#invoice_no1").prop("required", true);
+           $("#tocd_code").prop("required", false);
         }
         else
         {
@@ -663,6 +811,8 @@ ini_set('memory_limit', '1G');
         $("#delivery-tab").prop("disabled", true);
         if($("#isReturnTrimsInward").is(":checked"))
         {
+           $("#tocd_code").prop("required", true);
+           $("#invoice_no1").prop("required", false);
            $("#isOutsideVendor").attr('disabled', true);
            $("#invoice_no1").removeAttr('name').removeAttr('required').addClass("hide");
            $("#tocd_code").attr('name', 'invoice_no').attr('required', true).removeClass("hide"); 
@@ -1088,6 +1238,7 @@ ini_set('memory_limit', '1G');
          
          var cell16=row.insertCell(10);
          var btnRemove = document.createElement("INPUT");
+         btnRemove.style="margin-left: 10px;";
          btnRemove.id = "Dbutton";
          btnRemove.type = "button";
          btnRemove.className="btn btn-danger text-center";
@@ -1248,6 +1399,7 @@ ini_set('memory_limit', '1G');
          
          var cell16=row.insertCell(10);
          var btnRemove = document.createElement("INPUT");
+         btnRemove.style="margin-left: 10px;";
          btnRemove.id = "Dbutton1";
          btnRemove.type = "button";
          btnRemove.className="btn btn-danger pull-text";
