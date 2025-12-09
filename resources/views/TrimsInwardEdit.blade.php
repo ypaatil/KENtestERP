@@ -875,99 +875,155 @@
         $(obj).parent().parent('tr').find('td button[name="allocate[]"]').attr('qty', qty);
     }
     
-    function stockAllocate(obj)
-    {
-      var row1 = $(obj).attr('item_code');
-      var row2 = $(obj).attr('qty');
-      var row3 = $(obj).attr('bom_code');
-      var row4 = $(obj).attr('cat_id');
-      var row5 = $(obj).attr('class_id');
-      var isClick = $(obj).attr('isClick');
-      
-      setTimeout(() => {
-
-         $('#footable_2')
-           .find('select, button')
-           .not('select[name="rack_id[]"]')
-           .prop('disabled', true);
-         
-         $('#footable_2')
-           .find('input') 
-           .prop('readOnly', true);
-
-       }, 500);
-
-      if($('#is_opening').is(":checked") == true)
-      {
-           var is_opening = 1;
-      }
-      else
-      {
-           var is_opening = 0;
-      } 
-      var po_type_id = $("#po_type_id").val();
-      if(isClick == 0)
-      {
-          $.ajax({
-                  type: "GET",
-                  dataType:"json",
-                  url: "{{ route('stockAllocate') }}",
-                  data:{'bom_code':row3,'item_code' : row1,'item_qty': row2, 'cat_id':row4, 'class_id':row5,'is_opening':is_opening,'po_type_id':po_type_id},
-                  success: function(data)
-                  {
-                        $("#stock_allocate").append(data.html);
-                        $(obj).attr('isClick', '1');
-                        $(obj).removeClass('btn-success').addClass('btn-danger');
-                        calculateAllocatedQty();
-                  }
-            });
-      }
-      else
-      {
-          alert('Already stock allocated..!');
-      }
-      
-      calculateAllocatedQty();
-    } 
-
-   function stockAllocate1(obj)
+    function stockAllocate(obj) 
    {
+      $('#Submit').prop('disabled', false);
+      var Click = $("#mainAllocation").attr('isClick');
 
-      // Disable submit first
+      // -------------------------
+      // 1️⃣ Validate Qty > 0
+      // -------------------------
+      let isValid = true;
+
+      $("#detailTbl tr").each(function () {
+         let qty = $(this).find('input[name="item_qtys[]"]').val();
+
+         if (qty === "" || qty == 0 || qty < 0) {
+               isValid = false;
+               return false; // break the loop
+         }
+      });
+
+      if (!isValid) {
+         alert("Quantity should be greater than 0 for all items.");
+         return false;   // ❗STOP FUNCTION COMPLETELY
+      }
+      // -------------------------
+      // END VALIDATION
+      // -------------------------
+
+
+      setTimeout(() => {
+         $('#footable_2')
+               .find('select, button')
+               .not('select[name="rack_id[]"]')
+               .prop('disabled', true);
+
+         $('#footable_2')
+               .find('input')
+               .prop('readOnly', true);
+
+      }, 500);
+
+
+
+      if (Click == 1) {
+         alert('Already stock allocated..!');
+         return false;
+      }
+
+      // -------------------------
+      // 2️⃣ Perform Stock Allocation
+      // -------------------------
+      $("#footable_2 > tbody").find('tr').each(function () {
+
+         var row1 = $(this).attr('item_code');
+         var row2 = $(this).attr('qty');
+         var row3 = $(this).attr('bom_code');
+         var row4 = $(this).attr('cat_id');
+         var row5 = $(this).attr('class_id');
+
+         var is_opening = $('#is_opening').is(":checked") ? 1 : 0;
+         var po_type_id = $("#po_type_id").val();
+
+         $.ajax({
+               type: "GET",
+               dataType: "json",
+               url: "{{ route('stockAllocate') }}",
+               data: {
+                  'bom_code': row3,
+                  'item_code': row1,
+                  'item_qty': row2,
+                  'cat_id': row4,
+                  'class_id': row5,
+                  'is_opening': is_opening,
+                  'po_type_id': po_type_id
+               },
+               success: function (data) {
+                  $("#stock_allocate").append(data.html);
+                  $("#mainAllocation").attr('isClick', '1');
+                  $("#mainAllocation").removeClass('btn-success').addClass('btn-danger');
+                  calculateAllocatedQty();
+               }
+         });
+      });
+
+      calculateAllocatedQty();
+   }
+
+   
+  function stockAllocate1(obj) 
+  {
+      // Enable submit button
       $('#Submit').prop('disabled', false);
 
-      // Prevent function from running again
+      // ---------- 1️⃣ Prevent double click ----------
       if ($("#mainAllocation1").data("running") === 1) {
          alert("Already processing...!");
          return;
       }
       $("#mainAllocation1").data("running", 1);
 
-      // Disable all controls except rack select
-      setTimeout(() => {
-         $('#footable_21').find('input, select, button')
-               .not('select[name="rack_id[]"]')
-               .prop('disabled', true);
-      }, 300);
+      // ---------- 3️⃣ Validate Qty > 0 ----------
+      let isValid = true;
 
+      $("#detailTbl tr").each(function () {
+         let qty = $(this).find('input[name="item_qtys[]"]').val();
+
+         if (qty === "" || qty == 0 || qty < 0) {
+               isValid = false;
+               return false; // stop loop
+         }
+      });
+
+      if (!isValid) {
+         alert("Quantity should be greater than 0 for all items.");
+         $("#mainAllocation1").data("running", 0);
+         return false;  // STOP FUNCTION
+      }
+
+
+      // ---------- 4️⃣ Stop if already allocated ----------
       let Click = $("#mainAllocation1").attr('isClick');
 
       if (Click == 1) {
-         alert('Already stock allocated..!');
+         alert("Already stock allocated..!");
          $("#mainAllocation1").data("running", 0);
          return;
       }
 
-      // Process each row only once
+
+      // ---------- 2️⃣ Disable controls except rack select ----------
+      setTimeout(() => {
+         $('#footable_21')
+               .find('input, select, button')
+               .not('select[name="rack_id[]"]')
+               .prop('disabled', true);
+      }, 300);
+
+
+      // ---------- 5️⃣ Process each row ----------
       $("#footable_21 > tbody > tr").each(function () {
 
          let row = $(this);
 
+         // Stop duplicate processing
          if (row.data("processed") === 1) {
-               return;  // skip already processed
+               return;
          }
          row.data("processed", 1);
 
+         // Collect attributes
          var row1 = row.attr('item_code');
          var row2 = row.attr('qty');
          var row3 = row.attr('bom_code');
@@ -984,20 +1040,22 @@
                   item_code: row1,
                   item_qty: row2,
                   cat_id: row4,
-                  class_id: row5, 
+                  class_id: row5,
                   po_type_id: po_type_id
                },
                success: function (data) {
+
                   $("#stock_allocate1").append(data.html);
 
+                  // Update button status
                   $("#mainAllocation1")
                      .attr('isClick', '1')
                      .removeClass('btn-success')
                      .addClass('btn-danger');
 
-                  // Run only once per AJAX batch
-                  clearTimeout(window.calcTimer);
-                  window.calcTimer = setTimeout(() => {
+                  // Run calculation once after batch
+                  clearTimeout(window.calcTimer1);
+                  window.calcTimer1 = setTimeout(() => {
                      calculateAllocatedQty();
                      $("#mainAllocation1").data("running", 0);
                   }, 200);
