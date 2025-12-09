@@ -610,8 +610,8 @@
 
                        
                     <!-- Assortment Table -->
-                    <h4 class="text-center fw-bold">Assortment Details</h4>
-                    <hr/>
+                    <h4 class="text-center fw-bold ">Assortment Details</h4>
+                    <hr class="mt-1"/>
                      @php
                      $totalAmt=0; $totalQty=0; 
                      foreach($vpoCodes as $key=>$details)
