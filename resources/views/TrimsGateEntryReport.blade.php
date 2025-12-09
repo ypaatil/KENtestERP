@@ -84,6 +84,7 @@ ini_set('memory_limit', '10G');
                      <th nowrap>DC Date <span class="filter-icon">🔽</span><div class="filter-menu dc-date"></div></th>
                      <th nowrap>Invoice No <span class="filter-icon">🔽</span><div class="filter-menu invoice-no"></div></th>
                      <th nowrap>Invoice Date <span class="filter-icon">🔽</span><div class="filter-menu invoice-date"></div></th>
+                     <th nowrap>Buyer <span class="filter-icon">🔽</span><div class="filter-menu buyer"></div></th>
                      <th nowrap>Supplier <span class="filter-icon">🔽</span><div class="filter-menu supplier"></div></th>
                      <th nowrap>Bill To <span class="filter-icon">🔽</span><div class="filter-menu bill-to"></div></th>
                      <th nowrap>Location/Warehouse <span class="filter-icon">🔽</span><div class="filter-menu location"></div></th>
@@ -158,6 +159,7 @@ ini_set('memory_limit', '10G');
            {data: 'dc_date', name: 'dc_date', className: 'no-wrap'},
            {data: 'invoice_no', name: 'invoice_no'},
            {data: 'invoice_date', name: 'invoice_date'},
+           {data: 'buyer_name', name: "buyer_name"},
            {data: 'supplier_name', name: "supplier_name"},
            {data: 'bill_name', name: "bill_name"},
            {data: 'location', name: "location"},
@@ -192,19 +194,20 @@ ini_set('memory_limit', '10G');
          else if(menu.hasClass('dc-date')) applyDateFilter(5, menu);
          else if(menu.hasClass('invoice-no')) applySimpleFilter(6, menu);
          else if(menu.hasClass('invoice-date')) applyDateFilter(7, menu);
-         else if(menu.hasClass('supplier')) applySimpleFilter(8, menu);
-         else if(menu.hasClass('bill-to')) applySimpleFilter(9, menu);
-         else if(menu.hasClass('location')) applySimpleFilter(10, menu);
-         else if(menu.hasClass('lr-no')) applySimpleFilter(11, menu);
-         else if(menu.hasClass('transport-name')) applySimpleFilter(12, menu);
-         else if(menu.hasClass('vehicle-no')) applySimpleFilter(13, menu);
-         else if(menu.hasClass('item-name')) applySimpleFilter(14, menu);
-         else if(menu.hasClass('item-code')) applySimpleFilter(15, menu);
-         else if(menu.hasClass('item-description')) applySimpleFilter(16, menu);
-         else if(menu.hasClass('challan-qty')) applySimpleFilter(17, menu);
-         else if(menu.hasClass('rate')) applySimpleFilter(18, menu);
-         else if(menu.hasClass('amount')) applySimpleFilter(19, menu);
-         else if(menu.hasClass('remark')) applySimpleFilter(20, menu);
+         else if(menu.hasClass('buyer')) applySimpleFilter(8, menu);
+         else if(menu.hasClass('supplier')) applySimpleFilter(9, menu);
+         else if(menu.hasClass('bill-to')) applySimpleFilter(10, menu);
+         else if(menu.hasClass('location')) applySimpleFilter(11, menu);
+         else if(menu.hasClass('lr-no')) applySimpleFilter(12, menu);
+         else if(menu.hasClass('transport-name')) applySimpleFilter(13, menu);
+         else if(menu.hasClass('vehicle-no')) applySimpleFilter(14, menu);
+         else if(menu.hasClass('item-name')) applySimpleFilter(15, menu);
+         else if(menu.hasClass('item-code')) applySimpleFilter(16, menu);
+         else if(menu.hasClass('item-description')) applySimpleFilter(17, menu);
+         else if(menu.hasClass('challan-qty')) applySimpleFilter(18, menu);
+         else if(menu.hasClass('rate')) applySimpleFilter(19, menu);
+         else if(menu.hasClass('amount')) applySimpleFilter(20, menu);
+         else if(menu.hasClass('remark')) applySimpleFilter(21, menu);
 
                                
          $('.filter-menu').hide();

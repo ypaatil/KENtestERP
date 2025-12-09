@@ -104,6 +104,17 @@
                </div>
                <div class="col-md-3">
                   <div class="mb-3">
+                     <label for="buyer_id" class="form-label">Buyer Name</label>
+                     <select name="buyer_id" class="form-select select2" id="buyer_id">
+                        <option value="">--Select--</option>
+                        @foreach($BuyerList as  $row) 
+                            <option value="{{ $row->ac_code }}" {{ $row->ac_code == $TrimGateEntryMasterList->buyer_id ? 'selected="selected"' : '' }} >{{ $row->ac_name }}</option> 
+                        @endforeach
+                     </select>
+                  </div>
+               </div> 
+               <div class="col-md-3">
+                  <div class="mb-3">
                      <label for="Ac_code" class="form-label">Supplier</label>
                      <select name="Ac_code" class="form-select" id="Ac_code" disabled>
                         <option value="">--Select--</option>
@@ -332,6 +343,18 @@
     
     function getDetails(po_code)
     { 
+
+         $.ajax({
+           type:"GET",
+           url:"{{ route('GetBuyerNameFromPO') }}",
+           data:{po_code:po_code},
+           success:function(res)
+           { 
+               $("#buyer_id").val(res.buyer_id).trigger('change');
+               $("#buyer_id").attr('disabled', true);
+           }
+         });
+
         $.ajax({
            type:"GET",
            url:"{{ route('GetPOApproveStatus') }}",

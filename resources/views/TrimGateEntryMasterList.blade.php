@@ -59,6 +59,7 @@
                      <th>TGE Code</th>
                      <th>TGE Date</th>
                      <th>PO Code</th>
+                     <th>Buyer Name</th>
                      <th>Supplier Name</th>
                      <th>DC No.</th>
                      <th>DC Date.</th>
@@ -81,6 +82,7 @@
                      <td>{{ $row->tge_code }}</td>
                      <td>{{ $row->tge_date }}</td>
                      <td>{{ $row->po_code ?? $row->po_code2 }}</td>
+                     <td>{{ $row->buyer_name }}</td>
                      <td>{{ $row->Ac_name }}</td>
                      <td>{{ $row->dc_no }}</td>
                      <td>{{ $row->dc_date }}</td>

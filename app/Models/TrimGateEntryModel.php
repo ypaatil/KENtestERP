@@ -15,7 +15,7 @@ class TrimGateEntryModel extends Model
 	
 	protected $fillable = [
         'tge_code', 'tge_date','po_code', 'po_code2', 'dc_no', 'dc_date', 'invoice_no', 'invoice_date', 'Ac_code', 'location_id',   
-        'lr_no', 'transport_name','vehicle_no', 'total_qty','total_received_meter','total_amt','remark', 'userId', 'delflag', 'created_at', 'updated_at','bill_to'
+        'lr_no', 'transport_name','vehicle_no', 'total_qty','total_received_meter','total_amt','remark', 'userId', 'delflag', 'created_at', 'updated_at','bill_to','buyer_id'
     ];
 
     protected $attributes = [

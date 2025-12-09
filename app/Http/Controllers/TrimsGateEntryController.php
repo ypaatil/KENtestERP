@@ -47,10 +47,11 @@ class TrimsGateEntryController extends Controller
          
         $TrimGateEntryList = TrimGateEntryModel::join('usermaster', 'usermaster.userId', '=', 'trim_gate_entry_master.userId')
             ->join('ledger_master', 'ledger_master.Ac_code', '=', 'trim_gate_entry_master.Ac_code') 
+            ->leftjoin('ledger_master as LM1', 'LM1.Ac_code', '=', 'trim_gate_entry_master.buyer_id') 
             ->where('trim_gate_entry_master.delflag','=', '0')
             ->where('trim_gate_entry_master.tge_date','>', DB::raw('LAST_DAY(CURRENT_DATE - INTERVAL 3 MONTH)')) 
             ->orderByRaw('CAST(SUBSTRING(trim_gate_entry_master.tge_code, 4) AS UNSIGNED) DESC')
-            ->get(['trim_gate_entry_master.*','usermaster.username','ledger_master.Ac_name']);
+            ->get(['trim_gate_entry_master.*','usermaster.username','ledger_master.Ac_name','LM1.ac_short_name as buyer_name']);
   
          return view('TrimGateEntryMasterList', compact('TrimGateEntryList','chekform'));
     }
@@ -66,9 +67,10 @@ class TrimsGateEntryController extends Controller
         // DB::enableQueryLog();  
          $TrimGateEntryList = TrimGateEntryModel::join('usermaster', 'usermaster.userId', '=', 'trim_gate_entry_master.userId')
             ->join('ledger_master', 'ledger_master.Ac_code', '=', 'trim_gate_entry_master.Ac_code') 
+            ->leftjoin('ledger_master as LM1', 'LM1.Ac_code', '=', 'trim_gate_entry_master.buyer_id') 
             ->where('trim_gate_entry_master.delflag','=', '0')
             ->orderByRaw('CAST(SUBSTRING(trim_gate_entry_master.tge_code, 4) AS UNSIGNED) DESC')
-            ->get(['trim_gate_entry_master.*','usermaster.username','ledger_master.Ac_name']);
+            ->get(['trim_gate_entry_master.*','usermaster.username','ledger_master.Ac_name','LM1.ac_short_name as buyer_name']);
         // dd(DB::getQueryLog());
          return view('TrimGateEntryMasterList', compact('TrimGateEntryList','chekform'));
     }
@@ -82,13 +84,14 @@ class TrimsGateEntryController extends Controller
         $counter_number = DB::select("select c_code, tr_no + 1 as 'tr_no' from counter_number where c_name ='C1' AND type='TrimGateEntry'");
         $ItemList = ItemModel::where('item_master.delflag','=', '0')->where('item_master.cat_id','!=', '1')->get();
         $Ledger = LedgerModel::where('ledger_master.delflag','=', '0')->whereIn('ledger_master.bt_id', [1,2,4])->get();
+        $BuyerList = LedgerModel::where('ledger_master.delflag','=', '0')->whereIn('ledger_master.bt_id', [2])->get();
         $FGList =  DB::table('fg_master')->get();
         $BillToList =  DB::table('ledger_details')->get();
         $POList = PurchaseOrderModel::where('purchase_order.bom_type','!=', '1')->get();
         $LocationList = LocationModel::where('location_master.delflag','=', '0')->get(); 
         $UnitList = UnitModel::where('unit_master.delflag','=', '0')->get(); 
         
-        return view('TrimGateEntryMaster',compact('Ledger','LocationList', 'POList','FGList', 'counter_number','ItemList','UnitList','BillToList'));
+        return view('TrimGateEntryMaster',compact('BuyerList','Ledger','LocationList', 'POList','FGList', 'counter_number','ItemList','UnitList','BillToList'));
     }
 
     /**
@@ -110,7 +113,7 @@ class TrimsGateEntryController extends Controller
             'location_id'=>$request->location_id,'lr_no'=>$request->lr_no, 
             'transport_name'=>$request->transport_name,'vehicle_no'=>$request->vehicle_no,
             'total_qty'=>$request->total_qty,'total_received_meter'=>$request->total_received_meter,
-            'total_amt'=>$request->total_amt,  'remark' => $request->remark,'is_manual'=>$request->is_manual,'bill_to'=>$request->bill_to,
+            'total_amt'=>$request->total_amt,  'remark' => $request->remark,'is_manual'=>$request->is_manual,'bill_to'=>$request->bill_to,'buyer_id'=>$request->buyer_id,
             'userId'=>$request->userId, 'delflag'=>'0', 'created_at'=>date("Y-m-d H:i:s"), 'updated_at'=>date("Y-m-d H:i:s")
         );
         
@@ -176,6 +179,7 @@ class TrimsGateEntryController extends Controller
         $POList = PurchaseOrderModel::where('purchase_order.bom_type','!=', '1')->get();
         $LocationList = LocationModel::where('location_master.delflag','=', '0')->get(); 
         $UnitList = UnitModel::where('unit_master.delflag','=', '0')->get(); 
+        $BuyerList = LedgerModel::where('ledger_master.delflag','=', '0')->whereIn('ledger_master.bt_id', [2])->get();
         
         
         $TrimGateEntryMasterList = TrimGateEntryModel::where('tge_code',$id)->first();
@@ -207,7 +211,7 @@ class TrimsGateEntryController extends Controller
             $BillToList = DB::SELECT("SELECT ledger_details.sr_no, ledger_details.trade_name, ledger_details.site_code FROM purchase_order INNER JOIN ledger_details ON ledger_details.sr_no = purchase_order.bill_to WHERE purchase_order.Ac_code='".$TrimGateEntryMasterList->Ac_code."'");
         }
 
-        return view('TrimGateEntryMasterEdit',compact('TrimGateEntryMasterList','POList','LocationList', 'Ledger', 'FGList', 'TrimGateEntryDetails','counter_number','ItemList', 'UnitList','BillToList'));
+        return view('TrimGateEntryMasterEdit',compact('BuyerList','TrimGateEntryMasterList','POList','LocationList', 'Ledger', 'FGList', 'TrimGateEntryDetails','counter_number','ItemList', 'UnitList','BillToList'));
     }
 
     /**
@@ -227,7 +231,7 @@ class TrimsGateEntryController extends Controller
             'location_id'=>$request->location_id,'lr_no'=>$request->lr_no, 
             'transport_name'=>$request->transport_name,'vehicle_no'=>$request->vehicle_no,
             'total_qty'=>$request->total_qty,'total_received_meter'=>$request->total_received_meter,
-            'total_amt'=>$request->total_amt,  'remark' => $request->remark,'is_manual'=>$request->is_manual,'bill_to'=>$request->bill_to,
+            'total_amt'=>$request->total_amt,  'remark' => $request->remark,'is_manual'=>$request->is_manual,'bill_to'=>$request->bill_to,'buyer_id'=>$request->buyer_id,
             'userId'=>$request->userId, 'delflag'=>'0', 'updated_at'=>date("Y-m-d H:i:s")
         );
  
@@ -319,7 +323,8 @@ class TrimsGateEntryController extends Controller
                     IFNULL(SUM(trim_gate_entry_details.challan_qty),0) AS challan_qty,
                     trim_gate_entry_details.rate, 
                     trim_gate_entry_details.amount, 
-                    trim_gate_entry_details.remarks 
+                    trim_gate_entry_details.remarks,
+                    LM1.ac_short_name as buyer_name 
                 FROM trim_gate_entry_master  
                 LEFT JOIN trim_gate_entry_details 
                     ON trim_gate_entry_details.tge_code = trim_gate_entry_master.tge_code
@@ -327,6 +332,8 @@ class TrimsGateEntryController extends Controller
                     ON item_master.item_code = trim_gate_entry_details.item_code
                 LEFT JOIN ledger_master 
                     ON ledger_master.ac_code = trim_gate_entry_master.Ac_code
+                LEFT JOIN ledger_master as LM1
+                    ON LM1.ac_code = trim_gate_entry_master.buyer_id
                 LEFT JOIN ledger_details 
                     ON ledger_details.sr_no = trim_gate_entry_master.bill_to 
                     OR ledger_details.ac_code = trim_gate_entry_master.Ac_code
@@ -392,5 +399,16 @@ class TrimsGateEntryController extends Controller
         return response()->json(['detail' => $html]); 
          
     }
+    public function GetBuyerNameFromPO(Request $request)
+    {
+        $po_code = $request->po_code;
+
+        $buyer = DB::table('purchase_order')
+                    ->where('pur_code', $po_code)
+                    ->value('buyer_id'); // returns only single value
+
+        return response()->json(['buyer_id' => $buyer]);
+    }
+
     
 }
