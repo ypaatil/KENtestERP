@@ -59,9 +59,9 @@
                      <tr style="text-align:center; white-space:nowrap;background: bisque;" id="total_head">
                         <th colspan="13"></th>
                         <th style="text-align: right;">Total : </th>
-                        <th id="head_total_outward_qty">0</th>
+                        <th class="textallalignright" id="head_total_outward_qty">0</th>
                         <th></th>
-                        <th id="head_total_value">0</th>
+                        <th class="textallalignright" id="head_total_value">0</th>
                      </tr>
                      <tr>
                         <th>Vendor Name <span class="filter-icon">🔽</span><div class="filter-menu vendor-name"></div></th>
@@ -100,7 +100,8 @@
     {
         var fromDate = $("#fromDate").val();
         var toDate = $("#toDate").val();
-
+         sessionStorage.setItem('btnclickforgetalldata', 1); 
+         removeFilterColor();
          var currentURL = "";
 
          if(ele == 1)
@@ -136,6 +137,7 @@ deferRender: true,
             ],
             initComplete: function () {
                   buildAllMenusFabricOutwardDataReport();
+                  sessionStorage.setItem('btnclickforgetalldata', 0); 
             },
             "footerCallback": function (row, data, start, end, display) {                
                  var total_meter = 0;             
@@ -169,17 +171,17 @@ deferRender: true,
                   {data: 'sales_order_no', name: 'sales_order_no'},
                   {data: 'fout_code', name: 'fout_code'},
                   {data: 'out_type_name', name: 'out_type_name'},
-                  {data: 'fout_date', name: 'fout_date'},
+                  {data: 'fout_date', name: 'fout_date' , render: function (data) { return formatDateDMY(data); }},
                   {data: 'po_code', name: 'po_code'},
                   {data: 'supplier_name', name: 'supplier_name'},
                   {data: 'bill_to', name: 'bill_to'},
-                  {data: 'item_code', name: 'item_code'},
+                  {data: 'item_code', name: 'item_code' },
                   {data: 'item_name', name: 'item_name'},
                   {data: 'quality_name', name: 'quality_name'},
                   {data: 'track_code', name: 'track_code'},
-                  {data: 'meter', name: 'meter'},
-                  {data: 'item_rate', name: 'item_rate'},
-                  {data: 'item_value', name: 'item_value'}
+                  {data: 'meter', name: 'meter', className: 'textallalignright' , render: function(data) { return formatIndianINR(data); }},
+                  {data: 'item_rate', name: 'item_rate', className: 'textallalignright' , render: function(data) { return formatIndianINR(data); } },
+                  {data: 'item_value', name: 'item_value' , className: 'textallalignright', render: function(data) { return formatIndianINR(data); } }
             ]
         });
     }
@@ -223,6 +225,7 @@ deferRender: true,
 
     $( document ).ready(function() 
     { 
+      sessionStorage.setItem('btnclickforgetalldata', 0); 
       removeFilterColor();
       tableData(0);       
     });
