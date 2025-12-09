@@ -259,7 +259,7 @@ class VendorPurchaseOrderController extends Controller
                 ->where('vendor_purchase_order_master.delflag','=', '0')
                 ->whereIN('vendor_purchase_order_master.vpo_code', $vpoCodes)
                 ->get(['vendor_purchase_order_master.*','usermaster.username','ledger_master.Ac_name','LM2.Ac_name as vendorName','LM2.address', 'LM2.pan_no','LM2.gst_no','costing_type_master.cost_type_name','season_master.season_name',
-                'currency_master.currency_name','main_style_master.mainstyle_name','sub_style_master.substyle_name','fg_master.fg_name','process_master.process_name','ledger_master.pan_no','ledger_master.gst_no']);
+                'currency_master.currency_name','main_style_master.mainstyle_name','sub_style_master.substyle_name','fg_master.fg_name','process_master.process_name']);
                 
          $FirmDetail = DB::table('firm_master')->where('delflag','=', '0')->first();
          

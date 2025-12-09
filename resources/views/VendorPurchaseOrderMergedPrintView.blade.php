@@ -613,7 +613,7 @@
                     <h4 class="text-center fw-bold">Assortment Details</h4>
                     <hr/>
                      @php
-               
+                     $totalAmt=0; $totalQty=0; 
                      foreach($vpoCodes as $key=>$details)
                      {
                 //   DB::enableQueryLog();
@@ -668,7 +668,7 @@
                         </thead>
                         <tbody>
                             @php   
-                        $no=1; $totalAmt=0; $totalQty=0;@endphp
+                        $no=1;   @endphp
                         @foreach ($OutwardForPackingList as $row) 
                             <tr>
                            <td class="text-end">{{$no}}</td>
@@ -749,9 +749,15 @@
                     @php
                         }
                     @endphp
-                  <div class="col-md-12 text-end">
-                      <h4><b>Grand Total : <span id="grand_total"></span></b><h4> 
-                  </div><br/>
+                <div class="col-md-12 d-flex justify-content-end mb-3">
+    <div class="border border-dark p-2 rounded" >
+        <h4 class="font-bold text-end m-0">
+            Grand Total : <span>{{number_format($totalQty)}}</span>
+        </h4>
+    </div>
+</div>
+
+
                   <div class="col-md-12 text-center" style="border:1px solid black;">
                         <h6><b>NOT FOR SALE, FOR JOB WORK ONLY</b></h6>
                   </div>
