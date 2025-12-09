@@ -39,6 +39,40 @@ function commonExportOptions() {
   };
 }
 
+function formatDateDMY(dateString) {
+    if (!dateString) return "";
+
+    const d = new Date(dateString);
+    if (isNaN(d)) return dateString; // if invalid format, return original
+
+    const day = ("0" + d.getDate()).slice(-2);
+    const month = ("0" + (d.getMonth() + 1)).slice(-2);
+    const year = d.getFullYear();
+
+    return `${day}-${month}-${year}`;
+}
+
+function formatIndianINR(num) {
+    if (num === null || num === undefined || num === '') return '';
+
+    // Convert to string & remove commas
+    num = String(num).replace(/,/g, '');
+
+    num = parseFloat(num);
+    if (isNaN(num)) return num;
+
+    const isNegative = num < 0;
+    num = Math.abs(num);
+
+    let formatted = num.toLocaleString('en-IN', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    return isNegative ? '-' + formatted : formatted;
+}
+
+
 function validateFilterMenu(menu) {
     // Find only normal checkboxes (ignore .select-all)
     const checkedCount = menu.find('input[type="checkbox"]:checked:not(.select-all)').length;

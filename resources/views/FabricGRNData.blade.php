@@ -67,9 +67,9 @@ setlocale(LC_MONETARY, 'en_IN');
                      <tr style="text-align:center; white-space:nowrap;background: bisque;" id="total_head">
                         <th colspan="11"></th>
                         <th style="text-align: right;">Total : </th>
-                        <th id="head_total_grn_qty">0</th>
+                        <th class=" text-right" id="head_total_grn_qty">0</th>
                         <th></th>
-                        <th id="head_total_value">0</th>
+                        <th class=" text-right" id="head_total_value">0</th>
                         <th></th>
                         <th></th>
                         <th></th>
@@ -90,9 +90,9 @@ setlocale(LC_MONETARY, 'en_IN');
                         <th>Invoice Date.<span class="filter-icon">🔽</span><div class="filter-menu invoice-date"></div></th>
                         <th>Item Code<span class="filter-icon">🔽</span><div class="filter-menu item-code"></div></th>
                         <th>Item Name<span class="filter-icon">🔽</span><div class="filter-menu item-name"></div></th>
-                        <th>GRN Qty</th>
-                        <th>Rate</th>
-                        <th>Value</th>
+                        <th class=" text-right">GRN Qty</th>
+                        <th class=" text-right">Rate</th>
+                        <th class=" text-right">Value</th>
                         <th>Width</th>
                         <th>Quality Name</th>
                         <th>Color</th>
@@ -119,7 +119,8 @@ setlocale(LC_MONETARY, 'en_IN');
         var fromDate = $("#fromDate").val();
         var toDate = $("#toDate").val();
         var currentURL = "";
-        
+        sessionStorage.setItem('btnclickforgetalldata', 1); 
+        removeFilterColor();
         if(ele == 1)
         {
             currentURL = "FabricGRNData?fromDate="+fromDate+"&toDate="+toDate;  
@@ -153,6 +154,7 @@ setlocale(LC_MONETARY, 'en_IN');
             ],
             initComplete: function () {
                   buildAllMenusFabricGRNDataReport();
+                  sessionStorage.setItem('btnclickforgetalldata', 0); 
             },
             "footerCallback": function (row, data, start, end, display) {                
                  var total_meter = 0;             
@@ -162,8 +164,8 @@ setlocale(LC_MONETARY, 'en_IN');
                     /*total_meter += parseFloat(data[i].meter);
                     total_value += parseFloat(data[i].item_value);*/
 
-                     const qty  = String(data[i].total_meter).replace(/,/g, "");
-                     const val  = String(data[i].total_value).replace(/,/g, "");
+                     const qty  = String(data[i].meter).replace(/,/g, "");
+                     const val  = String(data[i].item_value).replace(/,/g, "");
                      total_meter  += parseFloat(qty) || 0;
                      total_value += parseFloat(val) || 0; 
                 } 
@@ -181,8 +183,7 @@ setlocale(LC_MONETARY, 'en_IN');
                 // Update the HTML
                 $('#head_total_grn_qty').html(formatted_qty);
                 $('#head_total_value').html(formatted_value);
-                
-                
+                                
               },
             columns: [
                   {data: 'ac_short_name', name: 'ac_short_name'},
@@ -190,25 +191,30 @@ setlocale(LC_MONETARY, 'en_IN');
                   {data: 'buyer', name: 'buyer'},
                   {data: 'po_code', name: 'po_code'},
                   {data: 'in_code', name: 'in_code'},
-                  {data: 'in_date', name: 'in_date'},
+                  {data: 'in_date', name: 'in_date' , render: function (data) { return formatDateDMY(data);  } },
                   {data: 'vw_code', name: 'vw_code'},
                   {data: 'vendorName', name: 'vendorName'},
                   {data: 'invoice_no', name: 'invoice_no'},
-                  {data: 'invoice_date', name: 'invoice_date'},
+                  {data: 'invoice_date', name: 'invoice_date' , render: function (data) { return formatDateDMY(data); }},
                   {data: 'item_code', name: 'item_code', className: 'text-right'},
                   {data: 'item_name', name: 'item_name'},
-                  {data: 'meter', name: 'meter', className: 'text-right'},
-                  {data: 'item_rate', name: 'item_rate', className: 'text-right'},
-                  {data: 'item_value', name: 'item_value', className: 'text-right'},
-                  {data: 'dimension', name: 'dimension'},
+                  {data: 'meter', name: 'meter', className: 'text-right' ,render: function(data) { return formatIndianINR(data); }},
+                  {data: 'item_rate', name: 'item_rate', className: 'text-right' ,render: function(data) { return formatIndianINR(data); } },
+                  {data: 'item_value', name: 'item_value', className: 'text-right' ,render: function(data) { return formatIndianINR(data); } },
+                  {data: 'dimension', name: 'dimension' , className: 'text-right'},
                   {data: 'quality_name', name: 'quality_name'},
-                  {data: 'color_name', name: 'color_name'},
+                  {data: 'color_name', name: 'color_name' , className: 'text-right'},
                   {data: 'item_description', name: 'item_description'},
                   {data: 'track_code', name: 'track_code'},
                   {data: 'rack_name', name: 'rack_name'}
             ]
         });
     }
+
+      $( document ).ready(function() 
+      {
+         sessionStorage.setItem('btnclickforgetalldata', 0); 
+      });
 
       // Start script for filter search and apply
         
