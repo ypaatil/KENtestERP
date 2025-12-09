@@ -650,97 +650,95 @@
                     //   $query = end($query);
                     //   dd($query);
                     @endphp
-                    <table class="table table-bordered table-sm second">
-                        <thead>
-                           <div class="text-start fw-bold mb-1" style="margin-left:10px;">
+                     <div class="text-start fw-bold mb-1" style="margin-left:10px;">
                                 D. No. : {{$vpoCodes[$key]}},  
                                 Sales Order No : {{$VendorPurchaseOrderMaster[0]->sales_order_no}},  
                                 Style : {{$VendorPurchaseOrderMaster[0]->mainstyle_name}}
                            </div>
+                    <table class="table table-bordered table-sm second size-table">
+
+                        @php
+                            $no = 1;
+                            $sizeTotals = array_fill(1, 20, 0); // totals for s1 to s20
+                            $totalQty = 0;
+                        @endphp
+
+                        <thead>
                         <tr class="text-center">
-                           <th>Sr.No.</th>
-                           <th>Garment Color</th>
-                           @foreach ($SizeDetailList as $sz) 
-                           <th>{{$sz->size_name}}</th>
-                           @endforeach
-                           <th>Total Qty</th>
+                        <th>Sr.No.</th>
+                        <th>Garment Color</th>
+                        @foreach ($SizeDetailList as $sz) 
+                            <th>{{ $sz->size_name }}</th>
+                        @endforeach
+                        <th>Total Qty</th>
                         </tr>
                         </thead>
+
                         <tbody>
-                            @php   
-                        $no=1;   @endphp
                         @foreach ($OutwardForPackingList as $row) 
-                            <tr>
-                           <td class="text-end">{{$no}}</td>
-                           <td class="text-start">{{$row->color_name}}</td>
-                           @if(isset($row->s1))  
-                           <td class="text-end">{{number_format($row->s1)}}</td>
-                           @endif
-                           @if(isset($row->s2)) 
-                           <td class="text-end">{{number_format($row->s2)}}</td>
-                           @endif
-                           @if(isset($row->s3)) 
-                           <td class="text-end">{{number_format($row->s3)}}</td>
-                           @endif
-                           @if(isset($row->s4)) 
-                           <td class="text-end">{{number_format($row->s4)}}</td>
-                           @endif
-                           @if(isset($row->s5)) 
-                           <td class="text-end">{{number_format($row->s5)}}</td>
-                           @endif
-                           @if(isset($row->s6)) 
-                           <td class="text-end">{{number_format($row->s6)}}</td>
-                           @endif
-                           @if(isset($row->s7)) 
-                           <td class="text-end">{{number_format($row->s7)}}</td>
-                           @endif
-                           @if(isset($row->s8)) 
-                           <td class="text-end">{{number_format($row->s8)}}</td>
-                           @endif
-                           @if(isset($row->s9)) 
-                           <td class="text-end">{{number_format($row->s9)}}</td>
-                           @endif
-                           @if(isset($row->s10)) 
-                           <td class="text-end">{{number_format($row->s10)}}</td>
-                           @endif
-                           @if(isset($row->s11)) 
-                           <td class="text-end">{{number_format($row->s11)}}</td>
-                           @endif
-                           @if(isset($row->s12)) 
-                           <td class="text-end">{{number_format($row->s12)}}</td>
-                           @endif
-                           @if(isset($row->s13)) 
-                           <td class="text-end">{{number_format($row->s13)}}</td>
-                           @endif
-                           @if(isset($row->s14)) 
-                           <td class="text-end">{{number_format($row->s14)}}</td>
-                           @endif
-                           @if(isset($row->s15)) 
-                           <td class="text-end">{{number_format($row->s15)}}</td>
-                           @endif
-                           @if(isset($row->s16)) 
-                           <td class="text-end">{{number_format($row->s16)}}</td>
-                           @endif
-                           @if(isset($row->s17)) 
-                           <td class="text-end">{{number_format($row->s17)}}</td>
-                           @endif
-                           @if(isset($row->s18)) 
-                           <td class="text-end">{{number_format($row->s18)}}</td>
-                           @endif
-                           @if(isset($row->s19)) 
-                           <td class="text-end">{{number_format($row->s19)}}</td>
-                           @endif
-                           @if(isset($row->s20))  
-                           <td class="text-end">{{number_format($row->s20)}}</td>
-                           @endif
-                           <td class="text-end">{{number_format($row->size_qty_total)}}</td>
+                        <tr>
+                        <td class="text-end">{{ $no }}</td>
+                        <td class="text-start">{{ $row->color_name }}</td>
+
+                        @if(isset($row->s1))  <td class="text-end">{{ number_format($row->s1) }}</td> @endif
+                        @if(isset($row->s2))  <td class="text-end">{{ number_format($row->s2) }}</td> @endif
+                        @if(isset($row->s3))  <td class="text-end">{{ number_format($row->s3) }}</td> @endif
+                        @if(isset($row->s4))  <td class="text-end">{{ number_format($row->s4) }}</td> @endif
+                        @if(isset($row->s5))  <td class="text-end">{{ number_format($row->s5) }}</td> @endif
+                        @if(isset($row->s6))  <td class="text-end">{{ number_format($row->s6) }}</td> @endif
+                        @if(isset($row->s7))  <td class="text-end">{{ number_format($row->s7) }}</td> @endif
+                        @if(isset($row->s8))  <td class="text-end">{{ number_format($row->s8) }}</td> @endif
+                        @if(isset($row->s9))  <td class="text-end">{{ number_format($row->s9) }}</td> @endif
+                        @if(isset($row->s10)) <td class="text-end">{{ number_format($row->s10) }}</td> @endif
+                        @if(isset($row->s11)) <td class="text-end">{{ number_format($row->s11) }}</td> @endif
+                        @if(isset($row->s12)) <td class="text-end">{{ number_format($row->s12) }}</td> @endif
+                        @if(isset($row->s13)) <td class="text-end">{{ number_format($row->s13) }}</td> @endif
+                        @if(isset($row->s14)) <td class="text-end">{{ number_format($row->s14) }}</td> @endif
+                        @if(isset($row->s15)) <td class="text-end">{{ number_format($row->s15) }}</td> @endif
+                        @if(isset($row->s16)) <td class="text-end">{{ number_format($row->s16) }}</td> @endif
+                        @if(isset($row->s17)) <td class="text-end">{{ number_format($row->s17) }}</td> @endif
+                        @if(isset($row->s18)) <td class="text-end">{{ number_format($row->s18) }}</td> @endif
+                        @if(isset($row->s19)) <td class="text-end">{{ number_format($row->s19) }}</td> @endif
+                        @if(isset($row->s20)) <td class="text-end">{{ number_format($row->s20) }}</td> @endif
+
+                        <td class="text-end">{{ number_format($row->size_qty_total) }}</td>
                         </tr>
-                           @php $no=$no+1; 
-                        $totalQty = $totalQty + $row->size_qty_total;
+
+                        @php
+                            // Increment row number
+                            $no++;
+
+                            // Add totals for each size
+                            for ($i = 1; $i <= 20; $i++) {
+                                $key = "s$i";
+                                if (isset($row->$key)) {
+                                    $sizeTotals[$i] += $row->$key;
+                                }
+                            }
+
+                            // Add total qty
+                            $totalQty += $row->size_qty_total;
                         @endphp
+
                         @endforeach
-                    </tbody>
-                    </table>
+                        </tbody>
+
+                        <tfoot>
+                        <tr class="text-end fw-bold">
+                            <td colspan="2">Total:</td>
+
+                            @foreach ($SizeDetailList as $index => $sz)
+                                @php
+                                    $i = $index + 1; // matches s1, s2, s3...
+                                @endphp
+                                <td>{{ number_format($sizeTotals[$i]) }}</td>
+                            @endforeach
+
+                            <td>{{ number_format($totalQty) }}</td>
+                        </tr>
+                        </tfoot>
+
+                        </table>
 
                      <div class="col-md-12">
                       <span style="margin-left:9px;"><b>Remark : </b>{{$VendorPurchaseOrderMaster[0]->narration}}</span>
@@ -750,12 +748,12 @@
                         }
                     @endphp
                 <div class="col-md-12 d-flex justify-content-end mb-3">
-    <div class="border border-dark p-2 rounded" >
-        <h4 class="font-bold text-end m-0">
-            Grand Total : <span>{{number_format($totalQty)}}</span>
-        </h4>
-    </div>
-</div>
+                <div class="border border-dark p-2 rounded" >
+                    <h4 class="font-bold text-end m-0">
+                        Grand Total : <span>{{number_format($totalQty)}}</span>
+                    </h4>
+                </div>
+                </div>
 
 
                   <div class="col-md-12 text-center" style="border:1px solid black;">
@@ -782,7 +780,6 @@
    
      <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script> 
-      
     $(document).ready(function () 
     {
         // Function to format numbers in Indian currency format
