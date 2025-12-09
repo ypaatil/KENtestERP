@@ -275,6 +275,12 @@ class TrimsGateEntryController extends Controller
         return redirect()->route('TrimGateEntry.index')->with('message', 'Update Record Succesfully');
     }
 
+    public function TrimGateEntryPrintView(){
+
+
+        return view('TrimsGateEntryPrintView');
+    }
+
 
     public function GetItemDetails(Request $request)
     {

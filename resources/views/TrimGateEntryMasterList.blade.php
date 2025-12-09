@@ -69,6 +69,7 @@
                      <th>Total Amount</th>
                      <th>User Name</th>
                      <th>Edit</th>
+                     <th>Print</th>
                      <th>Delete</th>
                   </tr>
                </thead>
@@ -103,7 +104,13 @@
                         <i class="fas fa-lock"></i>
                         </a>
                      </td>
+                     
                      @endif
+                     <td>
+                        <a href="{{route('TrimGateEntry.TrimGateEntryPrintView')}}" class="btn btn-outline-secondary btn-sm" title="Print">
+                        <i class="fas fa-print"></i>
+                     </a>
+                   </td>
                      @if($chekform->delete_access==1 && $row->userId == Session::get('userId') || Session::get('user_type') == 1)
                      <td> 
                         <button  class="btn btn-sm delete"  data-placement="top" id="DeleteRecord" data-token="{{ csrf_token() }}" data-id="{{ base64_encode($row->tge_code) }}"  data-route="{{route('TrimGateEntry.destroy', base64_encode($row->tge_code) )}}" title="Delete">
