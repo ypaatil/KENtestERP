@@ -1251,7 +1251,7 @@
     $("#cntrr1").val(parseInt($("#cntrr1").val()) + 1);
 
     indexcone++;
-    mycalc();
+    mycalc1();
     recalcIdcone();
 
     // ---------------- Reapply Select2 ----------------
@@ -1442,10 +1442,6 @@
 
       cell7.appendChild(t8);
 
-
-
-            
-      
       var cell3 = row.insertCell(7);
       var t3 = document.createElement("input");
       t3.style = "display: table-cell; width:80px;height:30px;";
@@ -1538,10 +1534,11 @@
       // }
       document.getElementById('cntrr').value = parseInt(document.getElementById('cntrr').value)+1;
       CalculateRow($(row));
-      mycalc();
       indexcone++;
-      mycalc();
       recalcIdcone();
+    //   setTimeout(function() 
+    //   {
+    //   }, 500);
       // $("#footable_2 tbody tr").find("td input[name='item_rates[]']").prop('readonly', true);   // most reliable
    }
    
@@ -1552,58 +1549,73 @@
 
    function CalculateRow(row)
    {
-      console.log(row);
-
       var item_qtys = parseFloat(row.find('input[name="meter[]"]').val()) || 0;
       var item_rates = parseFloat(row.find('input[name="item_rates[]"]').val()) || 0;
-
-      console.log("item_qtys : " + item_qtys);
-      console.log("item_rates : " + item_rates);
 
       var amount = (item_qtys * item_rates).toFixed(2);
 
       row.find('input[name="amounts[]"]').val(amount);
 
-      mycalc();
+        mycalc();
+    //   mycalc();
    }
 
    
-   function mycalc()
-   {  
-   document.getElementById("total_taga_qty").value =document.getElementById('cntrr').value;
+    function mycalc() 
+    {
+        // Set taga qty
+        $("#total_taga_qty").val($("#cntrr").val());
+    
+        // ---- TOTAL METER ----
+        let totalMeter = 0;
+        $("#footable_2 .METER").each(function () {
+            totalMeter += parseFloat($(this).val()) || 0;
+        });
+        $("#total_meter").val(totalMeter.toFixed(2));
+    
+        // ---- TOTAL KG ----
+        let totalKg = 0;
+        $("#footable_2 .KG").each(function () {
+            totalKg += parseFloat($(this).val()) || 0;
+        });
+        $("#total_kg").val(totalKg.toFixed(2));
+    
+        // ---- TOTAL AMOUNT ----
+        let totalAmt = 0;
+        $("#footable_2 .AMT").each(function () {
+            totalAmt += parseFloat($(this).val()) || 0;
+        });
+        $("#total_amount").val(totalAmt.toFixed(2)); 
+    }
+
    
-   sum1 = 0.0;
-   var amounts = document.getElementsByClassName('METER');
-   //alert("value="+amounts[0].value);
-   for(var i=0; i<amounts .length; i++)
-   { 
-   var a = +amounts[i].value;
-   sum1 += parseFloat(a);
-   }
-   document.getElementById("total_meter").value = sum1.toFixed(2);
-   
-   
-   sum1 = 0.0;
-   var amounts = document.getElementsByClassName('KG');
-   //alert("value="+amounts[0].value);
-   for(var i=0; i<amounts .length; i++)
-   { 
-   var a = +amounts[i].value;
-   sum1 += parseFloat(a);
-   }
-   document.getElementById("total_kg").value = sum1.toFixed(2);
-   
-   
-   sum1 = 0.0;
-   var amounts = document.getElementsByClassName('AMT');
-   //alert("value="+amounts[0].value);
-   for(var i=0; i<amounts .length; i++)
-   { 
-   var a = +amounts[i].value;
-   sum1 += parseFloat(a);
-   }
-   document.getElementById("total_amount").value = sum1.toFixed(2); 
-   }
+    function mycalc1() 
+    {
+     
+        $("#total_taga_qty").val($("#cntrr").val());
+    
+        // ---- TOTAL METER ----
+        let totalMeter1 = 0;
+        $("#footable_2 .METER").each(function () {
+            totalMeter1 += parseFloat($(this).val()) || 0;
+        });
+        $("#total_meter").val(totalMeter1.toFixed(2));
+    
+        // ---- TOTAL KG ----
+        let totalKg1 = 0;
+        $("#footable_2 .KG").each(function () {
+            totalKg1 += parseFloat($(this).val()) || 0;
+        });
+        $("#total_kg1").val(totalKg1.toFixed(2));
+    
+        // ---- TOTAL AMOUNT ----
+        let totalAmt1 = 0;
+        $("#footable_2 .AMT").each(function () {
+            totalAmt1 += parseFloat($(this).val()) || 0;
+        });
+        $("#total_amount1").val(totalAmt1.toFixed(2));
+    }
+
     
    function deleteRowcone(btn) 
    {
