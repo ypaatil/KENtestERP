@@ -3765,9 +3765,9 @@ from item_master where item_code='$value->item_code'"));
                        <td class="text-center">'.($sr_no++).'</td> 
                        <td class="text-center">'.$row->item_code.'</td>
                        <td>'.$row->item_name.'</td>
-                       <td class="text-center">'.$row->total_qty.'</td>
-                       <td class="text-center">'.$row->received.'</td>
-                       <td class="text-center bal_qty1">'.($row->total_qty-$row->received).'</td>
+                       <td class="text-center">'.(round($row->total_qty,2)).'</td>
+                       <td class="text-center">'.(round($row->received,2)).'</td>
+                       <td class="text-center bal_qty1">'.(round($row->total_qty-$row->received,2)).'</td>
                     </tr>';
         }
         

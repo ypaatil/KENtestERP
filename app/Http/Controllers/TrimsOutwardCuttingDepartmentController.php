@@ -341,22 +341,48 @@ class TrimsOutwardCuttingDepartmentController extends Controller
 
     public function GetTrimsOutwardCuttingDeptData(Request $request)
     {
-        $detailData = DB::SELECT("
-            SELECT trims_outward_cutting_department_details.*, 
-                SUM(trims_outward_cutting_department_details.outward_qty) as outward_qty,
-                item_master.item_name,
-                item_master.color_name,
-                classification_master.class_name,
-                item_master.unit_id, 
-                item_master.cat_id, 
-                item_master.class_id 
-            FROM trims_outward_cutting_department_details 
-            INNER JOIN item_master 
-                ON item_master.item_code = trims_outward_cutting_department_details.item_code
-            INNER JOIN classification_master 
-                ON classification_master.class_id = item_master.class_id
-            WHERE trims_outward_cutting_department_details.tocd_code = ? GROUP BY trims_outward_cutting_department_details.item_code
-        ", [$request->tocd_code]);
+        $detailData = DB::select("SELECT 
+                    trims_outward_cutting_department_details.item_code,
+                    SUM(trims_outward_cutting_department_details.outward_qty) AS outward_qty,
+                    
+                    ANY_VALUE(item_master.item_name) AS item_name,
+                    ANY_VALUE(item_master.color_name) AS color_name,
+                    ANY_VALUE(classification_master.class_name) AS class_name,
+                    ANY_VALUE(item_master.unit_id) AS unit_id,
+                    ANY_VALUE(item_master.cat_id) AS cat_id,
+                    ANY_VALUE(item_master.class_id) AS class_id,
+                    
+                    ANY_VALUE(purchaseorder_detail.item_rate) AS item_rate,
+                    ANY_VALUE(purchaseorder_detail.pur_code) AS po_code
+                    
+                FROM trims_outward_cutting_department_details
+
+                INNER JOIN trims_outward_cutting_department_master 
+                    ON trims_outward_cutting_department_master.tocd_code = trims_outward_cutting_department_details.tocd_code
+
+                INNER JOIN item_master 
+                    ON item_master.item_code = trims_outward_cutting_department_details.item_code
+
+                INNER JOIN classification_master 
+                    ON classification_master.class_id = item_master.class_id
+
+                LEFT JOIN trimsoutwarddetail 
+                    ON (
+                        trimsoutwarddetail.vpo_code = trims_outward_cutting_department_master.cutting_po_no 
+                        OR trimsoutwarddetail.vw_code  = trims_outward_cutting_department_master.cutting_po_no
+                    )
+
+                LEFT JOIN purchaseorder_detail 
+                    ON purchaseorder_detail.pur_code = trimsoutwarddetail.po_code
+
+                WHERE trims_outward_cutting_department_details.tocd_code = ?
+
+                GROUP BY trims_outward_cutting_department_details.item_code
+            ", [$request->tocd_code]);
+
+        
+        
+        $masterData = DB::table('trims_outward_cutting_department_master')->where('tocd_code', $request->tocd_code)->first();
 
         $html = '';
         $sr_no = 1;
@@ -379,7 +405,7 @@ class TrimsOutwardCuttingDepartmentController extends Controller
 
         foreach($detailData as $row)
         {
-            $html .= '<tr item_code="'.$row->item_code.'" cat_id="'.$row->cat_id.'" class_id="'.$row->class_id.'"  qty="'.$row->item_qty.'">
+            $html .= '<tr item_code="'.$row->item_code.'" cat_id="'.$row->cat_id.'" class_id="'.$row->class_id.'"  qty="'.$row->outward_qty.'">
                 <td><input type="text" style="width:60px;" value="'.($sr_no++).'" readonly></td>
                 <td><input type="text" style="width:100px;" value="'.($row->item_code).'" name="itemsCode[]" readonly></td> 
                 <td>
@@ -416,15 +442,16 @@ class TrimsOutwardCuttingDepartmentController extends Controller
             $html .= '</select>
                 </td>
 
+                <td><input type="text" value="'.$row->po_code.'" style="width:120px;height:30px;" readonly></td>
+
                 <td><input type="number" step="any" class="QTY" max="'.$row->outward_qty.'"
                         name="item_qtys[]" onchange="SetQtyToBtn(this);" oninput="if(parseFloat(this.value) > parseFloat(this.max)) {  alert(`Value cannot exceed ` + this.max);  this.value = this.max;  } mycalc();"
                         value="'.$row->outward_qty.'" style="width:80px;height:30px;" required></td>
 
-                <td><input type="number" step="any" name="item_rates[]" value="0"
-                        style="width:80px;height:30px;" required></td>
+                <td><input type="number" step="any" name="item_rates[]" value="'.$row->item_rate.'" style="width:80px;height:30px;" required></td>
 
                 <td><input type="number" step="any" class="AMT" readonly
-                        name="amounts[]" value="0"
+                        name="amounts[]" value="'.($row->outward_qty * $row->item_rate).'"
                         style="width:80px;height:30px;" required>
                     <input type="hidden" name="hsn_codes[]" value="0">
                 </td>
@@ -451,7 +478,8 @@ class TrimsOutwardCuttingDepartmentController extends Controller
         }
 
         return response()->json([
-            'html' => $html
+            'html' => $html,
+            'masterData' => $masterData
         ], 200, [], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE);
     }
 

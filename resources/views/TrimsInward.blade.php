@@ -360,7 +360,7 @@ ini_set('memory_limit', '1G');
                            <select name="invoice_no" class="form-select select2 hide" id="tocd_code" onchange="GetTrimsCuttingDeptData();">
                               <option value="">--Select--</option>
                               @foreach($TrimsCuttingOutwardList as  $row)
-                              <option value="{{ $row->tocd_code }}">{{ $row->tocd_code }}</option> 
+                              <option value="{{ $row->tocd_code }}">{{ $row->tocd_code }}({{ $row->dc_no }})</option> 
                               @endforeach
                            </select>
                         </div>
@@ -440,6 +440,7 @@ ini_set('memory_limit', '1G');
                                  <th>Classification</th>
                                  <th>Item Name</th>
                                  <th>UOM</th>
+                                 <th>PO Code</th>
                                  <th>Quantity</th>
                                  <th>Rate</th>
                                  <th>Amount</th>
@@ -478,6 +479,7 @@ ini_set('memory_limit', '1G');
                                        @endforeach
                                     </select>
                                  </td>
+                                 <td><input type="text" value="-" id="po_codes" style="width:120px;height:30px;" readonly />
                                  <td><input type="number" step="any" class="QTY"   name="item_qtys[]"  onchange="SetQtyToBtn(this);" value="0" id="item_qty" style="width:80px;height:30px;" required/>
                                  <td><input type="number" step="any"    name="item_rates[]"   value="0" id="item_rates" style="width:80px;height:30px;" required/>
                                  <td><input type="number" step="any" class="AMT" readOnly  name="amounts[]"   value="0" id="amounts" style="width:80px;height:30px;" required/>
@@ -505,6 +507,7 @@ ini_set('memory_limit', '1G');
                                  <th>Classification</th>
                                  <th>Item Name</th>
                                  <th>UOM</th>
+                                 <th>PO Code</th>
                                  <th>Quantity</th>
                                  <th>Rate</th>
                                  <th>Amount</th>
@@ -756,7 +759,8 @@ ini_set('memory_limit', '1G');
           success: function(data)
           {
               $('#detailTbl').html(data.html); 
-              $('#vpo_code').val(data.vpo_code).trigger('change'); 
+              $('#vw_code').val(data.masterData.cutting_po_no).trigger('change'); 
+              mycalc();
           }
         }); 
 
@@ -1471,6 +1475,15 @@ ini_set('memory_limit', '1G');
          
          var cell3 = row.insertCell(5);
          var t3=document.createElement("input");
+         t3.style="display: table-cell; width:120px;height:30px;";
+         t3.type="text"; 
+         t3.readOnly="true";
+         t3.id = "po_codes"+index; 
+         t3.value="-";
+         cell3.appendChild(t3);
+
+         var cell3 = row.insertCell(6);
+         var t3=document.createElement("input");
          t3.style="display: table-cell; width:80px;height:30px;";
          t3.type="number";
          t3.step="any";
@@ -1491,7 +1504,7 @@ ini_set('memory_limit', '1G');
          cell3.appendChild(t3);
          
          
-         var cell3 = row.insertCell(6);
+         var cell3 = row.insertCell(7);
          var t3=document.createElement("input");
          t3.style="display: table-cell; width:80px;height:30px;";
          t3.type="number";
@@ -1502,7 +1515,7 @@ ini_set('memory_limit', '1G');
          t3.value="0";
          cell3.appendChild(t3);
          
-         var cell3 = row.insertCell(7);
+         var cell3 = row.insertCell(8);
          var t3=document.createElement("input");
          t3.style="display: table-cell; width:80px;height:30px;";
          t3.type="number";
@@ -1515,7 +1528,7 @@ ini_set('memory_limit', '1G');
          t3.value="0";
          cell3.appendChild(t3);
          
-         var cell2 = row.insertCell(8);
+         var cell2 = row.insertCell(9);
          var t2=document.createElement("select");
          var x = $("#rack_id"),
          y = x.clone();
@@ -1529,7 +1542,7 @@ ini_set('memory_limit', '1G');
          y.appendTo(cell2);
          
          
-         var cell15=row.insertCell(9);
+         var cell15=row.insertCell(10);
          var btnAdd = document.createElement("INPUT");
          btnAdd.id = "Abutton1";
          btnAdd.type = "button";
@@ -1538,7 +1551,7 @@ ini_set('memory_limit', '1G');
          btnAdd.setAttribute("onclick", "mycalc();");
          cell15.appendChild(btnAdd);
          
-         var cell16=row.insertCell(10);
+         var cell16=row.insertCell(11);
          var btnRemove = document.createElement("INPUT");
          btnRemove.style="margin-left: 10px;";
          btnRemove.id = "Dbutton1";
