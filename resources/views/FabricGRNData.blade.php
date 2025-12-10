@@ -15,6 +15,7 @@ setlocale(LC_MONETARY, 'en_IN');
    white-space: nowrap;
    }
 </style>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <div class="row">
    <div class="col-12">
       <div class="page-title-box d-sm-flex align-items-center justify-content-between">
@@ -112,6 +113,7 @@ setlocale(LC_MONETARY, 'en_IN');
 </div>
 <!-- end row -->
 <script src="{{ URL::asset('assets/libs/jquery/jquery.min.js')}}"></script>
+
 <script>
        
     function tableData(ele) 

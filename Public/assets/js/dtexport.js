@@ -43,10 +43,14 @@ function formatDateDMY(dateString) {
     if (!dateString) return "";
 
     const d = new Date(dateString);
-    if (isNaN(d)) return dateString; // if invalid format, return original
+    if (isNaN(d)) return dateString; // if invalid, return original
 
     const day = ("0" + d.getDate()).slice(-2);
-    const month = ("0" + (d.getMonth() + 1)).slice(-2);
+
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
+                        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    const month = monthNames[d.getMonth()];
     const year = d.getFullYear();
 
     return `${day}-${month}-${year}`;

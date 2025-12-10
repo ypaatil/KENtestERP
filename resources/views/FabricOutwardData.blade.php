@@ -5,6 +5,7 @@
     setlocale(LC_MONETARY, 'en_IN');  
 @endphp
 <!-- end page title -->
+ <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 <div class="row">
    <div class="col-12">
       <div class="page-title-box d-sm-flex align-items-center justify-content-between">
