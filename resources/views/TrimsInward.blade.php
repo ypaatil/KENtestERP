@@ -376,7 +376,7 @@ ini_set('memory_limit', '1G');
                      </div>
                      <div class="col-md-3">
                         <label for="location_id" class="form-label">Location/Warehouse</label>
-                        <select name="location_id" class="form-select select2  " id="location_id" required>
+                        <select name="location_id" class="form-select select2  " id="location_id">
                            <option value="">--Location--</option>
                            @foreach($LocationList as  $row) 
                            <option value="{{ $row->loc_id }}" {{ $row->loc_id == 4 ? 'selected="selected"' : '' }}>{{ $row->location }}</option> 
@@ -592,7 +592,8 @@ ini_set('memory_limit', '1G');
 
    function CheckDuplicateRow(row)
    {
-      $(row).closest('tr').find('input').not('input[name="id"]').not('input[name="id[]"]').not('.btn').val(0);
+      $(row).closest('tr').find('select[name="class_id[]"]').prop('disabled', true);
+      $(row).closest('tr').find('input').not('input[name="id"]').not('input[name="id[]"]').not('.btn').val('');
       let selectedVal = $(row).val(); 
       $(row).closest('tr').find('input[name="itemsCode[]"]').val(selectedVal);
       if (duplicateChecking) return;  // stop repeated alerts
@@ -828,89 +829,129 @@ ini_set('memory_limit', '1G');
    
    
    $(document).ready(function() {
-       $('#frmData').submit(function(e) {
-           e.preventDefault(); 
-   
-           var Click = $("#mainAllocation").attr('isClick');
-           var isValid = true;
-   
-           // ✅ Check all required fields manually
-           $(this).find('[required]').each(function() {
-               if (!$(this).val() || $(this).val().trim() === '') {
-                   isValid = false;
-                   $(this).addClass('is-invalid'); // optional red border
-               } else {
-                   $(this).removeClass('is-invalid');
-               }
-           });
-   
-           // ✅ Also check mainAllocation click
-           if (Click != 1) {
-               alert("Quantity is not allocated...!");
-               $('#Submit').prop('disabled', true);               
-               $("#po_code").prop('disabled', true);
-               $("#is_opening").prop('disabled', true);
-               return false; // stop
-           }
-   
-           if (!isValid) {
-               alert("Please fill all required fields!");
-               $('#Submit').prop('disabled', false);
-               return false; // stop
-           }
-   
-           // ✅ If both validations pass, disable submit to prevent double-click
-           $('#Submit').prop('disabled', true);
-           this.submit(); // now actually submit form
-       });
-   
-       // ✅ When mainAllocation button is clicked, mark it as clicked
-       $('#mainAllocation').on('click', function() {
-           $(this).attr('isClick', 1);
-           $('#Submit').prop('disabled', false);
-       });
+     $('#frmData').on('submit', function (e) {
+         e.preventDefault();
 
-       $('#frmData1').submit(function(e) {
-           e.preventDefault(); 
-   
-           var Click1 = $("#mainAllocation1").attr('isClick');
-           var isValid1 = true;
-   
-           // ✅ Check all required fields manually
-           $(this).find('[required]').each(function() {
-               if (!$(this).val() || $(this).val().trim() === '') {
-                   isValid1 = false;
-                   $(this).addClass('is-invalid'); 
-               } else {
-                   $(this).removeClass('is-invalid');
-               }
-           });
-   
-           // ✅ Also check mainAllocation click
-           if (Click1 != 1) {
-               alert("Quantity is not allocated...!");
-               $('#Submit1').prop('disabled', true);               
-               $("#isReturnTrimsInward").prop('disabled', true);
-               $("#isOutsideVendor").prop('disabled', true);
-               return false; // stop
-           }
-   
-           if (!isValid1) {
-               alert("Please fill all required fields!");
-               $('#Submit1').prop('disabled', false);
-               return false; // stop
-           }
-   
-           // ✅ If both validations pass, disable submit to prevent double-click
-           $('#Submit1').prop('disabled', true);
-           this.submit(); // now actually submit form
-       });
-   
-       // ✅ When mainAllocation button is clicked, mark it as clicked
-       $('#mainAllocation1').on('click', function() {
-           $(this).attr('isClick', 1);
-           $('#Submit1').prop('disabled', false);
-       });
+         let form = $(this);
+         let isValid = true;
+
+         // Required validation — skip hidden fields
+         form.find('[required]').each(function () {
+
+            // ❌ Skip hidden or type="hidden"
+            if ($(this).is(':hidden') || $(this).attr("type") === "hidden") {
+                  return; // continue
+            }
+
+            // Normal validation
+            if (!$(this).val().trim()) {
+                  isValid = false;
+                  $(this).addClass('is-invalid');
+            } else {
+                  $(this).removeClass('is-invalid');
+            }
+         });
+
+         // Check mainAllocation click
+         let Click = $("#mainAllocation").data("clicked");
+
+         if (Click !== 1) {
+            alert("Quantity is not allocated...!");
+            $('#Submit').prop('disabled', true);
+            $("#po_code, #is_opening").prop('disabled', true);
+            return false;
+         }
+
+         // If required fields missing
+         if (!isValid) {
+            alert("Please fill all required fields!");
+            $('#Submit').prop('disabled', false);
+            return false;
+         }
+
+         // Check table rows
+         let hasRows = $("#stock_allocate tr").length > 0;
+
+         if (!hasRows) {
+            alert("No allocation rows found!");
+            $('#Submit').prop('disabled', true);
+            return false;
+         }
+
+         // Disable submit & submit form (without recursion)
+         $('#Submit').prop('disabled', true);
+         form.off('submit').submit();
+      });
+
+
+      // Mark mainAllocation clicked
+      $('#mainAllocation').on('click', function () {
+         $(this).data("clicked", 1);
+         $('#Submit').prop('disabled', false);
+      });
+
+
+      $('#frmData1').on('submit', function (e) {
+         e.preventDefault();
+
+         let form = $(this);
+         let isValid1 = true;
+
+        form.find('[required]').each(function () 
+        {
+            // ❌ Skip hidden fields
+            if ($(this).is(':hidden') || $(this).attr("type") === "hidden") {
+               return; // continue loop
+            }
+
+            // Normal validation
+            if (!$(this).val().trim()) {
+               isValid1 = false;
+               $(this).addClass('is-invalid');
+            } else {
+               $(this).removeClass('is-invalid');
+            }
+         });
+
+         // Check mainAllocation click
+         let Click1 = $("#mainAllocation1").data("clicked");
+         if (Click1 !== 1) {
+            alert("Quantity is not allocated...!");
+            $('#Submit1').prop('disabled', true);
+            $("#isReturnTrimsInward, #isOutsideVendor").prop('disabled', true);
+            return false;
+         }
+
+         // If required fields missing
+         if (!isValid1) {
+            alert("Please fill all required fields!");
+            $('#Submit1').prop('disabled', false);
+            return false;
+         }
+
+         // Check table rows (excluding header)
+         let hasRows = $("#stock_allocate1 tr").length > 0;
+
+         if (!hasRows) {
+            alert("No allocation rows found!");
+            $('#Submit1').prop('disabled', true);
+            return false;
+         }
+
+         // Finally disable submit & submit form
+         $('#Submit1').prop('disabled', true);
+
+         // 🔥 This submits WITHOUT triggering submit event again
+         form.off('submit').submit();
+      });
+
+
+      // Mark mainAllocation clicked
+      $('#mainAllocation1').on('click', function () {
+         $(this).data("clicked", 1);
+         $('#Submit1').prop('disabled', false);
+      });
+
    });
    
    
