@@ -318,7 +318,7 @@ ini_set('memory_limit', '1G');
                   </div>
                </div>
                @endif
-               <form action="{{route('TrimsInward.store')}}" method="POST" id="frmData" novalidate>
+               <form action="{{route('TrimsInward.store')}}" method="POST" id="frmData1" novalidate>
                   <input type="hidden" name="type" id="type" class="form-control" value="<?php echo  'TrimsInward' ?>" /> 
                   <input type="hidden" name="trimDate" class="form-control" id="trimDate" value="{{date('Y-m-d')}}">
                   <input type="hidden" name="cp_id" class="form-control" id="cp_id1" value="1">
@@ -550,7 +550,7 @@ ini_set('memory_limit', '1G');
                      </div>
                   </div>
                   <div>
-                     <button type="submit" class="btn btn-success w-md" onclick="EnableFields();" id="Submit">Save</button>
+                     <button type="submit" class="btn btn-success w-md" onclick="EnableFields();" id="Submit1">Save</button>
                      <a href="{{ Route('TrimsInward.index') }}" class="btn btn-warning w-md">Cancel</a>
                   </div>
                </form>
@@ -780,6 +780,7 @@ ini_set('memory_limit', '1G');
 
          GetVendorName(vw_code);
          $("#vw_code").prop('disabled', true);
+         $("#vendorId").prop('disabled', true);
    }
 
 
@@ -846,7 +847,9 @@ ini_set('memory_limit', '1G');
            // ✅ Also check mainAllocation click
            if (Click != 1) {
                alert("Quantity is not allocated...!");
-               $('#Submit').prop('disabled', true);
+               $('#Submit').prop('disabled', true);               
+               $("#po_code").prop('disabled', true);
+               $("#is_opening").prop('disabled', true);
                return false; // stop
            }
    
@@ -865,6 +868,48 @@ ini_set('memory_limit', '1G');
        $('#mainAllocation').on('click', function() {
            $(this).attr('isClick', 1);
            $('#Submit').prop('disabled', false);
+       });
+
+       $('#frmData1').submit(function(e) {
+           e.preventDefault(); 
+   
+           var Click1 = $("#mainAllocation1").attr('isClick');
+           var isValid1 = true;
+   
+           // ✅ Check all required fields manually
+           $(this).find('[required]').each(function() {
+               if (!$(this).val() || $(this).val().trim() === '') {
+                   isValid1 = false;
+                   $(this).addClass('is-invalid'); 
+               } else {
+                   $(this).removeClass('is-invalid');
+               }
+           });
+   
+           // ✅ Also check mainAllocation click
+           if (Click1 != 1) {
+               alert("Quantity is not allocated...!");
+               $('#Submit1').prop('disabled', true);               
+               $("#isReturnTrimsInward").prop('disabled', true);
+               $("#isOutsideVendor").prop('disabled', true);
+               return false; // stop
+           }
+   
+           if (!isValid1) {
+               alert("Please fill all required fields!");
+               $('#Submit1').prop('disabled', false);
+               return false; // stop
+           }
+   
+           // ✅ If both validations pass, disable submit to prevent double-click
+           $('#Submit1').prop('disabled', true);
+           this.submit(); // now actually submit form
+       });
+   
+       // ✅ When mainAllocation button is clicked, mark it as clicked
+       $('#mainAllocation1').on('click', function() {
+           $(this).attr('isClick', 1);
+           $('#Submit1').prop('disabled', false);
        });
    });
    
@@ -957,7 +1002,7 @@ ini_set('memory_limit', '1G');
       // -------------------------
       let isValid = true;
 
-      $("#detailTbl tr").each(function () {
+      $("#footable_2 tbody tr").each(function () {
          let qty = $(this).find('input[name="item_qtys[]"]').val();
 
          if (qty === "" || qty == 0 || qty < 0) {
@@ -966,7 +1011,7 @@ ini_set('memory_limit', '1G');
          }
       });
 
-      if (!isValid) {
+      if (!isValid) {  
          alert("Quantity should be greater than 0 for all items.");
          return false;   // ❗STOP FUNCTION COMPLETELY
       }
@@ -1031,6 +1076,7 @@ ini_set('memory_limit', '1G');
       });
 
       calculateAllocatedQty();
+      
    }
 
    

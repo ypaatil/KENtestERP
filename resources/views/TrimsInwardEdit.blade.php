@@ -875,18 +875,13 @@
         $(obj).parent().parent('tr').find('td button[name="allocate[]"]').attr('qty', qty);
     }
     
-    function stockAllocate(obj) 
+   function stockAllocate() 
    {
-      $('#Submit').prop('disabled', false);
-      var Click = $("#mainAllocation").attr('isClick');
-
-      // -------------------------
-      // 1️⃣ Validate Qty > 0
-      // -------------------------
+     
       let isValid = true;
 
-      $("#detailTbl tr").each(function () {
-         let qty = $(this).find('input[name="item_qtys[]"]').val();
+      $("#footable_2 tbody tr").each(function () {
+         let qty = $(this).find('td input[name="item_qtys[]"]').val();
 
          if (qty === "" || qty == 0 || qty < 0) {
                isValid = false;
@@ -901,7 +896,12 @@
       // -------------------------
       // END VALIDATION
       // -------------------------
+      $('#Submit').prop('disabled', false);
+      var Click = $("#mainAllocation").attr('isClick');
 
+      // -------------------------
+      // 1️⃣ Validate Qty > 0
+      // -------------------------
 
       setTimeout(() => {
          $('#footable_2')
@@ -962,23 +962,13 @@
    }
 
    
-  function stockAllocate1(obj) 
+  function stockAllocate1() 
   {
-      // Enable submit button
-      $('#Submit').prop('disabled', false);
-
-      // ---------- 1️⃣ Prevent double click ----------
-      if ($("#mainAllocation1").data("running") === 1) {
-         alert("Already processing...!");
-         return;
-      }
-      $("#mainAllocation1").data("running", 1);
-
       // ---------- 3️⃣ Validate Qty > 0 ----------
       let isValid = true;
 
       $("#detailTbl tr").each(function () {
-         let qty = $(this).find('input[name="item_qtys[]"]').val();
+         let qty = $(this).find('td input[name="item_qtys[]"]').val();
 
          if (qty === "" || qty == 0 || qty < 0) {
                isValid = false;
@@ -992,6 +982,15 @@
          return false;  // STOP FUNCTION
       }
 
+      // Enable submit button
+      $('#Submit').prop('disabled', false);
+
+      // ---------- 1️⃣ Prevent double click ----------
+      if ($("#mainAllocation1").data("running") === 1) {
+         alert("Already processing...!");
+         return;
+      }
+      $("#mainAllocation1").data("running", 1);
 
       // ---------- 4️⃣ Stop if already allocated ----------
       let Click = $("#mainAllocation1").attr('isClick');
