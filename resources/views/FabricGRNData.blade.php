@@ -139,7 +139,7 @@ setlocale(LC_MONETARY, 'en_IN');
          const year = today.getFullYear();
          const formattedDate = `${day}-${month}-${year}`;
          const exportTitle = 'Fabric Inward Report (' + formattedDate + ')';
-        
+         let skipFooterForNextDraw = false;
           var table = $('#dt').DataTable({
             ajax: {
                 url: currentURL,
@@ -157,9 +157,13 @@ setlocale(LC_MONETARY, 'en_IN');
                   sessionStorage.setItem('btnclickforgetalldata', 0); 
             },
             "footerCallback": function (row, data, start, end, display) {                
+                if (skipFooterForNextDraw) {
+                  skipFooterForNextDraw = false; // reset and exit
+                  return;
+               }
                  var total_meter = 0;             
                  var total_value = 0;
-                    
+                   
                 for (var i = 0; i < data.length; i++) {
                     /*total_meter += parseFloat(data[i].meter);
                     total_value += parseFloat(data[i].item_value);*/
@@ -209,6 +213,9 @@ setlocale(LC_MONETARY, 'en_IN');
                   {data: 'rack_name', name: 'rack_name'}
             ]
         });
+        table.on('order.dt', function () {
+         skipFooterForNextDraw = true;
+         });
     }
 
       $( document ).ready(function() 

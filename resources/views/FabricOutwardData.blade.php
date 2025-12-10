@@ -121,7 +121,7 @@
          const year = today.getFullYear();
          const formattedDate = `${day}-${month}-${year}`;
          const exportTitle = 'Fabric Outward Report (' + formattedDate + ')';
-        
+         let skipFooterForNextDraw = false;
           var table = $('#dt').DataTable({
             ajax: {
                 url: currentURL,
@@ -139,7 +139,11 @@ deferRender: true,
                   buildAllMenusFabricOutwardDataReport();
                   sessionStorage.setItem('btnclickforgetalldata', 0); 
             },
-            "footerCallback": function (row, data, start, end, display) {                
+            "footerCallback": function (row, data, start, end, display) {  
+                if (skipFooterForNextDraw) {
+                  skipFooterForNextDraw = false; // reset and exit
+                  return;
+               }              
                  var total_meter = 0;             
                  var total_value = 0;
                
@@ -184,6 +188,9 @@ deferRender: true,
                   {data: 'item_value', name: 'item_value' , className: 'textallalignright', render: function(data) { return formatIndianINR(data); } }
             ]
         });
+        table.on('order.dt', function () {
+         skipFooterForNextDraw = true;
+         });
     }
   
 
