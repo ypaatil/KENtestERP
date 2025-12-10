@@ -343,6 +343,7 @@ class TrimsOutwardCuttingDepartmentController extends Controller
     {
         $detailData = DB::SELECT("
             SELECT trims_outward_cutting_department_details.*, 
+                SUM(trims_outward_cutting_department_details.outward_qty) as outward_qty,
                 item_master.item_name,
                 item_master.color_name,
                 classification_master.class_name,
@@ -354,7 +355,7 @@ class TrimsOutwardCuttingDepartmentController extends Controller
                 ON item_master.item_code = trims_outward_cutting_department_details.item_code
             INNER JOIN classification_master 
                 ON classification_master.class_id = item_master.class_id
-            WHERE trims_outward_cutting_department_details.tocd_code = ?
+            WHERE trims_outward_cutting_department_details.tocd_code = ? GROUP BY trims_outward_cutting_department_details.item_code
         ", [$request->tocd_code]);
 
         $html = '';
@@ -415,9 +416,9 @@ class TrimsOutwardCuttingDepartmentController extends Controller
             $html .= '</select>
                 </td>
 
-                <td><input type="number" step="any" class="QTY"
-                        name="item_qtys[]" onchange="SetQtyToBtn(this);" 
-                        value="'.$row->item_qty.'" style="width:80px;height:30px;" required></td>
+                <td><input type="number" step="any" class="QTY" max="'.$row->outward_qty.'"
+                        name="item_qtys[]" onchange="SetQtyToBtn(this);" oninput="if(parseFloat(this.value) > parseFloat(this.max)) {  alert(`Value cannot exceed ` + this.max);  this.value = this.max;  } mycalc();"
+                        value="'.$row->outward_qty.'" style="width:80px;height:30px;" required></td>
 
                 <td><input type="number" step="any" name="item_rates[]" value="0"
                         style="width:80px;height:30px;" required></td>
