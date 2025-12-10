@@ -1596,21 +1596,21 @@
     
         // ---- TOTAL METER ----
         let totalMeter1 = 0;
-        $("#footable_2 .METER").each(function () {
+        $("#footable_3 .METER").each(function () {
             totalMeter1 += parseFloat($(this).val()) || 0;
         });
         $("#total_meter").val(totalMeter1.toFixed(2));
     
         // ---- TOTAL KG ----
         let totalKg1 = 0;
-        $("#footable_2 .KG").each(function () {
+        $("#footable_3 .KG").each(function () {
             totalKg1 += parseFloat($(this).val()) || 0;
         });
         $("#total_kg1").val(totalKg1.toFixed(2));
     
         // ---- TOTAL AMOUNT ----
         let totalAmt1 = 0;
-        $("#footable_2 .AMT").each(function () {
+        $("#footable_3 .AMT").each(function () {
             totalAmt1 += parseFloat($(this).val()) || 0;
         });
         $("#total_amount1").val(totalAmt1.toFixed(2));
