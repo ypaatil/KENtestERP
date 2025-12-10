@@ -794,12 +794,14 @@ ini_set('memory_limit', '1G');
         {
            $("#isReturnTrimsInward").attr('disabled', true); 
            $("#vw_code").attr('onchange', 'GetTrimsInwardOutwardData()');
+           $("#tocd_code").removeAttr("name");
            $("#invoice_no1").prop("required", true);
            $("#tocd_code").prop("required", false);
         }
         else
         {
-           $("#isReturnTrimsInward").attr('disabled', false);  
+           $("#invoice_no1").removeAttr("name");
+           $("#isReturnTrimsInward").attr('disabled', false);  tocd_code
         }          
    
    } 
