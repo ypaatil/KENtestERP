@@ -1343,7 +1343,7 @@
    
    index++;
    recalcId();
-   mycalc();
+   mycalc1();
    selselect();
    
    }
@@ -1394,6 +1394,7 @@
          
          recalcId();
          mycalc();  
+         mycalc1();
    }
    
    function recalcId(){
@@ -1436,7 +1437,7 @@
 
       // SUM QTY
       let sumQty = 0;
-      $(".QTY").each(function () {
+      $("#footable_2 .QTY").each(function () {
          let v = parseFloat($(this).val()) || 0;
          sumQty += v;
       });
@@ -1444,23 +1445,45 @@
       let totalqty = safeVal("#totalqty");
       if (totalqty) totalqty.val(sumQty.toFixed(2));
 
-      let totalqty2 = safeVal("#totalqty1");
-      if (totalqty2) totalqty2.val(sumQty.toFixed(2));
-
       // SUM AMOUNT
       let sumAmt = 0;
-      $(".AMT").each(function () {
+      $("#footable_2 .AMT").each(function () {
          let v = parseFloat($(this).val()) || 0;
          sumAmt += v;
       });
 
       let totalAmt = safeVal("#total_amount");
       if (totalAmt) totalAmt.val(sumAmt.toFixed(2));
+   }
+   
+  function mycalc1() 
+  { 
+      function safeVal(selector) {
+         let el = $(selector);
+         if (el.length > 0) return el;      // element exists
+         return null;                       // does not exist
+      }
+
+      // SUM QTY
+      let sumQty = 0;
+      $("#footable_21 .QTY").each(function () {
+         let v = parseFloat($(this).val()) || 0;
+         sumQty += v;
+      });
+
+      let totalqty2 = safeVal("#totalqty1");
+      if (totalqty2) totalqty2.val(sumQty.toFixed(2));
+
+      // SUM AMOUNT
+      let sumAmt = 0;
+      $("#footable_21 .AMT").each(function () {
+         let v = parseFloat($(this).val()) || 0;
+         sumAmt += v;
+      });
 
       let totalAmt2 = safeVal("#total_amount1");
       if (totalAmt2) totalAmt2.val(sumAmt.toFixed(2));
    }
-   
    function frieght_payable()
    {
        var Net_amount=document.getElementById('Net_amount').value;
@@ -1627,6 +1650,7 @@
            var amount=(parseFloat(item_qtys)*parseFloat(item_rates)).toFixed(2);
            row.find('input[name^="amounts[]"]').val(amount);
            mycalc();
+           mycalc1();
        }
    
    function getBomDetail(type){
@@ -1653,6 +1677,7 @@
        $("#bomdis").append(response.html);
        $("#bomdis1").append(response.html);
     mycalc();
+    mycalc1();
    }
    });
    }
@@ -1675,7 +1700,7 @@
        }
    }
    
-   setInterval(function() {mycalc()}, 1000);
+   setInterval(function() {mycalc();mycalc1();}, 1000);
    
    //  setInterval(fun, 3000);  
    
@@ -1765,6 +1790,7 @@
        row.parentNode.removeChild(row); 
        recalcId();
        mycalc(); 
+       mycalc1();
    }   
    
 </script>
